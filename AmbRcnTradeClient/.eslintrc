@@ -1,0 +1,60 @@
+{
+  "env": {
+    "browser": true,
+    "es6": true
+  },
+  "extends": [
+    "eslint:recommended",
+    "plugin:@typescript-eslint/eslint-recommended",
+    "plugin:@typescript-eslint/recommended"
+  ],
+  "globals": {
+    "Atomics": "readonly",
+    "SharedArrayBuffer": "readonly"
+  },
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "ecmaVersion": 2018,
+    "sourceType": "module"
+  },
+  "plugins": [
+    "@typescript-eslint"
+  ],
+  "rules": {
+    "indent": [
+      "error",
+      2,
+      {"SwitchCase":1}
+    ],
+    "linebreak-style": [
+      "error",
+      "unix"
+    ],
+    "quotes": [
+      "error",
+      "double"
+    ],
+    "semi": [
+      "error",
+      "always"
+    ],
+    "eqeqeq":"error",
+    "no-console":["error"],
+    "no-debugger":["error"],
+    "no-irregular-whitespace":"error",
+    "no-loss-of-precision":"error",
+    "@typescript-eslint/naming-convention":[
+      "error",      
+      {
+        "selector": "typeParameter", "format": ["PascalCase"], "prefix": ["T"]
+      },
+      {
+        "selector": "interface", "format": ["PascalCase"], "prefix":["I"]
+      }
+    ],    
+    "@typescript-eslint/no-use-before-define": "off",
+    "@typescript-eslint/explicit-function-return-type":"off",
+    "@typescript-eslint/no-non-null-assertion":"off",
+    "@typescript-eslint/explicit-module-boundary-types":"off"    
+  }
+}

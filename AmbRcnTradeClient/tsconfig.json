@@ -1,0 +1,72 @@
+// {
+//   "compileOnSave": false,
+//   "compilerOptions": {
+//     "sourceMap": true,
+//     "target": "es6",
+//     "inlineSources": true,
+//     "module": "ES2020",
+//     "declaration": false,
+//     "noImplicitAny": false,
+//     "removeComments": true,
+//     "emitDecoratorMetadata": true,
+//     "experimentalDecorators": true,
+//     "esModuleInterop": true,
+//     "resolveJsonModule": true,
+//     "allowJs": true,
+//     "moduleResolution": "node",
+//     "skipLibCheck": true,
+//     "lib": [
+//       "es2020",
+//       "dom"
+//     ],
+//     "baseUrl": "src",
+//     "rootDir": "src",
+//     "strict": true,
+//     "forceConsistentCasingInFileNames": true,
+//     "importHelpers": true
+//   },
+//   "include": [
+//     "./src/**/*.ts",
+//     "./test/**/*.ts",
+//     "./custom_typings/**/*.d.ts"
+//   ],
+//   "atom": {
+//     "rewriteTsconfig": false
+//   }
+// }
+
+{
+  "compileOnSave": false,
+  "compilerOptions": {
+    "declaration": false,
+    "typeRoots": [
+      "./node_modules/@types"
+    ],
+    "removeComments": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "sourceMap": true,
+    "target": "es6",
+    "lib": [
+      "es2020",
+      "dom"      
+    ],
+    "moduleResolution": "node",
+    "baseUrl": "src",    
+    "resolveJsonModule": true,
+    "allowJs": true,
+    "esModuleInterop": true,
+    "importHelpers": true,
+    "forceConsistentCasingInFileNames": true,
+
+    "skipLibCheck": true,
+    "strict": false
+  },
+  "include": [
+    "src",
+    "test"
+  ],
+  "atom": {
+    "rewriteTsconfig": false
+  }
+}

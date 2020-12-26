@@ -1,0 +1,35 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+    <PropertyGroup>
+        <TargetFramework>net5.0</TargetFramework>
+        <AssemblyName>AmbRcnTradeServer</AssemblyName>
+        <RootNamespace>AmbRcnTradeServer</RootNamespace>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="AutoMapper" Version="10.1.1" />
+        <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.1.0" />
+        <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="5.0.1" NoWarn="NU1605" />
+        <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="5.0.1" NoWarn="NU1605" />
+        <PackageReference Include="Microsoft.VisualStudio.Web.BrowserLink" Version="2.2.0" />
+        <PackageReference Include="RavenDB.Client" Version="5.1.2" />
+        <PackageReference Include="Serilog.AspNetCore" Version="3.4.0" />
+        <PackageReference Include="Serilog.Sinks.Console" Version="3.1.1" />
+        <PackageReference Include="Serilog.Sinks.Debug" Version="1.0.1" />
+        <PackageReference Include="Serilog.Sinks.XUnit" Version="2.0.4" />
+        <PackageReference Include="Swashbuckle.AspNetCore" Version="5.6.3" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Reference Include="AmberwoodCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <HintPath>..\..\..\AmberwoodCore\AmberwoodCore\bin\Release\net5.0\AmberwoodCore.dll</HintPath>
+      </Reference>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Controllers" />
+      <Folder Include="Extensions" />
+      <Folder Include="Models\DictionaryModels" />
+    </ItemGroup>
+
+</Project>
