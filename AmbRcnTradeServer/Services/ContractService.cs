@@ -58,14 +58,14 @@ namespace AmbRcnTradeServer.Services
             var appUserInfo = await _appUserService.GetCustomersForAppUser(prms.AppUserId);
 
             var query = _session.Query<ContractListItem, Contract_ByContainers>()
-                .Where(c => c.CompanyId == prms.CompanyId && (c.Seller.Id.In(appUserInfo.UserCustomerIds) || c.Buyer.Id.In(appUserInfo.UserCustomerIds)) ||
-                            c.Broker.Id.In(appUserInfo.UserCustomerIds));
+                .Where(c => c.CompanyId == prms.CompanyId && (c.SellerId.In(appUserInfo.UserCustomerIds) || c.BuyerId.In(appUserInfo.UserCustomerIds)) 
+                );
 
             if (prms.SellerId.IsNotNullOrEmpty())
-                query = query.Where(c => c.Seller.Id == prms.SellerId);
+                query = query.Where(c => c.SellerId == prms.SellerId);
 
             if (prms.BuyerId.IsNotNullOrEmpty())
-                query = query.Where(c => c.Buyer.Id == prms.BuyerId);
+                query = query.Where(c => c.BuyerId == prms.BuyerId);
 
             if (prms.ContainerStatus == null)
             {

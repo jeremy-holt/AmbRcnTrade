@@ -1,0 +1,42 @@
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+using AmberwoodCore.Controllers;
+using AmberwoodCore.Responses;
+using AmbRcnTradeServer.Models.DictionaryModels;
+using AmbRcnTradeServer.Services;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Raven.Client.Documents.Session;
+
+namespace AmbRcnTradeServer.Controllers
+{
+    public class PortController: RavenController
+    {
+        private readonly IPortsService _portsService;
+        public PortController(IAsyncDocumentSession session, IPortsService portsService) : base(session)
+        {
+            _portsService = portsService;
+        }
+
+        [Authorize]
+        [HttpPost("[action]")]
+        public async Task<ActionResult<ServerResponse<Port>>> Save(Port port)
+        {
+            return await _portsService.SavePort(port);
+        }
+
+        [Authorize]
+        [HttpGet("[action]")]
+        public async Task<ActionResult<Port>> Load(string id)
+        {
+            return await _portsService.LoadPort(id);
+        }
+
+        [Authorize]
+        [HttpGet("[actoin]")]
+        public async Task<ActionResult<List<Port>>> LoadPorts(string companyId)
+        {
+            return await _portsService.LoadPortList(companyId);
+        }
+    }
+}

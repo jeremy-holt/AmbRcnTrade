@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using AmberwoodCore.Extensions;
 using AmberwoodCore.Models;
+using AmbRcnTradeServer.Constants;
 using AmbRcnTradeServer.Models;
 using AmbRcnTradeServer.RavenIndexes;
 using AutoFixture;
@@ -61,18 +62,28 @@ namespace Tests
                 .With(c => c.Users, users)
                 .Create();
 
-            var otherCustomers = fixture.DefaultEntity<Customer>().CreateMany(2).ToList();
+            var otherCustomers = fixture.DefaultEntity<Customer>()
+                .Without(c => c.Users)
+                .CreateMany(2).ToList();
+
+            await session.StoreAsync(customerTerraNova);
+            await otherCustomers.SaveList(session);
+
+            var containers = fixture.Build<Container>()
+                .With(c => c.Status, ContainerStatus.Open)
+                .CreateMany().ToList();
 
             var contract = fixture.DefaultEntity<Contract>()
                 .With(c => c.SellerId, customerTerraNova.Id)
                 .With(c => c.BuyerId, otherCustomers[0].Id)
                 .Without(c => c.BrokerId)
+                .With(c => c.Containers, containers)
                 .Create();
             await session.StoreAsync(contract);
             await session.SaveChangesAsync();
-            
-            WaitForIndexing(store);
 
+            WaitForIndexing(store);
+            
             // Act
             var prms = new ContractQueryParameters
             {
@@ -86,8 +97,8 @@ namespace Tests
             actual.Id.Should().Be(contract.Id);
             actual.ContractNumber.Should().Be(contract.ContractNumber);
             actual.ContractDate.Should().Be(contract.ContractDate);
-            actual.Seller.Should().Be(new ListItem(customerTerraNova.Id, customerTerraNova.Name));
-            actual.Buyer.Should().Be(new ListItem(otherCustomers[0].Id, otherCustomers[0].Name));
+            actual.SellerId.Should().Be(customerTerraNova.Id);
+            actual.BuyerId.Should().Be(otherCustomers[0].Id);
         }
 
         private static async Task InitializeIndexes(IDocumentStore store)

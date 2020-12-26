@@ -9,9 +9,12 @@ namespace AmbRcnTradeServer.Models
         public string Id { get; set; }
         public string ContractNumber { get; set; }
         public DateTime ContractDate { get; set; }
-        public ListItem Seller { get; set; }
-        public ListItem Buyer { get; set; }
-        public ListItem Broker { get; set; }
+        public string SellerId { get; set; }
+        public string SellerName { get; set; }
+        public string BuyerId { get; set; }
+        public string BuyerName { get; set; }
+        public string  BrokerId { get; set; }
+        public string  BrokerName { get; set; }
         public string ContainerNumber { get; set; }
         public string VesselName { get; set; }
         public DateTime? VesselEta { get; set; }

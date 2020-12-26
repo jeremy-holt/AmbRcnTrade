@@ -18,7 +18,7 @@ namespace AmbRcnTradeServer.Startup_Config
             // services.AddScoped<ICommodityGroupService, CommodityGroupService>();
             // services.AddScoped<ICommodityService, CommodityService>();
             // services.AddScoped<IContractClauseService, ContractClauseService>();
-            // services.AddScoped<IContractService, ContractService>();
+            
             services.AddScoped<IContractService, ContractService>();
             services.AddScoped<ICounterService, CounterService>();
             services.AddScoped<ICustomerService, CustomerService>();
@@ -26,7 +26,7 @@ namespace AmbRcnTradeServer.Startup_Config
             // services.AddScoped<IIncotermsService, IncotermsService>();
             // services.AddScoped<IPackingService, PackingService>();
             // services.AddScoped<IPaymentService, PaymentService>();
-            // services.AddScoped<IPortsService, PortsService>();
+            services.AddScoped<IPortsService, PortsService>();
             // services.AddScoped<IStandardClauseService, StandardClauseService>();
             // services.AddScoped<ITransportUnitService, TransportUnitService>();
             // services.AddScoped<IClauseGroupService,ClauseGroupService>();
@@ -38,8 +38,8 @@ namespace AmbRcnTradeServer.Startup_Config
             // services.AddScoped<ISpecificationService, SpecificationService>();
             // services.AddScoped<IToleranceDescriptorService, ToleranceDescriptorService>();
             // services.AddScoped<IToleranceService, ToleranceService>();
-            // services.AddScoped<IAppUserService, AppUserService>();
-            // services.AddScoped<IAuditingService, AuditingService>();
+            services.AddScoped<IAppUserService, AppUserService>();
+            services.AddScoped<IAuditingService, AuditingService>();
             // services.AddScoped<IAttachmentService, AttachmentService>();
             // services.AddScoped<IContractDocumentService, ContractDocumentService>();
             

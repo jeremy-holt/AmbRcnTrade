@@ -1,6 +1,5 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
-using AmberwoodCore.Models;
 using AmbRcnTradeServer.Models;
 using Raven.Client.Documents;
 using Raven.Client.Documents.Indexes;
@@ -18,27 +17,31 @@ namespace AmbRcnTradeServer.RavenIndexes
                 let buyer = LoadDocument<Customer>(c.BuyerId)
                 let broker = LoadDocument<Customer>(c.BrokerId)
                 from container in c.Containers
-                select new ContractListItem
+                select new
                 {
-                    Id = c.Id,
-                    CompanyId = c.CompanyId,
-                    ContractNumber = c.ContractNumber,
-                    ContractDate = c.ContractDate,
-                    Seller = new ListItem {Id = c.SellerId, Name = seller.Name},
-                    Buyer = new ListItem {Id = c.BuyerId, Name = buyer.Name},
-                    Broker = new ListItem {Id = c.BrokerId, Name = broker.Name},
-                    ContainerNumber = container.ContainerNumber,
-                    VesselName = container.VesselName,
-                    VesselEta = container.VesselEta,
-                    BlNumber = container.BlNumber,
-                    BlDate = container.BlDate,
-                    Status = container.Status
+                    c.Id,
+                    c.CompanyId,
+                    c.ContractNumber,
+                    c.ContractDate,
+                    c.SellerId,
+                    SellerName = seller.Name,
+                    c.BuyerId,
+                    BuyerName = buyer.Name,
+                    c.BrokerId,
+                    BrokerName = broker.Name,
+                    container.ContainerNumber,
+                    container.VesselName,
+                    container.VesselEta,
+                    container.BlNumber,
+                    container.BlDate,
+                    container.Status
                 };
 
-            Index(x => x.Seller.Id, FieldIndexing.Default);
-            Index(x => x.Buyer.Id, FieldIndexing.Default);
-            Index(x => x.Broker.Id, FieldIndexing.Default);
+            Index(x => x.SellerId, FieldIndexing.Default);
+            Index(x => x.BuyerId, FieldIndexing.Default);
+            Index(x => x.BrokerId, FieldIndexing.Default);
             Index(x => x.CompanyId, FieldIndexing.Default);
+            Index(x => x.Status, FieldIndexing.Default);
 
             StoreAllFields(FieldStorage.Yes);
         }

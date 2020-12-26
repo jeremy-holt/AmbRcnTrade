@@ -9,9 +9,9 @@ namespace AmbRcnTradeServer.Models
 {
     public class AppUserInfo
     {
-        public List<string> UserCustomerIds { get; set; } = new List<string>();
-        public string AppUserId { get; set; }
-        public string AppUserName { get; set; }
-        public string AppUserRole { get; set; }
+        public List<string> UserCustomerIds { get; init; } = new();
+        public string AppUserId { get; init; }
+        public string AppUserName { get; init; }
+        public string AppUserRole { get; init; }
     }
 }
