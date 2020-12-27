@@ -1,4 +1,4 @@
-import { IAuditLog } from "./../interfaces/IAuditLog";
+import { IAuditLog } from "../interfaces/IAuditLog";
 import { Router } from "aurelia-router";
 import { HttpClient } from "aurelia-fetch-client";
 import { autoinject } from "aurelia-framework";

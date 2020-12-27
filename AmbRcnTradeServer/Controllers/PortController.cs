@@ -33,10 +33,17 @@ namespace AmbRcnTradeServer.Controllers
         }
 
         [Authorize]
-        [HttpGet("[actoin]")]
+        [HttpGet("[action]")]
         public async Task<ActionResult<List<Port>>> LoadPorts(string companyId)
         {
             return await _portsService.LoadPortList(companyId);
+        }
+
+        [Authorize]
+        [HttpGet("[action]")]
+        public async Task<ActionResult<Port>> Create()
+        {
+            return await Task.FromResult(new Port());
         }
     }
 }

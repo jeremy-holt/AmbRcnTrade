@@ -1,0 +1,37 @@
+<template>
+  <!-- <require from="../custom-elements/images/ancard/ancard-image-custom-element"></require>
+  <require from="../home/parts/home-footer-custom-element"></require> -->
+
+  <toolbar t="[caption]login" caption="Sign in" show-login="false"></toolbar>
+
+  <!-- <div class="w-100 pt-3 pb-3 pl-3 bg-logo mb-3">
+    <img src="images/Amberwood 2018 letterhead no padding.png" class="img-fluid">
+  </div> -->
+  
+  <ancard-image></ancard-image>
+  
+  <h4 class="mt-3 mb-3">Please provide your sign in details</h4>
+
+  <form>
+    <div class="form-group">
+      <email-input value.bind="model.email & validate" t="[label]email" label="Email"></email-input>
+    </div>
+
+    <div class="form-group">
+      <password-input value.bind="model.password & validate" t="[label]password" label="Password"></password-input>
+    </div>
+
+    <button type="submit" class="btn btn-primary" click.delegate="login()" t="login">Sign in</button>
+
+    <!-- <div if.bind="state.serverMessages.errorMessage" class="alert alert-danger mt-5">${state.serverMessages.errorMessage}</div> -->
+
+    <error-alert class="mt-5"></error-alert>
+
+    <!-- <div class="mt-5">
+      <span t="not-yet-registered">If you have not yet registered, please</span>&nbsp;<a class="with-decoration"
+         href="#" click.delegate="registerDemonstration()"><span t="register-now-lc"></span></a>
+    </div> -->
+  </form>
+
+  <!-- <home-footer></home-footer> -->
+</template>

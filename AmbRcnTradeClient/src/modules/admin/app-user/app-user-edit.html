@@ -1,0 +1,30 @@
+<template>
+  <toolbar type="menu" caption="User admin" save.call="save()" disabled-save.bind="!canSave">
+    <toolbar-item icon="fas fa-plus" click.call="addUser()"></toolbar-item>
+  </toolbar>
+
+  <select-input source.bind="companiesList" value.bind="selectedCompany" label="Companies"></select-input>
+
+  <select-input source.bind="appUsersList" value.bind="selectedAppUser" label="Select users"></select-input>
+
+  <section class="mt-5">
+    <text-input value.bind="model.firstName" label="First name"></text-input>
+
+    <text-input value.bind="model.lastName" label="Last name"></text-input>
+
+    <email-input value.bind="model.email" label="Email"></email-input>
+
+    <text-input if.bind="showPassword" value.bind="model.password" label="Password"></text-input>
+
+    <label class="form-label">Roles</label>
+    <div>
+      <select class="form-select" value.bind="selectedRoles" change.delegate="selectedRolesChanged(selectedRoles)"
+        multiple="true">
+        <option repeat.for="item of roleNamesList" model.bind="item.id">${item.name}</option>
+      </select>
+    </div>
+    <div>
+      ${rolesMessage}
+    </div>
+  </section>
+</template>

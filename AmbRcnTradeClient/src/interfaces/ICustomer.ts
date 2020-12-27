@@ -1,6 +1,6 @@
 import { IUser } from "interfaces/IUser";
-import { IAccountCode } from "../accounts/IAccountCode";
-import { IEntityCompany } from "../IEntity";
+import { IEntityCompany } from "./IEntity";
+
 
 export interface ICustomer extends IEntityCompany {
   id: string | null;
@@ -8,8 +8,7 @@ export interface ICustomer extends IEntityCompany {
   companyId: string;
   companyName: string;
   address: IAddress | null;
-  notes?: string;
-  accountCodes: IAccountCode[];
+  notes?: string;  
   users: IUser[];
 }
 

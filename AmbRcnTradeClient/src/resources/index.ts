@@ -29,10 +29,6 @@ export function configure(config: FrameworkConfiguration) {
     "./value-converters/pos-neg-color",
     "./value-converters/toJson",
     "./value-converters/number",
-    "./value-converters/price-format",
-    "./value-converters/container-format",
-    "./value-converters/contract-list-number-format",
-    "./value-converters/exchange-rate-format",
     "./value-converters/currency-format"
   ]);
 }

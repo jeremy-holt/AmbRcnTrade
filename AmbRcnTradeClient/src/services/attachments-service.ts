@@ -5,8 +5,8 @@ import { Store } from "aurelia-store";
 import _ from "lodash";
 import { QueryId } from "models/QueryId";
 import { IState } from "store/state";
-import { IAttachmentInfo } from "../interfaces/inspections/IAttachmentInfo";
-import { IDeleteAttachmentRequest } from "../interfaces/inspections/IDeleteAttachmentRequest";
+import { IAttachmentInfo } from "../interfaces/IAttachmentInfo";
+import { IDeleteAttachmentRequest } from "../interfaces/IDeleteAttachmentRequest";
 import { FetchService } from "./fetch-service";
 import { noOpAction } from "./no-op-action";
 

@@ -1,6 +1,8 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using AmberwoodCore.Controllers;
+using AmberwoodCore.Models;
 using AmberwoodCore.Responses;
 using AmbRcnTradeServer.Models;
 using AmbRcnTradeServer.Services;
@@ -32,6 +34,27 @@ namespace AmbRcnTradeServer.Controllers
         public async Task<ActionResult<Customer>> Load(string id)
         {
             return await _customerService.LoadCustomer(id);
+        }
+
+        [Authorize]
+        [HttpGet("action")]
+        public async Task<ActionResult<List<Customer>>> LoadCustomerList(string companyId)
+        {
+            return await _customerService.LoadCustomerList(companyId);
+        }
+
+        [Authorize]
+        [HttpGet("[action]")]
+        public async Task<ActionResult<List<ListItem>>> LoadCustomerListForAppUser(string companyId, string appUserId)
+        {
+            return await _customerService.LoadCustomerListForAppUser(companyId, appUserId);
+        }
+
+        [Authorize]
+        [HttpGet("[action]")]
+        public async Task<ActionResult<Customer>> Create()
+        {
+            return await Task.FromResult(new Customer());
         }
     }
 }

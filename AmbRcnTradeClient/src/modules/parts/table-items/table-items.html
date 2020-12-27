@@ -1,0 +1,33 @@
+<template>
+  <require from="./table-items-filter-value-converter"></require>
+  <table class="table table-sm table-bordered small table-hover">
+    <thead class="thead-dark">
+      <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th if.bind="hasDescription">Description</th>
+        <th>Sort order</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr reorderable-repeat.for="item of list" reorderable-dnd-handler-selector=".handler"
+        reorderable-after-reordering="orderChanged" click.delegate="setCurrentItem(item)">
+        <td class="text-nowrap">
+          <i class="fas fa-grip-vertical fa-fw text-secondary handler"></i>&nbsp;
+          <span if.bind="editRoute">            
+            <button type="button" class="btn btn-sm btn-light" click.delegate="editItem(encode(item.id))"><i
+              class="fas fa-pencil fa-fw"></i></button>
+          </span>
+          ${item.id}
+        
+        </td>
+        <td class="text-nowrap"><span if.bind="item.clauseGroup"
+            class="font-weight-bold">${item.clauseGroup.name}<br></span>${item.name}</td>
+        <td if.bind="hasDescription" innerhtml.bind="item.description"></td>
+        <td>${item.sortOrder}
+
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</template>

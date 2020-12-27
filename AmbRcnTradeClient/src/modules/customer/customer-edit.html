@@ -1,0 +1,121 @@
+<template>
+  <require from="../../../custom-elements/countries/countries-list-custom-element"></require>
+  <require from="../../../custom-elements/currencies/currencies-list-custom-element"></require>
+
+
+  <toolbar type="menu" caption="Customer" save.call="save()">
+    <toolbar-item icon="fa fa-plus" label="Add" click.call="addNewCustomer()"></toolbar-item>
+  </toolbar>
+
+  <div class="card">
+    <div class="card-header">
+      <h4>Customer details</h4>
+      <select-input source.bind="list" label="Customers" value.bind="selectedCustomer" warn-null="false"></select-input>
+    </div>
+  
+    <div class="card-body">
+      <div class="row">
+        <div class="col-4">
+          <text-input value.bind="model.name" label="Short name"></text-input>
+        </div>
+      
+        <div class="col">
+          <text-input value.bind="model.companyName" label="Company"></text-input>
+        </div>
+      </div>
+    
+      <div class="form-group">
+        <text-input value.bind="model.address.street1" label="Street 1"></text-input>
+      </div>
+    
+      <div class="form-group">
+        <text-input value.bind="model.address.street2" label="Street 2"></text-input>
+      </div>
+    
+    
+      <div class="row">
+        <div class="col">
+          <text-input value.bind="model.address.city" label="City"></text-input>
+        </div>
+        <div class="col">
+          <text-input value.bind="model.address.postCode" label="Post code"></text-input>
+        </div>
+      </div>
+    
+      <div class="row">
+        <div class="col">
+          <text-input value.bind="model.address.state" label="State"></text-input>
+        </div>
+      
+        <div class="col">
+          <countries-list value.bind="model.address.country" label="Country"></countries-list>
+        </div>
+      </div>
+    
+      <div class="form-group">
+        <text-area-input value.bind="model.notes" label="Notes"></text-area-input>
+      </div>
+    
+      <div class="row small" if.bind="selectedCustomer.id">
+        <div class="col" style="white-space: pre-wrap">${customerBlock} </div>
+        <div class="col">${customerInLine}</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card mt-2">
+    <div class="card-header">
+      <h4>Users in company</h4>
+    </div>
+    <div class="card-body">
+        <div class="row mb-3 d-flex align-items-end">
+          <div class="col-8">
+            <select-input source.bind="appUsersList" label="Users in system" value.bind="selectedAppUser" warn-null="false"></select-input>
+          </div>
+      
+          <div class="col-4"><button type="button" class="btn btn-primary" disabled.bind="!canAddAppuser" click.delegate="addAppUser()">Add user to this customer</button></div>
+        </div>
+    
+        <ul class="list-group">
+          <li class="list-group-item d-flex justify-content-between" repeat.for="item of model.users">
+            <div>
+              ${item.name}
+            </div>
+            <div>
+              <a href="#" class="text-danger" click.delegate="removeAppUser($index)"><i class="fas fa-trash"></i></a>
+            </div> 
+          </li>
+        </ul>
+
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <h4>Account codes</h4>
+    </div>
+    <div class="card-body" if.bind="selectedCustomer.id">
+      <button type="button" class="btn btn-primary mb-2" click.delegate="addAccountCode()">Add Account Code</button>
+      <ul class="list-group" if.bind="model.accountCodes.length">
+        <li class="list-group-item" repeat.for="item of model.accountCodes">
+          <div class="row d-flex align-items-end">
+            <div class="col">
+              <text-input value.bind="item.name" label="Account name"></text-input>
+            </div>
+            <div class="col">
+              <currencies-list value.bind="item.currency"></currencies-list>
+            </div>
+            <div class="col">
+              <checkbox-input value.bind="item.active" label="Active account"></checkbox-input>
+            </div>
+            <div class="col">
+              <button type="button" class="btn btn-sm btn-danger"
+                click.delegate="removeAccountCode($index)">Delete</button>
+            </div>
+          </div>
+        </li>
+      </ul>
+      <p else>This customer does not have any account codes yet</p>
+    </div>
+  </div>
+</template>

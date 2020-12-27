@@ -1,4 +1,4 @@
-import { IEntityCompany } from "../IEntity";
+import { IEntityCompany } from "./IEntity";
 
 export interface IPort extends IEntityCompany
 {

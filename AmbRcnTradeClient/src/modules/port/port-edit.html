@@ -1,0 +1,22 @@
+<template>
+  <require from="../../../custom-elements/countries/countries-list-custom-element"></require>
+  <require from="../parts/table-items/table-items"> </require>
+
+  <toolbar type="menu" caption="Ports" save.call="save()">
+    <toolbar-item icon="fa fa-plus" label="Add" click.call="addNewPort()"></toolbar-item>
+  </toolbar>
+
+  <div class="form-group">
+    <text-input value.bind="model.name" label="Name"></text-input>
+  </div>
+
+  <div class="form-group">
+    <countries-list value.bind="model.country" label="Country"></countries-list>
+  </div>
+
+  <div class="form-group">
+    <text-input value.bind="model.description" label="Description"></text-input>
+  </div>
+
+  <table-items list.bind="list" change.delegate="itemSelected($event)"></table-items>
+</template>

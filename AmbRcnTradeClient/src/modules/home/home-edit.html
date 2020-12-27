@@ -1,0 +1,31 @@
+<template>
+  <toolbar caption="Home" type="menu">
+  </toolbar>
+
+  <img class="img-fluid mb-3" src="images/Amberwood Trading Large.png">
+
+  <h1 class="mb-5">Amberwood Private Brokerage System</h1>
+
+  <div if.bind="isGuest">
+
+    <p>
+      Hello ${state.user.firstName}, you are now logged in to the system as a ${state.user.role}
+    </p>
+    <p>To get going select Contracts from the menu</p>
+  </div>
+
+  <div if.bind="isInspector">    
+    <p>
+      Bonjour ${state.user.firstName}, vous êtes maintenant connecté au système en tant que ${state.user.role}
+    </p>
+    <p>Veuillez sélectionner Inspections dans le menu pour commencer</p>
+  </div>
+
+  <!-- <a route-href="login" class="with-decoration">Login</a> -->
+
+  <p class="mt-3" if.bind="state.loggedIn">
+    <a href="#" class="with-decoration" click.delegate="logout()">Click here to log out of the system</a>
+  </p>
+
+  <div if.bind="requireLogin" class="alert alert-info my-3">You are not logged in to the system.<br>Please <a  route-href="login" class="with-decoration">login</a> again</div>
+</template>

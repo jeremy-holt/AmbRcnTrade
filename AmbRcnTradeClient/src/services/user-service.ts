@@ -1,5 +1,5 @@
 import { IAppUserPassword } from "./../interfaces/IAppUserPassword";
-import { ICustomerUserListItem } from "./../interfaces/dictionary-interfaces/ICustomerUserListItem";
+import { ICustomerUserListItem } from "./../interfaces/ICustomerUserListItem";
 import { HttpClient } from "aurelia-fetch-client";
 import { autoinject } from "aurelia-framework";
 import { Router } from "aurelia-router";
@@ -30,10 +30,6 @@ export class UserService extends FetchService {
   public async getCompaniesForUser(user: IPayload) {
     return super.post({ companyIds: user.companies }, "getCompaniesForUser", userCompaniesAction);
   }
-
-  // public async getCustomersForAppUser(appUserId: string) {
-  //   return super.get([new QueryId("appUserId", appUserId)], "getCustomersForAppUser", userCustomersAction);
-  // }
 
   public async listCustomersAndUsers() {
     return super.get([new QueryId("companyId", this.getStateCurrentCompanyId())], "listCustomersAndUsers", customerAndUsersListAction);
