@@ -112,5 +112,15 @@ namespace Tests.Base
         {
             return new ContractService(session, new CounterService(session), GetAppUserService(session));
         }
+
+        protected IInspectionService GetInspectionService(IAsyncDocumentSession session)
+        {
+            return new InspectionService(session);
+        }
+
+        protected IStockService GetStockService(IAsyncDocumentSession session)
+        {
+            return new StockService(session, new CounterService(session));
+        }
     }
 }

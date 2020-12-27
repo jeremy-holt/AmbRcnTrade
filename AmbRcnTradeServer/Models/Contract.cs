@@ -55,17 +55,6 @@ namespace AmbRcnTradeServer.Models
         public int Bags { get; set; }
         public List<Analysis> Analyses { get; set; } = new();
     }
-    
-    public class Analysis
-    {
-        public double Moisture { get; set; }
-        public double Count { get; set; }
-        public double Spotted { get; set; }
-        public double Sound { get; set; }
-        public double Rejects { get; set; }
-        public double Kor { get; set; }
-        public bool Approved { get; set; }
-    }
 
     public class Payment
     {
