@@ -122,5 +122,10 @@ namespace Tests.Base
         {
             return new StockService(session, new CounterService(session));
         }
+
+        protected IPurchaseService GetPurchaseService(IAsyncDocumentSession session)
+        {
+            return new PurchaseService(session, new CounterService(session));
+        }
     }
 }

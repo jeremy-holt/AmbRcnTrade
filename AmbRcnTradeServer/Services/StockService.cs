@@ -4,12 +4,14 @@ using System.Linq;
 using System.Threading.Tasks;
 using AmberwoodCore.Extensions;
 using AmberwoodCore.Responses;
+using AmbRcnTradeServer.Extensions;
 using AmbRcnTradeServer.Models;
+using AmbRcnTradeServer.Models.InspectionModels;
 using AmbRcnTradeServer.Models.StockModels;
+using AmbRcnTradeServer.RavenIndexes;
 using Raven.Client.Documents;
 using Raven.Client.Documents.Linq;
 using Raven.Client.Documents.Session;
-using Inspection = AmbRcnTradeServer.Models.InspectionModels.Inspection;
 
 namespace AmbRcnTradeServer.Services
 {
@@ -17,6 +19,8 @@ namespace AmbRcnTradeServer.Services
     {
         Task<ServerResponse<Stock>> Save(Stock stock);
         Task<Stock> Load(string id);
+        Task<List<StockBalanceListItem>> LoadStockBalanceList(string companyId, long? lotNo, string locationId);
+        Task<List<StockListItem>> LoadStockList(string companyId, long? lotNo, string locationId);
     }
 
     public class StockService : IStockService
@@ -35,7 +39,9 @@ namespace AmbRcnTradeServer.Services
             if (stock.StockInDate != null && stock.StockOutDate != null)
                 throw new InvalidOperationException("A stock cannot have both a Stock In date and a Stock Out date");
 
-            if (stock.StockOutDate != null)
+            stock.IsStockIn = stock.StockInDate != null;
+
+            if (!stock.IsStockIn)
             {
                 stock.Bags = -stock.Bags;
                 stock.WeightKg = -stock.WeightKg;
@@ -53,21 +59,79 @@ namespace AmbRcnTradeServer.Services
         public async Task<Stock> Load(string id)
         {
             var stock = await _session.Include<Stock>(c => c.InspectionIds).LoadAsync<Stock>(id);
-            var results = await _session.LoadAsync<Inspection>(stock.InspectionIds);
-
-            var inspections = results.Values;
+            stock.Inspections = await _session.LoadListFromMultipleIdsAsync<Inspection>(stock.InspectionIds);
 
             stock.AnalysisResult = new Analysis
             {
-                Count = CalculateAnalysisResult(inspections, c => c.Count),
-                Kor = CalculateAnalysisResult(inspections, c => c.Kor),
-                Moisture = CalculateAnalysisResult(inspections, c => c.Moisture),
-                Rejects = CalculateAnalysisResult(inspections, c => c.Rejects),
-                Sound = CalculateAnalysisResult(inspections, c => c.Sound),
-                Spotted = CalculateAnalysisResult(inspections, c => c.Spotted)
+                Count = CalculateAnalysisResult(stock.Inspections, c => c.Count),
+                Kor = CalculateAnalysisResult(stock.Inspections, c => c.Kor),
+                Moisture = CalculateAnalysisResult(stock.Inspections, c => c.Moisture),
+                Rejects = CalculateAnalysisResult(stock.Inspections, c => c.Rejects),
+                Sound = CalculateAnalysisResult(stock.Inspections, c => c.Sound),
+                Spotted = CalculateAnalysisResult(stock.Inspections, c => c.Spotted)
             };
 
+
             return stock;
+        }
+
+        public async Task<List<StockBalanceListItem>> LoadStockBalanceList(string companyId, long? lotNo, string locationId)
+        {
+            var query = _session.Query<Stocks_ByBalances.Result, Stocks_ByBalances>()
+                .OrderBy(c => c.LotNo)
+                .Where(c => c.CompanyId == companyId);
+
+            if (lotNo != null)
+                query = query.Where(c => c.LotNo == lotNo);
+
+            if (locationId.IsNotNullOrEmpty())
+                query = query.Where(c => c.LocationId == locationId);
+
+            var list = await query
+                .ProjectInto<StockBalanceListItem>()
+                .ToListAsync();
+
+            return list;
+        }
+
+        public async Task<List<StockListItem>> LoadStockList(string companyId, long? lotNo, string locationId)
+        {
+            var query = _session.Query<Stock>()
+                .Include(c => c.InspectionIds)
+                .Include(c => c.LocationId)
+                .Where(c => c.CompanyId == companyId);
+
+            if (lotNo != null)
+                query = query.Where(c => c.LotNo == lotNo);
+
+            if (locationId.IsNotNullOrEmpty())
+                query = query.Where(c => c.LocationId == locationId);
+
+            var stocks = await query.ToListAsync();
+
+            var inspections = await _session.LoadListFromMultipleIdsAsync<Inspection>(stocks.SelectMany(x => x.InspectionIds));
+            var locations = await _session.LoadListFromMultipleIdsAsync<Customer>(stocks.Select(c => c.LocationId));
+            var suppliers = await _session.LoadListFromMultipleIdsAsync<Customer>(inspections.Select(x => x.SupplierId));
+
+            return stocks.Select(item => new StockListItem
+                {
+                    AnalysisResult = item.AnalysisResult,
+                    LotNo = item.LotNo,
+                    LocationId = item.LocationId,
+                    StockId = item.Id,
+                    Date = item.StockInDate ?? item.StockOutDate ?? DateTime.MinValue,
+                    IsStockIn = item.IsStockIn,
+                    Origin = item.Origin,
+                    StockIn = item.IsStockIn
+                        ? new StockInfo(item.Bags, item.WeightKg)
+                        : new StockInfo(),
+                    StockOut = item.IsStockIn
+                        ? new StockInfo()
+                        : new StockInfo(item.Bags, item.WeightKg),
+                    LocationName = locations.FirstOrDefault(c => c.Id == item.LocationId)?.Name,
+                    SupplierNames = suppliers.Where(c => c.Id.In(inspections.Select(x => x.SupplierId))).Select(x => x.Name).Distinct().ToAggregateString()
+                })
+                .ToList();
         }
 
         private static double CalculateAnalysisResult(IReadOnlyCollection<Inspection> inspections, Func<Analysis, double> field)

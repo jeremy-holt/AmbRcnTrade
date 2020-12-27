@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using AmberwoodCore.Interfaces;
 using AmbRcnTradeServer.Constants;
+using AmbRcnTradeServer.Models.InspectionModels;
 
 namespace AmbRcnTradeServer.Models
 {
@@ -45,15 +46,6 @@ namespace AmbRcnTradeServer.Models
         public int Bags { get; set; }
         public List<Payment> Payments { get; set; } = new List<Payment>();
         public bool Approved { get; set; }
-    }
-    
-    public class Inspection
-    {
-        public Guid Id { get; set; }
-        public DateTime InspectionDate { get; set; }
-        public string Inspector { get; set; }
-        public int Bags { get; set; }
-        public List<Analysis> Analyses { get; set; } = new();
     }
 
     public class Payment

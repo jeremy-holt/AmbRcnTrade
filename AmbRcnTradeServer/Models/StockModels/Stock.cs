@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text.Json.Serialization;
 using AmberwoodCore.Interfaces;
+using AmbRcnTradeServer.Models.InspectionModels;
+using Newtonsoft.Json;
 
 namespace AmbRcnTradeServer.Models.StockModels
 {
@@ -15,13 +16,14 @@ namespace AmbRcnTradeServer.Models.StockModels
         public long LotNo { get; set; }
         public double Bags { get; set; }
         public double WeightKg { get; set; }
-        public List<string> InspectionIds { get; set; }
+        public List<string> InspectionIds { get; set; } = new();
         public DateTime? StockOutDate { get; set; }
-        
+        public bool IsStockIn { get; set; }
+        public Analysis AnalysisResult { get; set; } = new();
         [JsonIgnore]
-        public bool IsStockIn => StockInDate != null;
+        public List<Inspection> Inspections { get; set; } = new();
 
-        public Analysis AnalysisResult { get; set; }
+        public string Origin { get; set; }
     }
 
     

@@ -10,12 +10,14 @@ namespace AmbRcnTradeServer.Services
     {
         Task<long> GetNextContractNumber(string companyId);
         Task<long> GetNextLotNumber(string companyId);
+        Task<long> GetNextPurchaseNumber(string companyId);
     }
 
     public class CounterService : ICounterService
     {
         private const string CONTRACT_NUMBERS = "ContractNumbers";
-        private const string LOT_NUMBERS = "LogNumbers";
+        private const string LOT_NUMBERS = "LotNumbers";
+        private const string PURCHASE_NUMBER = "PurchaseNumbers";
 
         private readonly IAsyncDocumentSession _session;
 
@@ -26,16 +28,24 @@ namespace AmbRcnTradeServer.Services
 
         public async Task<long> GetNextContractNumber(string companyId)
         {
-            _session.CountersFor(companyId).Increment(CONTRACT_NUMBERS);
-            await _session.SaveChangesAsync();
-            return await GetCurrentCounter(companyId, CONTRACT_NUMBERS);
+            return await NextNumber(companyId, CONTRACT_NUMBERS);
         }
 
         public async Task<long> GetNextLotNumber(string companyId)
         {
-            _session.CountersFor(companyId).Increment(LOT_NUMBERS);
+            return await NextNumber(companyId, LOT_NUMBERS);
+        }
+
+        public async Task<long> GetNextPurchaseNumber(string companyId)
+        {
+            return await NextNumber(companyId, PURCHASE_NUMBER);
+        }
+
+        private async Task<long> NextNumber(string companyId, string key)
+        {
+            _session.CountersFor(companyId).Increment(key);
             await _session.SaveChangesAsync();
-            return await GetCurrentCounter(companyId, LOT_NUMBERS);
+            return await GetCurrentCounter(companyId, key);
         }
 
         private async Task<long> GetCurrentCounter(string companyId, string key)

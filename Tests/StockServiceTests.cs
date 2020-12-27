@@ -6,6 +6,7 @@ using AmberwoodCore.Extensions;
 using AmberwoodCore.Models;
 using AmbRcnTradeServer.Models;
 using AmbRcnTradeServer.Models.StockModels;
+using AmbRcnTradeServer.RavenIndexes;
 using AutoFixture;
 using FluentAssertions;
 using Raven.Client.Documents;
@@ -22,6 +23,11 @@ namespace Tests
     {
         public StockServiceTests(ITestOutputHelper output) : base(output) { }
 
+        private static async Task InitializeIndexes(IDocumentStore store)
+        {
+            await new Stocks_ByBalances().ExecuteAsync(store);
+        }
+
         [Fact]
         public async Task Load_ShouldLoadStock()
         {
@@ -31,7 +37,12 @@ namespace Tests
             var sut = GetStockService(session);
             var fixture = new Fixture();
 
-            var stock = fixture.DefaultEntity<Stock>().Create();
+            var inspections = fixture.DefaultEntity<Inspection>().CreateMany().ToList();
+            await inspections.SaveList(session);
+
+            var stock = fixture.DefaultEntity<Stock>()
+                .With(c => c.InspectionIds, inspections.Select(x => x.Id).ToList())
+                .Create();
             await session.StoreAsync(stock);
 
             // Act
@@ -39,6 +50,197 @@ namespace Tests
 
             // Assert
             actual.Should().NotBeNull();
+            actual.Inspections.Should().HaveCount(inspections.Count);
+            actual.Inspections[0].Id.Should().Be(actual.InspectionIds[0]);
+        }
+
+        [Fact]
+        public async Task Load_ShouldUpdateAverageKor()
+        {
+            // Arrange
+            using var store = GetDocumentStore();
+            using var session = store.OpenAsyncSession();
+            var sut = GetStockService(session);
+            var inspectionService = GetInspectionService(session);
+
+            var fixture = new Fixture();
+
+            var analyses = fixture.Build<Analysis>()
+                .With(c => c.Kor, 50)
+                .With(c => c.Bags, 100)
+                .CreateMany().ToList();
+            var inspections = fixture.DefaultEntity<Inspection>()
+                .With(c => c.Analyses, analyses)
+                .With(c => c.Bags, 100)
+                .CreateMany()
+                .ToList();
+
+            foreach (var inspection in inspections)
+                await inspectionService.Save(inspection);
+
+            var expectedAvgKor = inspections.Sum(x => x.AnalysisResult.Kor * x.Bags) / inspections.Sum(x => x.Bags);
+
+            await session.SaveChangesAsync();
+
+            var stockIn = fixture.DefaultEntity<Stock>()
+                .Without(c => c.StockOutDate)
+                .Without(c => c.AnalysisResult)
+                .With(c => c.InspectionIds, inspections.Select(x => x.Id).ToList)
+                .Create();
+            await session.StoreAsync(stockIn);
+
+            // Act
+            var actual = await sut.Load(stockIn.Id);
+
+            // Assert
+            actual.AnalysisResult.Kor.Should().Be(expectedAvgKor);
+        }
+
+        [Fact]
+        public async Task LoadStockList_ShouldLoadListOfStocks()
+        {
+            // Arrange
+            using var store = GetDocumentStore();
+            using var session = store.OpenAsyncSession();
+            var sut = GetStockService(session);
+            var fixture = new Fixture();
+            await session.StoreAsync(new Company(COMPANY_ID));
+
+            var supplier = fixture.DefaultEntity<Customer>().Create();
+            await session.StoreAsync(supplier);
+
+            var location = fixture.DefaultEntity<Customer>().Create();
+            await session.StoreAsync(location);
+
+            var inspections = fixture.DefaultEntity<Inspection>()
+                .With(c => c.SupplierId, supplier.Id)
+                .CreateMany().ToList();
+            await inspections.SaveList(session);
+
+            var stockIn1 = fixture.DefaultEntity<Stock>()
+                .Without(c => c.StockOutDate)
+                .Without(c => c.InspectionIds)
+                .Without(c => c.AnalysisResult)
+                .Without(c => c.LocationId)
+                .Create();
+            await sut.Save(stockIn1);
+
+            var stockIn2 = fixture.DefaultEntity<Stock>()
+                .Without(c => c.StockOutDate)
+                .With(c => c.InspectionIds, inspections.Select(x => x.Id).ToList)
+                .Without(c => c.AnalysisResult)
+                .With(c => c.LocationId, location.Id)
+                .Create();
+            await sut.Save(stockIn2);
+
+            var stockOut = fixture.DefaultEntity<Stock>()
+                .Without(c => c.StockInDate)
+                .Without(c => c.InspectionIds)
+                .Without(c => c.AnalysisResult)
+                .With(c => c.LotNo, stockIn2.LotNo)
+                .Without(c => c.LocationId)
+                .Create();
+            await sut.Save(stockOut);
+
+            var stockIn3 = fixture.DefaultEntity<Stock>()
+                .Without(c => c.StockOutDate)
+                .Without(c => c.InspectionIds)
+                .Without(c => c.AnalysisResult)
+                .Without(c => c.LocationId)
+                .Create();
+            await sut.Save(stockIn3);
+
+            await session.SaveChangesAsync();
+
+            WaitForIndexing(store);
+
+            // Act
+            var list = await sut.LoadStockList(COMPANY_ID, null, null);
+            list.Should().BeInAscendingOrder(c => c.LotNo);
+
+            var actual = list[1];
+            actual.StockIn.Bags.Should().Be(stockIn2.Bags);
+            actual.StockIn.WeightKg.Should().Be(stockIn2.WeightKg);
+            actual.StockOut.Bags.Should().Be(0);
+            actual.StockOut.WeightKg.Should().Be(0);
+            actual.AnalysisResult.Should().Be(stockIn2.AnalysisResult);
+            actual.LocationId.Should().Be(stockIn2.LocationId);
+            actual.LocationName.Should().Be(location.Name);
+            actual.LotNo.Should().Be(stockIn2.LotNo);
+            actual.IsStockIn.Should().BeTrue();
+            actual.Date.Should().Be(stockIn2.StockInDate ?? DateTime.MinValue);
+            actual.Date.Should().NotBe(DateTime.MinValue);
+            actual.SupplierNames.Should().Be(supplier.Name);
+            actual.Origin.Should().Be(stockIn2.Origin);
+        }
+
+        [Fact]
+        public async Task LoadStockBalanceList_ShouldLoadStockMovementsForLotNo()
+        {
+            // Arrange
+            using var store = GetDocumentStore();
+            using var session = store.OpenAsyncSession();
+            var sut = GetStockService(session);
+            await InitializeIndexes(store);
+            var fixture = new Fixture();
+
+            await session.StoreAsync(new Company(COMPANY_ID));
+
+            var stockIn1 = fixture.DefaultEntity<Stock>()
+                .Without(c => c.StockOutDate)
+                .Without(c => c.InspectionIds)
+                .Without(c => c.AnalysisResult)
+                .Without(c => c.LocationId)
+                .Create();
+            await sut.Save(stockIn1);
+
+            var stockIn2 = fixture.DefaultEntity<Stock>()
+                .Without(c => c.StockOutDate)
+                .Without(c => c.InspectionIds)
+                .Without(c => c.AnalysisResult)
+                .Without(c => c.LocationId)
+                .Create();
+            await sut.Save(stockIn2);
+
+            var stockOut = fixture.DefaultEntity<Stock>()
+                .Without(c => c.StockInDate)
+                .Without(c => c.InspectionIds)
+                .Without(c => c.AnalysisResult)
+                .With(c => c.LotNo, stockIn2.LotNo)
+                .Without(c => c.LocationId)
+                .Create();
+            await sut.Save(stockOut);
+
+            var stockIn3 = fixture.DefaultEntity<Stock>()
+                .Without(c => c.StockOutDate)
+                .Without(c => c.InspectionIds)
+                .Without(c => c.AnalysisResult)
+                .Without(c => c.LocationId)
+                .Create();
+            await sut.Save(stockIn3);
+
+            await session.SaveChangesAsync();
+
+            WaitForIndexing(store);
+
+            // Act
+            var list = await sut.LoadStockBalanceList(COMPANY_ID, null, null);
+            var actual = list[1];
+
+            // Assert
+            list.Should().HaveCount(3);
+            list.Should().OnlyHaveUniqueItems(c => c.LotNo);
+            actual.LotNo.Should().Be(2);
+
+            var expectedBalanceBags = stockIn2.Bags + stockOut.Bags;
+            var expectedBalanceWeightKg = stockIn2.WeightKg + stockOut.WeightKg;
+
+            actual.StockIn.Bags.Should().Be(stockIn2.Bags);
+            actual.StockIn.WeightKg.Should().Be(stockIn2.WeightKg);
+            actual.StockOut.Bags.Should().Be(stockOut.Bags);
+            actual.StockOut.WeightKg.Should().Be(stockOut.WeightKg);
+            actual.Balance.Bags.Should().Be(expectedBalanceBags);
+            actual.Balance.WeightKg.Should().Be(expectedBalanceWeightKg);
         }
 
         [Fact]
@@ -155,6 +357,9 @@ namespace Tests
             var location = fixture.DefaultEntity<Customer>().Create();
             await session.StoreAsync(location);
 
+            var supplier = fixture.DefaultEntity<Customer>().Create();
+            await session.StoreAsync(supplier);
+
             var stockIn = new Stock
             {
                 Id = null,
@@ -165,7 +370,8 @@ namespace Tests
                 LotNo = 1,
                 Bags = 300.0,
                 WeightKg = 24000.0,
-                InspectionIds = new List<string>()
+                InspectionIds = new List<string>(),
+                Origin = "Bouake"
             };
 
             // Act
@@ -173,6 +379,7 @@ namespace Tests
 
             // Assert
             var actual = await session.LoadAsync<Stock>(response.Id);
+            actual.IsStockIn.Should().BeTrue();
             actual.Should().NotBeNull();
         }
 
@@ -192,48 +399,6 @@ namespace Tests
 
             // Assert
             await action.Should().ThrowAsync<InvalidOperationException>().WithMessage("A stock cannot have both a Stock In date and a Stock Out date");
-        }
-
-        [Fact]
-        public async Task Load_ShouldUpdateAverageKor()
-        {
-            // Arrange
-            using var store = GetDocumentStore();
-            using var session = store.OpenAsyncSession();
-            var sut = GetStockService(session);
-            var inspectionService = GetInspectionService(session);
-
-            var fixture = new Fixture();
-
-            var analyses = fixture.Build<Analysis>()
-                .With(c => c.Kor, 50)
-                .With(c => c.Bags, 100)
-                .CreateMany().ToList();
-            var inspections = fixture.DefaultEntity<Inspection>()
-                .With(c => c.Analyses, analyses)
-                .With(c => c.Bags, 100)
-                .CreateMany()
-                .ToList();
-
-            foreach (var inspection in inspections)
-                await inspectionService.Save(inspection);
-
-            var expectedAvgKor = inspections.Sum(x => x.AnalysisResult.Kor * x.Bags) / inspections.Sum(x => x.Bags);
-
-            await session.SaveChangesAsync();
-
-            var stockIn = fixture.DefaultEntity<Stock>()
-                .Without(c => c.StockOutDate)
-                .Without(c => c.AnalysisResult)
-                .With(c => c.InspectionIds, inspections.Select(x => x.Id).ToList)
-                .Create();
-            await session.StoreAsync(stockIn);
-
-            // Act
-            var actual = await sut.Load(stockIn.Id);
-
-            // Assert
-            actual.AnalysisResult.Kor.Should().Be(expectedAvgKor);
         }
     }
 }
