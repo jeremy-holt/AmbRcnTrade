@@ -21,7 +21,7 @@
 
     <ItemGroup>
       <Reference Include="AmberwoodCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-        <HintPath>..\..\..\AmberwoodCore\AmberwoodCore\bin\Release\net5.0\AmberwoodCore.dll</HintPath>
+        <HintPath>..\..\AmberwoodCore\AmberwoodCore\bin\Release\net5.0\AmberwoodCore.dll</HintPath>
       </Reference>
     </ItemGroup>
 
