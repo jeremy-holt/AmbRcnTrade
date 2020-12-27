@@ -1,0 +1,5 @@
+<template>
+  <div if.bind="model.fileContents">
+    <embed src="data:${model.contentType};base64, ${model.fileContents}" width="100%" type="${model.contentType}">
+  </div>  
+</template>

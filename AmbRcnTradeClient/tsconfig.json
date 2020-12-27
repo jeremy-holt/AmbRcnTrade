@@ -1,40 +1,3 @@
-// {
-//   "compileOnSave": false,
-//   "compilerOptions": {
-//     "sourceMap": true,
-//     "target": "es6",
-//     "inlineSources": true,
-//     "module": "ES2020",
-//     "declaration": false,
-//     "noImplicitAny": false,
-//     "removeComments": true,
-//     "emitDecoratorMetadata": true,
-//     "experimentalDecorators": true,
-//     "esModuleInterop": true,
-//     "resolveJsonModule": true,
-//     "allowJs": true,
-//     "moduleResolution": "node",
-//     "skipLibCheck": true,
-//     "lib": [
-//       "es2020",
-//       "dom"
-//     ],
-//     "baseUrl": "src",
-//     "rootDir": "src",
-//     "strict": true,
-//     "forceConsistentCasingInFileNames": true,
-//     "importHelpers": true
-//   },
-//   "include": [
-//     "./src/**/*.ts",
-//     "./test/**/*.ts",
-//     "./custom_typings/**/*.d.ts"
-//   ],
-//   "atom": {
-//     "rewriteTsconfig": false
-//   }
-// }
-
 {
   "compileOnSave": false,
   "compilerOptions": {
@@ -46,21 +9,15 @@
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "sourceMap": true,
-    "target": "es6",
+    "target": "es5",
     "lib": [
-      "es2020",
-      "dom"      
+      "es2015",
+      "dom"
     ],
     "moduleResolution": "node",
-    "baseUrl": "src",    
+    "baseUrl": "src",
     "resolveJsonModule": true,
-    "allowJs": true,
-    "esModuleInterop": true,
-    "importHelpers": true,
-    "forceConsistentCasingInFileNames": true,
-
-    "skipLibCheck": true,
-    "strict": false
+    "allowJs": true
   },
   "include": [
     "src",

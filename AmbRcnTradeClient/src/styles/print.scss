@@ -1,0 +1,31 @@
+@media print {
+
+  .card,
+  .card-header,
+  .card-body {
+    border: none;
+    /* background-color: inherit!important;
+    color:inherit!important; */
+  }
+
+  body {
+    font-size: 13pt;
+    background: #fff !important;
+    color: #000;
+    /* margin: 0; */
+  }
+
+  @page {
+    margin: 1.5cm;
+  }
+
+  /* @page: first {
+    margin-top: 1.5cm;
+  } */
+
+  // div.row,
+  // li {
+  //   page-break-inside: avoid;
+  //   break-inside: avoid;
+  // }
+}

@@ -1,0 +1,12 @@
+@import "./colors";
+
+.pdf-background {
+  background-color: $light;
+}
+
+#viewerContainer {
+  overflow: auto;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}

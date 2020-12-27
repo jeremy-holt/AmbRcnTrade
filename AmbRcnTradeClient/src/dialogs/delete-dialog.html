@@ -1,0 +1,15 @@
+<template>
+  <ux-dialog>
+    <ux-dialog-header class="bg-danger">
+      <h4 class="text-white">Delete</h4>
+    </ux-dialog-header>
+    <ux-dialog-body>
+      <!-- Are you sure you wish to delete this? -->
+      ${body}
+    </ux-dialog-body>
+    <ux-dialog-footer>
+      <button type="button" class="btn btn-danger" click.delegate="controller.ok()">Yes</button>
+      <button type="button" class="btn btn-secondary" click.delegate="controller.cancel()">No</button>
+    </ux-dialog-footer>
+  </ux-dialog>
+</template>

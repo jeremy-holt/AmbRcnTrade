@@ -1,0 +1,13 @@
+<template>
+  <div>
+    <label if.bind="label" class="form-label">${label}</label>
+    <select disabled.bind="disabled" class.bind="selectClass" value.bind="value" matcher.bind="matcher">    
+      <option if.bind="!useModelId" repeat.for="item of source" model.bind="item">
+        ${item[property]}
+      </option>
+      <option else repeat.for="item of source" model.bind="item.id">
+        ${item[property]}
+      </option>
+    </select>
+  </div>
+</template>

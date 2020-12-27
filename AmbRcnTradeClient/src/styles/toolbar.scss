@@ -1,0 +1,68 @@
+@import "../../node_modules/bootstrap/scss/functions";
+@import "../../node_modules/bootstrap/scss/variables";
+
+// $toolbar: rgb(0, 45, 128);
+$toolbar:navy;
+$footer:$dark;
+
+
+.toolbar-wrapper {  
+  margin:auto;
+  margin-bottom: 100px;
+  max-width: 1140px;
+
+  >ul {
+    margin-top: 0px;
+    list-style: none;
+    width: 100%;
+    position: absolute;
+    left: 0;
+    padding: .75rem;
+  }
+
+  .progress {
+    margin-top: 1px;
+    height: 5px;
+  }
+}
+
+.toolbar {
+  padding: 0px 10px 5px 5px;
+  margin-top: 0;
+  display: flex;
+  top: 0;
+  background-color: $toolbar;
+  color: white;
+
+  a,
+  a.btn,
+  btn {
+    color: white;
+
+    &:focus &:hover {
+      color: red;
+    }
+  }
+}
+
+a.toolbar-item{
+  &:hover{
+    color:lightblue;
+  }
+}
+
+.toolbar.not-logged-in {
+  background-color: red !important;
+}
+
+.toolbar.force-select-company {
+  background-color: darken($danger, 10%);
+}
+
+.toolbar-item, .toolbaritem.btn {
+  padding-left: 9px;
+  padding-right:0;
+}
+.progress-hide {
+  background-color: white !important;
+}

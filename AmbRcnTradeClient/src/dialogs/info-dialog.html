@@ -1,0 +1,13 @@
+<template>
+  <ux-dialog>
+    <ux-dialog-header>
+      <h4>${model.header}</h4>
+    </ux-dialog-header>
+    <ux-dialog-body>
+      <p>${model.body}</p>
+    </ux-dialog-body>
+    <ux-dialog-footer>
+      <button type="button" class="btn btn-secondary" click.delegate="controller.cancel()">Ok</button>
+    </ux-dialog-footer>
+  </ux-dialog>
+</template>

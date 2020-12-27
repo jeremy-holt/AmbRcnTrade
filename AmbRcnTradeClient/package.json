@@ -1,0 +1,100 @@
+{
+  "name": "AmbRcnTrade",
+  "description": "An Aurelia client application.",
+  "version": "0.1.0",
+  "repository": {
+    "type": "???",
+    "url": "???"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "aurelia-bootstrapper": "^2.3.3",
+    "aurelia-animator-css": "^1.0.4"
+  },
+  "devDependencies": {
+    "babel-eslint": "^10.1.0",
+    "eslint": "^7.16.0",
+    "aurelia-cli": "^2.0.2",
+    "aurelia-testing": "^1.0.0",
+    "gulp": "^4.0.2",
+    "gulp-eslint": "^6.0.0",
+    "minimatch": "^3.0.4",
+    "promise-polyfill": "^8.2.0",
+    "typescript": "^4.1.3",
+    "@types/node": "^14.14.16",
+    "@typescript-eslint/eslint-plugin": "^4.11.0",
+    "@typescript-eslint/parser": "^4.11.0",
+    "del": "^6.0.0",
+    "alameda": "^1.4.0",
+    "text": "requirejs/text",
+    "gulp-typescript": "^6.0.0-alpha.1",
+    "gulp-dart-sass": "^1.0.2",
+    "node-sass-package-importer": "^5.3.2",
+    "gulp-htmlmin": "^5.0.1",
+    "connect": "^3.7.0",
+    "connect-history-api-fallback": "^1.6.0",
+    "connect-injector": "^0.4.4",
+    "serve-static": "^1.14.1",
+    "socket.io": "^3.0.4",
+    "open": "^7.3.0",
+    "server-destroy": "^1.0.1",
+    "debounce": "^1.2.0",
+    "gulp-plumber": "^1.2.1",
+    "gulp-rename": "^2.0.0",
+    "gulp-watch": "^5.0.1",
+    "gulp-if": "^3.0.0",
+    "jest": "^26.6.3",
+    "jest-cli": "^26.6.3",
+    "jest-transform-stub": "^2.0.0",
+    "aurelia-loader-nodejs": "^1.1.0",
+    "aurelia-pal-nodejs": "^2.0.0",
+    "ts-jest": "^26.4.4",
+    "@types/jest": "^26.0.19"
+  },
+  "scripts": {
+    "build": "au build --env prod",
+    "start": "au run",
+    "test": "au test"
+  },
+  "engines": {
+    "node": ">=10.12.0"
+  },
+  "jest": {
+    "moduleNameMapper": {
+      "^aurelia-binding$": "<rootDir>/node_modules/aurelia-binding",
+      "^.+\\.css$": "<rootDir>/test/mock-css"
+    },
+    "modulePaths": [
+      "<rootDir>/src",
+      "<rootDir>/node_modules"
+    ],
+    "moduleFileExtensions": [
+      "ts",
+      "js",
+      "json"
+    ],
+    "transform": {
+      "^.+\\.(css|less|sass|scss|styl|jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$": "jest-transform-stub",
+      "^.+\\.ts$": "ts-jest"
+    },
+    "testRegex": "\\.spec\\.(ts|js)$",
+    "setupFiles": [
+      "<rootDir>/test/jest-pretest.ts"
+    ],
+    "testEnvironment": "node",
+    "collectCoverage": true,
+    "collectCoverageFrom": [
+      "src/**/*.{js,ts}",
+      "!**/*.spec.{js,ts}",
+      "!**/node_modules/**",
+      "!**/test/**"
+    ],
+    "coverageDirectory": "<rootDir>/test/coverage-jest",
+    "coverageReporters": [
+      "json",
+      "lcov",
+      "text",
+      "html"
+    ]
+  }
+}

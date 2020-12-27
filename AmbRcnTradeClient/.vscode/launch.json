@@ -1,0 +1,68 @@
+{
+    // Use IntelliSense to find out which attributes exist for C# debugging
+    // Use hover for the description of the existing attributes
+    // For further information visit https://github.com/OmniSharp/omnisharp-vscode/blob/master/debugger-launchjson.md
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": ".NET Core Attach",
+            "type": "coreclr",
+            "request": "attach",
+            "processName": "AmbBrokerageClient.exe"
+        },
+        {
+            "name": ".NET Core Launch (web)",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            // If you have changed target frameworks, make sure to update the program path.
+            "program": "${workspaceFolder}/AmbBrokerageClient/bin/Debug/netcoreapp3.1/AmbBrokerageClient.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/AmbBrokerageClient",
+            "stopAtEntry": false,
+            // Enable launching a web browser when ASP.NET Core starts. For more information: https://aka.ms/VSCode-CS-LaunchJson-WebBrowser
+            "serverReadyAction": {
+                "action": "openExternally",
+                "pattern": "^\\s*Now listening on:\\s+(https?://\\S+)"
+            },
+            "env": {
+                "ASPNETCORE_ENVIRONMENT": "Development"
+            },
+            "sourceFileMap": {
+                "/Views": "${workspaceFolder}/Views"
+            }
+        },
+        {
+            "name": "Launch localhost in Microsoft Edge (EdgeHTML)",
+            "type": "pwa-msedge",
+            "request": "launch",
+            "url": "https://localhost:5001",
+            "webRoot": "${workspaceFolder}/AmbBrokerageClient/src",
+            "smartStep": true,
+            "skipFiles": [
+                "node_modules/**/*.js",
+                "lib/**/*.js",
+                "wwwroot/scripts/vendor-bundle.js"
+            ],
+            "sourceMapPathOverrides": {
+                "../src/*": "${webRoot}/*"
+            }
+        },
+        {
+            "name": "Launch localhost in Chrome",
+            "type": "chrome",
+            "request": "launch",
+            "url": "https://localhost:5001",
+            "webRoot": "${workspaceFolder}/AmbBrokerageClient/src",
+            "smartStep": true,
+            "skipFiles": [
+                "node_modules/**/*.js",
+                "lib/**/*.js",
+                "wwwroot/scripts/vendor-bundle.js"
+            ],
+            "sourceMapPathOverrides": {
+                "../src/*": "${webRoot}/*"
+            }
+        },
+    ]
+}

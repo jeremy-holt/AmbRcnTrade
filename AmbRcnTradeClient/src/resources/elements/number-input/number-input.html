@@ -1,0 +1,9 @@
+<template>
+
+    <div>
+      <label if.bind="label" class="form-label">${label}</label>
+      <input type="number" class.bind="formControlClass" disabled.bind="disabled" value.bind="value | number"
+             min.bind="min" max.bind="max" step.bind="step" placeholder.bind="label">
+    </div>
+
+</template>

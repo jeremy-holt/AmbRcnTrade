@@ -1,0 +1,49 @@
+<template>
+  <require from="./sidenav-dropdown"></require>
+
+  <nav if.bind="open" class="sidenav au-animate animate-slide-in-left animate-slide-out-left">
+    <div>
+      <div class="sidenav-header">
+        <div class="text-right">
+          <button type="button" class="btn" click.delegate="open=false">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+
+        <ul>
+          <li class="pt-0">
+            <div if.bind="state.loggedIn">
+              <strong if.bind="state.loggedIn">${state.user.name}</strong>
+              <div if.bind="state.currentCompanyName">${state.currentCompanyName}</div>
+            </div>
+            <a else href="#" click.delegate="login()" class="text-danger"><i class="fas fa-sign-in"></i>
+              <span>Please login</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      <ul class="mr-auto">
+        <li class="sidenav-link" repeat.for="row of otherRoutes()">
+          <a href.bind="row.href" click.delegate="open=false & debounce:100">${row.title}</a>
+        </li>
+
+        <sidenav-dropdown routes.bind="dictionaryRoutes()" title="Dictionaries"></sidenav-dropdown>
+
+        <sidenav-dropdown routes.bind="inspectionRoutes()" title="Inspections"></sidenav-dropdown>
+
+        <sidenav-dropdown routes.bind="accountsRoutes()" title="Accounts"></sidenav-dropdown>
+
+        <sidenav-dropdown routes.bind="adminRoutes()" title="Admin"></sidenav-dropdown>
+      </ul>
+
+      <ul class="mr-auto">
+        <li class="sidenav-link">
+          <hr>
+          <a href="#" click.delegate="logout()"><i class="fas fa-fw fa-sign-out"></i><span>Logout</span></a>
+        </li>
+      </ul>
+    </div>
+  </nav>
+
+</template>

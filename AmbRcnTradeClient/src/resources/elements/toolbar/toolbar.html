@@ -1,0 +1,37 @@
+<template>
+  <section class="toolbar-wrapper d-print-none fixed-top">
+    <ul class="toolbar d-flex justify-content-between align-items-centre">
+      <li class="d-flex align-items-center justify-content-between">
+        <div if.bind="state.loggedIn">
+          <a href="#" click.delegate="openSideBar()">
+            <i class="fal fa-bars" style="font-size: 26px;"></i>
+          </a>
+          <a route-href="home"><span class="ml-2 h5" innerhtml.bind="caption"></span></a>
+        </div>
+
+        <a else route-href="home">
+          <i class="fas fa-home" style="font-size:20px"></i>
+          <span class="h5" innerhtml.bind="caption"></span></a>
+      </li>
+
+
+      <li show.bind="state.loggedIn" style="width: 30%;">
+        <ul class="list-unstyled d-flex justify-content-end align-items-center">
+
+          <slot></slot>
+
+          <li if.bind="listRoute.length">
+            <a route-href.bind="listRoute" class="toolbar-item btn">
+              <i class="fal fa-list" style="font-size: 20px;"></i>
+            </a>
+          </li>
+          <li if.bind="showSaveButton">
+            <a class="toolbar-item ${disabledSave ? 'disabled' : ''}" style="font-size: 20px;" href="#"
+               click.delegate="callSave()"><i class="fas fa-save fa-fw"></i></a>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </section>
+  <div id="scrollTop"></div>
+</template>

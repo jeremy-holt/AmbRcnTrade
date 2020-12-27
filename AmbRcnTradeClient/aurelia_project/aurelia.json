@@ -1,0 +1,151 @@
+{
+  "name": "AmbBrokerageClient",
+  "type": "project:application",
+  "paths": {
+    "root": "src",
+    "resources": "resources",
+    "elements": "resources/elements",
+    "attributes": "resources/attributes",
+    "valueConverters": "resources/value-converters",
+    "bindingBehaviors": "resources/binding-behaviors"
+  },
+  "transpiler": {
+    "id": "typescript",
+    "displayName": "TypeScript",
+    "fileExtension": ".ts",
+    "dtsSource": [
+      "./custom_typings/**/*.d.ts",
+      "./types/**/*.d.ts"
+    ],
+    "source": "src/**/*.ts"
+  },
+  "markupProcessor": {
+    "id": "maximum",
+    "displayName": "Maximum Minification",
+    "fileExtension": ".html",
+    "source": "src/**/*.html"
+  },
+  "cssProcessor": {
+    "id": "sass",
+    "displayName": "Sass",
+    "fileExtension": ".scss",
+    "source": "src/**/*.scss"
+  },
+  "platform": {
+    "id": "aspnetcore",
+    "displayName": "ASP.NET Core",
+    "port": 9000,
+    "index": "wwwroot/index.html",
+    "baseDir": "./wwwroot",
+    "baseUrl": "wwwroot/scripts",
+    "output": "wwwroot/scripts",
+    "host": "localhost",
+    "open": true
+  },
+  "build": {
+    "targets": [
+      {
+        "id": "aspnetcore",
+        "displayName": "ASP.NET Core",
+        "port": 5001,
+        "index": "wwwroot/index.html",
+        "baseDir": "./wwwroot",
+        "baseUrl": "scripts",
+        "output": "wwwroot/scripts"
+      }
+    ],
+    "options": {
+      "minify": "stage & prod",
+      "sourcemaps": "dev & stage",
+      "rev": false,
+      "cache": "dev & stage"
+    },
+    "bundles": [
+      {
+        "name": "app-bundle.js",
+        "source": [
+          "**/*.{js,json,css,html}"
+        ]
+      },
+      {
+        "name": "vendor-bundle.js",
+        "prepend": [
+          "node_modules/alameda/alameda.js"
+        ],
+        "dependencies": [
+          "aurelia-bootstrapper",
+          "aurelia-loader-default",
+          "aurelia-pal-browser",
+          {
+            "name": "aurelia-testing",
+            "env": "dev"
+          },
+          "text",
+          {
+            "name": "quill",
+            "path": "../node_modules/quill/dist",
+            "main": "quill",
+            "resources": [
+              "quill.snow.css"
+            ]
+          },
+          {
+            "name": "aurelia-quill-plugin",
+            "path": "../node_modules/aurelia-quill-plugin/dist/amd",
+            "main": "index"
+          }
+        ]
+      }
+    ],
+    "copyFiles": {
+      "src/locales/en/*": "wwwroot/locales/en",
+      "src/locales/fr/*": "wwwroot/locales/fr"
+    },
+    "__COMMENT": {
+      "node_modules/@fortawesome/fontawesome-pro/webfonts/*": "wwwroot/@fortawesome/fontawesome-pro/webfonts"
+    },
+    "loader": {
+      "type": "require",
+      "configTarget": "vendor-bundle.js",
+      "includeBundleMetadataInConfig": "auto",
+      "plugins": [
+        {
+          "name": "text",
+          "extensions": [
+            ".html",
+            ".css"
+          ],
+          "stub": false
+        }
+      ]
+    }
+  },
+
+  "jsonProcessor": {
+    "id": "none",
+    "displayName": "None",
+    "fileExtension": ".json",
+    "source": "src/**/*.json"
+  },
+  "editor": {
+    "id": "vscode",
+    "displayName": "Visual Studio Code"
+  },
+  "unitTestRunners": [
+    {
+      "id": "jest",
+      "displayName": "Jest",
+      "source": "test/unit/**/*.ts"
+    }
+  ],
+  "integrationTestRunner": {
+    "id": "none",
+    "displayName": "None"
+  },
+
+  "testFramework": {
+    "id": "jasmine",
+    "displayName": "Jasmine"
+  },
+  "packageManager": "yarn"
+}

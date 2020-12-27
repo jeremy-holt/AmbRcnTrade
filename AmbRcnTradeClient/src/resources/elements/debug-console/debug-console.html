@@ -1,0 +1,16 @@
+<template>
+  <div class="my-5 alert alert-secondary">
+    <div class="d-flex ">
+      <button type="button" class="btn btn-danger" click.delegate="debug()">Debug</button>    
+  
+      <div class="custom-control custom-checkbox ml-3">
+        <input type="checkbox" class="custom-control-input" id="debugCheck123" checked.bind="show">
+        <label class="custom-control-label" for="debugCheck123">Show in page</label>
+      </div>
+    </div>
+  
+    <pre class="mt-3" if.bind="show">
+      ${model | toJSON}
+    </pre>
+  </div>
+</template>

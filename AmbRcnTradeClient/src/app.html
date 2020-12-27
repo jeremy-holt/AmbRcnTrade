@@ -1,0 +1,16 @@
+<template>
+  <require from="@fortawesome/fontawesome-pro/css/all.min.css"></require>
+  <require from="izitoast/dist/css/iziToast.min.css"></require>
+  <require from="./styles/app.css"></require>
+
+  <sidenav view-model.ref="sidenav"></sidenav>
+  <div class="container-fluid" click.trigger="closeSideNav() & debounce:200">
+
+    <div id="pre-loader" if.bind="http.isRequesting">
+      <i id="loader" class="fas fa-spinner fa-spin fa-3x"></i>
+    </div>
+
+    <router-view swap-order="with"></router-view>
+  </div>
+  <toast></toast>
+</template>

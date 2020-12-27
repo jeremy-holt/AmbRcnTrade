@@ -1,0 +1,15 @@
+<template>
+  <li if.bind="routes" class="sidenav-link">
+    <div class="dropdown">
+      <a class="btn dropdown-toggle" href="#" role="button" id.bind="dropDownLink" data-toggle="dropdown"
+         aria-haspopup="true" aria-expanded="false">
+        ${title}
+      </a>
+
+      <div class="dropdown-menu" aria-labelledby.bind="dropDownLink">
+        <a repeat.for="row of routes" class="dropdown-item" href.bind="row.href"
+           click.delegate="open=false & debounce:100">${row.title}</a>
+      </div>
+    </div>
+  </li>
+</template>

@@ -1,0 +1,18 @@
+@import "colors";
+
+.alert {
+  &.alert-primary {
+    background-color: $primary;
+    color: white;
+  }
+
+  &.alert-danger {
+    background-color: $danger;
+    color: white;
+  }
+
+  &.alert-warning {
+    background-color: $warning;
+    color:white;
+  }
+}
