@@ -50,7 +50,7 @@ export class App {
 
   public configureRouter(config: RouterConfiguration, router: Router) {
     this.router = router;
-    config.title = "Brokerage";
+    config.title = "RCN Trade";
     config.map(
       [
         { route: ["", "home"], name: "home", title: "Home", nav: true, moduleId: "modules/home/home-edit" },
@@ -58,10 +58,13 @@ export class App {
 
 
         // Inspections
-        { route: "inspections/list/:approval", href: "inspections/list", name: "inspectionList", title: "Inspections", nav: true, moduleId: "modules/inspections/inspection-list", roles: ["admin", "user", "guest", "inspector"] },
-        { route: "inspections/edit/:id?", name: "inspectionEdit", title: "Inspection", moduleId: "modules/inspections/inspection-edit", roles: ["admin", "user", "inspector"] },
-        { route: "inspections/upload", name: "inspectionImageUpload", moduleId: "modules/inspections/file-manager/file-manager" },
-        { route: "inspections/print/:id", name: "inspectionPrint", title: "Print", moduleId: "modules/inspections/inspection-print", roles: ["admin", "user", "guest", "inspector"] },
+        { route: "inspections/list/:approval?", href: "inspections/list", name: "inspectionList", title: "Inspections", nav: true, moduleId: "modules/inspection/inspection-list", roles: ["admin", "user", "guest", "inspector"] },
+        { route: "inspections/edit/:id?", name: "inspectionEdit", title: "Inspection", moduleId: "modules/inspection/inspection-edit", roles: ["admin", "user", "inspector"] },
+        { route: "inspections/upload", name: "inspectionImageUpload", moduleId: "modules/inspection/file-manager/file-manager" },
+        { route: "inspections/print/:id", name: "inspectionPrint", title: "Print", moduleId: "modules/inspection/inspection-print", roles: ["admin", "user", "guest", "inspector"] },
+
+        // Stocks
+        // {route: "stock/list/:lotNo?/:locationId?", name="stockList",title="Stocks",nav:true,moduleId:"modules/stock/stock-list",roles:["admin", "user","guest", "inspector"]},
 
         // Dictionary items       
         { route: "dictionary/customer/edit", name: "customerEdit", title: "Customers", nav: true, moduleId: "modules/dictionary/customer/customer-edit", roles: ["admin"] },

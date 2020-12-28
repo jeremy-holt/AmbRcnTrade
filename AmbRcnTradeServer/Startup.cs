@@ -49,7 +49,12 @@ namespace AmbRcnTradeServer
             RavenDbInitialize.Configure(services, _env.IsDevelopment(), _assembly, "AmbRcnTrade");
 
             services.AddControllers()
-                .AddJsonOptions(options => options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase)));
+                .AddJsonOptions(options =>
+                {
+                    options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase));
+                    // options.JsonSerializerOptions.IgnoreReadOnlyProperties = true;
+                    // options.JsonSerializerOptions.NumberHandling = JsonNumberHandling.AllowNamedFloatingPointLiterals;
+                });
 
             Log.Logger.Information("Successfully completed Startup.ConfigureServices()");
         }

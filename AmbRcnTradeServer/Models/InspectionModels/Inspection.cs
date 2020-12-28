@@ -12,7 +12,6 @@ namespace AmbRcnTradeServer.Models.InspectionModels
         public string LotNo { get; set; }
         public string Location { get; set; }
         public string TruckPlate { get; set; }
-        public double ApproxWeight { get; set; }
         public double Bags { get; set; }
         public string Id { get; set; }
         public string Name { get; set; }

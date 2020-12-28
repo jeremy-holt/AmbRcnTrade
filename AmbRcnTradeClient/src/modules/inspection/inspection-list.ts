@@ -1,3 +1,4 @@
+import { Router } from "aurelia-router";
 import { Approval, APPROVAL_LIST } from "./../../constants/app-constants";
 import { IInspectionListItem } from "./../../interfaces/inspections/IInspectionListItem";
 import { IInspection } from "./../../interfaces/inspections/IInspection";
@@ -16,7 +17,8 @@ export class InspectionList {
   @observable selectedApproval = APPROVAL_LIST[0];
 
   constructor(
-    private inspectionService: InspectionService
+    private inspectionService: InspectionService,
+    private router: Router
   ) { }
 
   protected stateChanged(state: IState) {
@@ -25,5 +27,9 @@ export class InspectionList {
 
   protected async activate(params: {approval: Approval}) { 
     await this.inspectionService.loadList(params.approval);
+  }
+
+  protected addInspection(){
+    this.router.navigateToRoute("inspectionEdit");
   }
 }

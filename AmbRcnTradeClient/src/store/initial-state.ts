@@ -1,3 +1,4 @@
+import { Approval } from "constants/app-constants";
 import { IState } from "./state";
 
 export const initialState: IState = {
@@ -80,7 +81,6 @@ export const initialState: IState = {
       lotNo: undefined!,
       location: undefined!,
       truckPlate: undefined!,
-      approxWeight: undefined!,
       bags: undefined!,
       id: undefined!,
       name: undefined!,
@@ -88,7 +88,16 @@ export const initialState: IState = {
       analyses: [],
       approved: undefined!,
       supplierId: undefined!,
-      analysisResult: undefined!
+      analysisResult: {
+        count: 0,
+        moisture: 0,
+        kor: 0,
+        sound: 0,
+        rejects: 0,
+        approved: Approval.Rejected,
+        spotted: 0,
+        bags: 0
+      }
     },
     list: []
   },
@@ -112,16 +121,16 @@ export const initialState: IState = {
     list: [],
     stockBalanceList: []
   },
-  purchase:{
-    current:{
+  purchase: {
+    current: {
       id: undefined!,
-      name:undefined!,
+      name: undefined!,
       companyId: undefined!,
       purchaseDate: undefined!,
-      purchaseNumber:undefined!,
+      purchaseNumber: undefined!,
       supplierId: undefined!,
-      purchaseDetails:[]
+      purchaseDetails: []
     },
-    list:[]
+    list: []
   }
 };

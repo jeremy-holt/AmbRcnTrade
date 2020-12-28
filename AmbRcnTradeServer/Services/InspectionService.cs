@@ -1,17 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using AmberwoodCore.Responses;
 using AmbRcnTradeServer.Constants;
-using AmbRcnTradeServer.Models;
 using AmbRcnTradeServer.Models.DictionaryModels;
 using AmbRcnTradeServer.Models.InspectionModels;
 using Raven.Client.Documents;
 using Raven.Client.Documents.Linq;
 using Raven.Client.Documents.Session;
-using Inspection = AmbRcnTradeServer.Models.InspectionModels.Inspection;
 
 namespace AmbRcnTradeServer.Services
 {
@@ -33,15 +30,15 @@ namespace AmbRcnTradeServer.Services
 
         public async Task<ServerResponse<Inspection>> Save(Inspection inspection)
         {
-            inspection.AnalysisResult = new Analysis()
+            inspection.AnalysisResult = new Analysis
             {
-                Bags = 0,
+                Bags = CalculateAverageValue(inspection.Analyses, c => c.Bags),
                 Count = CalculateAverageValue(inspection.Analyses, c => c.Count),
                 Kor = CalculateAverageValue(inspection.Analyses, c => c.Kor),
                 Moisture = CalculateAverageValue(inspection.Analyses, c => c.Moisture),
                 Rejects = CalculateAverageValue(inspection.Analyses, c => c.Rejects),
                 Sound = CalculateAverageValue(inspection.Analyses, c => c.Sound),
-                Spotted = CalculateAverageValue(inspection.Analyses, c => c.Spotted),
+                Spotted = CalculateAverageValue(inspection.Analyses, c => c.Spotted)
             };
 
             await _session.StoreAsync(inspection);
@@ -51,12 +48,6 @@ namespace AmbRcnTradeServer.Services
         public async Task<Inspection> Load(string id)
         {
             return await _session.LoadAsync<Inspection>(id);
-        }
-
-        private static double CalculateAverageValue(List<Analysis> list, Func<Analysis, double> field)
-        {
-            var bags = list.Where(c => c.Approved == Approval.Approved).Sum(c => c.Bags);
-            return list.Where(c => c.Approved == Approval.Approved).Sum(c => c.Bags * field(c)) / bags;
         }
 
         public async Task<List<InspectionListItem>> LoadList(InspectionQueryParams prms)
@@ -70,14 +61,13 @@ namespace AmbRcnTradeServer.Services
             }
 
             var list = await query.OrderByDescending(c => c.InspectionDate)
-                .Select(c => new InspectionListItem()
+                .Select(c => new InspectionListItem
                 {
                     Approved = c.Approved,
                     Bags = c.Bags,
                     Inspector = c.Inspector,
                     InspectionDate = c.InspectionDate,
                     Location = c.Location,
-                    ApproxWeight = c.ApproxWeight,
                     InspectionId = c.Id,
                     LotNo = c.LotNo,
                     TruckPlate = c.TruckPlate,
@@ -93,6 +83,16 @@ namespace AmbRcnTradeServer.Services
             }
 
             return list;
+        }
+
+        private static double CalculateAverageValue(List<Analysis> list, Func<Analysis, double> field)
+        {
+            var bags = list.Sum(c => c.Bags);
+            
+            if (bags == 0)
+                return 0;
+            
+            return list.Sum(c => c.Bags * field(c)) / bags;
         }
     }
 }

@@ -1,0 +1,145 @@
+<template>
+  <toolbar caption="Inspection" disabled-save.bind="!canSave" save.call="save()"></toolbar>
+
+  <debug-console model.bind="model"></debug-console>
+
+  <div class="card">
+    <div class="card-header">
+      <h4>Inspection</h4>
+      <h1>${model.name}</h1>
+    </div>
+    <div class="card-body">
+      <div class="row">
+        <div class="col-sm-12 col-md-6">
+          <date-input value.bind="model.inspectionDate" label="Date"></date-input>
+        </div>
+        <div class="col">
+          <text-input value.bind="model.inspector" label="Inspector"></text-input>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-6">
+          <text-input value.bind="model.location" label="Place of inspection"></text-input>
+        </div>
+        <div class="col">
+          <text-input value.bind="model.truckPlate" label="Truck plate"></text-input>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-6">
+          <number-input value.bind="model.bags" label="Number bags"></number-input>
+        </div>
+        <div class="col">
+          <text-input value.bind="model.lotNo" label="Lot number"></text-input>
+        </div>
+      </div>
+
+      <div class="row mb-2">
+        <div class="col-sm-12 col-md-6">
+          <select-input source.bind="suppliers" value.bind="selectedSupplier" label="Supplier"
+            matcher.bind="listItemMatcher"></select-input>
+        </div>
+        <div class="col"></div>
+      </div>
+
+      <div class="row">
+        <div class="col small">
+          <h5>Summary of analyses</h5>
+          <table class="table table-sm table-bordered">
+            <thead>
+              <th>Name</th>
+              <th>Value</th>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Moisture</td>
+                <td>${model.analysisResult.moisture/100 | numberFormat:"0.00%"}</td>
+              </tr>
+              <tr>
+                <td>Count (nuts per kg)</td>
+                <td>${model.analysisResult.count | numberFormat: "0.0"} </td>
+              </tr>
+              <tr>
+                <td>KOR</td>
+                <td>${model.analysisResult.kor | numberFormat: "0,0.00"}</td>
+              </tr>
+              <tr>
+                <td>Spotted</td>
+                <td>${model.analysisResult.spotted/100 | numberFormat: "0.00%"}</td>
+              </tr>
+              <tr>
+                <td>Sound</td>
+                <td>${model.analysisResult.sound/100 | numberFormat: "0.00%"}</td>
+              </tr>
+              <tr>
+                <td>Rejects</td>
+                <td>${model.analysisResult.rejects/100 | numberFormat: "0.00%"}</td>
+              </tr>
+            </tbody>
+            <tfoot>
+              <tr>
+                <th colspan="2">
+                  <switch class.bind="approvalCss" checked.bind="approvalChecked" label.bind="approvalLabel"></switch>
+                </th>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col d-flex justify-content-between">
+          <button type="button" class="btn btn-primary" disabled.bind="!canAddAnalysis"
+            click.delegate="addAnalysis()">Add analysis</button>
+          <button type="button" class="btn btn-success" if.bind="model.analyses.length > 0"
+            click.delegate="showHideAnalysis()">${showAnalysesCaption}</button>
+        </div>
+      </div>
+
+      <ul if.bind="showAnalyses" class="list-unstyled">
+        <li class="border-bottom py-4" repeat.for="item of model.analyses">
+          <div class="row">
+            <div class="col-6">
+              <number-input value.bind="item.bags" label="Bags" change.delegate="calc()" ></number-input>
+            </div>
+            <div class="col">
+              <number-input value.bind="item.moisture" label="Moisture %"  change.delegate="calc()"></number-input>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-6">
+              <number-input value.bind="item.spotted" label="Spotted"  change.delegate="calc()"></number-input>
+            </div>
+            <div class="col">
+              <number-input value.bind="item.sound" label="Sound" change.delegate="calc()"></number-input>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-6">
+              <number-input value.bind="item.rejects" label="Rejects" change.delegate="calc()"></number-input>
+            </div>
+            <div class="col">
+              <number-input value.bind="item.kor" label="KOR" change.delegate="calc()"></number-input>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-6">
+              <number-input value.bind="item.count" label="Count" change.delegate="calc()"></number-input>
+            </div>
+          </div>
+
+          <div class="row mt-2">
+            <div class="col">
+              <button type="button" class="btn btn-sm btn-danger" click.delegate="removeRow($index)">Delete</button>
+            </div>
+            <div class="col text-warning" if.bind="!canSaveAnalysis">
+              You must fill in all the fields
+            </div>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+</template>

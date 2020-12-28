@@ -84,7 +84,6 @@ namespace Tests
             actual.LotNo.Should().Be(expected.LotNo);
             actual.Inspector.Should().Be(expected.Inspector);
             actual.Bags.Should().Be(expected.Bags);
-            actual.ApproxWeight.Should().Be(expected.ApproxWeight);
             actual.Approved.Should().Be(expected.Approved);
             actual.Location.Should().Be(expected.Location);
             actual.TruckPlate.Should().Be(expected.TruckPlate);
@@ -123,7 +122,6 @@ namespace Tests
                 LotNo = "Lot 1234",
                 TruckPlate = "AA BB CC",
                 Bags = 300,
-                ApproxWeight = 24000,
                 Location = "Bouake warehouse",
                 Analyses = analyses,
                 Approved = Approval.Approved

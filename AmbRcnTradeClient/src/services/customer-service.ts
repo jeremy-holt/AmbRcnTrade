@@ -2,12 +2,13 @@ import { HttpClient } from "aurelia-fetch-client";
 import { autoinject } from "aurelia-framework";
 import { Router } from "aurelia-router";
 import { Store } from "aurelia-store";
+import { IListItem } from "interfaces/IEntity";
 import _ from "lodash";
 import { QueryId } from "models/QueryId";
 import { IState } from "store/state";
 import { ICustomer } from "./../interfaces/ICustomer";
-import { ICustomerUserListItem } from "./../interfaces/ICustomerUserListItem";
 import { FetchService } from "./fetch-service";
+import { isInRole } from "./role-service";
 
 @autoinject
 export class CustomerService extends FetchService {
@@ -39,12 +40,14 @@ export class CustomerService extends FetchService {
     return super.get([], "create", customerEditAction);
   }
 
-  public async loadCustomerListForAppUsers(appUserId: string) {
-    return super.getMany<ICustomerUserListItem>(
-      [
-        new QueryId("companyId", super.currentCompanyId()),
-        new QueryId("appUserId", appUserId)
-      ], "loadCustomerListForAppUser", customerAppUserListAction);
+  public async loadCustomersForAppUserList() {
+    const state = this.getCurrentState();
+    const appUserId = isInRole(["admin", "user", "inspector"], state) ? null : state.user.id;
+
+    return super.getMany<IListItem>([
+      super.currentCompanyIdQuery(),
+      new QueryId("appUserId", appUserId)
+    ], "loadCustomerListForAppUser", customerAppUserListAction);
   }
 }
 
@@ -60,8 +63,8 @@ export function customerListAction(state: IState, list: ICustomer[]) {
   return newsState;
 }
 
-export function customerAppUserListAction(state: IState, list: ICustomerUserListItem[]) {
+export function customerAppUserListAction(state: IState, list: IListItem[]) {
   const newState = _.cloneDeep(state);
-  newState.customer.usersList = list;
+  newState.userFilteredCustomers = list;
   return newState;
 }

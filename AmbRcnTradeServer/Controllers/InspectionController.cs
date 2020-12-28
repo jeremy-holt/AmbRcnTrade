@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AmberwoodCore.Controllers;
@@ -43,6 +44,13 @@ namespace AmbRcnTradeServer.Controllers
         {
             var prms = new InspectionQueryParams {CompanyId = companyId, Approved = approval};
             return await _service.LoadList(prms);
+        }
+
+        [Authorize]
+        [HttpGet("[action]")]
+        public async Task<ActionResult<Inspection>> Create()
+        {
+            return await Task.FromResult(new Inspection {InspectionDate = DateTime.Today, Approved = Approval.Rejected});
         }
     }
 }

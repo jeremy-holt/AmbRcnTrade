@@ -21,14 +21,14 @@ export class DateInput {
   }
 
   protected get formControlClass() {    
-    return this.small ? "form-control form-control-sm" : "form-control";
+    return (this.small ? "form-control form-control-sm " : "form-control ") + this.textColor;
   }
 
   protected get textColor(){
-    return this.value ? "":"silver";
+    return this.value !== null ? "text-primary":"text-muted";
   }
 
   protected get fitContentStyle() {
-    return `color: ${this.textColor}; max-width: ${this.fitcontent ? "fit-content":""}`;    
+    return `max-width: ${this.fitcontent ? "fit-content":""}`;    
   }
 }
