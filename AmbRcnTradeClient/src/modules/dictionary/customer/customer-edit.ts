@@ -1,4 +1,4 @@
-import { CustomerService } from "./../../services/customer-service";
+import { CustomerService } from "../../../services/customer-service";
 import { observable } from "aurelia-binding";
 import { autoinject } from "aurelia-framework";
 import { Router } from "aurelia-router";
@@ -58,7 +58,7 @@ export class CustomerEdit {
   }
 
   protected get canAddAppuser() {
-    return this.selectedAppUser?.id && !this.model.users.find(c => c.appUserId === this.selectedAppUser.id);
+    return this.selectedAppUser?.id && !this.model?.users?.find(c => c.appUserId === this.selectedAppUser.id);
   }
 
   protected removeAppUser(index: number) {

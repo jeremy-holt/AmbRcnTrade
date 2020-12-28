@@ -1,4 +1,3 @@
-import { Currency } from "constants/app-constants";
 import { IAppUser, IAppUserListItem } from "interfaces/IAppUser";
 import { IAttachmentInfo } from "interfaces/IAttachmentInfo";
 import { ICompany, ICompanyListItem } from "interfaces/ICompany";

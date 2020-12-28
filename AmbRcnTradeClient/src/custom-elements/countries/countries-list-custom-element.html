@@ -1,0 +1,8 @@
+<template>
+  <label class="select-input-label" innerhtml.bind="label"></label>
+  <select class="custom-select" disabled.bind="disabled" value.bind="value">
+    <option repeat.for="item of countriesList" model.bind="item">
+      ${item}
+    </option>
+  </select>
+</template>

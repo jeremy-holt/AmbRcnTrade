@@ -32,7 +32,7 @@ export class CustomerService extends FetchService {
   }
 
   public async loadCustomerList() {
-    return super.getMany<ICustomer>([new QueryId("companyId", super.getStateCurrentCompanyId)], "loadCustomerList", customerListAction);
+    return super.getMany<ICustomer>([super.currentCompanyIdQuery()], "loadCustomerList", customerListAction);
   }
 
   public async createCustomer() {
@@ -42,7 +42,7 @@ export class CustomerService extends FetchService {
   public async loadCustomerListForAppUsers(appUserId: string) {
     return super.getMany<ICustomerUserListItem>(
       [
-        new QueryId("companyId", super.getStateCurrentCompanyId),
+        new QueryId("companyId", super.currentCompanyId()),
         new QueryId("appUserId", appUserId)
       ], "loadCustomerListForAppUser", customerAppUserListAction);
   }

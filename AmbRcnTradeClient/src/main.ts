@@ -31,7 +31,7 @@ export function configure(aurelia: Aurelia) {
     .plugin("aurelia-validation")
     .plugin("aurelia-animator-css")
     .plugin("bcx-aurelia-reorderable-repeat")
-    .plugin("aurelia-api", config => {
+    .plugin("aurelia-api", (config: { registerEndpoint: (arg0: string) => void; }) => {
       config.registerEndpoint("auth");
     })
     .plugin("aurelia-store", {

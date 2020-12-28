@@ -1,4 +1,4 @@
-import { PortService } from "./../../services/port-service";
+import { PortService } from "../../../services/port-service";
 import { observable, BindingEngine } from "aurelia-binding";
 import { Subscription } from "aurelia-event-aggregator";
 import { autoinject } from "aurelia-framework";

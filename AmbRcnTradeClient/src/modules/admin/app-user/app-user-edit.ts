@@ -13,7 +13,7 @@ import _ from "lodash";
 @connectTo()
 export class AppUserEdit {
   @observable public state: IState = undefined!;
-  public model: IAppUser;
+  public model: IAppUser=undefined!;
   public appUsersList: IAppUserListItem[] = [];
   public companiesList: ICompanyListItem[] = [];
   public roleNamesList: IRoleNameItem[] = [];

@@ -8,7 +8,7 @@
             "name": ".NET Core Attach",
             "type": "coreclr",
             "request": "attach",
-            "processName": "AmbBrokerageClient.exe"
+            "processName": "AmbRcnTradeClient.exe"
         },
         {
             "name": ".NET Core Launch (web)",
@@ -16,9 +16,9 @@
             "request": "launch",
             "preLaunchTask": "build",
             // If you have changed target frameworks, make sure to update the program path.
-            "program": "${workspaceFolder}/AmbBrokerageClient/bin/Debug/netcoreapp3.1/AmbBrokerageClient.dll",
+            "program": "${workspaceFolder}/AmbRcnTradeClient/bin/Debug/net5.0/AmbRcnTradeClient.dll",
             "args": [],
-            "cwd": "${workspaceFolder}/AmbBrokerageClient",
+            "cwd": "${workspaceFolder}/AmbRcnTradeClient",
             "stopAtEntry": false,
             // Enable launching a web browser when ASP.NET Core starts. For more information: https://aka.ms/VSCode-CS-LaunchJson-WebBrowser
             "serverReadyAction": {
@@ -37,7 +37,7 @@
             "type": "pwa-msedge",
             "request": "launch",
             "url": "https://localhost:5001",
-            "webRoot": "${workspaceFolder}/AmbBrokerageClient/src",
+            "webRoot": "${workspaceFolder}/AmbRcnTradeClient/src",
             "smartStep": true,
             "skipFiles": [
                 "node_modules/**/*.js",
@@ -53,7 +53,7 @@
             "type": "chrome",
             "request": "launch",
             "url": "https://localhost:5001",
-            "webRoot": "${workspaceFolder}/AmbBrokerageClient/src",
+            "webRoot": "${workspaceFolder}/AmbRcnTradeClient/src",
             "smartStep": true,
             "skipFiles": [
                 "node_modules/**/*.js",

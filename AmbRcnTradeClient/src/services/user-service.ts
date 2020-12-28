@@ -1,12 +1,11 @@
-import { IAppUserPassword } from "./../interfaces/IAppUserPassword";
-import { ICustomerUserListItem } from "./../interfaces/ICustomerUserListItem";
 import { HttpClient } from "aurelia-fetch-client";
 import { autoinject } from "aurelia-framework";
 import { Router } from "aurelia-router";
 import { Store } from "aurelia-store";
 import _ from "lodash";
-import { QueryId } from "models/QueryId";
 import { IState } from "../store/state";
+import { IAppUserPassword } from "./../interfaces/IAppUserPassword";
+import { ICustomerUserListItem } from "./../interfaces/ICustomerUserListItem";
 import { IListItem } from "./../interfaces/IEntity";
 import { IPayload } from "./../interfaces/IPayload";
 import { FetchService } from "./fetch-service";
@@ -32,7 +31,7 @@ export class UserService extends FetchService {
   }
 
   public async listCustomersAndUsers() {
-    return super.get([new QueryId("companyId", this.getStateCurrentCompanyId())], "listCustomersAndUsers", customerAndUsersListAction);
+    return super.get([super.currentCompanyIdQuery()], "listCustomersAndUsers", customerAndUsersListAction);
   }
 
   public async saveAppUsersPasswords(model: IAppUserPassword[]) {

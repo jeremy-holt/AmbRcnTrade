@@ -1,7 +1,9 @@
+import { IEntity } from "./../interfaces/IEntity";
 import { HttpClient, json } from "aurelia-fetch-client";
 import { autoinject } from "aurelia-framework";
 import { Router } from "aurelia-router";
 import { Reducer, Store } from "aurelia-store";
+import { IEntityCompany } from "interfaces/IEntity";
 import { Subscription } from "rxjs";
 import { log } from "../core/log";
 import { IServerResponse } from "../interfaces/IServerResponse";
@@ -40,8 +42,12 @@ export class FetchService {
     this.getUrlService = new GetUrlService(baseUrl);
   }
 
-  public getStateCurrentCompanyId() {
+  public currentCompanyId() {
     return this.getCurrentState().currentCompanyId;
+  }
+
+  public currentCompanyIdQuery(): QueryId {
+    return new QueryId("companyId", this.currentCompanyId());
   }
 
   public getCurrentState(): IState {
@@ -62,7 +68,7 @@ export class FetchService {
     return this.http.isRequesting;
   }
 
-  protected async create<T>(reducer: Reducer<IState, unknown[]>) {
+  protected async create<T extends IEntityCompany | IEntity>(reducer: Reducer<IState, unknown[]>): Promise<void> {
     const url = `${this.baseUrl}/create`;
 
     await this.serverMessageService.clearMessages();
@@ -72,7 +78,8 @@ export class FetchService {
       try {
         const data = (await response.json()) as IServerResponse<T>;
         if (!data.isError) {
-          (data.dto as any).companyId = this.getStateCurrentCompanyId();
+          (data.dto as IEntityCompany).companyId = this.currentCompanyId();
+
           await this.store.dispatch(reducer, data.dto);
         } else {
           await this.serverMessageService.setErrorMessage(data.message);
@@ -86,7 +93,7 @@ export class FetchService {
     }
   }
 
-  protected async get<T>(id: string | null | QueryId[], action: string, reducer?: Reducer<IState, unknown[]>): Promise<void|T> {
+  protected async get<T>(id: string | null | QueryId[], action: string, reducer?: Reducer<IState, unknown[]>): Promise<void | T> {
     const params = typeof (id) === "string" ? [new QueryId("id", id)] : id;
     const url = this.getUrlService.getUrl(new FetchRoute(params, action));
 
@@ -103,7 +110,7 @@ export class FetchService {
     }
   }
 
-  protected async delete<T>(id: string | QueryId[], action: string, reducer: Reducer<IState, any[]>) {
+  protected async delete<T>(id: string | QueryId[], action: string, reducer: Reducer<IState, unknown[]>) {
     const params = typeof (id) === "string" ? [new QueryId("id", id)] : id;
     const url = this.getUrlService.getUrl(new FetchRoute(params, action));
     const response = await this.http.fetch(url, { method: "DELETE" });
@@ -112,9 +119,8 @@ export class FetchService {
 
   protected async post<T>(model: any, action: string, reducer?: Reducer<IState, unknown[]>) {
     const url = this.getUrlService.getPostUrl(action);
-    if (model["companyId"]) {
-      model["companyId"] = this.getStateCurrentCompanyId();
-    }
+
+    model["companyId"] = this.currentCompanyId();
 
     const response = await this.http.fetch(url, { method: "POST", body: json(model) });
     return this.handleResponse<T>(response, reducer);

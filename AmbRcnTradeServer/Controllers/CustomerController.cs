@@ -37,7 +37,7 @@ namespace AmbRcnTradeServer.Controllers
         }
 
         [Authorize]
-        [HttpGet("action")]
+        [HttpGet("[action]")]
         public async Task<ActionResult<List<Customer>>> LoadCustomerList(string companyId)
         {
             return await _customerService.LoadCustomerList(companyId);

@@ -1,12 +1,11 @@
-import { FetchService } from "./fetch-service";
-import { autoinject } from "aurelia-framework";
 import { HttpClient } from "aurelia-fetch-client";
+import { autoinject } from "aurelia-framework";
 import { Router } from "aurelia-router";
 import { Store } from "aurelia-store";
-import { IState } from "store/state";
-import _ from "lodash";
 import { IPort } from "interfaces/IPort";
-import { QueryId } from "models/QueryId";
+import _ from "lodash";
+import { IState } from "store/state";
+import { FetchService } from "./fetch-service";
 
 @autoinject
 export class PortService extends FetchService {
@@ -30,7 +29,7 @@ export class PortService extends FetchService {
   }
 
   public async loadPortList() {
-    return super.getMany<IPort[]>([new QueryId("companyId", super.getStateCurrentCompanyId)], "loadPorts", portListAction);
+    return super.getMany<IPort[]>([this.currentCompanyIdQuery()], "loadPorts", portListAction);
   }
 
   public async createPort() {
