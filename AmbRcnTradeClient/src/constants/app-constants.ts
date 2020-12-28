@@ -21,6 +21,13 @@ export enum Approval {
   Rejected = "rejected",
 }
 
+export interface IApproval { id: Approval, name: string; }
+
+export const APPROVAL_LIST = [
+  { id: Approval.Approved, name: "Approved" },
+  { id: Approval.Rejected, name: "Rejected" }
+];
+
 export enum ImageType {
   image = "image",
   pdf = "pdf",

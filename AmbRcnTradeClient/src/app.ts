@@ -57,10 +57,9 @@ export class App {
         { route: "login", name: "login", title: "Login", moduleId: "modules/login/login-edit" },
 
 
-        // Misc
-        { route: "inspections/list/:inspectionId?/:completed?", href: "inspections/list", name: "inspectionList", title: "Inspections", nav: true, moduleId: "modules/inspections/inspection-list", roles: ["admin", "user", "guest", "inspector"] },
+        // Inspections
+        { route: "inspections/list/:approval", href: "inspections/list", name: "inspectionList", title: "Inspections", nav: true, moduleId: "modules/inspections/inspection-list", roles: ["admin", "user", "guest", "inspector"] },
         { route: "inspections/edit/:id?", name: "inspectionEdit", title: "Inspection", moduleId: "modules/inspections/inspection-edit", roles: ["admin", "user", "inspector"] },
-        { route: "inspections/spec-by-grade/list/:gradeId?/:specificationId?", href: "inspections/spec-by-grade/list", name: "tolerancesList", title: "Quality specifications", nav: true, moduleId: "modules/inspections/spec-by-grade/spec-by-grade-list", roles: ["admin"] },
         { route: "inspections/upload", name: "inspectionImageUpload", moduleId: "modules/inspections/file-manager/file-manager" },
         { route: "inspections/print/:id", name: "inspectionPrint", title: "Print", moduleId: "modules/inspections/inspection-print", roles: ["admin", "user", "guest", "inspector"] },
 

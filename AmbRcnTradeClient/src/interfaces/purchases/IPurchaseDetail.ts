@@ -6,6 +6,6 @@ export interface IPurchaseDetail {
     exchangeRate: number;
     currency: Currency;
     pricePerKg: number;
-    date: Date | string;
+    date: string;
     stocks: IStock[];
 }

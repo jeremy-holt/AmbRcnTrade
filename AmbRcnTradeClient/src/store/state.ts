@@ -1,3 +1,9 @@
+import { IPurchaseListItem } from "./../interfaces/purchases/IPurchaseListItem";
+import { IPurchase } from "./../interfaces/purchases/IPurchase";
+import { IStockBalanceListItem } from "./../interfaces/stocks/IStockBalanceListItem";
+import { IStockListItem } from "./../interfaces/stocks/IStockListItem";
+import { IInspectionListItem } from "./../interfaces/inspections/IInspectionListItem";
+import { IInspection } from "./../interfaces/inspections/IInspection";
 import { IAppUser, IAppUserListItem } from "interfaces/IAppUser";
 import { IAttachmentInfo } from "interfaces/IAttachmentInfo";
 import { ICompany, ICompanyListItem } from "interfaces/ICompany";
@@ -7,6 +13,7 @@ import { IListItem } from "interfaces/IEntity";
 import { IPayload } from "interfaces/IPayload";
 import { IPort } from "interfaces/IPort";
 import { IRoleNameItem } from "interfaces/IRoleNameItem";
+import { IStock } from "interfaces/stocks/IStock";
 
 export interface IState {
   userFilteredCustomers: IListItem[];
@@ -34,7 +41,11 @@ export interface IState {
   };
 
   customer: { current: ICustomer; list: ICustomer[]; usersList: ICustomerUserListItem[] };
- 
+
   port: { current: IPort, list: IPort[] };
   attachmentRoutes: IAttachmentInfo[];
+  inspection: { current: IInspection, list: IInspectionListItem[] };
+  stock: { current: IStock, list: IStockListItem[], stockBalanceList: IStockBalanceListItem[] };
+  purchase: { current: IPurchase, list: IPurchaseListItem[] };
+
 }

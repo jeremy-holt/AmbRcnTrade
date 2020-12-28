@@ -8,7 +8,7 @@ namespace AmbRcnTradeServer.Constants
 {
     public enum Approval
     {
-        Approved=1,
-        Rejected=2,
+        Approved = 1,
+        Rejected = 2
     }
 }

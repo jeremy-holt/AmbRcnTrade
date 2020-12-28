@@ -16,7 +16,7 @@ export const initialState: IState = {
   },
   userCompanies: [],
   userCustomers: [],
-  userFilteredCustomers:[],
+  userFilteredCustomers: [],
   serverMessages: {
     errorMessage: "",
     message: ""
@@ -72,5 +72,56 @@ export const initialState: IState = {
     current: undefined!,
     list: []
   },
-  attachmentRoutes:[]
+  attachmentRoutes: [],
+  inspection: {
+    current: {
+      inspectionDate: undefined!,
+      inspector: undefined!,
+      lotNo: undefined!,
+      location: undefined!,
+      truckPlate: undefined!,
+      approxWeight: undefined!,
+      bags: undefined!,
+      id: undefined!,
+      name: undefined!,
+      companyId: undefined!,
+      analyses: [],
+      approved: undefined!,
+      supplierId: undefined!,
+      analysisResult: undefined!
+    },
+    list: []
+  },
+  stock: {
+    current: {
+      id: undefined!,
+      name: undefined!,
+      companyId: undefined!,
+      locationId: undefined!,
+      stockInDate: undefined!,
+      stockOutDate: undefined!,
+      lotNo: undefined!,
+      bags: undefined!,
+      weightKg: undefined!,
+      inspectionIds: [],
+      inspections: [],
+      isStockIn: undefined!,
+      analysisResult: undefined!,
+      origin: undefined!
+    },
+    list: [],
+    stockBalanceList: []
+  },
+  purchase:{
+    current:{
+      id: undefined!,
+      name:undefined!,
+      companyId: undefined!,
+      purchaseDate: undefined!,
+      purchaseNumber:undefined!,
+      supplierId: undefined!,
+      purchaseDetails:[]
+    },
+    list:[]
+  }
 };

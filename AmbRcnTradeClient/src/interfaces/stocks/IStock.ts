@@ -16,6 +16,5 @@ export interface IStock extends IEntityCompany {
     isStockIn: boolean;
     analysisResult: IAnalysis;
     inspections: IInspection[];
-
     origin: string;
 }
