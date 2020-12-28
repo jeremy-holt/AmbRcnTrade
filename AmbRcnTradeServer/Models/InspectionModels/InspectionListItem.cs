@@ -1,4 +1,5 @@
 ﻿using System;
+using AmbRcnTradeServer.Constants;
 
 namespace AmbRcnTradeServer.Models.InspectionModels
 {

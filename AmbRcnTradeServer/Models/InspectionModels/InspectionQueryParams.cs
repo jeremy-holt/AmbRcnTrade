@@ -1,4 +1,6 @@
-﻿namespace AmbRcnTradeServer.Models.InspectionModels
+﻿using AmbRcnTradeServer.Constants;
+
+namespace AmbRcnTradeServer.Models.InspectionModels
 {
     public class InspectionQueryParams
     {
@@ -6,9 +8,5 @@
         public Approval? Approved { get; set; }
     }
 
-    public enum Approval
-    {
-        Approved=1,
-        Rejected=2,
-    }
+ 
 }

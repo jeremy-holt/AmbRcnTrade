@@ -7,7 +7,7 @@ using Raven.Client.Documents;
 using Raven.Client.Documents.Linq;
 using Raven.Client.Documents.Session;
 
-namespace AmbRcnTradeServer.Models
+namespace AmbRcnTradeServer.Models.DictionaryModels
 {
     public class Customer : IEntityCompany
     {

@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using AmberwoodCore.Extensions;
 using AmberwoodCore.Responses;
 using AmbRcnTradeServer.Models;
+using AmbRcnTradeServer.Models.DictionaryModels;
 using AmbRcnTradeServer.Models.PurchaseModels;
 using AmbRcnTradeServer.Models.StockModels;
 using Raven.Client.Documents;

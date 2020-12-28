@@ -6,6 +6,7 @@ using AmberwoodCore.Extensions;
 using AmberwoodCore.Models;
 using AmberwoodCore.Responses;
 using AmbRcnTradeServer.Models;
+using AmbRcnTradeServer.Models.DictionaryModels;
 using AmbRcnTradeServer.RavenIndexes;
 using Raven.Client.Documents;
 using Raven.Client.Documents.Linq;

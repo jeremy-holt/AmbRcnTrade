@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using AmberwoodCore.Interfaces;
+using AmbRcnTradeServer.Constants;
 
 namespace AmbRcnTradeServer.Models.InspectionModels
 {

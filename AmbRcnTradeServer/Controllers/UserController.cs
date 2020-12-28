@@ -9,6 +9,7 @@ using AmberwoodCore.Responses;
 using AmberwoodCore.Services;
 using AmbRcnTradeServer.Authorization;
 using AmbRcnTradeServer.Models;
+using AmbRcnTradeServer.Models.DictionaryModels;
 using AmbRcnTradeServer.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

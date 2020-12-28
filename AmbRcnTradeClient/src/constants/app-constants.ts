@@ -16,6 +16,11 @@ export enum PackingUnit {
   Mt = "mt"
 }
 
+export enum Approval {
+  Approved = "approved",
+  Rejected = "rejected",
+}
+
 export enum ImageType {
   image = "image",
   pdf = "pdf",

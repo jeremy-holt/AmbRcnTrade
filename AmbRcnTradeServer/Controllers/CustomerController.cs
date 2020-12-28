@@ -5,6 +5,7 @@ using AmberwoodCore.Controllers;
 using AmberwoodCore.Models;
 using AmberwoodCore.Responses;
 using AmbRcnTradeServer.Models;
+using AmbRcnTradeServer.Models.DictionaryModels;
 using AmbRcnTradeServer.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
