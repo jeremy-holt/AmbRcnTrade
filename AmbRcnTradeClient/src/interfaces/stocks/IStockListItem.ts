@@ -10,7 +10,8 @@ export interface IStockListItem {
     stockId: string;
     isStockIn: boolean;
     date: string;
-    supplierNames: string;
+    supplierName: string;
+    supplierId: string;
     locationName: string;
     origin: string;
 }

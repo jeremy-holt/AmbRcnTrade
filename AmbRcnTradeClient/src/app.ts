@@ -64,7 +64,8 @@ export class App {
         { route: "inspections/print/:id", name: "inspectionPrint", title: "Print", moduleId: "modules/inspection/inspection-print", roles: ["admin", "user", "guest", "inspector"] },
 
         // Stocks
-        // {route: "stock/list/:lotNo?/:locationId?", name="stockList",title="Stocks",nav:true,moduleId:"modules/stock/stock-list",roles:["admin", "user","guest", "inspector"]},
+        { route: "stock/list/:lotNo?/:locationId?", href: "stock/list", name: "stockList", title: "Stocks", nav: true, moduleId: "modules/stock/stock-list", roles: ["admin", "user", "guest", "inspector"] },
+        { route: "stock/edit/:id?", name: "stockEdit", title: "Stock", moduleId: "modules/stock/stock-edit", roles: ["admin", "user", "guest", "inspector"] },
 
         // Dictionary items       
         { route: "dictionary/customer/edit", name: "customerEdit", title: "Customers", nav: true, moduleId: "modules/dictionary/customer/customer-edit", roles: ["admin"] },

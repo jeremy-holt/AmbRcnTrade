@@ -118,7 +118,8 @@ export const initialState: IState = {
       inspections: [],
       isStockIn: undefined!,
       analysisResult: undefined!,
-      origin: undefined!
+      origin: undefined!,
+      supplierId: undefined!
     },
     list: [],
     stockBalanceList: []

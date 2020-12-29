@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using AmberwoodCore.Extensions;
 using AmberwoodCore.Responses;
-using AmbRcnTradeServer.Models;
 using AmbRcnTradeServer.Models.DictionaryModels;
 using AmbRcnTradeServer.Models.InspectionModels;
 using AmbRcnTradeServer.Models.StockModels;
@@ -97,8 +96,9 @@ namespace AmbRcnTradeServer.Services
         public async Task<List<StockListItem>> LoadStockList(string companyId, long? lotNo, string locationId)
         {
             var query = _session.Query<Stock>()
-                .Include(c => c.InspectionIds)
+                // .Include(c => c.InspectionIds)
                 .Include(c => c.LocationId)
+                .Include(c => c.SupplierId)
                 .Where(c => c.CompanyId == companyId);
 
             if (lotNo != null)
@@ -108,10 +108,9 @@ namespace AmbRcnTradeServer.Services
                 query = query.Where(c => c.LocationId == locationId);
 
             var stocks = await query.ToListAsync();
-
-            var inspections = await _session.LoadListFromMultipleIdsAsync<Inspection>(stocks.SelectMany(x => x.InspectionIds));
+            
             var locations = await _session.LoadListFromMultipleIdsAsync<Customer>(stocks.Select(c => c.LocationId));
-            var suppliers = await _session.LoadListFromMultipleIdsAsync<Customer>(inspections.Select(x => x.SupplierId));
+            var suppliers = await _session.LoadListFromMultipleIdsAsync<Customer>(stocks.Select(x => x.SupplierId));
 
             return stocks.Select(item => new StockListItem
                 {
@@ -129,7 +128,8 @@ namespace AmbRcnTradeServer.Services
                         ? new StockInfo()
                         : new StockInfo(item.Bags, item.WeightKg),
                     LocationName = locations.FirstOrDefault(c => c.Id == item.LocationId)?.Name,
-                    SupplierNames = suppliers.Where(c => c.Id.In(inspections.Select(x => x.SupplierId))).Select(x => x.Name).Distinct().ToAggregateString()
+                    SupplierId = item.SupplierId,
+                    SupplierName = suppliers.FirstOrDefault(c => c.Id == item.SupplierId)?.Name
                 })
                 .ToList();
         }

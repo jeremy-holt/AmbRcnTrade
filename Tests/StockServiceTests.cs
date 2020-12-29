@@ -124,6 +124,7 @@ namespace Tests
                 .Without(c => c.InspectionIds)
                 .Without(c => c.AnalysisResult)
                 .Without(c => c.LocationId)
+                .With(c=>c.SupplierId,supplier.Id)
                 .Create();
             await sut.Save(stockIn1);
 
@@ -132,6 +133,7 @@ namespace Tests
                 .With(c => c.InspectionIds, inspections.Select(x => x.Id).ToList)
                 .Without(c => c.AnalysisResult)
                 .With(c => c.LocationId, location.Id)
+                .With(c=>c.SupplierId,supplier.Id)
                 .Create();
             await sut.Save(stockIn2);
 
@@ -141,6 +143,7 @@ namespace Tests
                 .Without(c => c.AnalysisResult)
                 .With(c => c.LotNo, stockIn2.LotNo)
                 .Without(c => c.LocationId)
+                .Without(c=>c.SupplierId)
                 .Create();
             await sut.Save(stockOut);
 
@@ -149,6 +152,7 @@ namespace Tests
                 .Without(c => c.InspectionIds)
                 .Without(c => c.AnalysisResult)
                 .Without(c => c.LocationId)
+                .With(c=>c.SupplierId,supplier.Id)
                 .Create();
             await sut.Save(stockIn3);
 
@@ -172,8 +176,9 @@ namespace Tests
             actual.IsStockIn.Should().BeTrue();
             actual.Date.Should().Be(stockIn2.StockInDate ?? DateTime.MinValue);
             actual.Date.Should().NotBe(DateTime.MinValue);
-            actual.SupplierNames.Should().Be(supplier.Name);
             actual.Origin.Should().Be(stockIn2.Origin);
+            actual.SupplierName.Should().Be(supplier.Name);
+            actual.SupplierId.Should().Be(supplier.Id);
         }
 
         [Fact]
@@ -372,6 +377,7 @@ namespace Tests
                 LotNo = 1,
                 Bags = 300.0,
                 WeightKg = 24000.0,
+                SupplierId=supplier.Id,
                 InspectionIds = new List<string>(),
                 Origin = "Bouake"
             };

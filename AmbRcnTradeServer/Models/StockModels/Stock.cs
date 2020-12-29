@@ -24,6 +24,7 @@ namespace AmbRcnTradeServer.Models.StockModels
         public List<Inspection> Inspections { get; set; } = new();
 
         public string Origin { get; set; }
+        public string SupplierId { get; set; }
     }
 
     

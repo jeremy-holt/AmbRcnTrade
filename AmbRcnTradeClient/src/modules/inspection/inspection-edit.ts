@@ -4,7 +4,6 @@ import { Approval } from "constants/app-constants";
 import { IAnalysis } from "interfaces/inspections/IAnalysis";
 import _ from "lodash";
 import { IState } from "store/state";
-import { APPROVAL_LIST } from "./../../constants/app-constants";
 import { IListItem } from "./../../interfaces/IEntity";
 import { IInspection } from "./../../interfaces/inspections/IInspection";
 import { IParamsId } from "./../../interfaces/IParamsId";
@@ -17,10 +16,7 @@ export class InspectionEdit {
   @observable protected state: IState;
   public model: IInspection = undefined!;
 
-  public approvalList = APPROVAL_LIST;
-  @observable selectedApproval = APPROVAL_LIST[0];
   @observable protected approvalChecked = false;
-  protected approvalLabel = this.selectedApproval.name;
 
   protected suppliers: IListItem[] = [];
   @observable protected selectedSupplier: IListItem = undefined!;
@@ -50,26 +46,10 @@ export class InspectionEdit {
     }
   }
 
-  protected approvalCheckedChanged() {
-    this.selectedApproval = this.approvalChecked ? APPROVAL_LIST[0] : APPROVAL_LIST[1];
-    this.approvalLabel = this.selectedApproval.name;
-  }
-
-  protected get approvalCss() {
-    if (this.selectedApproval) {
-      return this.selectedApproval.id === Approval.Approved ? "text-white rounded px-2 bg-success" : "text-white rounded px-2 bg-danger";
-    }
-  }
-
   protected async deactivate() {
     await this.save();
   }
 
-  protected selectedApprovalChanged() {
-    if (this.model?.analysisResult) {
-      this.model.analysisResult.approved = this.selectedApproval.id;
-    }
-  }
   protected selectedSupplierChanged() {
     if (this.model) {
       this.model.supplierId = this.selectedSupplier?.id;
@@ -113,7 +93,7 @@ export class InspectionEdit {
       this.approvalChecked = false;
     }
   }
-
+  
   protected calc() {
     if (this.model.analysisResult) {
       this.model.analysisResult = this.inspectionService.getAnalysisResult(this.model.analyses, this.model.analysisResult.approved);

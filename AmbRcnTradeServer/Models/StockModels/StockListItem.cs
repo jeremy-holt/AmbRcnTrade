@@ -18,8 +18,9 @@ namespace AmbRcnTradeServer.Models.StockModels
         public string StockId { get; set; }
         public bool IsStockIn { get; set; }
         public DateTime Date { get; set; }
-        public string SupplierNames { get; set; }
         public string LocationName { get; set; }
         public string Origin { get; set; }
+        public string SupplierName { get; set; }
+        public string SupplierId { get; set; }
     }
 }

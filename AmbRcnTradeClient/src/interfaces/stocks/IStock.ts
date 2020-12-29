@@ -17,4 +17,5 @@ export interface IStock extends IEntityCompany {
     analysisResult: IAnalysis;
     inspections: IInspection[];
     origin: string;
+    supplierId: string;
 }

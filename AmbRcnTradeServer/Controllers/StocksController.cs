@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using AmberwoodCore.Controllers;
 using AmberwoodCore.Responses;
@@ -44,6 +45,13 @@ namespace AmbRcnTradeServer.Controllers
         public async Task<ActionResult<List<StockBalanceListItem>>> LoadStockBalanceList(string companyId, long? lotNo, string locationId)
         {
             return await _service.LoadStockBalanceList(companyId, lotNo, locationId);
+        }
+
+        [Authorize]
+        [HttpGet("[action]")]
+        public async Task<ActionResult<Stock>> Create(string companyId)
+        {
+            return await Task.FromResult(new Stock {CompanyId = companyId, StockInDate = DateTime.Today});
         }
     }
 }

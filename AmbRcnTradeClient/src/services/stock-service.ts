@@ -54,6 +54,10 @@ export class StockService extends FetchService {
       ], "loadStockBalanceList", stockBalanceListAction
     );
   }
+
+  public async createStock() {
+    return super.get([super.currentCompanyIdQuery()], "create", stockEditAction);
+  }
 }
 
 
