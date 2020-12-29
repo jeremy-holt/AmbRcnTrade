@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using AmberwoodCore.Extensions;
 using AmbRcnTradeServer.Constants;
-using AmbRcnTradeServer.Models;
 using AmbRcnTradeServer.Models.DictionaryModels;
 using AmbRcnTradeServer.Models.InspectionModels;
 using AutoFixture;
@@ -15,7 +14,6 @@ using Raven.Client.Documents.Session;
 using Tests.Base;
 using Xunit;
 using Xunit.Abstractions;
-using Inspection = AmbRcnTradeServer.Models.InspectionModels.Inspection;
 
 namespace Tests
 {
@@ -80,7 +78,7 @@ namespace Tests
             var prms = new InspectionQueryParams
             {
                 CompanyId = COMPANY_ID,
-                Approved = Approval.Approved,
+                Approved = Approval.Approved
             };
 
             // Act
@@ -139,7 +137,7 @@ namespace Tests
                 TruckPlate = "AA BB CC",
                 Bags = 300,
                 Location = "Bouake warehouse",
-                Analyses = analyses,
+                Analyses = analyses
             };
 
             // Act

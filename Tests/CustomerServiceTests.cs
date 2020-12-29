@@ -22,23 +22,15 @@ namespace Tests
     {
         public CustomerServiceTests(ITestOutputHelper output) : base(output) { }
 
-        [Fact]
-        public async Task Save_ShouldSaveACustomer()
+        private static async Task InitializeIndexes(IDocumentStore store)
         {
-            // Arrange
-            using var store = GetDocumentStore();
-            using var session = store.OpenAsyncSession();
-            ICustomerService sut = GetCustomerService(session);
-            var fixture = new Fixture();
+            await new Customers_ByAppUserId().ExecuteAsync(store);
+            await new Contracts_ByAppUser().ExecuteAsync(store);
+        }
 
-            var customer = fixture.DefaultEntity<Customer>().Create();
-
-            // Act
-            var response = await sut.SaveCustomer(customer);
-
-            // Assert
-            var actual = await session.LoadAsync<Customer>(response.Id);
-            actual.Should().NotBeNull();
+        private ICustomerService GetCustomerService(IAsyncDocumentSession session)
+        {
+            return new CustomerService(session);
         }
 
         [Fact]
@@ -54,7 +46,7 @@ namespace Tests
             await session.StoreAsync(customer);
 
             // Act
-            Customer actual = await sut.LoadCustomer(customer.Id);
+            var actual = await sut.LoadCustomer(customer.Id);
 
             // Assert
             actual.Should().NotBeNull();
@@ -93,7 +85,7 @@ namespace Tests
                 .Create();
             await session.StoreAsync(contract);
             await session.SaveChangesAsync();
-            
+
             WaitForIndexing(store);
 
             // Act
@@ -103,15 +95,23 @@ namespace Tests
             list.Should().OnlyContain(c => c.Id == customerTerraNova.Id);
         }
 
-        private static async Task InitializeIndexes(IDocumentStore store)
+        [Fact]
+        public async Task Save_ShouldSaveACustomer()
         {
-            await new Customers_ByAppUserId().ExecuteAsync(store);
-            await new Contracts_ByAppUser().ExecuteAsync(store);
-        }
+            // Arrange
+            using var store = GetDocumentStore();
+            using var session = store.OpenAsyncSession();
+            var sut = GetCustomerService(session);
+            var fixture = new Fixture();
 
-        private ICustomerService GetCustomerService(IAsyncDocumentSession session)
-        {
-            return new CustomerService(session);
+            var customer = fixture.DefaultEntity<Customer>().Create();
+
+            // Act
+            var response = await sut.SaveCustomer(customer);
+
+            // Assert
+            var actual = await session.LoadAsync<Customer>(response.Id);
+            actual.Should().NotBeNull();
         }
     }
 }

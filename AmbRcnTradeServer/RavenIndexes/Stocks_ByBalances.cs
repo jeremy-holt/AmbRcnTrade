@@ -1,24 +1,15 @@
 ﻿using System.Linq;
+using System.Threading.Tasks;
 using AmbRcnTradeServer.Models.StockModels;
+using Raven.Client.Documents;
 using Raven.Client.Documents.Indexes;
+using Raven.Client.Documents.Linq;
+using Raven.Client.Documents.Session;
 
 namespace AmbRcnTradeServer.RavenIndexes
 {
     public class Stocks_ByBalances : AbstractIndexCreationTask<Stock, Stocks_ByBalances.Result>
     {
-        public class Result
-        {
-            public long LotNo { get; set; }
-            public string CompanyId { get; set; }
-            public string LocationId { get; set; }
-            public double BagsIn { get; set; }
-            public double BagsOut { get; set; }
-            public double WeightKgIn { get; set; }
-            public double WeightKgOut { get; set; }
-            public StockInfo StockIn { get; set; } = new();
-            public StockInfo StockOut { get; set; } = new();
-        }
-
         public Stocks_ByBalances()
         {
             Map = stocks => from c in stocks
@@ -47,7 +38,7 @@ namespace AmbRcnTradeServer.RavenIndexes
                     BagsOut = 0.0,
                     WeightKgOut = 0.0,
                     StockIn = new StockInfo {Bags = grp.Sum(x => x.BagsIn), WeightKg = grp.Sum(x => x.WeightKgIn)},
-                    StockOut = new StockInfo {Bags = grp.Sum(x => x.BagsOut), WeightKg = grp.Sum(x => x.WeightKgOut)},
+                    StockOut = new StockInfo {Bags = grp.Sum(x => x.BagsOut), WeightKg = grp.Sum(x => x.WeightKgOut)}
                 };
 
             Index(x => x.LotNo, FieldIndexing.Default);
@@ -55,6 +46,19 @@ namespace AmbRcnTradeServer.RavenIndexes
             Index(x => x.CompanyId, FieldIndexing.Default);
 
             StoreAllFields(FieldStorage.Yes);
+        }
+
+        public class Result
+        {
+            public long LotNo { get; set; }
+            public string CompanyId { get; set; }
+            public string LocationId { get; set; }
+            public double BagsIn { get; set; }
+            public double BagsOut { get; set; }
+            public double WeightKgIn { get; set; }
+            public double WeightKgOut { get; set; }
+            public StockInfo StockIn { get; set; } = new();
+            public StockInfo StockOut { get; set; } = new();
         }
     }
 }

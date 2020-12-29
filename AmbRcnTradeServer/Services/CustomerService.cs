@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using AmberwoodCore.Extensions;
@@ -114,12 +113,12 @@ namespace AmbRcnTradeServer.Services
                 .ProjectInto<Contracts_ByAppUser.Result>()
                 .ToListAsync();
 
-            var temp=query.Where(c => c.Id.IsNotNullOrEmpty())
+            var temp = query.Where(c => c.Id.IsNotNullOrEmpty())
                 .Select(c => new ListItem(c.CustomerId, c.CustomerName, c.CompanyId))
                 .DistinctBy(c => c.Id)
                 .OrderBy(c => c.Name)
                 .ToList();
-            
+
             return query.Where(c => c.Id.IsNotNullOrEmpty())
                 .Select(c => new ListItem(c.CustomerId, c.CustomerName, c.CompanyId))
                 .DistinctBy(c => c.Id)

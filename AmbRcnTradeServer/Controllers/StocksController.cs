@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using AmberwoodCore.Controllers;
 using AmberwoodCore.Responses;
@@ -9,13 +10,16 @@ using AmbRcnTradeServer.Models.StockModels;
 using AmbRcnTradeServer.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Raven.Client.Documents;
+using Raven.Client.Documents.Linq;
 using Raven.Client.Documents.Session;
 
 namespace AmbRcnTradeServer.Controllers
 {
-    public class StocksController: RavenController
+    public class StocksController : RavenController
     {
         private readonly IStockService _service;
+
         public StocksController(IAsyncDocumentSession session, IStockService service) : base(session)
         {
             _service = service;
@@ -56,7 +60,7 @@ namespace AmbRcnTradeServer.Controllers
             return await Task.FromResult(new Stock
             {
                 CompanyId = companyId, StockInDate = DateTime.Today,
-                AnalysisResult = new Analysis(){Approved = Approval.Rejected}
+                AnalysisResult = new Analysis {Approved = Approval.Rejected}
             });
         }
     }

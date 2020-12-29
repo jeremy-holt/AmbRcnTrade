@@ -22,6 +22,12 @@ namespace Tests
     {
         public ContractServiceTests(ITestOutputHelper output) : base(output) { }
 
+        private static async Task InitializeIndexes(IDocumentStore store)
+        {
+            await new Customers_ByAppUserId().ExecuteAsync(store);
+            await new Contract_ByContainers().ExecuteAsync(store);
+        }
+
         [Fact]
         public async Task Load_ShouldLoadAPurchase()
         {
@@ -84,7 +90,7 @@ namespace Tests
             await session.SaveChangesAsync();
 
             WaitForIndexing(store);
-            
+
             // Act
             var prms = new ContractQueryParameters
             {
@@ -100,12 +106,6 @@ namespace Tests
             actual.ContractDate.Should().Be(contract.ContractDate);
             actual.SellerId.Should().Be(customerTerraNova.Id);
             actual.BuyerId.Should().Be(otherCustomers[0].Id);
-        }
-
-        private static async Task InitializeIndexes(IDocumentStore store)
-        {
-            await new Customers_ByAppUserId().ExecuteAsync(store);
-            await new Contract_ByContainers().ExecuteAsync(store);
         }
 
         [Fact]

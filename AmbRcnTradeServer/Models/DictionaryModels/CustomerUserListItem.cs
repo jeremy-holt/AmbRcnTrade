@@ -11,7 +11,7 @@ namespace AmbRcnTradeServer.Models.DictionaryModels
     {
         public string CustomerId { get; set; }
         public string CustomerName { get; set; }
-        public List<User> Users { get; set; } = new List<User>();
+        public List<User> Users { get; set; } = new();
         public string Name { get; set; }
     }
 }

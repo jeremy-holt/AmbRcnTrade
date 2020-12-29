@@ -23,7 +23,8 @@ namespace AmbRcnTradeServer.Startup_Config
             services.AddScoped<IPortsService, PortsService>();
             services.AddScoped<IPurchaseService, PurchaseService>();
             services.AddScoped<IStockService, StockService>();
-           
+            services.AddScoped<IStockManagementService, StockManagementService>();
+
             Log.Logger.Information("Successfully ran DependencyInjection.Configure()");
         }
     }

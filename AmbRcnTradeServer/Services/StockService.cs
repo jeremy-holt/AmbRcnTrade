@@ -108,7 +108,7 @@ namespace AmbRcnTradeServer.Services
                 query = query.Where(c => c.LocationId == locationId);
 
             var stocks = await query.ToListAsync();
-            
+
             var locations = await _session.LoadListFromMultipleIdsAsync<Customer>(stocks.Select(c => c.LocationId));
             var suppliers = await _session.LoadListFromMultipleIdsAsync<Customer>(stocks.Select(x => x.SupplierId));
 

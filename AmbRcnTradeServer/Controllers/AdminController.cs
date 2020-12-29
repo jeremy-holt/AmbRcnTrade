@@ -52,7 +52,7 @@ namespace AmbRcnTradeServer.Controllers
                 PasswordHash = response.Dto.PasswordHash,
                 Role = response.Dto.Role
             };
-            
+
             return new ServerResponse<AppUser>(appUser, "Saved");
         }
     }

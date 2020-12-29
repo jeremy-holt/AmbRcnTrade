@@ -1,6 +1,5 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
-using AmbRcnTradeServer.Models;
 using AmbRcnTradeServer.Models.DictionaryModels;
 using Raven.Client.Documents;
 using Raven.Client.Documents.Indexes;
@@ -23,7 +22,7 @@ namespace AmbRcnTradeServer.RavenIndexes
                 };
             Index(x => x.CustomerId, FieldIndexing.Default);
             Index(x => x.AppUserId, FieldIndexing.Default);
-            Index(x=>x.CustomerId,FieldIndexing.Default);
+            Index(x => x.CustomerId, FieldIndexing.Default);
 
             StoreAllFields(FieldStorage.Yes);
         }

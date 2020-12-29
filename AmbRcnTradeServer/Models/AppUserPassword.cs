@@ -7,12 +7,12 @@ using Raven.Client.Documents.Session;
 
 namespace AmbRcnTradeServer.Models
 {
-    public class AppUserPassword: IEntity
+    public class AppUserPassword : IEntity
     {
-        public string Id { get; set; }
-        public string Name { get; set; }
         public string Email { get; set; }
         public string Password { get; set; }
         public string AppUserId { get; set; }
+        public string Id { get; set; }
+        public string Name { get; set; }
     }
 }

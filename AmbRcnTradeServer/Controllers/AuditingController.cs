@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using AmberwoodCore.Attributes;
 using AmberwoodCore.Controllers;
 using AmberwoodCore.Responses;
+using AmbRcnTradeServer.Authorization;
 using AmbRcnTradeServer.Models;
 using AmbRcnTradeServer.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -13,22 +14,23 @@ using Raven.Client.Documents.Session;
 
 namespace AmbRcnTradeServer.Controllers
 {
-    public class AuditingController: RavenController
+    public class AuditingController : RavenController
     {
         private readonly IAuditingService _auditingService;
+
         public AuditingController(IAsyncDocumentSession session, IAuditingService auditingService) : base(session)
         {
             _auditingService = auditingService;
         }
 
-        [AuthorizeRoles(Authorization.RoleNames.ADMIN)]
+        [AuthorizeRoles(RoleNames.ADMIN)]
         [HttpGet("[action]")]
         public async Task<List<AuditLog>> LoadList()
         {
             return await _auditingService.LoadList();
         }
 
-        [AuthorizeRoles(Authorization.RoleNames.ADMIN)]
+        [AuthorizeRoles(RoleNames.ADMIN)]
         [HttpPost("[action]")]
         public async Task<ServerResponse> ClearLogs(ClearAuditLogRequest request)
         {

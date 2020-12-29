@@ -8,11 +8,11 @@ using Raven.Client.Documents.Session;
 
 namespace AmbRcnTradeClient
 {
-    public class Program
+  public class Program
+  {
+    public static void Main(string[] args)
     {
-        public static void Main(string[] args)
-        {
-            ProgramInitialization.InitMain<Startup>(args);
-        }
+      ProgramInitialization.InitMain<Startup>(args);
     }
+  }
 }

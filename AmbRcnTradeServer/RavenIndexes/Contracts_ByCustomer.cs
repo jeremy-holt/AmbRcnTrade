@@ -46,7 +46,6 @@ namespace AmbRcnTradeServer.RavenIndexes
         {
             public string CustomerId { get; set; }
             public string CustomerName { get; set; }
-        
-    }
+        }
     }
 }

@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using AmberwoodCore.Controllers;
 using AmberwoodCore.Models;
 using AmberwoodCore.Responses;
-using AmbRcnTradeServer.Models;
 using AmbRcnTradeServer.Models.DictionaryModels;
 using AmbRcnTradeServer.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -15,9 +14,10 @@ using Raven.Client.Documents.Session;
 
 namespace AmbRcnTradeServer.Controllers
 {
-    public class CustomerController: RavenController
+    public class CustomerController : RavenController
     {
         private readonly ICustomerService _customerService;
+
         public CustomerController(IAsyncDocumentSession session, ICustomerService customerService) : base(session)
         {
             _customerService = customerService;
@@ -43,7 +43,7 @@ namespace AmbRcnTradeServer.Controllers
         {
             return await _customerService.LoadCustomerList(companyId);
         }
-        
+
         [Authorize]
         [HttpGet("[action]")]
         public async Task<ActionResult<List<ListItem>>> LoadCustomerListForAppUser(string companyId, string appUserId)

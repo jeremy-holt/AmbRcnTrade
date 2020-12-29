@@ -21,9 +21,9 @@ namespace AmbRcnTradeServer.Controllers
 {
     public class UserController : RavenController
     {
-        private readonly IUserService _service;
         private readonly IAppUserService _appUserService;
         private readonly ICustomerService _customerService;
+        private readonly IUserService _service;
 
         public UserController(IAsyncDocumentSession session, IUserService service, IAppUserService appUserService, ICustomerService customerService) : base(session)
         {
@@ -40,10 +40,10 @@ namespace AmbRcnTradeServer.Controllers
             var list = await _service.GetCompaniesForUser(request.CompanyIds);
             return new ActionResult<List<ListItem>>(list);
         }
-        
+
         [Authorize]
         [HttpGet("[action]")]
-        public async Task<ActionResult<AppUserInfo>>GetCustomersForAppUser(string appUserId)
+        public async Task<ActionResult<AppUserInfo>> GetCustomersForAppUser(string appUserId)
         {
             return await _appUserService.GetCustomersForAppUser(appUserId);
         }

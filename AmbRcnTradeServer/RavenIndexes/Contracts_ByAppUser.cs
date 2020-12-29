@@ -20,9 +20,9 @@ namespace AmbRcnTradeServer.RavenIndexes
                 {
                     c.CompanyId,
                     c.Id,
-                    CustomerId=customer.Id,
+                    CustomerId = customer.Id,
                     Users = customer.Users.Select(x => x.AppUserId),
-                    CustomerName=customer.CompanyName
+                    CustomerName = customer.CompanyName
                 }
             );
             AddMap<Contract>(contracts => from c in contracts
@@ -31,9 +31,9 @@ namespace AmbRcnTradeServer.RavenIndexes
                 {
                     c.CompanyId,
                     c.Id,
-                    CustomerId=customer.Id,
+                    CustomerId = customer.Id,
                     Users = customer.Users.Select(x => x.AppUserId),
-                    CustomerName=customer.CompanyName
+                    CustomerName = customer.CompanyName
                 }
             );
             AddMap<Contract>(contracts => from c in contracts
@@ -42,9 +42,9 @@ namespace AmbRcnTradeServer.RavenIndexes
                 {
                     c.CompanyId,
                     c.Id,
-                    CustomerId=customer.Id,
+                    CustomerId = customer.Id,
                     Users = customer.Users.Select(x => x.AppUserId),
-                    CustomerName=customer.CompanyName
+                    CustomerName = customer.CompanyName
                 }
             );
 

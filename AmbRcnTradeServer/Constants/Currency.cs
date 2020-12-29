@@ -11,6 +11,6 @@ namespace AmbRcnTradeServer.Constants
         USD = 1,
         EUR = 2,
         CFA = 3,
-        GBP = 4,
+        GBP = 4
     }
 }

@@ -80,7 +80,7 @@ namespace AmbRcnTradeServer
             }
 
             app.UseGlobalExceptionMiddleware();
-            
+
             Globalization.Configure(app);
 
             var provider = new FileExtensionContentTypeProvider();
@@ -93,7 +93,7 @@ namespace AmbRcnTradeServer
                 RequestPath = "/locales",
                 ContentTypeProvider = provider
             });
-            
+
             app.UseFileServer(new FileServerOptions {EnableDefaultFiles = true, EnableDirectoryBrowsing = false});
             app.UseRouting();
 
@@ -101,7 +101,7 @@ namespace AmbRcnTradeServer
             app.UseAuthorization();
             app.UseHttpsRedirection();
             SwaggerInitialize.Configure(app);
-            
+
             app.UseEndpoints(endpoints => endpoints.MapDefaultControllerRoute().RequireAuthorization());
 
             Log.Logger.Information("Successfully ran Startup.Configure()");

@@ -1,6 +1,10 @@
 ﻿using System;
-using AmberwoodCore.Models;
+using System.Linq;
+using System.Threading.Tasks;
 using AmbRcnTradeServer.Constants;
+using Raven.Client.Documents;
+using Raven.Client.Documents.Linq;
+using Raven.Client.Documents.Session;
 
 namespace AmbRcnTradeServer.Models
 {
@@ -13,8 +17,8 @@ namespace AmbRcnTradeServer.Models
         public string SellerName { get; set; }
         public string BuyerId { get; set; }
         public string BuyerName { get; set; }
-        public string  BrokerId { get; set; }
-        public string  BrokerName { get; set; }
+        public string BrokerId { get; set; }
+        public string BrokerName { get; set; }
         public string ContainerNumber { get; set; }
         public string VesselName { get; set; }
         public DateTime? VesselEta { get; set; }

@@ -8,7 +8,7 @@ using Raven.Client.Documents.Session;
 
 namespace AmbRcnTradeServer.Models
 {
-    public class AuditLog:IIdentity
+    public class AuditLog : IIdentity
     {
         public DateTime Date { get; set; }
         public string UserRole { get; set; }
@@ -17,7 +17,7 @@ namespace AmbRcnTradeServer.Models
         public string Email { get; set; }
         public string Page { get; set; }
         public string IpAddress { get; set; }
-        public string Id { get; set; }
         public string QueryString { get; set; }
+        public string Id { get; set; }
     }
 }
