@@ -1,3 +1,4 @@
+import { Approval } from "constants/app-constants";
 import { IListItem } from "interfaces/IEntity";
 import { CustomerService } from "./../../services/customer-service";
 import { Router } from "aurelia-router";
@@ -16,6 +17,8 @@ export class StockEdit {
   protected model: IStock = undefined!;
   protected locations: IListItem[] = [];
   protected suppliers: IListItem[] = [];
+  protected approvalChecked: Approval = null;
+
   @observable protected selectedLocation: IListItem = undefined!;
   @observable protected selectedSupplier: IListItem = undefined!;
 

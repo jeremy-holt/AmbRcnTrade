@@ -30,8 +30,6 @@ export class StockService extends FetchService {
   }
 
   public async save(stock: IStock) {
-    stock.stockInDate = fixAspNetCoreDate(stock.stockInDate, false);
-    stock.stockOutDate = fixAspNetCoreDate(stock.stockOutDate, false);
     return super.post<IStock>(stock, "save", stockEditAction);
   }
 
@@ -62,6 +60,9 @@ export class StockService extends FetchService {
 
 
 export function stockEditAction(state: IState, stock: IStock) {
+  stock.stockInDate = fixAspNetCoreDate(stock.stockInDate, false);
+  stock.stockOutDate = fixAspNetCoreDate(stock.stockOutDate, false);
+
   const newState = _.cloneDeep(state);
   newState.stock.current = stock;
   return newState;

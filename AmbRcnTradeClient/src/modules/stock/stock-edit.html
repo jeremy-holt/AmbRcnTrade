@@ -7,42 +7,43 @@
 
   <div class="row">
     <div class="col">
+      <select-input source.bind="locations" value.bind="selectedLocation" label="Stock location"
+        matcher.bind="listItemMatcher"></select-input>
+    </div>
+    <div class="col">
+      <select-input source.bind="suppliers" value.bind="selectedSupplier" label="Supplier"
+        matcher.bind="listItemMatcher"></select-input>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col">
       <date-input value.bind="model.stockInDate" label="Date IN"></date-input>
     </div>
     <div class="col">
       <date-input value.bind="model.stockOutDate" label="Date OUT"></date-input>
     </div>
-
-    <div class="row">
-      <div class="col">
-        <select-input source.bind="locations" value.bind="selectedLocation" label="Stock location"
-          matcher.bind="listItemMatcher"></select-input>
-      </div>
-      <div class="col">
-        <select-input source.bind="suppliers" value.bind="selectedSupplier" label="Supplier"
-          matcher.bind="listItemMatcher"></select-input>
-      </div>
-    </div>
-
-    <div class="row">
-      <div class="col">
-        <text-input value.bind="model.origin" label="Origin"></text-input>
-      </div>
-      <div class="col">
-        <div>${model.lotNo}</div>
-      </div>
-    </div>
-
-    <div class="row">
-      <div class="col">
-        <number-input value.bind="model.bags" label="Number bags"></number-input>
-      </div>
-      <div class="col">
-        <number-input value.bind="model.weightKg" label="Weight (kg)"></number-input>
-      </div>
-    </div>
-
-    <analysis-result model.bind="model.analysisResult"></analysis-result>
-
   </div>
+
+  <div class="row">
+    <div class="col">
+      <text-input value.bind="model.origin" label="Origin"></text-input>
+    </div>
+    <div class="col">
+      <div>${model.lotNo}</div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col">
+      <number-input value.bind="model.bags" label="Number bags"></number-input>
+    </div>
+    <div class="col">
+      <number-input value.bind="model.weightKg" label="Weight (kg)"></number-input>
+    </div>
+  </div>
+
+  <analysis-result model.bind="model.analysisResult" approval-checked.bind="approvalChecked"></analysis-result>
+
+
 </template>

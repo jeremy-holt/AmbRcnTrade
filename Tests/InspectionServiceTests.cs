@@ -54,16 +54,24 @@ namespace Tests
             var customer = fixture.DefaultEntity<Customer>().Create();
             await session.StoreAsync(customer);
 
-            var analysisResult = fixture.Build<Analysis>()
+            var analysisResult1 = fixture.Build<Analysis>()
                 .With(c => c.Approved, Approval.Approved)
+                .Create();
+            var analysisResult2 = fixture.Build<Analysis>()
+                .With(c => c.Approved, Approval.Approved)
+                .Create();
+            var analysisResult3 = fixture.Build<Analysis>()
+                .With(c => c.Approved, Approval.Rejected)
                 .Create();
 
             var inspections = fixture.DefaultEntity<Inspection>()
-                .With(c => c.AnalysisResult,analysisResult)
+                .Without(c => c.AnalysisResult)
                 .With(c => c.SupplierId, customer.Id)
                 .CreateMany()
                 .ToList();
-            inspections[2].AnalysisResult.Approved = Approval.Rejected;
+            inspections[0].AnalysisResult = analysisResult1;
+            inspections[1].AnalysisResult = analysisResult2;
+            inspections[2].AnalysisResult = analysisResult3;
 
             await inspections.SaveList(session);
             await session.SaveChangesAsync();

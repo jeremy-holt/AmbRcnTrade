@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using AmberwoodCore.Controllers;
 using AmberwoodCore.Responses;
+using AmbRcnTradeServer.Constants;
+using AmbRcnTradeServer.Models.InspectionModels;
 using AmbRcnTradeServer.Models.StockModels;
 using AmbRcnTradeServer.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -51,7 +53,11 @@ namespace AmbRcnTradeServer.Controllers
         [HttpGet("[action]")]
         public async Task<ActionResult<Stock>> Create(string companyId)
         {
-            return await Task.FromResult(new Stock {CompanyId = companyId, StockInDate = DateTime.Today});
+            return await Task.FromResult(new Stock
+            {
+                CompanyId = companyId, StockInDate = DateTime.Today,
+                AnalysisResult = new Analysis(){Approved = Approval.Rejected}
+            });
         }
     }
 }

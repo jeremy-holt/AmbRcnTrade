@@ -31,7 +31,6 @@ export class InspectionService extends FetchService {
   }
 
   public async save(model: IInspection) {
-
     model.inspectionDate = fixAspNetCoreDate(model.inspectionDate, false);
 
     return super.post(model, "save", inspectionEditAction);
