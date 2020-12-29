@@ -40,7 +40,7 @@ namespace AmbRcnTradeServer.Controllers
 
         [Authorize]
         [HttpGet("[action]")]
-        public async Task<ActionResult<List<InspectionListItem>>> LoadList(string companyId, Approval approval)
+        public async Task<ActionResult<List<InspectionListItem>>> LoadList(string companyId, Approval? approval)
         {
             var prms = new InspectionQueryParams {CompanyId = companyId, Approved = approval};
             return await _service.LoadList(prms);

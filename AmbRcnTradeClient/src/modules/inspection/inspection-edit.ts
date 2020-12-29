@@ -19,7 +19,7 @@ export class InspectionEdit {
   public approvalList = APPROVAL_LIST;
   @observable selectedApproval = APPROVAL_LIST[0];
   protected suppliers: IListItem[] = [];
-  protected showAnalyses = false;
+  protected showAnalyses = true;
   @observable protected selectedSupplier: IListItem = undefined!;
   @observable protected approvalChecked = false;
   protected approvalLabel = this.selectedApproval.name;

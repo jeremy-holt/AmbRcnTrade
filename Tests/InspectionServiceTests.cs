@@ -74,7 +74,7 @@ namespace Tests
             // Act
             var list = await sut.LoadList(prms);
 
-            var actual = list.Single(c => c.InspectionId == inspections[0].Id);
+            var actual = list.Single(c => c.Id == inspections[0].Id);
             var expected = inspections[0];
 
             // Assert
@@ -89,7 +89,10 @@ namespace Tests
             actual.TruckPlate.Should().Be(expected.TruckPlate);
             actual.SupplierName.Should().Be(customer.Name);
             actual.SupplierId.Should().Be(customer.Id);
-
+            actual.Kor.Should().BeGreaterThan(0);
+            actual.Count.Should().BeGreaterThan(0);
+            actual.Moisture.Should().BeGreaterThan(0);
+            actual.RejectsPct.Should().BeGreaterThan(0);
         }
 
         [Fact]

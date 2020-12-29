@@ -55,10 +55,14 @@ namespace AmbRcnTradeServer.Services
                     Inspector = c.Inspector,
                     InspectionDate = c.InspectionDate,
                     Location = c.Location,
-                    InspectionId = c.Id,
+                    Id = c.Id,
                     LotNo = c.LotNo,
                     TruckPlate = c.TruckPlate,
-                    SupplierId = c.SupplierId
+                    SupplierId = c.SupplierId,
+                    Kor=c.AnalysisResult.Kor,
+                    Count = c.AnalysisResult.Count,
+                    Moisture = c.AnalysisResult.Moisture,
+                    RejectsPct = c.AnalysisResult.RejectsPct
                 })
                 .ToListAsync();
 
