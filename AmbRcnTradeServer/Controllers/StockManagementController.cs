@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using AmberwoodCore.Controllers;
 using AmberwoodCore.Responses;
@@ -35,20 +34,5 @@ namespace AmbRcnTradeServer.Controllers
         {
             return await _service.RemoveInspectionFromStock(request.InspectionId, request.StockId);
         }
-    }
-
-    public class RemoveInspectionFromStockRequest
-    {
-        public string StockId { get; set; }
-        public string InspectionId { get; set; }
-    }
-
-    public class MoveInspectionToStockRequest
-    {
-        public string InspectionId { get; set; }
-        public double Bags { get; set; }
-        public DateTime Date { get; set; }
-        public string LocationId { get; set; }
-        public string StockId { get; set; }
     }
 }

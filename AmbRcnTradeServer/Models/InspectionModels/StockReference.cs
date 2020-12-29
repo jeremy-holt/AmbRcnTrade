@@ -4,7 +4,7 @@ using Raven.Client.Documents;
 using Raven.Client.Documents.Linq;
 using Raven.Client.Documents.Session;
 
-namespace AmbRcnTradeServer.Models.StockManagementModels
+namespace AmbRcnTradeServer.Models.InspectionModels
 {
     public class StockReference
     {

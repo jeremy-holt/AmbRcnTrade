@@ -1,3 +1,6 @@
+import { IRemoveInspectionFromStockRequest } from "./../../interfaces/stockManagement/IRemoveInspectionFromStockRequest";
+import { IMoveInspectionToStockRequest } from "./../../interfaces/stockManagement/IMoveInspectionToStockRequest";
+import { StockManagementService } from "./../../services/stock-management-service";
 import { autoinject, observable } from "aurelia-framework";
 import { connectTo } from "aurelia-store";
 import { Approval } from "constants/app-constants";
@@ -23,7 +26,8 @@ export class InspectionEdit {
 
   constructor(
     private inspectionService: InspectionService,
-    private customerService: CustomerService
+    private customerService: CustomerService,
+    private stockManagementService: StockManagementService
   ) { }
 
   protected stateChanged(state: IState) {
@@ -54,6 +58,14 @@ export class InspectionEdit {
     if (this.model) {
       this.model.supplierId = this.selectedSupplier?.id;
     }
+  }
+
+  protected async moveInspectionToStock(request: IMoveInspectionToStockRequest) {
+    return await this.stockManagementService.moveInspectionToStock(request);
+  }
+
+  protected async removeInspectionFromStock(request: IRemoveInspectionFromStockRequest) {
+    return await this.stockManagementService.removeInspectionFromStock(request);
   }
 
   protected get canSave() {
@@ -93,7 +105,7 @@ export class InspectionEdit {
       this.approvalChecked = false;
     }
   }
-  
+
   protected calc() {
     if (this.model.analysisResult) {
       this.model.analysisResult = this.inspectionService.getAnalysisResult(this.model.analyses, this.model.analysisResult.approved);
