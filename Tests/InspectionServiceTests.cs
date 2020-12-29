@@ -78,7 +78,7 @@ namespace Tests
             var expected = inspections[0];
 
             // Assert
-            list.Should().OnlyContain(c => c.Approved == prms.Approved);
+            list.Should().Contain(c => c.Approved == prms.Approved);
             list.Should().BeInDescendingOrder(c => c.InspectionDate);
 
             actual.LotNo.Should().Be(expected.LotNo);
@@ -89,6 +89,7 @@ namespace Tests
             actual.TruckPlate.Should().Be(expected.TruckPlate);
             actual.SupplierName.Should().Be(customer.Name);
             actual.SupplierId.Should().Be(customer.Id);
+
         }
 
         [Fact]
@@ -105,9 +106,9 @@ namespace Tests
                 {
                     Count = 180,
                     Moisture = 10,
-                    Rejects = 4.5,
-                    Sound = 65,
-                    Spotted = 7,
+                    RejectsPct = 4.5,
+                    SoundPct = 65,
+                    SpottedPct = 7,
                     Kor = 47,
                     Approved = Approval.Approved
                 }
@@ -133,72 +134,6 @@ namespace Tests
             // Assert
             var actual = await session.LoadAsync<Inspection>(response.Id);
             actual.Should().NotBeNull();
-        }
-
-        [Fact]
-        public async Task Save_ShouldCalculateAnalysisResultFromTests()
-        {
-            // Arrange
-            using var store = GetDocumentStore();
-            using var session = store.OpenAsyncSession();
-            var sut = GetInspectionService(session);
-            var fixture = new Fixture();
-
-            var analyses = new List<Analysis>
-            {
-                new()
-                {
-                    Bags = 100,
-                    Count = 200,
-                    Moisture = 10,
-                    Rejects = 10,
-                    Sound = 60,
-                    Spotted = 10,
-                    Kor = 50,
-                    Approved = Approval.Approved
-                },
-                new()
-                {
-                    Bags = 100,
-                    Count = 220,
-                    Moisture = 14,
-                    Rejects = 14,
-                    Sound = 70,
-                    Spotted = 14,
-                    Kor = 54,
-                    Approved = Approval.Approved
-                },
-                new()
-                {
-                    Bags = 999,
-                    Count = 999,
-                    Moisture = 999,
-                    Rejects = 999,
-                    Sound = 999,
-                    Spotted = 999,
-                    Kor = 999,
-                    Approved = Approval.Rejected
-                },
-            };
-
-            var inspection = fixture.DefaultEntity<Inspection>()
-                .With(c => c.Analyses, analyses)
-                .Without(c => c.AnalysisResult)
-                .With(c => c.Bags, 300)
-                .Create();
-
-            // Act
-            var response = await sut.Save(inspection);
-            
-            var actual = await sut.Load(inspection.Id);
-
-            // Assert
-            actual.AnalysisResult.Count.Should().Be(210);
-            actual.AnalysisResult.Moisture.Should().Be(12);
-            actual.AnalysisResult.Rejects.Should().Be(12);
-            actual.AnalysisResult.Sound.Should().Be(65);
-            actual.AnalysisResult.Spotted.Should().Be(12);
-            actual.AnalysisResult.Kor.Should().Be(52);
         }
     }
 }

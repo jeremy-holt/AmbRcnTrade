@@ -1,5 +1,5 @@
 export type Lazy<T> = () => T;
-export type Fn<T, U> = (t: T) => U;
+export type Fn<T, TU> = (t: T) => TU;
 export type Predicate = (e: unknown) => boolean;
 // export type ById1<T> = { [key: string]: T }
 

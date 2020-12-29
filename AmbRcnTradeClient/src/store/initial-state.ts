@@ -92,10 +92,13 @@ export const initialState: IState = {
         count: 0,
         moisture: 0,
         kor: 0,
-        sound: 0,
-        rejects: 0,
+        soundGm: 0,
+        rejectsGm: 0,
         approved: Approval.Rejected,
-        spotted: 0,
+        spottedGm: 0,
+        soundPct: undefined!,
+        spottedPct: undefined!,
+        rejectsPct: undefined!,
         bags: 0
       }
     },

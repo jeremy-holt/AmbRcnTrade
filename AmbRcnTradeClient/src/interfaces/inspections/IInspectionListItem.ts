@@ -7,8 +7,7 @@ export interface IInspectionListItem {
     location: string;
     lotNo: string;
     inspector: string;
-    bags: number;
-    approxWeight: number;
+    bags: number;    
     truckPlate: string;
     supplierName: string;
     supplierId: string;

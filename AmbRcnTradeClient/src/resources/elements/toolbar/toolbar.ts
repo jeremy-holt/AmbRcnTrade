@@ -10,7 +10,7 @@ export class Toolbar {
   @bindable public caption: string = undefined!;
   @bindable public listRoute: string = undefined!;
   @bindable public showLogin = true;
-  @bindable public save: () => any = undefined!;
+  @bindable public save: () => Promise<void> = undefined!;
   @bindable({ defaultBindingMode: bindingMode.twoWay }) public disabledSave = false;
 
   constructor(

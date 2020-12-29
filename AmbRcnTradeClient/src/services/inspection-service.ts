@@ -31,7 +31,6 @@ export class InspectionService extends FetchService {
   }
 
   public async save(model: IInspection) {
-    // model.analysisResult = this.zeroAnalysisResult(model.analysisResult);
 
     model.inspectionDate = fixAspNetCoreDate(model.inspectionDate, false);
 
@@ -58,11 +57,11 @@ export class InspectionService extends FetchService {
     list.forEach(item => {
       item.kor = this.calcKor(item);
 
-      const { sound, spotted, rejects } = this.calcPercentages(item);
-      
-      item.sound = sound;
-      item.spotted = spotted;
-      item.rejects = rejects;
+      const { soundPct, spottedPct, rejectsPct } = this.calcPercentages(item);
+
+      item.soundPct = soundPct;
+      item.spottedPct = spottedPct;
+      item.rejectsPct = rejectsPct;
 
       array.push(
         {
@@ -70,9 +69,12 @@ export class InspectionService extends FetchService {
           count: this.calcAverageResult(item, c => c.count),
           moisture: this.calcAverageResult(item, c => c.moisture),
           kor: this.calcAverageResult(item, c => c.kor),
-          sound: this.calcAverageResult(item, c => c.sound),
-          rejects: this.calcAverageResult(item, c => c.rejects),
-          spotted: this.calcAverageResult(item, c => c.spotted),
+          soundPct: this.calcAverageResult(item, c => c.soundPct),
+          rejectsPct: this.calcAverageResult(item, c => c.rejectsPct),
+          spottedPct: this.calcAverageResult(item, c => c.spottedPct),
+          soundGm: 0,
+          rejectsGm: 0,
+          spottedGm: 0,
           approved
         });
     });
@@ -82,9 +84,12 @@ export class InspectionService extends FetchService {
       count: this.sumAnalysisResult(array, c => c.count) / bags,
       moisture: this.sumAnalysisResult(array, c => c.moisture) / bags,
       kor: this.sumAnalysisResult(array, c => c.kor) / bags,
-      sound: this.sumAnalysisResult(array, c => c.sound) / bags,
-      rejects: this.sumAnalysisResult(array, c => c.rejects) / bags,
-      spotted: this.sumAnalysisResult(array, c => c.spotted) / bags,
+      soundPct: this.sumAnalysisResult(array, c => c.soundPct) / bags,
+      rejectsPct: this.sumAnalysisResult(array, c => c.rejectsPct) / bags,
+      spottedPct: this.sumAnalysisResult(array, c => c.spottedPct) / bags,
+      soundGm: 0,
+      rejectsGm: 0,
+      spottedGm: 0,
       approved
     };
 
@@ -100,26 +105,26 @@ export class InspectionService extends FetchService {
   }
 
   private calcKor(analysis: IAnalysis): number {
-    if (analysis.sound && analysis.spotted) {
-      return (((analysis.spotted / 2) + analysis.sound) * 80 * 2.20462 / 1000) || 0;
+    if (analysis.soundGm && analysis.spottedGm) {
+      return (((analysis.spottedGm / 2) + analysis.soundGm) * 80 * 2.20462 / 1000) || 0;
     }
     return 0;
   }
 
   private calcPercentages(analysis: IAnalysis) {
-    const total = (analysis?.sound || 0) + (analysis?.spotted || 0) + (analysis?.rejects || 0);
+    const total = (analysis?.soundGm || 0) + (analysis?.spottedGm || 0) + (analysis?.rejectsGm || 0);
     if (total === 0) {
       return {
-        sound: 0,
-        spotted: 0,
-        rejects: 0
+        soundPct: 0,
+        spottedPct: 0,
+        rejectsPct: 0
       };
     }
 
     return {
-      sound: (analysis?.sound || 0) / total,
-      spotted: (analysis?.spotted || 0) / total,
-      rejects: (analysis?.rejects || 0) / total
+      soundPct: (analysis?.soundGm || 0) / total,
+      spottedPct: (analysis?.spottedGm || 0) / total,
+      rejectsPct: (analysis?.rejectsGm || 0) / total
     };
   }
 

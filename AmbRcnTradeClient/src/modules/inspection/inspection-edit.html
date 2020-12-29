@@ -1,5 +1,5 @@
 <template>
-  <toolbar caption="Inspection" disabled-save.bind="!canSave" save.call="save()"></toolbar>
+  <toolbar caption="Inspection" list-route="inspectionList" disabled-save.bind="!canSave" save.call="save()"></toolbar>
 
   <debug-console model.bind="model"></debug-console>
 
@@ -46,7 +46,7 @@
 
       <div class="row">
         <div class="col small">
-          <h5>Summary of analyses</h5>
+          <h5>Average of analyses</h5>
           <table class="table table-sm table-bordered">
             <thead>
               <th>Name</th>
@@ -67,15 +67,15 @@
               </tr>
               <tr>
                 <td>Spotted</td>
-                <td>${model.analysisResult.spotted/100 | numberFormat: "0.00%"}</td>
+                <td>${model.analysisResult.spottedPct | numberFormat: "0.00%"}</td>
               </tr>
               <tr>
                 <td>Sound</td>
-                <td>${model.analysisResult.sound/100 | numberFormat: "0.00%"}</td>
+                <td>${model.analysisResult.soundPct | numberFormat: "0.00%"}</td>
               </tr>
               <tr>
                 <td>Rejects</td>
-                <td>${model.analysisResult.rejects/100 | numberFormat: "0.00%"}</td>
+                <td>${model.analysisResult.rejectsPct | numberFormat: "0.00%"}</td>
               </tr>
             </tbody>
             <tfoot>
@@ -102,31 +102,31 @@
         <li class="border-bottom py-4" repeat.for="item of model.analyses">
           <div class="row">
             <div class="col-6">
-              <number-input value.bind="item.bags" label="Bags" change.delegate="calc()" ></number-input>
+              <number-input value.bind="item.bags" label="Bags" change.delegate="calc()"></number-input>
             </div>
             <div class="col">
-              <number-input value.bind="item.moisture" label="Moisture %"  change.delegate="calc()"></number-input>
+              <number-input value.bind="item.moisture" label="Moisture %" change.delegate="calc()"></number-input>
             </div>
           </div>
           <div class="row">
             <div class="col-6">
-              <number-input value.bind="item.spotted" label="Spotted"  change.delegate="calc()"></number-input>
+              <number-input value.bind="item.spottedGm" label="Spotted (gms)" change.delegate="calc()"></number-input>
             </div>
             <div class="col">
-              <number-input value.bind="item.sound" label="Sound" change.delegate="calc()"></number-input>
+              <number-input value.bind="item.soundGm" label="Sound (gms)" change.delegate="calc()"></number-input>
             </div>
           </div>
           <div class="row">
             <div class="col-6">
-              <number-input value.bind="item.rejects" label="Rejects" change.delegate="calc()"></number-input>
+              <number-input value.bind="item.rejectsGm" label="Rejects (gms)" change.delegate="calc()"></number-input>
             </div>
-            <div class="col">
-              <number-input value.bind="item.kor" label="KOR" change.delegate="calc()"></number-input>
-            </div>
-          </div>
-          <div class="row">
             <div class="col-6">
               <number-input value.bind="item.count" label="Count" change.delegate="calc()"></number-input>
+            </div>
+          </div>
+          <div class="row mt-2">
+            <div class="col">
+              <h5>KOR ${item.kor | numberFormat: "0,0.00"}</h5>
             </div>
           </div>
 

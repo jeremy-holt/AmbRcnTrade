@@ -66,9 +66,9 @@ namespace AmbRcnTradeServer.Services
                 Count = CalculateAnalysisResult(stock.Inspections, c => c.Count),
                 Kor = CalculateAnalysisResult(stock.Inspections, c => c.Kor),
                 Moisture = CalculateAnalysisResult(stock.Inspections, c => c.Moisture),
-                Rejects = CalculateAnalysisResult(stock.Inspections, c => c.Rejects),
-                Sound = CalculateAnalysisResult(stock.Inspections, c => c.Sound),
-                Spotted = CalculateAnalysisResult(stock.Inspections, c => c.Spotted)
+                RejectsPct = CalculateAnalysisResult(stock.Inspections, c => c.RejectsPct),
+                SoundPct = CalculateAnalysisResult(stock.Inspections, c => c.SoundPct),
+                SpottedPct = CalculateAnalysisResult(stock.Inspections, c => c.SpottedPct)
             };
 
 

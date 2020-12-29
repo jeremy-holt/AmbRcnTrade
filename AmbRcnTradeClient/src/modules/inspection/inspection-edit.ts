@@ -33,42 +33,10 @@ export class InspectionEdit {
     this.model = _.cloneDeep(state.inspection.current);
     this.suppliers = _.cloneDeep(state.userFilteredCustomers);
     this.suppliers.unshift({ id: null, name: "[Select]" } as IListItem);
-
-    // if (this.model && !this.model?.inspectionDate) {
-    //   this.model.inspectionDate = moment().format(DATEFORMAT);
-    // }
-
-    // if (this.model && !this.model.analysisResult) {
-    //   this.model.analysisResult = {} as IAnalysis;
-    // }
-
-    // if (this.model) {
-    //   this.model.inspectionDate ?? moment().format(DATEFORMAT);
-    //   this.model.analysisResult ?? {} as IAnalysis;
-    //   this.model.analyses ?? [];
-    // }
-
-    // if (this.model.analysisResult === undefined) {
-    //   this.model = {
-    //     inspectionDate: moment().format(DATEFORMAT),
-    //     analysisResult: {} as IAnalysis,
-    //     analyses: []
-    //   } as IInspection;
-    // }
-    // console.log(this.model);
   }
 
   protected async activate(params: IParamsId) {
     await this.customerService.loadCustomersForAppUserList();
-    // if (params?.id) {
-    //   await this.inspectionService.load(params.id);
-    // } else {
-    //   this.model = {
-    //     analyses: [],
-    //     analysisResult: {} as IAnalysis,
-    //   } as IInspection;
-    //   console.log(this.model);
-    // }
 
     if (params?.id) {
       await this.inspectionService.load(params.id);
@@ -116,14 +84,14 @@ export class InspectionEdit {
   protected get canSaveAnalysis() {
     return this.model && !this.model.analyses.some(
       c => c.count === undefined! || c.bags === undefined ||
-        c.moisture === undefined || c.sound === undefined ||
-        c.rejects === undefined || c.spotted === undefined ||
+        c.moisture === undefined || c.soundGm === undefined ||
+        c.rejectsGm === undefined || c.spottedGm === undefined ||
         c.kor === undefined);
 
   }
 
   protected get canAddAnalysis() {
-    return this.model?.inspectionDate && this.model?.inspector && this.model?.bags > 0;
+    return this.model?.inspectionDate && this.model?.inspector && this.model?.bags > 0 && this.canSaveAnalysis;
   }
 
   protected addAnalysis() {
@@ -137,6 +105,10 @@ export class InspectionEdit {
   protected removeRow(index: number) {
     this.model.analyses.splice(index, 1);
     this.calc();
+
+    if (this.model.analyses.length === 0) {
+      this.approvalChecked = false;
+    }
   }
 
   protected calc() {

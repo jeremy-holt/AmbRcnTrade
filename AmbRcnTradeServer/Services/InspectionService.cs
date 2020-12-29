@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AmberwoodCore.Responses;
-using AmbRcnTradeServer.Constants;
 using AmbRcnTradeServer.Models.DictionaryModels;
 using AmbRcnTradeServer.Models.InspectionModels;
 using Raven.Client.Documents;
@@ -30,17 +28,6 @@ namespace AmbRcnTradeServer.Services
 
         public async Task<ServerResponse<Inspection>> Save(Inspection inspection)
         {
-            inspection.AnalysisResult = new Analysis
-            {
-                Bags = CalculateAverageValue(inspection.Analyses, c => c.Bags),
-                Count = CalculateAverageValue(inspection.Analyses, c => c.Count),
-                Kor = CalculateAverageValue(inspection.Analyses, c => c.Kor),
-                Moisture = CalculateAverageValue(inspection.Analyses, c => c.Moisture),
-                Rejects = CalculateAverageValue(inspection.Analyses, c => c.Rejects),
-                Sound = CalculateAverageValue(inspection.Analyses, c => c.Sound),
-                Spotted = CalculateAverageValue(inspection.Analyses, c => c.Spotted)
-            };
-
             await _session.StoreAsync(inspection);
             return new ServerResponse<Inspection>(inspection, "Saved");
         }
@@ -83,16 +70,6 @@ namespace AmbRcnTradeServer.Services
             }
 
             return list;
-        }
-
-        private static double CalculateAverageValue(List<Analysis> list, Func<Analysis, double> field)
-        {
-            var bags = list.Sum(c => c.Bags);
-            
-            if (bags == 0)
-                return 0;
-            
-            return list.Sum(c => c.Bags * field(c)) / bags;
         }
     }
 }
