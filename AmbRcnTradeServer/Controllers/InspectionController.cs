@@ -50,7 +50,14 @@ namespace AmbRcnTradeServer.Controllers
         [HttpGet("[action]")]
         public async Task<ActionResult<Inspection>> Create()
         {
-            return await Task.FromResult(new Inspection {InspectionDate = DateTime.Today, Approved = Approval.Rejected});
+            return await Task.FromResult(new Inspection
+            {
+                InspectionDate = DateTime.Today, 
+                AnalysisResult = new Analysis
+                {
+                    Approved = Approval.Rejected
+                }
+            });
         }
     }
 }

@@ -44,13 +44,13 @@ namespace AmbRcnTradeServer.Services
 
             if (prms.Approved != null)
             {
-                query = query.Where(c => c.Approved == prms.Approved);
+                query = query.Where(c => c.AnalysisResult.Approved == prms.Approved);
             }
 
             var list = await query.OrderByDescending(c => c.InspectionDate)
                 .Select(c => new InspectionListItem
                 {
-                    Approved = c.Approved,
+                    Approved = c.AnalysisResult.Approved,
                     Bags = c.Bags,
                     Inspector = c.Inspector,
                     InspectionDate = c.InspectionDate,
@@ -59,7 +59,7 @@ namespace AmbRcnTradeServer.Services
                     LotNo = c.LotNo,
                     TruckPlate = c.TruckPlate,
                     SupplierId = c.SupplierId,
-                    Kor=c.AnalysisResult.Kor,
+                    Kor = c.AnalysisResult.Kor,
                     Count = c.AnalysisResult.Count,
                     Moisture = c.AnalysisResult.Moisture,
                     RejectsPct = c.AnalysisResult.RejectsPct

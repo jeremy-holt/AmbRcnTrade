@@ -85,8 +85,7 @@ export const initialState: IState = {
       id: undefined!,
       name: undefined!,
       companyId: undefined!,
-      analyses: [],
-      approved: undefined!,
+      analyses: [],      
       supplierId: undefined!,
       analysisResult: {
         count: 0,

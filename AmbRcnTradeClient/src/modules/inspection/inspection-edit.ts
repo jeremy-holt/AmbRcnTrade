@@ -16,13 +16,14 @@ import { InspectionService } from "./../../services/inspection-service";
 export class InspectionEdit {
   @observable protected state: IState;
   public model: IInspection = undefined!;
+
   public approvalList = APPROVAL_LIST;
   @observable selectedApproval = APPROVAL_LIST[0];
-  protected suppliers: IListItem[] = [];
-  protected showAnalyses = true;
-  @observable protected selectedSupplier: IListItem = undefined!;
   @observable protected approvalChecked = false;
   protected approvalLabel = this.selectedApproval.name;
+
+  protected suppliers: IListItem[] = [];
+  @observable protected selectedSupplier: IListItem = undefined!;
 
   constructor(
     private inspectionService: InspectionService,
@@ -33,6 +34,10 @@ export class InspectionEdit {
     this.model = _.cloneDeep(state.inspection.current);
     this.suppliers = _.cloneDeep(state.userFilteredCustomers);
     this.suppliers.unshift({ id: null, name: "[Select]" } as IListItem);
+
+    if (this.model) {
+      this.approvalChecked = this.model?.analysisResult.approved === Approval.Approved;
+    }
   }
 
   protected async activate(params: IParamsId) {
@@ -52,7 +57,7 @@ export class InspectionEdit {
 
   protected get approvalCss() {
     if (this.selectedApproval) {
-      return this.selectedApproval.id === Approval.Approved ? "bg-success rounded" : "bg-danger text-white rounded";
+      return this.selectedApproval.id === Approval.Approved ? "text-white rounded px-2 bg-success" : "text-white rounded px-2 bg-danger";
     }
   }
 
@@ -61,8 +66,8 @@ export class InspectionEdit {
   }
 
   protected selectedApprovalChanged() {
-    if (this.model) {
-      this.model.approved = this.selectedApproval.id;
+    if (this.model?.analysisResult) {
+      this.model.analysisResult.approved = this.selectedApproval.id;
     }
   }
   protected selectedSupplierChanged() {
@@ -98,8 +103,6 @@ export class InspectionEdit {
     this.model.analyses.push({
       approved: Approval.Rejected
     } as IAnalysis);
-
-    this.showAnalyses = true;
   }
 
   protected removeRow(index: number) {
@@ -115,14 +118,6 @@ export class InspectionEdit {
     if (this.model.analysisResult) {
       this.model.analysisResult = this.inspectionService.getAnalysisResult(this.model.analyses, this.model.analysisResult.approved);
     }
-  }
-
-  protected showHideAnalysis() {
-    this.showAnalyses = !this.showAnalyses;
-  }
-
-  protected get showAnalysesCaption() {
-    return this.showAnalyses ? "Hide analyses" : "Show analysis";
   }
 
   protected listItemMatcher = (a: IListItem, b: IListItem) => a?.id === b?.id;

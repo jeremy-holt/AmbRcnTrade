@@ -17,7 +17,6 @@ namespace AmbRcnTradeServer.Models.InspectionModels
         public string Name { get; set; }
         public string CompanyId { get; set; }
         public List<Analysis> Analyses { get; init; } = new();
-        public Approval Approved { get; set; }
         public string SupplierId { get; set; }
         public Analysis AnalysisResult { get; set; } = new();
     }

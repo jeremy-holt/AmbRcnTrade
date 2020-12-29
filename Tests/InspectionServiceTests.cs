@@ -54,12 +54,16 @@ namespace Tests
             var customer = fixture.DefaultEntity<Customer>().Create();
             await session.StoreAsync(customer);
 
-            var inspections = fixture.DefaultEntity<Inspection>()
+            var analysisResult = fixture.Build<Analysis>()
                 .With(c => c.Approved, Approval.Approved)
+                .Create();
+
+            var inspections = fixture.DefaultEntity<Inspection>()
+                .With(c => c.AnalysisResult,analysisResult)
                 .With(c => c.SupplierId, customer.Id)
                 .CreateMany()
                 .ToList();
-            inspections[2].Approved = Approval.Rejected;
+            inspections[2].AnalysisResult.Approved = Approval.Rejected;
 
             await inspections.SaveList(session);
             await session.SaveChangesAsync();
@@ -84,7 +88,7 @@ namespace Tests
             actual.LotNo.Should().Be(expected.LotNo);
             actual.Inspector.Should().Be(expected.Inspector);
             actual.Bags.Should().Be(expected.Bags);
-            actual.Approved.Should().Be(expected.Approved);
+            actual.Approved.Should().Be(expected.AnalysisResult.Approved);
             actual.Location.Should().Be(expected.Location);
             actual.TruckPlate.Should().Be(expected.TruckPlate);
             actual.SupplierName.Should().Be(customer.Name);
@@ -128,7 +132,6 @@ namespace Tests
                 Bags = 300,
                 Location = "Bouake warehouse",
                 Analyses = analyses,
-                Approved = Approval.Approved
             };
 
             // Act

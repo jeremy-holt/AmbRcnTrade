@@ -1,14 +1,14 @@
 <template>
-  <toolbar caption="Inspection" list-route="inspectionList" disabled-save.bind="!canSave" save.call="save()"></toolbar>
-
-  <debug-console model.bind="model"></debug-console>
+  <toolbar caption="Inspection" list-route="inspectionList" disabled-save.bind="!canSave" save.call="save()">
+    <toolbar-item icon="fas fa-plus" click.call="addAnalysis()" disabled.bind="!canAddAnalysis"></toolbar-item>
+  </toolbar>
 
   <div class="card">
     <div class="card-header">
       <h4>Inspection</h4>
       <h1>${model.name}</h1>
     </div>
-    <div class="card-body">
+    <div class="card-body border-0">
       <div class="row">
         <div class="col-sm-12 col-md-6">
           <date-input value.bind="model.inspectionDate" label="Date"></date-input>
@@ -38,14 +38,14 @@
 
       <div class="row mb-2">
         <div class="col-sm-12 col-md-6">
-          <select-input source.bind="suppliers" value.bind="selectedSupplier" label="Supplier"
+          <select-input source.bind="suppliers" value.bind="selectedSupplier" label="Supplier" warn-null="false"
             matcher.bind="listItemMatcher"></select-input>
         </div>
         <div class="col"></div>
       </div>
 
       <div class="row">
-        <div class="col small">
+        <div class="col small m-3 shadow">
           <h5>Average of analyses</h5>
           <table class="table table-sm table-bordered">
             <thead>
@@ -89,57 +89,49 @@
         </div>
       </div>
 
-      <div class="row">
-        <div class="col d-flex justify-content-between">
-          <button type="button" class="btn btn-primary" disabled.bind="!canAddAnalysis"
-            click.delegate="addAnalysis()">Add analysis</button>
-          <button type="button" class="btn btn-success" if.bind="model.analyses.length > 0"
-            click.delegate="showHideAnalysis()">${showAnalysesCaption}</button>
-        </div>
-      </div>
-
-      <ul if.bind="showAnalyses" class="list-unstyled">
-        <li class="border-bottom py-4" repeat.for="item of model.analyses">
-          <div class="row">
-            <div class="col-6">
-              <number-input value.bind="item.bags" label="Bags" change.delegate="calc()"></number-input>
+      <ul class="list-unstyled mt-4">
+        <li repeat.for="item of model.analyses">
+          <div class="font-weight-bold mb-1">Analysis ${$index+1}</div>
+          <div class="mb-2 p-4 bg-light">
+            <div class="row">
+              <div class="col-6">
+                <number-input value.bind="item.bags" label="Bags" change.delegate="calc()"></number-input>
+              </div>
+              <div class="col">
+                <number-input value.bind="item.moisture" label="Moisture %" change.delegate="calc()"></number-input>
+              </div>
             </div>
-            <div class="col">
-              <number-input value.bind="item.moisture" label="Moisture %" change.delegate="calc()"></number-input>
+            <div class="row">
+              <div class="col-6">
+                <number-input value.bind="item.spottedGm" label="Spotted (gms)" change.delegate="calc()"></number-input>
+              </div>
+              <div class="col">
+                <number-input value.bind="item.soundGm" label="Sound (gms)" change.delegate="calc()"></number-input>
+              </div>
             </div>
-          </div>
-          <div class="row">
-            <div class="col-6">
-              <number-input value.bind="item.spottedGm" label="Spotted (gms)" change.delegate="calc()"></number-input>
+            <div class="row">
+              <div class="col-6">
+                <number-input value.bind="item.rejectsGm" label="Rejects (gms)" change.delegate="calc()"></number-input>
+              </div>
+              <div class="col-6">
+                <number-input value.bind="item.count" label="Count" change.delegate="calc()"></number-input>
+              </div>
             </div>
-            <div class="col">
-              <number-input value.bind="item.soundGm" label="Sound (gms)" change.delegate="calc()"></number-input>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-6">
-              <number-input value.bind="item.rejectsGm" label="Rejects (gms)" change.delegate="calc()"></number-input>
-            </div>
-            <div class="col-6">
-              <number-input value.bind="item.count" label="Count" change.delegate="calc()"></number-input>
-            </div>
-          </div>
-          <div class="row mt-2">
-            <div class="col">
-              <h5>KOR ${item.kor | numberFormat: "0,0.00"}</h5>
-            </div>
-          </div>
-
-          <div class="row mt-2">
-            <div class="col">
-              <button type="button" class="btn btn-sm btn-danger" click.delegate="removeRow($index)">Delete</button>
-            </div>
-            <div class="col text-warning" if.bind="!canSaveAnalysis">
-              You must fill in all the fields
+            <div class="d-flex justify-content-between mt-2">
+              <div class="">
+                <h5>KOR ${item.kor | numberFormat: "0,0.00"}</h5>
+              </div>
+              <div class="">
+                <button type="button" class="btn btn-sm btn-danger" click.delegate="removeRow($index)">Delete</button>
+              </div>
             </div>
           </div>
         </li>
       </ul>
+
+      <div class="text-warning" if.bind="!canSaveAnalysis">
+        You must fill in all the fields for all of the analyses
+      </div>
     </div>
   </div>
 </template>

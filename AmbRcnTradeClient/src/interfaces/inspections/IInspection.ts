@@ -1,4 +1,3 @@
-import { Approval } from "constants/app-constants";
 import { IEntityCompany } from "interfaces/IEntity";
 import { IAnalysis } from "./IAnalysis";
 
@@ -12,8 +11,7 @@ export interface IInspection extends IEntityCompany {
     id: string;
     name: string;
     companyId: string;
-    analyses: IAnalysis[];
-    approved: Approval;
+    analyses: IAnalysis[];    
     supplierId: string;
     analysisResult: IAnalysis;
 }

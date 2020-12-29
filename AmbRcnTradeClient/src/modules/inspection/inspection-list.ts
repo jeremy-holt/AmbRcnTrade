@@ -1,5 +1,3 @@
-import { App } from "./../../app";
-import { encodeParams } from "./../../core/helpers";
 import { autoinject, observable } from "aurelia-framework";
 import { Router } from "aurelia-router";
 import { connectTo } from "aurelia-store";
@@ -7,6 +5,7 @@ import _ from "lodash";
 import { InspectionService } from "services/inspection-service";
 import { IState } from "store/state";
 import { Approval, APPROVAL_LIST } from "./../../constants/app-constants";
+import { encodeParams } from "./../../core/helpers";
 import { IInspectionListItem } from "./../../interfaces/inspections/IInspectionListItem";
 
 @autoinject
@@ -30,10 +29,6 @@ export class InspectionList {
     this.list.forEach(c=>{
       c.css = `text-right text-white ${c.approved === Approval.Approved ? "bg-success" : "bg-danger"}`;
     });
-  }
-
-  protected async activate(params: { approval: Approval }) {
-    // await this.inspectionService.loadList(params.approval);
   }
 
   protected bind() {

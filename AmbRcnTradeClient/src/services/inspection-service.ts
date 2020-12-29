@@ -127,13 +127,6 @@ export class InspectionService extends FetchService {
       rejectsPct: (analysis?.rejectsGm || 0) / total
     };
   }
-
-  private calc(analysis: IAnalysis | IAnalysis[], field: Fn<IAnalysis, number>): number {
-    if (Array.isArray(analysis)) {
-      return analysis.reduce((a, b) => a += (field(b) || 0), 0);
-    }
-    return analysis.bags * (field(analysis) || 0);
-  }
 }
 
 export function inspectionEditAction(state: IState, inspection: IInspection) {
