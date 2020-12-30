@@ -326,7 +326,7 @@ namespace Tests
                 WeightKg = 24000.0,
                 SupplierId = supplier.Id,
                 InspectionIds = new List<string>(),
-                Origin = "Bouake"
+                Origin = "Bouake",
             };
 
             // Act

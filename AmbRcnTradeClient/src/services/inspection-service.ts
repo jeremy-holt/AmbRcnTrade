@@ -44,6 +44,14 @@ export class InspectionService extends FetchService {
     return super.getMany<IInspectionListItem[]>([super.currentCompanyIdQuery(), new QueryId("approval", approval)], "loadList", inspectionListAction);
   }
 
+  public canAddInspectionToStock(inspection: IInspection): boolean {
+    const bagsAlreadyAllocated = inspection.stockReferences.reduce((a, b) => a += b.bags, 0);
+    if(!bagsAlreadyAllocated){
+      return true;
+    }    
+    return inspection.bags < bagsAlreadyAllocated;
+  }
+
   public getAnalysisResult(list: IAnalysis[], approved: Approval): IAnalysis {
     const bags = list.reduce((a, b) => a += b.bags, 0);
 

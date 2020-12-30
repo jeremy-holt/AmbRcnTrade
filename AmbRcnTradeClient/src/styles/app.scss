@@ -279,9 +279,14 @@ a.disabled {
 
 currencies-list select.custom-select {
   width: auto;
-  background-color: white;
+  background-color: white;  
 }
 
+.btn-primary:disabled {
+  background-color: $secondary;
+  border-color: lighten($secondary, 20%);
+  box-shadow: inset 0 1px rgb(255,255,255,0.15), 0 1px rgb(0,0,0,0.075);
+}
 
 .bg-lighter {
   background-color: $lighter;

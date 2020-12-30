@@ -9,7 +9,10 @@
     <div class="card-header">
       <div class="d-flex justify-content-between">
         <h4>Inspection</h4>
-        <button type="button" class="btn-primary" click.delegate="openAddToStockDialog()">Add this inspection to stocks</button>
+        <div>
+          <button type="button" class="btn-primary" disabled.bind="!canAddInspectionToStock" click.delegate="openAddToStockDialog()">Add this inspection to stocks</button>
+          <div if.bind="!canAddInspectionToStock" class="text-warning">All the bags on this inspection have already been added to stock</div>
+        </div>
       </div>
     </div>
     <div class="card-body border-0">

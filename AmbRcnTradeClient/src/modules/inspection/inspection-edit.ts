@@ -115,6 +115,13 @@ export class InspectionEdit {
     }
   }
 
+  protected get canAddInspectionToStock() {
+    if (!this.model) {
+      return false;
+    }
+    return this.inspectionService.canAddInspectionToStock(this.model);
+  }
+
   protected async openAddToStockDialog() {
     this.dialogService.open(
       {
