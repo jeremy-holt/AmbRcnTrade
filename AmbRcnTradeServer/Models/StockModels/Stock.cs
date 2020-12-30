@@ -21,7 +21,6 @@ namespace AmbRcnTradeServer.Models.StockModels
         public double WeightKg { get; set; }
         public List<string> InspectionIds { get; set; } = new();
         public bool IsStockIn { get; set; }
-        public Analysis AnalysisResult { get; set; } = new();
 
         [JsonIgnore]
         public List<Inspection> Inspections { get; set; } = new();

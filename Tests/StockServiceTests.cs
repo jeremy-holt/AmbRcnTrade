@@ -55,48 +55,6 @@ namespace Tests
         }
 
         [Fact]
-        public async Task Load_ShouldUpdateAverageKor()
-        {
-            // Arrange
-            using var store = GetDocumentStore();
-            using var session = store.OpenAsyncSession();
-            var sut = GetStockService(session);
-            var inspectionService = GetInspectionService(session);
-
-            var fixture = new Fixture();
-
-            var analyses = fixture.Build<Analysis>()
-                .With(c => c.Kor, 50)
-                .With(c => c.Bags, 100)
-                .CreateMany().ToList();
-            var inspections = fixture.DefaultEntity<Inspection>()
-                .With(c => c.Analyses, analyses)
-                .With(c => c.Bags, 100)
-                .CreateMany()
-                .ToList();
-
-            foreach (var inspection in inspections)
-                await inspectionService.Save(inspection);
-
-            var expectedAvgKor = inspections.Sum(x => x.AnalysisResult.Kor * x.Bags) / inspections.Sum(x => x.Bags);
-
-            await session.SaveChangesAsync();
-
-            var stockIn = fixture.DefaultEntity<Stock>()
-                .Without(c => c.StockOutDate)
-                .Without(c => c.AnalysisResult)
-                .With(c => c.InspectionIds, inspections.Select(x => x.Id).ToList)
-                .Create();
-            await session.StoreAsync(stockIn);
-
-            // Act
-            var actual = await sut.Load(stockIn.Id);
-
-            // Assert
-            actual.AnalysisResult.Kor.Should().Be(expectedAvgKor);
-        }
-
-        [Fact]
         public async Task LoadStockBalanceList_ShouldLoadStockMovementsForLotNo()
         {
             // Arrange
@@ -111,7 +69,6 @@ namespace Tests
             var stockIn1 = fixture.DefaultEntity<Stock>()
                 .Without(c => c.StockOutDate)
                 .Without(c => c.InspectionIds)
-                .Without(c => c.AnalysisResult)
                 .Without(c => c.LocationId)
                 .Create();
             await sut.Save(stockIn1);
@@ -119,7 +76,6 @@ namespace Tests
             var stockIn2 = fixture.DefaultEntity<Stock>()
                 .Without(c => c.StockOutDate)
                 .Without(c => c.InspectionIds)
-                .Without(c => c.AnalysisResult)
                 .Without(c => c.LocationId)
                 .Create();
             await sut.Save(stockIn2);
@@ -127,7 +83,6 @@ namespace Tests
             var stockOut = fixture.DefaultEntity<Stock>()
                 .Without(c => c.StockInDate)
                 .Without(c => c.InspectionIds)
-                .Without(c => c.AnalysisResult)
                 .With(c => c.LotNo, stockIn2.LotNo)
                 .Without(c => c.LocationId)
                 .Create();
@@ -136,7 +91,6 @@ namespace Tests
             var stockIn3 = fixture.DefaultEntity<Stock>()
                 .Without(c => c.StockOutDate)
                 .Without(c => c.InspectionIds)
-                .Without(c => c.AnalysisResult)
                 .Without(c => c.LocationId)
                 .Create();
             await sut.Save(stockIn3);
@@ -189,7 +143,6 @@ namespace Tests
             var stockIn1 = fixture.DefaultEntity<Stock>()
                 .Without(c => c.StockOutDate)
                 .Without(c => c.InspectionIds)
-                .Without(c => c.AnalysisResult)
                 .Without(c => c.LocationId)
                 .With(c => c.SupplierId, supplier.Id)
                 .Create();
@@ -198,7 +151,6 @@ namespace Tests
             var stockIn2 = fixture.DefaultEntity<Stock>()
                 .Without(c => c.StockOutDate)
                 .With(c => c.InspectionIds, inspections.Select(x => x.Id).ToList)
-                .Without(c => c.AnalysisResult)
                 .With(c => c.LocationId, location.Id)
                 .With(c => c.SupplierId, supplier.Id)
                 .Create();
@@ -207,7 +159,6 @@ namespace Tests
             var stockOut = fixture.DefaultEntity<Stock>()
                 .Without(c => c.StockInDate)
                 .Without(c => c.InspectionIds)
-                .Without(c => c.AnalysisResult)
                 .With(c => c.LotNo, stockIn2.LotNo)
                 .Without(c => c.LocationId)
                 .Without(c => c.SupplierId)
@@ -217,7 +168,6 @@ namespace Tests
             var stockIn3 = fixture.DefaultEntity<Stock>()
                 .Without(c => c.StockOutDate)
                 .Without(c => c.InspectionIds)
-                .Without(c => c.AnalysisResult)
                 .Without(c => c.LocationId)
                 .With(c => c.SupplierId, supplier.Id)
                 .Create();
@@ -236,7 +186,6 @@ namespace Tests
             actual.StockIn.WeightKg.Should().Be(stockIn2.WeightKg);
             actual.StockOut.Bags.Should().Be(0);
             actual.StockOut.WeightKg.Should().Be(0);
-            actual.AnalysisResult.Should().Be(stockIn2.AnalysisResult);
             actual.LocationId.Should().Be(stockIn2.LocationId);
             actual.LocationName.Should().Be(location.Name);
             actual.LotNo.Should().Be(stockIn2.LotNo);

@@ -49,7 +49,6 @@ namespace AmbRcnTradeServer.Services
                 stock.CompanyId = inspection.CompanyId;
                 stock.InspectionIds = new List<string> {inspectionId};
                 stock.LocationId = locationId;
-                stock.AnalysisResult = inspection.AnalysisResult;
             }
             else
             {

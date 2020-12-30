@@ -102,7 +102,6 @@ namespace AmbRcnTradeServer.Services
 
             return stocks.Select(item => new StockListItem
                 {
-                    AnalysisResult = item.AnalysisResult,
                     LotNo = item.LotNo,
                     LocationId = item.LocationId,
                     StockId = item.Id,

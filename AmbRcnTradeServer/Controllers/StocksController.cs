@@ -59,8 +59,7 @@ namespace AmbRcnTradeServer.Controllers
         {
             return await Task.FromResult(new Stock
             {
-                CompanyId = companyId, StockInDate = DateTime.Today,
-                AnalysisResult = new Analysis {Approved = Approval.Rejected}
+                CompanyId = companyId, StockInDate = DateTime.Today
             });
         }
     }

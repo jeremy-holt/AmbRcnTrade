@@ -118,8 +118,7 @@ export const initialState: IState = {
       weightKg: undefined!,
       inspectionIds: [],
       inspections: [],
-      isStockIn: undefined!,
-      analysisResult: undefined!,
+      isStockIn: undefined!,    
       origin: undefined!,
       supplierId: undefined!
     },

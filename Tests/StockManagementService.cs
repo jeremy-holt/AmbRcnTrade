@@ -72,7 +72,6 @@ namespace Tests
             actualStock.LocationId.Should().Be(location.Id);
             actualStock.LotNo.Should().Be(1);
             actualStock.InspectionIds.Should().HaveCount(1).And.Contain(inspection.Id);
-            actualStock.AnalysisResult.Approved.Should().Be(Approval.Approved);
 
             var listStocks = await session.Query<Stock>().ToListAsync();
             listStocks.Should().HaveCount(1);
