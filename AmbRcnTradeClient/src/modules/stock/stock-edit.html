@@ -14,28 +14,27 @@
     </div>
   </div>
   <div class="row">
+    <div class="col" if.bind="model.stockInDate">
+      <date-input value.bind="model.stockInDate" label="Date IN"></date-input>
+    </div>
+    <div class="col" else>
+      <date-input value.bind="model.stockOutDate" label="Date OUT" fit-content="true"></date-input>
+    </div>
+
     <div class="col">
       <select-input source.bind="locations" value.bind="selectedLocation" label="Stock location"
         matcher.bind="listItemMatcher"></select-input>
-    </div>
+    </div>    
+  </div>
+
+
+  <div class="row">
     <div class="col">
       <select-input source.bind="suppliers" value.bind="selectedSupplier" label="Supplier"
         matcher.bind="listItemMatcher"></select-input>
     </div>
-  </div>
-
-  <div class="row">
     <div class="col">
-      <date-input value.bind="model.stockInDate" label="Date IN"></date-input>
-    </div>
-    <div class="col">
-      <date-input value.bind="model.stockOutDate" label="Date OUT"></date-input>
-    </div>
-  </div>
-
-  <div class="row">
-    <div class="col">
-      <text-input value.bind="model.origin" label="Origin / region of goods"></text-input>
+      <text-input value.bind="model.origin" label="Origin of goods"></text-input>
     </div>
   </div>
 

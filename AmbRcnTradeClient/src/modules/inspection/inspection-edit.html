@@ -7,8 +7,10 @@
 
   <div class="card">
     <div class="card-header">
-      <h4>Inspection</h4>
-      <h1>${model.name}</h1>
+      <div class="d-flex justify-content-between">
+        <h4>Inspection</h4>
+        <button type="button" class="btn-primary" click.delegate="openAddToStockDialog()">Add this inspection to stocks</button>
+      </div>
     </div>
     <div class="card-body border-0">
       <div class="row">
@@ -48,18 +50,12 @@
 
       <analysis-result model.bind="model.analysisResult" approval-checked.bind="approvalChecked"></analysis-result>
 
-      <div class="row my-2">
-        <div class="col">
-          <button type="button" class="btn-primary" click.delegate="openAddToStockDialog()">Add this inspection to stocks</button>
-        </div>
-      </div>
-
       <div if.bind="model.stockReferences.length > 0" class="row my-2">
         <div class="col">
           <h5>Stock allocations</h5>
           <ul class="list-group">
             <li class="list-group-item" repeat.for="item of model.stockReferences">
-              <a class="with-decoration" route-href="stockEdit; params.bind:{id: encode(item.stockId)}">Entered stock ${item.bags | numberFormat: "0,0"} bags</a>
+              <a class="with-decoration" route-href="stockEdit; params.bind:{id: encode(item.stockId)}">Entered stock on ${item.bags | numberFormat: "0,0"} bags</a>
             </li>
           </ul>
         </div>
