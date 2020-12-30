@@ -25,11 +25,11 @@
         <th>Lot no</th>
         <th>Date</th>
         <th>Location</th>
-        <th>Supplier</th>
+        <!-- <th>Supplier</th> -->
         <th>Origin</th>
         <th>Stock in</th>
         <th>Stock out</th>
-        <th>KOR</th>
+        <th>Avg. quality</th>
       </tr>
     </thead>
     <tr repeat.for="item of list">
@@ -38,7 +38,7 @@
       </td>
       <td>${item.date | dateFormat: "DD/MM/YYYY"}</td>
       <td>${item.locationName}</td>
-      <td>${item.supplierName}</td>
+      <!-- <td>${item.supplierName}</td> -->
       <td>${item.origin}</td>
       <td>
         <div if.bind="item.stockIn.bags > 0">${item.stockIn.bags | numberFormat: "0,0"} bags
@@ -51,7 +51,11 @@
           <span if.bind="item.stockOut.weightKg"> / ${item.stockOut.weightKg | numberFormat: "0,0"} kg</span>
         </div>
       </td>
-      <td>${item.analysisResult.kor | numberFormat: "0,0.00"}</td>
+      <td>
+        KOR ${item.analysisResult.kor | numberFormat: "0,0.00"}<br>
+        Count ${item.analysisResult.count | numberFormat: "0,0"}<br>
+        Moisture ${item.analysisResult.moisture/100 | numberFormat: "0.00%"}
+      </td>
     </tr>
   </table>
 </template>

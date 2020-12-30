@@ -46,9 +46,9 @@ export class InspectionService extends FetchService {
 
   public canAddInspectionToStock(inspection: IInspection): boolean {
     const bagsAlreadyAllocated = inspection.stockReferences.reduce((a, b) => a += b.bags, 0);
-    if(!bagsAlreadyAllocated){
+    if (!bagsAlreadyAllocated) {
       return true;
-    }    
+    }
     return inspection.bags < bagsAlreadyAllocated;
   }
 
@@ -138,6 +138,9 @@ export class InspectionService extends FetchService {
 
 export function inspectionEditAction(state: IState, inspection: IInspection) {
   inspection.inspectionDate = fixAspNetCoreDate(inspection.inspectionDate, false);
+  inspection.stockReferences.forEach(c => {
+    c.date = fixAspNetCoreDate(c.date, false);
+  });
 
   const newState = _.cloneDeep(state);
   newState.inspection.current = inspection;

@@ -10,7 +10,7 @@
   <table class="table table-sm table-bordered small">
     <thead>
       <tr>
-        <th>Date</th>        
+        <th>Inspection date</th>        
         <th>Bags</th>
         <th>Stock allocations</th>
         <th>KOR</th>
@@ -26,7 +26,8 @@
     <tbody>
       <tr repeat.for="item of list">
         <td>
-          <a class="with-decoration" route-href="inspectionEdit; params.bind:{id: encode(item.id)}">${item.inspectionDate | dateFormat: "DD/MM/YYYY"}</a>
+          <a class="with-decoration" route-href="inspectionEdit; params.bind:{id: encode(item.id)}"><i class="fas fa-fw fa-chevron-circle-right"></i></a>
+          ${item.inspectionDate | dateFormat: "DD/MM/YYYY"}
         </td>
         <td>${item.bags}</td>
         <td>
@@ -34,7 +35,7 @@
             Not in stock            
           </div>
           <div else>
-            <a href="#" click.delegate="openStockAllocationsList(item)">${item.stockAllocations} stock allocation(s)</a>
+            <a href="#" class="with-decoration" click.delegate="openStockAllocationsList(item)">${item.stockAllocations} stock allocation(s)</a>
           </div>
         </td>
         <td class.bind="item.css">${item.kor | numberFormat:"0,0.00"}</td>

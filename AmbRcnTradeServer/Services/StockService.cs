@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using AmberwoodCore.Extensions;
 using AmberwoodCore.Responses;
+using AmbRcnTradeServer.Constants;
 using AmbRcnTradeServer.Models.DictionaryModels;
 using AmbRcnTradeServer.Models.InspectionModels;
 using AmbRcnTradeServer.Models.StockModels;
@@ -81,10 +82,19 @@ namespace AmbRcnTradeServer.Services
             return list;
         }
 
+        private static double GetAverageAnalysisResultForStock(IEnumerable<Inspection> inspections, Func<Inspection, double> field)
+        {
+            var results = inspections.Where(c => c.AnalysisResult.Approved == Approval.Approved).ToList();
+
+            return results.Any()
+                ? results.Average(field)
+                : 0;
+        }
+        
         public async Task<List<StockListItem>> LoadStockList(string companyId, long? lotNo, string locationId)
         {
             var query = _session.Query<Stock>()
-                // .Include(c => c.InspectionIds)
+                .Include(c => c.InspectionIds)
                 .Include(c => c.LocationId)
                 .Include(c => c.SupplierId)
                 .Where(c => c.CompanyId == companyId);
@@ -99,6 +109,17 @@ namespace AmbRcnTradeServer.Services
 
             var locations = await _session.LoadListFromMultipleIdsAsync<Customer>(stocks.Select(c => c.LocationId));
             var suppliers = await _session.LoadListFromMultipleIdsAsync<Customer>(stocks.Select(x => x.SupplierId));
+            var inspections = await _session.LoadListFromMultipleIdsAsync<Inspection>(stocks.SelectMany(x => x.InspectionIds));
+
+            var analysisResult = new Analysis
+            {
+                Count = GetAverageAnalysisResultForStock(inspections,c=>c.AnalysisResult.Count),
+                Kor = GetAverageAnalysisResultForStock(inspections,c=>c.AnalysisResult.Kor),
+                Moisture = GetAverageAnalysisResultForStock(inspections,c=>c.AnalysisResult.Moisture),
+                RejectsPct = GetAverageAnalysisResultForStock(inspections, c => c.AnalysisResult.RejectsPct),
+                SoundPct = GetAverageAnalysisResultForStock(inspections, c => c.AnalysisResult.SoundPct),
+                SpottedPct = GetAverageAnalysisResultForStock(inspections, c => c.AnalysisResult.SpottedPct)
+            };
 
             return stocks.Select(item => new StockListItem
                 {
@@ -116,7 +137,8 @@ namespace AmbRcnTradeServer.Services
                         : new StockInfo(item.Bags, item.WeightKg),
                     LocationName = locations.FirstOrDefault(c => c.Id == item.LocationId)?.Name,
                     SupplierId = item.SupplierId,
-                    SupplierName = suppliers.FirstOrDefault(c => c.Id == item.SupplierId)?.Name
+                    SupplierName = suppliers.FirstOrDefault(c => c.Id == item.SupplierId)?.Name,
+                    AnalysisResult = analysisResult
                 })
                 .ToList();
         }

@@ -7,7 +7,6 @@ using AmberwoodCore.Models;
 using AmbRcnTradeServer.Constants;
 using AmbRcnTradeServer.Models.DictionaryModels;
 using AmbRcnTradeServer.Models.InspectionModels;
-using AmbRcnTradeServer.Models.StockManagementModels;
 using AmbRcnTradeServer.Models.StockModels;
 using AutoFixture;
 using FluentAssertions;
@@ -81,6 +80,8 @@ namespace Tests
             actualInspection.StockReferences.Should().HaveCount(1);
             actualInspection.StockReferences[0].StockId.Should().Be(response.Dto.StockId);
             actualInspection.StockReferences[0].Bags.Should().Be(bags);
+            actualInspection.StockReferences[0].Date.Should().Be(new DateTime(2013, 1, 1));
+            actualInspection.StockReferences[0].LotNo.Should().Be(1);
         }
 
         [Fact]
@@ -103,7 +104,7 @@ namespace Tests
             var inspection = fixture.DefaultEntity<Inspection>()
                 .With(c => c.SupplierId, supplier.Id)
                 .With(c => c.Bags, 500)
-                .With(c => c.StockReferences, new List<StockReference> {new("stocks/1-A", 400)})
+                .With(c => c.StockReferences, new List<StockReference> {new("stocks/1-A", 400, new DateTime(2013, 1, 1), 1)})
                 .Create();
             await session.StoreAsync(inspection);
 

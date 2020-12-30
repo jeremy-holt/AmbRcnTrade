@@ -58,7 +58,7 @@
           <h5>Stock allocations</h5>
           <ul class="list-group">
             <li class="list-group-item" repeat.for="item of model.stockReferences">
-              <a class="with-decoration" route-href="stockEdit; params.bind:{id: encode(item.stockId)}">Entered stock on ${item.bags | numberFormat: "0,0"} bags</a>
+              <a class="with-decoration" route-href="stockEdit; params.bind:{id: encode(item.stockId)}">Lot ${item.lotNo} - ${item.bags | numberFormat: "0,0"} bags entered stock on ${item.date | dateFormat: "DD/MM/YYYY"} </a>
             </li>
           </ul>
         </div>

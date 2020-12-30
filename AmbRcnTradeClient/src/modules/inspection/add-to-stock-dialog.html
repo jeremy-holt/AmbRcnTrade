@@ -2,32 +2,54 @@
   <ux-dialog>
     <ux-dialog-header>
       <h4>Create stock from inspection</h4>
-      <p class="font-italic">
-        This will create a new stock entry from the goods inspected
-      </p>
     </ux-dialog-header>
 
-    <ux-dialog-body>
-      <debug-console model.bind="model"></debug-console>
-      
+    <ux-dialog-body>      
+      <p>Select an existing stock to move the bags into, or create a new stock entry</p>
+
+      <h5>Stock list</h5>
+      <ul class="list-group small" style="height: 300px; overflow-y: auto;">
+        <li repeat.for="item of stockList" class="list-group-item  ${item.selected ? 'list-group-item-success' : ''}">
+          <a href="#" class="text-decoration-none" click.trigger="selectStockRow(item)">
+            <div class="row">
+              <div class="col">Lot no ${item.lotNo}</div>
+              <div class="col">${item.locationName}</div>
+              <div class="col">Bags ${item.stockIn.bags | numberFormat: "0,0"}</div>
+              <div>KOR ${item.analysisResult.kor | numberFormat: "0,0.00"}</div>
+            </div>
+          </a>
+        </li>
+      </ul>
+
       <div class="row">
         <div class="col">
           <date-input value.bind="model.date" label="Date stock enters"></date-input>
         </div>
         <div class="col">
-          <number-input value.bind="model.bags" label="Number of bags"></number-input>
+          <number-input value.bind="model.bags" label="Number of bags to enter stock"></number-input>
+        </div>
+      </div>
+
+      <div class="row mb-3">
+        <div class="col">
+          <select-input source.bind="locations" value.bind="selectedLocation" label="Select the warehouse">
+          </select-input>
         </div>
       </div>
 
       <div class="row">
         <div class="col">
-          <select-input source.bind="locations" value.bind="selectedLocation" label="Select the warehouse"></select-input>
+          <div class="custom-control custom-checkbox">
+            <input type="checkbox" class="custom-control-input" checked.bind="newStockItem" id="chk1">
+            <label for="chk1" class="custom-control-label">Create new stock entry</label>
+          </div>
         </div>
       </div>
     </ux-dialog-body>
 
     <ux-dialog-footer>
-      <button type="button" class="btn btn-danger" disabled.bind="!canCreate" click.delegate="createStockAllocation()">Ok</button>
+      <button type="button" class="btn btn-danger" disabled.bind="!canCreate"
+        click.delegate="createStockAllocation()">Ok</button>
       <button type="button" class="btn btn-secondary" click.delegate="controller.cancel()">Cancel</button>
     </ux-dialog-footer>
   </ux-dialog>

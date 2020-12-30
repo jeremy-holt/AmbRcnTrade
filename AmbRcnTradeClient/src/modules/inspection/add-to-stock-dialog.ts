@@ -1,3 +1,5 @@
+import { IStockListItem } from "./../../interfaces/stocks/IStockListItem";
+import { StockService } from "./../../services/stock-service";
 import { DialogController } from "aurelia-dialog";
 import { autoinject, observable } from "aurelia-framework";
 import { Router } from "aurelia-router";
@@ -17,20 +19,24 @@ export class AddToStockDialog {
   @observable public state: IState = undefined!;
 
   public locations: IListItem[] = [];
-  @observable selectedLocation: IListItem = undefined!;
+  public stockList: IStockListItem[] = [];
 
+  @observable public selectedLocation: IListItem = undefined!;
+  @observable public newStockItem = false;
   public model: IMoveInspectionToStockRequest = {} as IMoveInspectionToStockRequest;
   public inspection: IInspection
 
   constructor(
     protected controller: DialogController,
     private customerService: CustomerService,
+    private stockService: StockService,
     private router: Router
   ) { }
 
   protected stateChanged(state: IState) {
     this.locations = _.cloneDeep(state.userFilteredCustomers);
     this.locations.unshift({ id: null, name: "[Select]" });
+    this.stockList = _.cloneDeep(state.stock.list);
   }
 
   protected selectedLocationChanged() {
@@ -39,8 +45,11 @@ export class AddToStockDialog {
     }
   }
 
+
+
   protected async activate(model: { inspection: IInspection }) {
     await this.customerService.loadCustomersForAppUserList();
+    await this.stockService.loadStockList(null, null);
     this.inspection = model.inspection;
 
     this.model.bags = this.inspection.bags;
@@ -53,10 +62,35 @@ export class AddToStockDialog {
   }
 
   protected get canCreate(): boolean {
-    return this.model?.bags > 0 && this.model?.date && this.model?.locationId !== null;
+    return this.model?.bags > 0 && this.model?.date && this.model?.locationId !== null &&
+      (this.newStockItem || this.stockList.some(x => x.selected));
   }
 
-  protected async createStockAllocation() {    
-    await this.controller.ok(this.model);    
+  protected selectStockRow(item: IStockListItem) {
+    item.selected = !item.selected;
+    this.selectedLocation = this.locations.find(c => c.id === item.locationId);
+    if (item.selected) {
+      this.newStockItem = false;
+    }
+  }
+
+  protected newStockItemChanged() {
+    if (this.newStockItem) {
+      this.stockList.forEach(c => c.selected = false);
+    }
+  }
+
+  protected get requestModel(): IMoveInspectionToStockRequest {
+    return {
+      inspectionId: this.model.inspectionId,
+      bags: this.model.bags,
+      date: this.model.date,
+      locationId: this.selectedLocation.id,
+      stockId: this.newStockItem ? null : this.stockList.find(c => c.selected)?.stockId
+    };
+  }
+
+  protected async createStockAllocation() {
+    await this.controller.ok(this.requestModel);
   }
 }

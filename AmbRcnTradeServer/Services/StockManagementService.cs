@@ -52,9 +52,6 @@ namespace AmbRcnTradeServer.Services
             }
             else
             {
-                if (inspection.SupplierId.IsNotNullOrEmpty() && stock.SupplierId != inspection.SupplierId)
-                    throw new InvalidOperationException("The supplier of the inspection must be the same as the supplier of the stock");
-
                 if (!stock.InspectionIds.Contains(inspectionId))
                     stock.InspectionIds.Add(inspectionId);
             }
@@ -63,7 +60,7 @@ namespace AmbRcnTradeServer.Services
 
             if (inspection.StockReferences.FirstOrDefault(c => c.StockId == stockResponse.Id) == null)
             {
-                inspection.StockReferences.Add(new StockReference(stockResponse.Id, bags));
+                inspection.StockReferences.Add(new StockReference(stockResponse.Id, bags, date, stock.LotNo));
                 await _inspectionService.Save(inspection);
             }
 

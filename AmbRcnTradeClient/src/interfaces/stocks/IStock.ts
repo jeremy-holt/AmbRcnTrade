@@ -1,5 +1,4 @@
 import { IEntityCompany } from "interfaces/IEntity";
-import { IAnalysis } from "interfaces/inspections/IAnalysis";
 import { IInspection } from "interfaces/inspections/IInspection";
 
 export interface IStock extends IEntityCompany {

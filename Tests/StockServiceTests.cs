@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using AmberwoodCore.Extensions;
 using AmberwoodCore.Models;
+using AmbRcnTradeServer.Constants;
 using AmbRcnTradeServer.Models.DictionaryModels;
 using AmbRcnTradeServer.Models.InspectionModels;
 using AmbRcnTradeServer.Models.StockModels;
@@ -135,8 +136,11 @@ namespace Tests
             var location = fixture.DefaultEntity<Customer>().Create();
             await session.StoreAsync(location);
 
+            var analysisResult = fixture.Build<Analysis>().With(c => c.Approved, Approval.Approved).Create();
+            
             var inspections = fixture.DefaultEntity<Inspection>()
                 .With(c => c.SupplierId, supplier.Id)
+                .With(c=>c.AnalysisResult, analysisResult)
                 .CreateMany().ToList();
             await inspections.SaveList(session);
 
@@ -195,6 +199,7 @@ namespace Tests
             actual.Origin.Should().Be(stockIn2.Origin);
             actual.SupplierName.Should().Be(supplier.Name);
             actual.SupplierId.Should().Be(supplier.Id);
+            actual.AnalysisResult.Should().NotBeNull();
         }
 
         [Fact]
