@@ -1,7 +1,13 @@
 <template>
   <div class="row">
     <div class="col small m-3 shadow">
-      <h5>Average of analyses</h5>
+      <h5><span if.bind="index > 0">(${index}) </span>Average of analyses</h5>
+      <div class="font-weight-bold">
+        <div if.bind="inspectionId">
+          <a route-href="inspectionEdit; params.bind:{id: encode(inspectionId)}" class="with-decoration">${caption}</a>
+        </div>
+        <div else>${caption}</div>
+      </div>
       <table class="table table-sm table-bordered">
         <thead>
           <th>Name</th>

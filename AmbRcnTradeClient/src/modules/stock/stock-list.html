@@ -1,19 +1,57 @@
 <template>
-  <toolbar type="menu" caption="Stocks" >
+  <toolbar type="menu" caption="Stocks">
     <toolbar-item icon="fa fa-plus" click.call="addStock()"></toolbar-item>
   </toolbar>
 
-  <table class="table table-sm">
+  <div class="mb-4 d-flex justify-content-between align-items-end">
+    <div class="mr-2 w-100">
+      <select-input source.bind="locations" value.bind="selectedLocation" label="Select warehouse location" warn-null="false">
+      </select-input>
+    </div>
+
+    <div class="mr-2 w-100">
+      <number-input value.bind="selectedLotNo" label="Search by lot no"></number-input>
+    </div>
+    <div>
+      <button type="button" class="btn btn-sm btn-primary" click.delegate="runQuery()">
+        <i class="fas fa-search"></i>
+      </button>
+    </div>
+  </div>
+
+  <table class="table table-sm small">
     <thead>
       <tr>
+        <th>Lot no</th>
         <th>Date</th>
         <th>Location</th>
         <th>Supplier</th>
         <th>Origin</th>
-        <th>Lot no</th>
         <th>Stock in</th>
         <th>Stock out</th>
+        <th>KOR</th>
       </tr>
     </thead>
+    <tr repeat.for="item of list">
+      <td>
+        <a route-href="stockEdit; params.bind:{id: encode(item.stockId)}" class="with-decoration">Lot ${item.lotNo}</a>
+      </td>
+      <td>${item.date | dateFormat: "DD/MM/YYYY"}</td>
+      <td>${item.locationName}</td>
+      <td>${item.supplierName}</td>
+      <td>${item.origin}</td>
+      <td>
+        <div if.bind="item.stockIn.bags > 0">${item.stockIn.bags | numberFormat: "0,0"} bags
+          <span if.bind="item.stockIn.weightKg"> / ${item.stockIn.weightKg} kg</span>
+        </div>
+      </td>
+      <td>
+        <div if.bind="item.stockOut.bags > 0">
+          ${item.stockOut.bags | numberFormat: "0,0"} bags
+          <span if.bind="item.stockOut.weightKg"> / ${item.stockOut.weightKg | numberFormat: "0,0"} kg</span>
+        </div>
+      </td>
+      <td>${item.analysisResult.kor | numberFormat: "0,0.00"}</td>
+    </tr>
   </table>
 </template>

@@ -1,16 +1,26 @@
 <template>
   <require from="./../analysis-result-custom-element/analysis-result-custom-element"></require>
 
-  <toolbar type="menu" caption="Stock" list-route="stockList" disabled-save="!canSave" save.call="save()"></toolbar>
+  <toolbar type="menu" caption="Stock" list-route="stockList" disabled-save.bind="!canSave" save.call="save()">
+  </toolbar>
 
   <debug-console model.bind="model"></debug-console>
 
   <div class="row">
     <div class="col">
-      <select-input source.bind="locations" value.bind="selectedLocation" label="Stock location"></select-input>
+      <h4 class="${model.isStockIn ? '' : 'text-blue'}">
+        Stock ${model.isStockIn ? "IN" : OUT} - Lot no ${model.lotNo}
+      </h4>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col">
+      <select-input source.bind="locations" value.bind="selectedLocation" label="Stock location"
+        matcher.bind="listItemMatcher"></select-input>
     </div>
     <div class="col">
-      <select-input source.bind="suppliers" value.bind="selectedSupplier" label="Supplier"></select-input>
+      <select-input source.bind="suppliers" value.bind="selectedSupplier" label="Supplier"
+        matcher.bind="listItemMatcher"></select-input>
     </div>
   </div>
 
@@ -25,10 +35,7 @@
 
   <div class="row">
     <div class="col">
-      <text-input value.bind="model.origin" label="Origin"></text-input>
-    </div>
-    <div class="col">
-      <div>${model.lotNo}</div>
+      <text-input value.bind="model.origin" label="Origin / region of goods"></text-input>
     </div>
   </div>
 
@@ -41,7 +48,10 @@
     </div>
   </div>
 
-  <analysis-result model.bind="model.analysisResult" approval-checked.bind="approvalChecked"></analysis-result>
+  <div repeat.for="item of model.inspections">
+    <analysis-result model.bind="item.analysisResult" index="${index + 1}" inspection-id.bind="item.id" caption="${item.bags | numberFormat: '0,0'} bags inspected by ${item.inspector} on ${item.inspectionDate |
+      dateFormat: 'DD/MM/YYYY' }"></analysis-result>
+  </div>
 
 
 </template>

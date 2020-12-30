@@ -34,7 +34,7 @@
             Not in stock            
           </div>
           <div else>
-            <a href="#" click.delegate="openStockAllocationsList(item)">${item.stockAllocations} stock allocations</a>
+            <a href="#" click.delegate="openStockAllocationsList(item)">${item.stockAllocations} stock allocation(s)</a>
           </div>
         </td>
         <td class.bind="item.css">${item.kor | numberFormat:"0,0.00"}</td>

@@ -1,14 +1,13 @@
-import { Approval } from "constants/app-constants";
-import { IListItem } from "interfaces/IEntity";
-import { CustomerService } from "./../../services/customer-service";
-import { Router } from "aurelia-router";
-import { StockService } from "./../../services/stock-service";
-import { IParamsId } from "interfaces/IParamsId";
 import { autoinject, observable } from "aurelia-framework";
+import { Router } from "aurelia-router";
 import { connectTo } from "aurelia-store";
+import { IListItem } from "interfaces/IEntity";
+import { IParamsId } from "interfaces/IParamsId";
 import { IStock } from "interfaces/stocks/IStock";
-import { IState } from "store/state";
 import _ from "lodash";
+import { IState } from "store/state";
+import { CustomerService } from "./../../services/customer-service";
+import { StockService } from "./../../services/stock-service";
 
 @autoinject
 @connectTo()
@@ -17,7 +16,7 @@ export class StockEdit {
   protected model: IStock = undefined!;
   protected locations: IListItem[] = [];
   protected suppliers: IListItem[] = [];
-  protected approvalChecked: Approval = null;
+  // protected approvalChecked: Approval = null;
 
   @observable protected selectedLocation: IListItem = undefined!;
   @observable protected selectedSupplier: IListItem = undefined!;
@@ -36,7 +35,7 @@ export class StockEdit {
     this.suppliers.unshift({ id: null, name: "[Select]" });
 
     this.model = _.cloneDeep(state.stock.current);
-    if (this.model) {
+    if (this.model && this.locations?.length > 0) {
       this.selectedLocation = this.locations.find(c => c.id === this.model.locationId);
       this.selectedSupplier = this.suppliers.find(c => c.id === this.model.supplierId);
     }
@@ -53,7 +52,7 @@ export class StockEdit {
   }
 
   protected get canSave() {
-    return true;
+    return this.model?.locationId && this.model?.supplierId && this.model?.bags > 0;
   }
 
   protected async save() {
@@ -74,16 +73,5 @@ export class StockEdit {
     }
   }
 
-  // protected locationMatcher = (a: IStock, b: IListItem) => {
-  //   console.log("a", a);
-  //   console.log("b", b);
-
-  //   a?.locationId === b?.id;
-  // }
-  // protected locationMatcher = (a: IListItem, b: IListItem) => {
-  //   console.log("a", a);
-  //   console.log("b", b);
-  //   a?.id === b?.id;
-  // }
-  protected supplierMatcher = (a: IStock, b: IListItem) => a?.supplierId === b?.id;
+  protected listItemMatcher = (a: IListItem, b: IListItem) => a?.id === b?.id;
 }

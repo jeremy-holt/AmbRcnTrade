@@ -59,18 +59,6 @@ namespace AmbRcnTradeServer.Services
         {
             var stock = await _session.Include<Stock>(c => c.InspectionIds).LoadAsync<Stock>(id);
             stock.Inspections = await _session.LoadListFromMultipleIdsAsync<Inspection>(stock.InspectionIds);
-
-            stock.AnalysisResult = new Analysis
-            {
-                Count = CalculateAnalysisResult(stock.Inspections, c => c.Count),
-                Kor = CalculateAnalysisResult(stock.Inspections, c => c.Kor),
-                Moisture = CalculateAnalysisResult(stock.Inspections, c => c.Moisture),
-                RejectsPct = CalculateAnalysisResult(stock.Inspections, c => c.RejectsPct),
-                SoundPct = CalculateAnalysisResult(stock.Inspections, c => c.SoundPct),
-                SpottedPct = CalculateAnalysisResult(stock.Inspections, c => c.SpottedPct)
-            };
-
-
             return stock;
         }
 
@@ -132,12 +120,6 @@ namespace AmbRcnTradeServer.Services
                     SupplierName = suppliers.FirstOrDefault(c => c.Id == item.SupplierId)?.Name
                 })
                 .ToList();
-        }
-
-        private static double CalculateAnalysisResult(IReadOnlyCollection<Inspection> inspections, Func<Analysis, double> field)
-        {
-            var bags = inspections.Sum(c => c.Bags);
-            return inspections.Sum(c => c.Bags * field(c.AnalysisResult)) / bags;
         }
     }
 }

@@ -1,16 +1,19 @@
+import { encodeParams } from "./../../core/helpers";
 import { IAnalysis } from "interfaces/inspections/IAnalysis";
 import { autoinject, bindable, observable } from "aurelia-framework";
 import { Approval, APPROVAL_LIST } from "constants/app-constants";
 
 @autoinject
-export class AnalysisResultCustomElement 
-{
-  @bindable public model: IAnalysis=undefined!
+export class AnalysisResultCustomElement {
+  @bindable public model: IAnalysis = undefined!
   @bindable protected approvalChecked = false;
+  @bindable public caption = "";
+  @bindable public inspectionId = "";
+  @bindable public index = 1;
 
   public approvalList = APPROVAL_LIST;
   @observable selectedApproval = APPROVAL_LIST[0];
-  
+
   protected approvalLabel = this.selectedApproval.name;
 
   protected approvalCheckedChanged() {
@@ -28,5 +31,9 @@ export class AnalysisResultCustomElement
     if (this.model) {
       this.model.approved = this.selectedApproval.id;
     }
+  }
+
+  protected encode(value: string) {
+    return encodeParams(value);
   }
 }

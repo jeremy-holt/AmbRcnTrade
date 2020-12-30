@@ -1,3 +1,4 @@
+import { encodeParams } from "./../../core/helpers";
 import { CustomerService } from "./../../services/customer-service";
 import { IListItem } from "interfaces/IEntity";
 import { IStockListItem } from "./../../interfaces/stocks/IStockListItem";
@@ -13,7 +14,7 @@ import _ from "lodash";
 export class StockList {
   @observable state: IState = undefined!;
   public list: IStockListItem[] = [];
-  public lotNo: number = undefined!;
+  public selectedLotNo: number = undefined!;
 
   public locations: IListItem[] = [];
   @observable selectedLocation: IListItem = undefined!
@@ -36,10 +37,18 @@ export class StockList {
   }
 
   protected async selectedLocationChanged() {
-    this.stockService.loadStockList(this.lotNo, this.selectedLocation.id);
+    await this.runQuery();
   }
 
   protected addStock() {
     this.router.navigateToRoute("stockEdit", { id: null });
+  }
+
+  protected async runQuery() {
+    this.stockService.loadStockList(this.selectedLotNo, this.selectedLocation.id);
+  }
+
+  protected encode(value: string){
+    return encodeParams(value);
   }
 }
