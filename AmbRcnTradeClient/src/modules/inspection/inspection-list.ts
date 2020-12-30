@@ -1,3 +1,5 @@
+import { StockNavigationDialog } from "./stock-navigation-dialog";
+import { DialogService } from "aurelia-dialog";
 import { autoinject, observable } from "aurelia-framework";
 import { Router } from "aurelia-router";
 import { connectTo } from "aurelia-store";
@@ -18,7 +20,8 @@ export class InspectionList {
 
   constructor(
     private inspectionService: InspectionService,
-    private router: Router
+    private router: Router,
+    private dialogService: DialogService
   ) {
 
   }
@@ -26,7 +29,7 @@ export class InspectionList {
   protected stateChanged(state: IState) {
     this.list = _.cloneDeep(state.inspection.list);
 
-    this.list.forEach(c=>{
+    this.list.forEach(c => {
       c.css = `text-right text-white ${c.approved === Approval.Approved ? "bg-success" : "bg-danger"}`;
     });
   }
@@ -48,4 +51,11 @@ export class InspectionList {
     return encodeParams(value);
   }
 
+  protected openStockAllocationsList(item: IInspectionListItem) {
+    this.dialogService.open(
+      {
+        viewModel: StockNavigationDialog,
+        model: item
+      });
+  }
 }

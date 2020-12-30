@@ -1,0 +1,20 @@
+<template>
+  <ux-dialog>
+    <ux-dialog-header>
+      <h4>Stock allocations</h4>
+    </ux-dialog-header>
+
+    <ux-dialog-body>
+      <ul class="list-group">
+        <li class="list-group-item" repeat.for="item of model.stockReferences">
+          <a href="#" class="with-decoration" click.delegate="navigateToStockReference($index)">Stock: ${item.bags |
+            numberFormat: "0,0"} bags</a>
+        </li>
+      </ul>
+    </ux-dialog-body>
+
+    <ux-dialog-footer>
+      <button type="button" class="btn btn-secondary" click.delegate="controller.cancel()">Close</button>
+    </ux-dialog-footer>
+  </ux-dialog>
+</template>

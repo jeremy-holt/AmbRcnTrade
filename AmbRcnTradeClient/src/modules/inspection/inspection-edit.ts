@@ -1,17 +1,20 @@
-import { IRemoveInspectionFromStockRequest } from "./../../interfaces/stockManagement/IRemoveInspectionFromStockRequest";
-import { IMoveInspectionToStockRequest } from "./../../interfaces/stockManagement/IMoveInspectionToStockRequest";
-import { StockManagementService } from "./../../services/stock-management-service";
+import { DialogService } from "aurelia-dialog";
 import { autoinject, observable } from "aurelia-framework";
+import { Router } from "aurelia-router";
 import { connectTo } from "aurelia-store";
 import { Approval } from "constants/app-constants";
 import { IAnalysis } from "interfaces/inspections/IAnalysis";
 import _ from "lodash";
 import { IState } from "store/state";
+import { encodeParams } from "./../../core/helpers";
 import { IListItem } from "./../../interfaces/IEntity";
 import { IInspection } from "./../../interfaces/inspections/IInspection";
 import { IParamsId } from "./../../interfaces/IParamsId";
+import { IMoveInspectionToStockRequest } from "./../../interfaces/stockManagement/IMoveInspectionToStockRequest";
 import { CustomerService } from "./../../services/customer-service";
 import { InspectionService } from "./../../services/inspection-service";
+import { StockManagementService } from "./../../services/stock-management-service";
+import { AddToStockDialog } from "./add-to-stock-dialog";
 
 @autoinject
 @connectTo()
@@ -27,7 +30,9 @@ export class InspectionEdit {
   constructor(
     private inspectionService: InspectionService,
     private customerService: CustomerService,
-    private stockManagementService: StockManagementService
+    private stockManagementService: StockManagementService,
+    private router: Router,
+    private dialogService: DialogService
   ) { }
 
   protected stateChanged(state: IState) {
@@ -37,6 +42,7 @@ export class InspectionEdit {
 
     if (this.model) {
       this.approvalChecked = this.model?.analysisResult.approved === Approval.Approved;
+      this.selectedSupplier = this.suppliers.find(c => c.id === this.model.supplierId);
     }
   }
 
@@ -48,6 +54,7 @@ export class InspectionEdit {
     } else {
       await this.inspectionService.createInspection();
     }
+
   }
 
   protected async deactivate() {
@@ -58,14 +65,6 @@ export class InspectionEdit {
     if (this.model) {
       this.model.supplierId = this.selectedSupplier?.id;
     }
-  }
-
-  protected async moveInspectionToStock(request: IMoveInspectionToStockRequest) {
-    return await this.stockManagementService.moveInspectionToStock(request);
-  }
-
-  protected async removeInspectionFromStock(request: IRemoveInspectionFromStockRequest) {
-    return await this.stockManagementService.removeInspectionFromStock(request);
   }
 
   protected get canSave() {
@@ -106,10 +105,39 @@ export class InspectionEdit {
     }
   }
 
+  protected addInspection() {
+    this.router.navigateToRoute("inspectionEdit", { id: null });
+  }
+
   protected calc() {
     if (this.model.analysisResult) {
       this.model.analysisResult = this.inspectionService.getAnalysisResult(this.model.analyses, this.model.analysisResult.approved);
     }
+  }
+
+  protected async openAddToStockDialog() {
+    this.dialogService.open(
+      {
+        viewModel: AddToStockDialog,
+        model: { inspection: this.model }
+      }
+    ).whenClosed(async result => {
+      if (!result.wasCancelled) {
+        const request = result.output as IMoveInspectionToStockRequest;
+
+        await this.stockManagementService.moveInspectionToStock(request);
+
+        if (this.state.inspection.movedToStockId) {
+          // console.log(this.state.inspection.current);
+          // console.log("openAddToStockDialog.onClosed()", this.state.inspection.movedToStockId);
+          this.router.navigateToRoute("stockEdit", { id: this.encode(this.state.inspection.movedToStockId) });
+        }
+      }
+    });
+  }
+
+  protected encode(value: string) {
+    return encodeParams(value);
   }
 
   protected listItemMatcher = (a: IListItem, b: IListItem) => a?.id === b?.id;

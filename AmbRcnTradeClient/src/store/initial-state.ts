@@ -85,8 +85,9 @@ export const initialState: IState = {
       id: undefined!,
       name: undefined!,
       companyId: undefined!,
-      analyses: [],      
+      analyses: [],
       supplierId: undefined!,
+      stockReferences: [],
       analysisResult: {
         count: 0,
         moisture: 0,
@@ -101,7 +102,8 @@ export const initialState: IState = {
         bags: 0
       }
     },
-    list: []
+    list: [],
+    movedToStockId: undefined!
   },
   stock: {
     current: {

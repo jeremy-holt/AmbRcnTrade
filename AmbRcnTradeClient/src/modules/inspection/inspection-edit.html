@@ -2,7 +2,7 @@
   <require from="./../analysis-result-custom-element/analysis-result-custom-element"></require>
 
   <toolbar caption="Inspection" list-route="inspectionList" disabled-save.bind="!canSave" save.call="save()">
-    <toolbar-item icon="fas fa-plus" click.call="addAnalysis()" disabled.bind="!canAddAnalysis"></toolbar-item>
+    <toolbar-item icon="fas fa-plus" click.call="addInspection()"></toolbar-item>
   </toolbar>
 
   <div class="card">
@@ -40,13 +40,30 @@
 
       <div class="row mb-2">
         <div class="col-sm-12 col-md-6">
-          <select-input source.bind="suppliers" value.bind="selectedSupplier" label="Supplier" warn-null="false"
+          <select-input source.bind="suppliers" value.bind="selectedSupplier" label="Supplier"
             matcher.bind="listItemMatcher"></select-input>
         </div>
         <div class="col"></div>
       </div>
 
       <analysis-result model.bind="model.analysisResult" approval-checked.bind="approvalChecked"></analysis-result>
+
+      <div class="row my-2">
+        <div class="col">
+          <button type="button" class="btn-primary" click.delegate="openAddToStockDialog()">Add this inspection to stocks</button>
+        </div>
+      </div>
+
+      <div if.bind="model.stockReferences.length > 0" class="row my-2">
+        <div class="col">
+          <h5>Stock allocations</h5>
+          <ul class="list-group">
+            <li class="list-group-item" repeat.for="item of model.stockReferences">
+              <a class="with-decoration" route-href="stockEdit; params.bind:{id: encode(item.stockId)}">Entered stock ${item.bags | numberFormat: "0,0"} bags</a>
+            </li>
+          </ul>
+        </div>
+      </div>
 
       <ul class="list-unstyled mt-4">
         <li repeat.for="item of model.analyses">
@@ -87,6 +104,8 @@
           </div>
         </li>
       </ul>
+
+      <button type="button" class="btn btn-primary" click.delegate="addAnalysis()" disabled.bind="!canAddAnalysis">Add analysis</button>
 
       <div class="text-warning" if.bind="!canSaveAnalysis">
         You must fill in all the fields for all of the analyses

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using AmberwoodCore.Extensions;
 using AmberwoodCore.Models;
+using AmbRcnTradeServer.Constants;
 using AmbRcnTradeServer.Models.DictionaryModels;
 using AmbRcnTradeServer.Models.InspectionModels;
 using AmbRcnTradeServer.Models.StockManagementModels;
@@ -40,9 +41,14 @@ namespace Tests
             var location = fixture.DefaultEntity<Customer>().Create();
             await session.StoreAsync(location);
 
+            var analysisResult = fixture.Build<Analysis>()
+                .With(c => c.Approved, Approval.Approved)
+                .Create();
+
             var inspection = fixture.DefaultEntity<Inspection>()
                 .With(c => c.SupplierId, supplier.Id)
                 .With(c => c.Bags, 500)
+                .With(c => c.AnalysisResult, analysisResult)
                 .Without(c => c.StockReferences)
                 .Create();
             await session.StoreAsync(inspection);
@@ -66,6 +72,10 @@ namespace Tests
             actualStock.LocationId.Should().Be(location.Id);
             actualStock.LotNo.Should().Be(1);
             actualStock.InspectionIds.Should().HaveCount(1).And.Contain(inspection.Id);
+            actualStock.AnalysisResult.Approved.Should().Be(Approval.Approved);
+
+            var listStocks = await session.Query<Stock>().ToListAsync();
+            listStocks.Should().HaveCount(1);
 
             // Should have added the stockId to the inspection.StockIds
             var actualInspection = await session.LoadAsync<Inspection>(inspection.Id);

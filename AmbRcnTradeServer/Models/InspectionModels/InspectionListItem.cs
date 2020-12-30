@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AmbRcnTradeServer.Constants;
@@ -24,5 +25,7 @@ namespace AmbRcnTradeServer.Models.InspectionModels
         public double Count { get; set; }
         public double Moisture { get; set; }
         public double RejectsPct { get; set; }
+        public List<StockReference> StockReferences { get; set; } = new();
+        public int StockAllocations { get; set; }
     }
 }

@@ -58,13 +58,13 @@ export class Sidenav {
     }
   }
 
-  protected inspectionRoutes() {
-    return this.router.navigation.filter(row => this.isInRoute(row, "inspections"));
-  }
+  // protected inspectionRoutes() {
+  //   return this.router.navigation.filter(row => this.isInRoute(row, "inspections"));
+  // }
 
   protected otherRoutes() {
     if (isInRole(["admin", "user", "guest", "inspector"], this.state)) {
-      return this.router.navigation.filter(row => this.isNotInRoute(row, ["admin", "dictionary", "accounts", "inspections"]));
+      return this.router.navigation.filter(row => this.isNotInRoute(row, ["admin", "dictionary", "accounts"]));
     }
   }
 

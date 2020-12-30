@@ -1,3 +1,4 @@
+import { IStockReference } from "./IStockReference";
 import { Approval } from "constants/app-constants";
 
 export interface IInspectionListItem {
@@ -15,5 +16,7 @@ export interface IInspectionListItem {
   count: number;
   moisture: number;
   rejectsPct: number;
+  stockReferences: IStockReference[];
+  stockAllocations: number;
   css?: string;
 }

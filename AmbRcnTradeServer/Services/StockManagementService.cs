@@ -49,6 +49,7 @@ namespace AmbRcnTradeServer.Services
                 stock.CompanyId = inspection.CompanyId;
                 stock.InspectionIds = new List<string> {inspectionId};
                 stock.LocationId = locationId;
+                stock.AnalysisResult = inspection.AnalysisResult;
             }
             else
             {
@@ -67,7 +68,9 @@ namespace AmbRcnTradeServer.Services
                 await _inspectionService.Save(inspection);
             }
 
-            return new ServerResponse<MovedInspectionResult>(new MovedInspectionResult(stockResponse.Id), "Moved inspection to stock");
+            await _session.SaveChangesAsync();
+
+            return new ServerResponse<MovedInspectionResult>(new MovedInspectionResult(stockResponse.Id, inspection), "Moved inspection to stock");
         }
 
         public async Task<ServerResponse> RemoveInspectionFromStock(string inspectionId, string stockId)

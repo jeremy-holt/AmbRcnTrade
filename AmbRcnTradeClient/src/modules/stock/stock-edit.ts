@@ -36,6 +36,10 @@ export class StockEdit {
     this.suppliers.unshift({ id: null, name: "[Select]" });
 
     this.model = _.cloneDeep(state.stock.current);
+    if (this.model) {
+      this.selectedLocation = this.locations.find(c => c.id === this.model.locationId);
+      this.selectedSupplier = this.suppliers.find(c => c.id === this.model.supplierId);
+    }
   }
 
   protected async activate(params: IParamsId) {
@@ -70,5 +74,16 @@ export class StockEdit {
     }
   }
 
-  protected listItemMatcher = (a: IListItem, b: IListItem) => a?.id === b?.id;
+  // protected locationMatcher = (a: IStock, b: IListItem) => {
+  //   console.log("a", a);
+  //   console.log("b", b);
+
+  //   a?.locationId === b?.id;
+  // }
+  // protected locationMatcher = (a: IListItem, b: IListItem) => {
+  //   console.log("a", a);
+  //   console.log("b", b);
+  //   a?.id === b?.id;
+  // }
+  protected supplierMatcher = (a: IStock, b: IListItem) => a?.supplierId === b?.id;
 }

@@ -62,7 +62,9 @@ namespace AmbRcnTradeServer.Services
                     Kor = c.AnalysisResult.Kor,
                     Count = c.AnalysisResult.Count,
                     Moisture = c.AnalysisResult.Moisture,
-                    RejectsPct = c.AnalysisResult.RejectsPct
+                    RejectsPct = c.AnalysisResult.RejectsPct,
+                    StockReferences = c.StockReferences,
+                    StockAllocations = c.StockReferences.Count
                 })
                 .ToListAsync();
 

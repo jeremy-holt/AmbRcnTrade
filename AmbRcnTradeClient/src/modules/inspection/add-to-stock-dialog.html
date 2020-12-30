@@ -1,0 +1,34 @@
+<template>
+  <ux-dialog>
+    <ux-dialog-header>
+      <h4>Create stock from inspection</h4>
+      <p class="font-italic">
+        This will create a new stock entry from the goods inspected
+      </p>
+    </ux-dialog-header>
+
+    <ux-dialog-body>
+      <debug-console model.bind="model"></debug-console>
+      
+      <div class="row">
+        <div class="col">
+          <date-input value.bind="model.date" label="Date stock enters"></date-input>
+        </div>
+        <div class="col">
+          <number-input value.bind="model.bags" label="Number of bags"></number-input>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col">
+          <select-input source.bind="locations" value.bind="selectedLocation" label="Select the warehouse"></select-input>
+        </div>
+      </div>
+    </ux-dialog-body>
+
+    <ux-dialog-footer>
+      <button type="button" class="btn btn-danger" disabled.bind="!canCreate" click.delegate="createStockAllocation()">Ok</button>
+      <button type="button" class="btn btn-secondary" click.delegate="controller.cancel()">Cancel</button>
+    </ux-dialog-footer>
+  </ux-dialog>
+</template>

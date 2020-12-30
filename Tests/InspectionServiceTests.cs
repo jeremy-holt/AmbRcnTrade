@@ -103,6 +103,8 @@ namespace Tests
             actual.Count.Should().BeGreaterThan(0);
             actual.Moisture.Should().BeGreaterThan(0);
             actual.RejectsPct.Should().BeGreaterThan(0);
+            actual.StockReferences.Should().HaveCount(3);
+            actual.StockAllocations.Should().Be(3);
         }
 
         [Fact]

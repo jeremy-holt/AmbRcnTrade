@@ -12,13 +12,14 @@
       <tr>
         <th>Date</th>        
         <th>Bags</th>
+        <th>Stock allocations</th>
         <th>KOR</th>
         <th>Count</th>
         <th>Moisture</th>
         <th>Rejects</th>
+        <th>SupplierName</th>        
         <th>Location</th>
         <th>Inspector</th>
-        <th>SupplierName</th>        
 
       </tr>
     </thead>
@@ -28,6 +29,14 @@
           <a class="with-decoration" route-href="inspectionEdit; params.bind:{id: encode(item.id)}">${item.inspectionDate | dateFormat: "DD/MM/YYYY"}</a>
         </td>
         <td>${item.bags}</td>
+        <td>
+          <div if.bind="item.stockAllocations == 0">
+            Not in stock            
+          </div>
+          <div else>
+            <a href="#" click.delegate="openStockAllocationsList(item)">${item.stockAllocations} stock allocations</a>
+          </div>
+        </td>
         <td class.bind="item.css">${item.kor | numberFormat:"0,0.00"}</td>
         <td class.bind="item.css">${item.count | numberFormat: "0,0.00"}</td>
         <td class.bind="item.css">${item.moisture/100 | numberFormat: "0.00%"}</td>
