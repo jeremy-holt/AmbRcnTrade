@@ -1,7 +1,7 @@
 <template>
   <div class="row">
     <div class="col small m-3 shadow">
-      <h5><span if.bind="caption">(${index}) </span>Average of analyses</h5>
+      <h5>Average of analyses</h5>
       <div class="font-weight-bold">
         <div if.bind="inspectionId">
           <a route-href="inspectionEdit; params.bind:{id: encode(inspectionId)}" class="with-decoration">${caption}</a>

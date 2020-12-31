@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AmberwoodCore.Extensions;
@@ -38,21 +37,32 @@ namespace Tests
             var sut = GetStockService(session);
             var fixture = new Fixture();
 
-            var inspections = fixture.DefaultEntity<Inspection>().CreateMany().ToList();
-            await inspections.SaveList(session);
+            var inspection = fixture.DefaultEntity<Inspection>().Create();
+            inspection.AnalysisResult.Approved = Approval.Approved;
+            // inspection.Analyses[0].Approved = Approval.Approved;
+            // inspection.Analyses[1].Approved = Approval.Approved;
+            // inspection.Analyses[2].Approved = Approval.Rejected;
+
+            await session.StoreAsync(inspection);
 
             var stock = fixture.DefaultEntity<Stock>()
-                .With(c => c.InspectionIds, inspections.Select(x => x.Id).ToList())
+                .With(c => c.InspectionId, inspection.Id)
+                .Without(c => c.AnalysisResult)
                 .Create();
             await session.StoreAsync(stock);
 
             // Act
             var actual = await sut.Load(stock.Id);
 
+            // var totalBags = inspection.Analyses.Where(c => c.Approved == Approval.Approved).Sum(x => x.Bags);
+            // var averageCount = inspection.Analyses.Where(c => c.Approved == Approval.Approved).Sum(x => x.Bags * x.Count) / totalBags;
+
             // Assert
             actual.Should().NotBeNull();
-            actual.Inspections.Should().HaveCount(inspections.Count);
-            actual.Inspections[0].Id.Should().Be(actual.InspectionIds[0]);
+            actual.Inspection.Should().Be(inspection);
+            actual.Inspection.Id.Should().Be(actual.InspectionId);
+            actual.AnalysisResult.Should().NotBeNull();
+            actual.AnalysisResult.Count.Should().Be(inspection.AnalysisResult.Count);
         }
 
         [Fact]
@@ -69,34 +79,34 @@ namespace Tests
 
             var stockIn1 = fixture.DefaultEntity<Stock>()
                 .Without(c => c.StockOutDate)
-                .Without(c => c.InspectionIds)
+                .Without(c => c.InspectionId)
                 .Without(c => c.LocationId)
-                .Without(c=>c.LotNo)
+                .Without(c => c.LotNo)
                 .Create();
             await sut.Save(stockIn1);
 
             var stockIn2 = fixture.DefaultEntity<Stock>()
                 .Without(c => c.StockOutDate)
-                .Without(c => c.InspectionIds)
+                .Without(c => c.InspectionId)
                 .Without(c => c.LocationId)
-                .Without(c=>c.LotNo)
+                .Without(c => c.LotNo)
                 .Create();
             await sut.Save(stockIn2);
 
             var stockOut = fixture.DefaultEntity<Stock>()
                 .Without(c => c.StockInDate)
-                .Without(c => c.InspectionIds)
+                .Without(c => c.InspectionId)
                 .With(c => c.LotNo, stockIn2.LotNo)
                 .Without(c => c.LocationId)
-                .Without(c=>c.LotNo)
+                .Without(c => c.LotNo)
                 .Create();
             await sut.Save(stockOut);
 
             var stockIn3 = fixture.DefaultEntity<Stock>()
                 .Without(c => c.StockOutDate)
-                .Without(c => c.InspectionIds)
+                .Without(c => c.InspectionId)
                 .Without(c => c.LocationId)
-                .Without(c=>c.LotNo)
+                .Without(c => c.LotNo)
                 .Create();
             await sut.Save(stockIn3);
 
@@ -141,16 +151,16 @@ namespace Tests
             await session.StoreAsync(location);
 
             var analysisResult = fixture.Build<Analysis>().With(c => c.Approved, Approval.Approved).Create();
-            
+
             var inspections = fixture.DefaultEntity<Inspection>()
                 .With(c => c.SupplierId, supplier.Id)
-                .With(c=>c.AnalysisResult, analysisResult)
+                .With(c => c.AnalysisResult, analysisResult)
                 .CreateMany().ToList();
             await inspections.SaveList(session);
 
             var stockIn1 = fixture.DefaultEntity<Stock>()
                 .Without(c => c.StockOutDate)
-                .Without(c => c.InspectionIds)
+                .Without(c => c.InspectionId)
                 .Without(c => c.LocationId)
                 .With(c => c.SupplierId, supplier.Id)
                 .Create();
@@ -158,7 +168,7 @@ namespace Tests
 
             var stockIn2 = fixture.DefaultEntity<Stock>()
                 .Without(c => c.StockOutDate)
-                .With(c => c.InspectionIds, inspections.Select(x => x.Id).ToList)
+                .With(c => c.InspectionId, inspections[0].Id)
                 .With(c => c.LocationId, location.Id)
                 .With(c => c.SupplierId, supplier.Id)
                 .Create();
@@ -166,7 +176,7 @@ namespace Tests
 
             var stockOut = fixture.DefaultEntity<Stock>()
                 .Without(c => c.StockInDate)
-                .Without(c => c.InspectionIds)
+                .Without(c => c.InspectionId)
                 .With(c => c.LotNo, stockIn2.LotNo)
                 .Without(c => c.LocationId)
                 .Without(c => c.SupplierId)
@@ -175,7 +185,7 @@ namespace Tests
 
             var stockIn3 = fixture.DefaultEntity<Stock>()
                 .Without(c => c.StockOutDate)
-                .Without(c => c.InspectionIds)
+                .Without(c => c.InspectionId)
                 .Without(c => c.LocationId)
                 .With(c => c.SupplierId, supplier.Id)
                 .Create();
@@ -189,7 +199,7 @@ namespace Tests
             var list = await sut.LoadStockList(COMPANY_ID, null, null);
             list.Should().BeInAscendingOrder(c => c.LotNo);
 
-            var actual = list[1];
+            var actual = list.Single(c => c.StockId == stockIn2.Id);
             actual.StockIn.Bags.Should().Be(stockIn2.Bags);
             actual.StockIn.WeightKg.Should().Be(stockIn2.WeightKg);
             actual.StockOut.Bags.Should().Be(0);
@@ -203,7 +213,8 @@ namespace Tests
             actual.Origin.Should().Be(stockIn2.Origin);
             actual.SupplierName.Should().Be(supplier.Name);
             actual.SupplierId.Should().Be(supplier.Id);
-            actual.AnalysisResult.Should().NotBeNull();
+            actual.InspectionId.Should().Be(stockIn2.InspectionId);
+            actual.Inspection.Should().Be(inspections[0]);
         }
 
         [Fact]
@@ -334,8 +345,8 @@ namespace Tests
                 Bags = 300.0,
                 WeightKg = 24000.0,
                 SupplierId = supplier.Id,
-                InspectionIds = new List<string>(),
-                Origin = "Bouake",
+                InspectionId = null,
+                Origin = "Bouake"
             };
 
             // Act

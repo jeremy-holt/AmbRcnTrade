@@ -58,8 +58,11 @@ namespace AmbRcnTradeServer.Services
 
         public async Task<Stock> Load(string id)
         {
-            var stock = await _session.Include<Stock>(c => c.InspectionIds).LoadAsync<Stock>(id);
-            stock.Inspections = await _session.LoadListFromMultipleIdsAsync<Inspection>(stock.InspectionIds);
+            var stock = await _session.Include<Stock>(c => c.InspectionId).LoadAsync<Stock>(id);
+            
+            stock.Inspection = await _session.LoadAsync<Inspection>(stock.InspectionId);
+            stock.AnalysisResult = stock.Inspection?.AnalysisResult;
+            
             return stock;
         }
 
@@ -82,19 +85,10 @@ namespace AmbRcnTradeServer.Services
             return list;
         }
 
-        private static double GetAverageAnalysisResultForStock(IEnumerable<Inspection> inspections, Func<Inspection, double> field)
-        {
-            var results = inspections.Where(c => c.AnalysisResult.Approved == Approval.Approved).ToList();
-
-            return results.Any()
-                ? results.Average(field)
-                : 0;
-        }
-
         public async Task<List<StockListItem>> LoadStockList(string companyId, long? lotNo, string locationId)
         {
             var query = _session.Query<Stock>()
-                .Include(c => c.InspectionIds)
+                .Include(c => c.InspectionId)
                 .Include(c => c.LocationId)
                 .Include(c => c.SupplierId)
                 .Where(c => c.CompanyId == companyId);
@@ -105,21 +99,11 @@ namespace AmbRcnTradeServer.Services
             if (locationId.IsNotNullOrEmpty())
                 query = query.Where(c => c.LocationId == locationId);
 
-            var stocks = await query.ToListAsync();
+            var stocks = await query.OrderBy(c => c.LotNo).ThenBy(c => c.StockInDate).ToListAsync();
 
             var locations = await _session.LoadListFromMultipleIdsAsync<Customer>(stocks.Select(c => c.LocationId));
             var suppliers = await _session.LoadListFromMultipleIdsAsync<Customer>(stocks.Select(x => x.SupplierId));
-            var inspections = await _session.LoadListFromMultipleIdsAsync<Inspection>(stocks.SelectMany(x => x.InspectionIds));
-
-            var analysisResult = new Analysis
-            {
-                Count = GetAverageAnalysisResultForStock(inspections, c => c.AnalysisResult.Count),
-                Kor = GetAverageAnalysisResultForStock(inspections, c => c.AnalysisResult.Kor),
-                Moisture = GetAverageAnalysisResultForStock(inspections, c => c.AnalysisResult.Moisture),
-                RejectsPct = GetAverageAnalysisResultForStock(inspections, c => c.AnalysisResult.RejectsPct),
-                SoundPct = GetAverageAnalysisResultForStock(inspections, c => c.AnalysisResult.SoundPct),
-                SpottedPct = GetAverageAnalysisResultForStock(inspections, c => c.AnalysisResult.SpottedPct)
-            };
+            var inspections = await _session.LoadListFromMultipleIdsAsync<Inspection>(stocks.Select(x => x.InspectionId));
 
             return stocks.Select(item => new StockListItem
                 {
@@ -138,9 +122,27 @@ namespace AmbRcnTradeServer.Services
                     LocationName = locations.FirstOrDefault(c => c.Id == item.LocationId)?.Name,
                     SupplierId = item.SupplierId,
                     SupplierName = suppliers.FirstOrDefault(c => c.Id == item.SupplierId)?.Name,
-                    AnalysisResult = analysisResult
+                    InspectionId = item.InspectionId,
+                    Inspection = inspections.FirstOrDefault(c => c.Id == item.InspectionId)
                 })
                 .ToList();
+        }
+
+        private static double GetAverageAnalysisResult(IEnumerable<Analysis> analyses, Func<Analysis, double> field, double bags)
+        {
+            if (bags == 0)
+                return 0;
+            
+            return analyses.Where(c => c.Approved == Approval.Approved).Sum(x => x.Bags * field(x)) / bags;
+        }
+
+        private static double GetAverageAnalysisResultForStock(IEnumerable<Inspection> inspections, Func<Inspection, double> field)
+        {
+            var results = inspections.Where(c => c.AnalysisResult.Approved == Approval.Approved).ToList();
+
+            return results.Any()
+                ? results.Average(field)
+                : 0;
         }
     }
 }

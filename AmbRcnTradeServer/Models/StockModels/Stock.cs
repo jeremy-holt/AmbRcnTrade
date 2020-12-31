@@ -19,16 +19,17 @@ namespace AmbRcnTradeServer.Models.StockModels
         public long LotNo { get; set; }
         public double Bags { get; set; }
         public double WeightKg { get; set; }
-        public List<string> InspectionIds { get; set; } = new();
+        public string InspectionId { get; set; } 
         public bool IsStockIn { get; set; }
 
         [JsonIgnore]
-        public List<Inspection> Inspections { get; set; } = new();
+        public Inspection Inspection { get; set; } = new();
 
         public string Origin { get; set; }
         public string SupplierId { get; set; }
         public string Id { get; set; }
         public string Name { get; set; }
         public string CompanyId { get; set; }
+        [JsonIgnore] public Analysis AnalysisResult { get; set; }
     }
 }

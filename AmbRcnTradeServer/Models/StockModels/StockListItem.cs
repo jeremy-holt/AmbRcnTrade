@@ -12,7 +12,6 @@ namespace AmbRcnTradeServer.Models.StockModels
     {
         public StockInfo StockIn { get; set; }
         public StockInfo StockOut { get; set; }
-        public Analysis AnalysisResult { get; set; }
         public string LocationId { get; set; }
         public long LotNo { get; set; }
         public string StockId { get; set; }
@@ -22,5 +21,7 @@ namespace AmbRcnTradeServer.Models.StockModels
         public string Origin { get; set; }
         public string SupplierName { get; set; }
         public string SupplierId { get; set; }
+        public string InspectionId { get; set; }
+        public Inspection Inspection { get; set; }
     }
 }

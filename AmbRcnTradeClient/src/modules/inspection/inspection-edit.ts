@@ -135,8 +135,6 @@ export class InspectionEdit {
         await this.stockManagementService.moveInspectionToStock(request);
 
         if (this.state.inspection.movedToStockId) {
-          // console.log(this.state.inspection.current);
-          // console.log("openAddToStockDialog.onClosed()", this.state.inspection.movedToStockId);
           this.router.navigateToRoute("stockEdit", { id: this.encode(this.state.inspection.movedToStockId) });
         }
       }

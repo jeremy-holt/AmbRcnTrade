@@ -116,8 +116,8 @@ export const initialState: IState = {
       lotNo: undefined!,
       bags: undefined!,
       weightKg: undefined!,
-      inspectionIds: [],
-      inspections: [],
+      inspectionId: undefined!,
+      inspection: undefined!,
       isStockIn: undefined!,    
       origin: undefined!,
       supplierId: undefined!

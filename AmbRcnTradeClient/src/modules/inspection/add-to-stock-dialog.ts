@@ -45,14 +45,12 @@ export class AddToStockDialog {
     }
   }
 
-
-
   protected async activate(model: { inspection: IInspection }) {
     await this.customerService.loadCustomersForAppUserList();
     await this.stockService.loadStockList(null, null);
     this.inspection = model.inspection;
 
-    this.model.bags = this.inspection.bags;
+    this.model.bags = this.inspection.bags - this.inspection.stockReferences.reduce((a, b) => a += b.bags, 0);
     this.model.inspectionId = this.inspection.id;
     this.model.date = moment().format(DATEFORMAT);
   }

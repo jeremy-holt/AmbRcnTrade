@@ -49,7 +49,7 @@ export class InspectionService extends FetchService {
     if (!bagsAlreadyAllocated) {
       return true;
     }
-    return inspection.bags < bagsAlreadyAllocated;
+    return bagsAlreadyAllocated < inspection.bags;
   }
 
   public getAnalysisResult(list: IAnalysis[], approved: Approval): IAnalysis {

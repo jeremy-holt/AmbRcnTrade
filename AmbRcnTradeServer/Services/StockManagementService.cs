@@ -44,7 +44,7 @@ namespace AmbRcnTradeServer.Services
                 stock.StockInDate = date;
                 stock.SupplierId = inspection.SupplierId;
                 stock.CompanyId = inspection.CompanyId;
-                stock.InspectionIds = new List<string> {inspectionId};
+                stock.InspectionId = inspectionId;
                 stock.LocationId = locationId;
                 stock.LotNo = lotNo;
             }
@@ -76,7 +76,7 @@ namespace AmbRcnTradeServer.Services
 
             foreach (var stock in stocks)
             {
-                stock.InspectionIds.RemoveAll(c => c == inspectionId);
+                stock.InspectionId = null;
                 await _session.StoreAsync(stock);
             }
 

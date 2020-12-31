@@ -1,10 +1,9 @@
-import { IAnalysis } from "./../inspections/IAnalysis";
+import { IInspection } from "./../inspections/IInspection";
 import { IStockInfo } from "./IStockInfo";
 
 export interface IStockListItem {
   stockIn: IStockInfo;
   stockOut: IStockInfo;
-  analysisResult: IAnalysis;
   locationId: string;
   lotNo: number;
   stockId: string;
@@ -13,6 +12,8 @@ export interface IStockListItem {
   supplierName: string;
   supplierId: string;
   locationName: string;
+  inspectionId: string;
+  inspection: IInspection;
   origin: string;
   selected?: boolean;
 }

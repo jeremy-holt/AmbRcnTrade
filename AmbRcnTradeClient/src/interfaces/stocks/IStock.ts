@@ -10,10 +10,10 @@ export interface IStock extends IEntityCompany {
     lotNo: number;
     bags: number;
     weightKg: number;
-    inspectionIds: string[];
+    inspectionId: string;
+    inspection: IInspection;
     stockOutDate: string | null;
     isStockIn: boolean;
-    inspections: IInspection[];
     origin: string;
     supplierId: string;
 }

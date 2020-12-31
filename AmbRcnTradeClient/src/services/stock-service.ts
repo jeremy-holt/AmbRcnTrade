@@ -33,9 +33,7 @@ export class StockService extends FetchService {
     return super.post<IStock>(stock, "save", stockEditAction);
   }
 
-  public async loadStockList(lotNo: number, locationId: string) {
-    console.log(lotNo,locationId);
-    
+  public async loadStockList(lotNo: number, locationId: string) {    
     return super.getMany<IStockListItem[]>(
       [
         this.currentCompanyIdQuery(),

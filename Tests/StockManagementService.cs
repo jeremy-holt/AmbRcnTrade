@@ -69,7 +69,7 @@ namespace Tests
             actualStock.Bags.Should().Be(400);
             actualStock.LocationId.Should().Be(location.Id);
             actualStock.LotNo.Should().Be(1);
-            actualStock.InspectionIds.Should().HaveCount(1).And.Contain(inspection.Id);
+            actualStock.InspectionId.Should().Be(inspection.Id);
 
             var listStocks = await session.Query<Stock>().ToListAsync();
             listStocks.Should().HaveCount(1);
@@ -129,7 +129,7 @@ namespace Tests
             actualStock.Bags.Should().Be(400);
             actualStock.LocationId.Should().Be(location.Id);
             actualStock.LotNo.Should().Be(17);
-            actualStock.InspectionIds.Should().HaveCount(1).And.Contain(inspection.Id);
+            actualStock.InspectionId.Should().Be(inspection.Id);
 
             var listStocks = await session.Query<Stock>().ToListAsync();
             listStocks.Should().HaveCount(1);
@@ -168,7 +168,7 @@ namespace Tests
             await session.StoreAsync(inspection);
 
             var stock = fixture.DefaultEntity<Stock>()
-                .With(c => c.InspectionIds, new List<string> {inspection.Id})
+                .With(c => c.InspectionId, inspection.Id)
                 .Create();
             await session.StoreAsync(stock);
 
@@ -184,7 +184,7 @@ namespace Tests
             actualInspection.StockReferences.Should().HaveCount(0);
 
             var actualStock = await session.LoadAsync<Stock>(stock.Id);
-            actualStock.InspectionIds.Should().HaveCount(0);
+            actualStock.InspectionId.Should().BeNullOrEmpty();
         }
     }
 }

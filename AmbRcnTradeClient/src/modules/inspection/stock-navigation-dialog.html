@@ -7,7 +7,7 @@
     <ux-dialog-body>
       <ul class="list-group">
         <li class="list-group-item" repeat.for="item of model.stockReferences">
-          <a href="#" class="with-decoration" click.delegate="navigateToStockReference($index)">Stock: ${item.bags |
+          <a href="#" class="with-decoration" click.delegate="navigateToStockReference($index)">Stock: Entered ${item.date | dateFormat:"DD/MM/YYYY"}, Lot no ${item.lotNo} - ${item.bags |
             numberFormat: "0,0"} bags</a>
         </li>
       </ul>

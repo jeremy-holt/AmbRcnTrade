@@ -24,7 +24,7 @@
     <div class="col">
       <select-input source.bind="locations" value.bind="selectedLocation" label="Stock location"
         matcher.bind="listItemMatcher"></select-input>
-    </div>    
+    </div>
   </div>
 
 
@@ -47,10 +47,7 @@
     </div>
   </div>
 
-  <div repeat.for="item of model.inspections">
-    <analysis-result model.bind="item.analysisResult" index="${index + 1}" inspection-id.bind="item.id" caption="${item.bags | numberFormat: '0,0'} bags inspected by ${item.inspector} on ${item.inspectionDate |
+  <analysis-result model.bind="model.analysisResult" inspection-id.bind="model.inspectionId" caption="${model.inspection.bags | numberFormat: '0,0'} bags inspected by ${model.inspection.inspector} on ${model.inspection.inspectionDate |
       dateFormat: 'DD/MM/YYYY' }"></analysis-result>
-  </div>
-
 
 </template>
