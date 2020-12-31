@@ -13,6 +13,7 @@ namespace AmbRcnTradeServer.Authorization
         public const string INSPECTOR = "inspector";
         public const string GUEST = "guest";
         public const string GUEST_NO_PRICES = "guestNoPrices";
+        public const string WAREHOUSEMAN = "warehouseManager";
     }
 
     public sealed class AuthorizeRoles

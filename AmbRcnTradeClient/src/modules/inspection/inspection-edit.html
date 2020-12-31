@@ -9,7 +9,7 @@
     <div class="card-header">
       <div class="d-flex justify-content-between">
         <h4>Inspection</h4>
-        <div>
+        <div if.bind="showCanAddInspectionToStock">
           <button type="button" class="btn-primary" disabled.bind="!canAddInspectionToStock" click.delegate="openAddToStockDialog()">Add this inspection to stocks</button>
           <div if.bind="!canAddInspectionToStock" class="text-warning">All the bags on this inspection have already been added to stock</div>
         </div>
@@ -36,7 +36,7 @@
 
       <div class="row">
         <div class="col-6">
-          <number-input value.bind="model.bags" label="Number bags"></number-input>
+          <number-input value.bind="model.bags" label="Number bags in lot. (${remainingBagsToAllocate} that can be allocated)"></number-input>
         </div>
         <div class="col">
           <text-input value.bind="model.lotNo" label="Lot number"></text-input>

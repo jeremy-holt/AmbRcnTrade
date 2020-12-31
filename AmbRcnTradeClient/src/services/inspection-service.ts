@@ -45,11 +45,15 @@ export class InspectionService extends FetchService {
   }
 
   public canAddInspectionToStock(inspection: IInspection): boolean {
-    const bagsAlreadyAllocated = inspection.stockReferences.reduce((a, b) => a += b.bags, 0);
+    const bagsAlreadyAllocated = this.bagsAlreadyAllocated(inspection);
     if (!bagsAlreadyAllocated) {
       return true;
     }
     return bagsAlreadyAllocated < inspection.bags;
+  }
+
+  public bagsAlreadyAllocated(inspection: IInspection):number{
+    return inspection.stockReferences.reduce((a, b) => a += b.bags, 0);
   }
 
   public getAnalysisResult(list: IAnalysis[], approved: Approval): IAnalysis {

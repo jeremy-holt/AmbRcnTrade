@@ -1,3 +1,4 @@
+import { isInRole } from "./../../services/role-service";
 import { DialogService } from "aurelia-dialog";
 import { autoinject, observable } from "aurelia-framework";
 import { Router } from "aurelia-router";
@@ -122,6 +123,10 @@ export class InspectionEdit {
     return this.inspectionService.canAddInspectionToStock(this.model);
   }
 
+  protected get showCanAddInspectionToStock(){
+    return isInRole(["warehouseManager"], this.state);
+  }
+
   protected async openAddToStockDialog() {
     this.dialogService.open(
       {
@@ -139,6 +144,10 @@ export class InspectionEdit {
         }
       }
     });
+  }
+
+  protected get remainingBagsToAllocate(){
+    return this.model.bags -  this.inspectionService.bagsAlreadyAllocated(this.model);
   }
 
   protected encode(value: string) {
