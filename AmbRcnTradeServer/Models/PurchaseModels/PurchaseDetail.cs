@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AmbRcnTradeServer.Constants;
+using AmbRcnTradeServer.Models.InspectionModels;
 using AmbRcnTradeServer.Models.StockModels;
 using Newtonsoft.Json;
 using Raven.Client.Documents;
@@ -21,5 +22,23 @@ namespace AmbRcnTradeServer.Models.PurchaseModels
 
         [JsonIgnore]
         public List<Stock> Stocks { get; set; } = new();
+    }
+
+    public class PurchaseDetailListItem
+    {
+        public List<string> StockIds { get; init; } = new();
+        public Currency Currency { get; set; }
+        public double PricePerKg { get; set; }
+        public DateTime Date { get; set; }
+        public List<PurchaseDetailStockListItem> Stocks { get; set; } = new();
+    }
+
+    public class PurchaseDetailStockListItem
+    {
+        public double Bags { get; set; }
+        public string StockId { get; set; }
+        public string InspectionId { get; set; }
+        public bool IsStockIn { get; set; }
+        public Analysis AnalysisResult { get; set; }
     }
 }

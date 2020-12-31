@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using AmberwoodCore.Extensions;
 using AmberwoodCore.Responses;
@@ -53,7 +52,7 @@ namespace AmbRcnTradeServer.Services
             var stocksDictionary = await _session
                 .Include<Stock>(c => c.LocationId)
                 .Include(c => c.SupplierId)
-                .Include(c=>c.InspectionId)
+                .Include(c => c.InspectionId)
                 .LoadAsync<Stock>(purchase.PurchaseDetails.SelectMany(x => x.StockIds));
             var stocks = stocksDictionary.Where(c => c.Value != null).Select(c => c.Value).ToList();
 
@@ -98,31 +97,65 @@ namespace AmbRcnTradeServer.Services
 
             foreach (var purchase in purchases)
             {
+                var purchaseListItem = new PurchaseListItem
+                {
+                    Id = purchase.Id,
+                    PurchaseDate = purchase.PurchaseDate,
+                    PurchaseNumber = purchase.PurchaseNumber,
+                    QuantityMt = purchase.QuantityMt,
+                    SupplierId = purchase.SupplierId,
+                    SupplierName = suppliers.FirstOrDefault(c => c.Id == purchase.SupplierId)?.Name
+                };
+
                 foreach (var detail in purchase.PurchaseDetails)
                 {
-                    var purchaseItem = new PurchaseListItem
+                    var listItem = new PurchaseDetailListItem
                     {
-                        SupplierName = suppliers.FirstOrDefault(c => c.Id == purchase.SupplierId)?.Name,
-                        Id = purchase.Id,
-                        SupplierId = purchase.SupplierId,
-                        PurchaseDate = purchase.PurchaseDate,
-                        PurchaseNumber = purchase.PurchaseNumber,
-                        PricePerKg = detail.PricePerKg,
                         Currency = detail.Currency,
-                        ExchangeRate = detail.ExchangeRate,
-                        QuantityMt = purchase.QuantityMt
+                        Date = detail.Date,
+                        PricePerKg = detail.PricePerKg,
+                        StockIds = detail.StockIds
                     };
+                    var foundStocks = stocks.Where(c => c.Id.In(detail.StockIds)).ToList();
+                    listItem.Stocks = foundStocks.Select(c => new PurchaseDetailStockListItem()
+                    {
+                        Bags = c.Bags,
+                        StockId = c.Id,
+                        InspectionId = c.InspectionId,
+                        IsStockIn = c.IsStockIn,
+                        AnalysisResult = c.AnalysisResult
+                    }).ToList();
+                    
 
-                    var stockIdsForItem = purchase.PurchaseDetails.SelectMany(c => c.StockIds).ToList();
-                    var stocksForItem = stocks.Where(c => c.Id.In(stockIdsForItem)).ToList();
-
-                    purchaseItem.StockIn = new StockInfo(stocksForItem.Where(c => c.IsStockIn).Sum(c => c.Bags), stocksForItem.Where(c => c.IsStockIn).Sum(c => c.WeightKg));
-                    purchaseItem.StockOut = new StockInfo(stocksForItem.Where(c => !c.IsStockIn).Sum(c => c.Bags), stocksForItem.Where(c => c.IsStockIn).Sum(c => c.WeightKg));
-                    purchaseItem.StockBalance = new StockInfo(purchaseItem.StockIn.Bags + purchaseItem.StockOut.Bags,
-                        purchaseItem.StockIn.WeightKg + purchaseItem.StockOut.WeightKg);
-
-                    purchaseList.Add(purchaseItem);
+                    purchaseListItem.PurchaseDetails.Add(listItem);
                 }
+
+                // foreach (var detail in purchase.PurchaseDetails)
+                // {
+                //     var xpurchaseItem = new PurchaseListItem
+                //     {
+                //         SupplierName = suppliers.FirstOrDefault(c => c.Id == purchase.SupplierId)?.Name,
+                //         Id = purchase.Id,
+                //         SupplierId = purchase.SupplierId,
+                //         PurchaseDate = purchase.PurchaseDate,
+                //         PurchaseNumber = purchase.PurchaseNumber,
+                //         PricePerKg = detail.PricePerKg,
+                //         Currency = detail.Currency,
+                //         ExchangeRate = detail.ExchangeRate,
+                //         QuantityMt = purchase.QuantityMt
+                //     };
+                //
+                //     var stockIdsForItem = purchase.PurchaseDetails.SelectMany(c => c.StockIds).ToList();
+                //     var stocksForItem = stocks.Where(c => c.Id.In(stockIdsForItem)).ToList();
+                //
+                //     purchaseListItem.StockIn = new StockInfo(stocksForItem.Where(c => c.IsStockIn).Sum(c => c.Bags), stocksForItem.Where(c => c.IsStockIn).Sum(c => c.WeightKg));
+                //     purchaseListItem.StockOut = new StockInfo(stocksForItem.Where(c => !c.IsStockIn).Sum(c => c.Bags), stocksForItem.Where(c => c.IsStockIn).Sum(c => c.WeightKg));
+                //     purchaseListItem.StockBalance = new StockInfo(purchaseListItem.StockIn.Bags + purchaseListItem.StockOut.Bags,
+                //         purchaseListItem.StockIn.WeightKg + purchaseListItem.StockOut.WeightKg);
+                //
+                //     
+                // }
+                purchaseList.Add(purchaseListItem);
             }
 
             return purchaseList;

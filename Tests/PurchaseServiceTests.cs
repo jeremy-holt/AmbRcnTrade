@@ -44,7 +44,7 @@ namespace Tests
             var inspection = fixture.DefaultEntity<Inspection>()
                 .With(c => c.AnalysisResult, analysisResult)
                 .Create();
-            
+
             await session.StoreAsync(inspection);
 
             var stocks = fixture.DefaultEntity<Stock>()
@@ -105,8 +105,14 @@ namespace Tests
             var supplier2 = fixture.DefaultEntity<Customer>().Create();
             await session.StoreAsync(supplier2);
 
+            var inspection = fixture.DefaultEntity<Inspection>().Create();
+            await session.StoreAsync(inspection);
 
-            var stocks = fixture.DefaultEntity<Stock>().CreateMany().ToList();
+            var stocks = fixture.DefaultEntity<Stock>()
+                .With(c => c.InspectionId, inspection.Id)
+                .Without(c => c.Inspection)
+                .Without(c => c.AnalysisResult)
+                .CreateMany().ToList();
             await stocks.SaveList(session);
 
             var purchaseDetails = fixture.Build<PurchaseDetail>()
@@ -135,17 +141,19 @@ namespace Tests
 
             // Assert
             list.Should().Contain(c => c.SupplierId == purchase1.SupplierId);
+            list.Should().OnlyContain(c => c.SupplierId == supplier1.Id);
             list.Should().Contain(c => c.SupplierName == supplier1.Name);
             list.Should().Contain(c => c.Id == purchase1.Id);
             list.Should().Contain(c => c.PurchaseNumber == purchase1.PurchaseNumber);
             list.Should().Contain(c => c.PurchaseDate == purchase1.PurchaseDate);
-            list.Should().Contain(c => c.StockIn != null);
-            list.Should().Contain(c => c.StockOut != null);
-            list.Should().Contain(c => c.StockBalance != null);
-            list.Should().OnlyContain(c => c.SupplierId == supplier1.Id);
-            list.Should().Contain(c => Math.Abs(c.PricePerKg - purchaseDetails[0].PricePerKg) < 0.01);
-            list.Should().Contain(c => c.Currency == purchaseDetails[0].Currency);
-            list.Should().Contain(c => Math.Abs(c.ExchangeRate - purchaseDetails[0].ExchangeRate) < 0.01);
+            
+            var details = list[0].PurchaseDetails;
+            details.Should().HaveCount(3);
+            details[0].PricePerKg.Should().Be(purchaseDetails[0].PricePerKg);
+            details[0].Currency.Should().Be(purchaseDetails[0].Currency);
+            details[0].StockIds.Should().BeEquivalentTo(purchaseDetails[0].StockIds);
+            details[0].Stocks[0].AnalysisResult.Should().Be(inspection.AnalysisResult);
+            details[0].Stocks[0].Bags.Should().Be(stocks[0].Bags);
         }
 
         [Fact]
