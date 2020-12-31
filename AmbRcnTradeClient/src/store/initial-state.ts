@@ -111,6 +111,7 @@ export const initialState: IState = {
       name: undefined!,
       companyId: undefined!,
       locationId: undefined!,
+      locationName: undefined!,
       stockInDate: undefined!,
       stockOutDate: undefined!,
       lotNo: undefined!,
@@ -118,7 +119,7 @@ export const initialState: IState = {
       weightKg: undefined!,
       inspectionId: undefined!,
       inspection: undefined!,
-      isStockIn: undefined!,    
+      isStockIn: undefined!,
       origin: undefined!,
       supplierId: undefined!
     },
@@ -133,8 +134,10 @@ export const initialState: IState = {
       purchaseDate: undefined!,
       purchaseNumber: undefined!,
       supplierId: undefined!,
+      quantityMt: undefined!,
       purchaseDetails: []
     },
-    list: []
+    list: [],
+    nonCommittedStocksList: []
   }
 };

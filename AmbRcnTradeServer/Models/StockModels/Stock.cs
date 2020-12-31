@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AmberwoodCore.Interfaces;
@@ -19,17 +18,19 @@ namespace AmbRcnTradeServer.Models.StockModels
         public long LotNo { get; set; }
         public double Bags { get; set; }
         public double WeightKg { get; set; }
-        public string InspectionId { get; set; } 
+        public string InspectionId { get; set; }
         public bool IsStockIn { get; set; }
 
-        [JsonIgnore]
-        public Inspection Inspection { get; set; } = new();
-
+        [JsonIgnore] public Inspection Inspection { get; set; } = new();
         public string Origin { get; set; }
         public string SupplierId { get; set; }
+        [JsonIgnore]
+        public Analysis AnalysisResult { get; set; }
+        [JsonIgnore]
+        public string LocationName { get; set; }
         public string Id { get; set; }
         public string Name { get; set; }
         public string CompanyId { get; set; }
-        [JsonIgnore] public Analysis AnalysisResult { get; set; }
+        [JsonIgnore]public string SupplierName { get; set; }
     }
 }

@@ -39,9 +39,6 @@ namespace Tests
 
             var inspection = fixture.DefaultEntity<Inspection>().Create();
             inspection.AnalysisResult.Approved = Approval.Approved;
-            // inspection.Analyses[0].Approved = Approval.Approved;
-            // inspection.Analyses[1].Approved = Approval.Approved;
-            // inspection.Analyses[2].Approved = Approval.Rejected;
 
             await session.StoreAsync(inspection);
 
@@ -53,9 +50,6 @@ namespace Tests
 
             // Act
             var actual = await sut.Load(stock.Id);
-
-            // var totalBags = inspection.Analyses.Where(c => c.Approved == Approval.Approved).Sum(x => x.Bags);
-            // var averageCount = inspection.Analyses.Where(c => c.Approved == Approval.Approved).Sum(x => x.Bags * x.Count) / totalBags;
 
             // Assert
             actual.Should().NotBeNull();

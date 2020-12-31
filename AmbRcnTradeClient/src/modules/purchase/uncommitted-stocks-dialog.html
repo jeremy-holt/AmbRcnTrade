@@ -1,0 +1,39 @@
+<template>
+  <ux-dialog>
+    <ux-dialog-header>
+      <h4>Available stocks</h4>
+    </ux-dialog-header>
+
+    <ux-dialog-body>
+      <table class="table table table-bordered table-hover">
+        <thead>
+          <tr>
+            <th>Lot no</th>
+            <th>Location</th>
+            <th>Supplier</th>
+            <th>Bags</th>
+            <th>Kor</th>
+            <th>Count</th>
+            <th>Moisture</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr repeat.for="item of list" click.delegate="selectRow(item)" class="cursor-pointer ${item.selected ? 'bg-highlight' : ''}">
+            <td>Lot no: ${item.lotNo}</td>
+            <td>${item.locationName}</td>
+            <td>${item.supplierName}</td>
+            <td class="text-right">${item.bags | numberFormat: "0,0"}</td>
+            <td class="text-right">${item.inspection.analysisResult.kor | numberFormat:"0,00.00"}</td>
+            <td class="text-right">${item.inspection.analysisResult.count | numberFormat: "0.0"}</td>
+            <td class="text-right">${item.inspection.analysisResult.moisture/100 | numberFormat: "0.00%"}</td>
+          </tr>
+        </tbody>
+      </table>
+    </ux-dialog-body>
+
+    <ux-dialog-footer>
+      <button type="button" class="btn btn-danger" click.delegate="okClicked()">Ok</button>
+      <button type="button" class="btn btn-secondary" click.delegate="controller.cancel()">Cancel</button>
+    </ux-dialog-footer>
+  </ux-dialog>
+</template>

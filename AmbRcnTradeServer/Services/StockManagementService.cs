@@ -5,9 +5,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using AmberwoodCore.Extensions;
 using AmberwoodCore.Responses;
+using AmbRcnTradeServer.Models.DictionaryModels;
 using AmbRcnTradeServer.Models.InspectionModels;
 using AmbRcnTradeServer.Models.StockManagementModels;
 using AmbRcnTradeServer.Models.StockModels;
+using AmbRcnTradeServer.RavenIndexes;
 using Raven.Client.Documents;
 using Raven.Client.Documents.Linq;
 using Raven.Client.Documents.Session;
@@ -18,6 +20,7 @@ namespace AmbRcnTradeServer.Services
     {
         Task<ServerResponse<MovedInspectionResult>> MoveInspectionToStock(string inspectionId, double bags, DateTime date, long lotNo, string locationId);
         Task<ServerResponse> RemoveInspectionFromStock(string inspectionId, string stockId);
+        Task<List<Stock>> GetNonCommittedStocks(string companyId);
     }
 
     public class StockManagementService : IStockManagementService
@@ -39,7 +42,8 @@ namespace AmbRcnTradeServer.Services
 
             var inspection = await _inspectionService.Load(inspectionId);
 
-            var stock = new Stock(); {
+            var stock = new Stock();
+            {
                 stock.Bags = bags;
                 stock.StockInDate = date;
                 stock.SupplierId = inspection.SupplierId;
@@ -48,7 +52,7 @@ namespace AmbRcnTradeServer.Services
                 stock.LocationId = locationId;
                 stock.LotNo = lotNo;
             }
-        
+
 
             var stockResponse = await _stockService.Save(stock);
 
@@ -81,6 +85,41 @@ namespace AmbRcnTradeServer.Services
             }
 
             return new ServerResponse("Removed inspection from stock");
+        }
+
+        public async Task<List<Stock>> GetNonCommittedStocks(string companyId)
+        {
+            var usedStockIds = await _session.Query<Stocks_ByPurchases.Result, Stocks_ByPurchases>()
+                .Where(c => c.CompanyId == companyId)
+                .ProjectInto<Stocks_ByPurchases.Result>()
+                .ToListAsync();
+
+            var stocks = await _session.Query<Stock>()
+                .Include(c => c.LocationId)
+                .Include(c=>c.InspectionId)
+                .Include(c=>c.SupplierId)
+                .Where(c => c.CompanyId == companyId)
+                .OrderBy(c => c.LotNo)
+                .ToListAsync();
+
+            var allStockIds = stocks
+                .Where(c => c.IsStockIn)
+                .Select(c => c.Id).ToList();
+
+            var nonCommittedStocksIds = allStockIds.Except(usedStockIds.Select(c => c.StockId)).ToList();
+
+            var nonCommittedStocks = await _session.LoadListFromMultipleIdsAsync<Stock>(nonCommittedStocksIds);
+            var locations = await _session.LoadListFromMultipleIdsAsync<Customer>(nonCommittedStocks.Select(c => c.LocationId));
+            var inspections = await _session.LoadListFromMultipleIdsAsync<Inspection>(nonCommittedStocks.Select(x => x.InspectionId));
+            var suppliers = await _session.LoadListFromMultipleIdsAsync<Customer>(nonCommittedStocks.Select(c => c.SupplierId));
+            
+            foreach (var item in nonCommittedStocks)
+            {
+                item.LocationName = locations.FirstOrDefault(c => c.Id == item.LocationId)?.Name;
+                item.Inspection = inspections.FirstOrDefault(c => c.Id == item.InspectionId) ?? new Inspection();
+                item.SupplierName = suppliers.FirstOrDefault(c => c.Id == item.SupplierId)?.Name;
+            }
+            return nonCommittedStocks;
         }
     }
 }

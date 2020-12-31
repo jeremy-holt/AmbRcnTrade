@@ -1,0 +1,100 @@
+<template>
+  <toolbar type="menu" caption="Purchase" disabled-save.bind="!canSave" save.call="save()" list-route="purchaseList">
+  </toolbar>
+
+  <debug-console model.bind="model"></debug-console>
+
+  <div class="card">
+    <div class="card-header">
+      <h4 if.bind="model.purchaseNumber">Purchase order ${model.purchaseNumber | numberFormat: "00000"}</h4>
+      <h4 else>New Purchase</h4>
+    </div>
+
+    <div class="card-body">
+      <div class="row mb-2">
+        <div class="col">
+          <date-input value.bind="model.purchaseDate" label="Date"></date-input>
+        </div>
+        <div class="col">
+          <select-input source.bind="suppliers" value.bind="selectedSupplier" label="Supplier" matcher.bind="listItemMatcher"></select-input>
+        </div>
+        <div class="col">
+          <number-input value.bind="model.quantityMt" label="Contract quantity (mt)"></number-input>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col">
+          <button type="button" class="btn btn-primary" click.delegate="addDetail()">Add details</button>
+        </div>
+      </div>
+
+      <div repeat.for="detail of model.purchaseDetails">
+        <div class="card mt-3">
+          <div class="card-header">
+            <div class="row">
+              <div class="col">
+                <date-input value.bind="detail.date" label="Date"></date-input>
+              </div>
+              <div class="col">
+                <select-input source.bind="currencies" value.bind="detail.currency" label="Currency"
+                  use-model-id="true"></select-input>
+              </div>
+              <div class="col">
+                <number-input value.bind="detail.pricePerKg" label="Price/kg"></number-input>
+              </div>
+              <div class="col">
+                <number-input value.bind="detail.exchangeRate" label="USD/CFA exchange"></number-input>
+              </div>
+            </div>
+          </div>
+          <div class="card-body">
+            <div>
+              <button type="button" class="btn btn-primary" click.delegate="addStocks($index)">Add stocks to
+                detail</button>
+            </div>
+
+            <table class="table table-sm table-bordered">
+              <thead>
+                <tr>
+                  <th>Lot no</th>
+                  <th>Location</th>
+                  <th>Supplier</th>
+                  <th class="text-right">Bags</th>
+                  <th class="text-right">KOR</th>
+                  <th class="text-right">Count</th>
+                  <th class="text-right">Moisture</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr repeat.for="stock of detail.stocks">
+                  <td>${stock.lotNo}</td>
+                  <td>${stock.locationName}</td>
+                  <td>${stock.supplierName}</td>
+                  <td class="text-right">${stock.bags | numberFormat: "0,0"}</td>
+                  <td class="text-right">${stock.inspection.analysisResult.kor | numberFormat: "0,0.00"}</td>
+                  <td class="text-right">${stock.inspection.analysisResult.count | numberFormat: "0,0.0"}</td>
+                  <td class="text-right">${stock.inspection.analysisResult.moisture/100 | numberFormat: "0.00%"}</td>
+                  <td class="text-right">
+                    <a disabled.bind="model.id" href="#" class="text-danger" click.delegate="deleteStockDetail(detail, $index)">
+                      <i class="fas fa-trash"></i>
+                    </a>
+                  </td>
+                </tr>
+              </tbody>
+              <tfoot>
+                <th colspan="3">Total</th>
+                <th class="text-right">${detail.values.bags | numberFormat: "0,0"}</th>
+                <th class="text-right">${detail.values.kor | numberFormat: "0,0.00"} </th>
+                <th class="text-right">${detail.values.count | numberFormat: "0,0.0"}</th>
+                <th class="text-right">${detail.values.moisture/100 | numberFormat: "0.00%"}</th>
+                <th></th>
+              </tfoot>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>

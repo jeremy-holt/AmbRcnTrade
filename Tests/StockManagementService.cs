@@ -7,7 +7,9 @@ using AmberwoodCore.Models;
 using AmbRcnTradeServer.Constants;
 using AmbRcnTradeServer.Models.DictionaryModels;
 using AmbRcnTradeServer.Models.InspectionModels;
+using AmbRcnTradeServer.Models.PurchaseModels;
 using AmbRcnTradeServer.Models.StockModels;
+using AmbRcnTradeServer.RavenIndexes;
 using AutoFixture;
 using FluentAssertions;
 using Raven.Client.Documents;
@@ -22,6 +24,60 @@ namespace Tests
     public class StockManagementServiceTests : TestBaseContainer
     {
         public StockManagementServiceTests(ITestOutputHelper output) : base(output) { }
+
+        private static async Task InitializeIndexes(IDocumentStore store)
+        {
+            await new Stocks_ByPurchases().ExecuteAsync(store);
+        }
+
+        [Fact]
+        public async Task GetNonCommittedStocks()
+        {
+            // Arrange
+            using var store = GetDocumentStore();
+            using var session = store.OpenAsyncSession();
+            var sut = GetStockManagementService(session);
+            await InitializeIndexes(store);
+            var fixture = new Fixture();
+
+            var inspection = fixture.DefaultEntity<Inspection>().Create();
+            await session.StoreAsync(inspection);
+
+            var supplier = fixture.DefaultEntity<Customer>().Create();
+            await session.StoreAsync(supplier);
+
+            var stocks = fixture.DefaultEntity<Stock>()
+                .With(c => c.IsStockIn, true)
+                .With(c => c.Inspection, inspection)
+                .With(c => c.InspectionId, inspection.Id)
+                .Without(c => c.SupplierName)
+                .With(c => c.SupplierId, supplier.Id)
+                .CreateMany(10).ToList();
+            await stocks.SaveList(session);
+
+            var stockIds = stocks.Take(3).Select(c => c.Id).ToList();
+            var purchaseDetail = fixture.Build<PurchaseDetail>()
+                .With(c => c.StockIds, stockIds)
+                .Create();
+
+            var purchase = fixture.DefaultEntity<Purchase>()
+                .With(c => c.PurchaseDetails, new List<PurchaseDetail> {purchaseDetail})
+                .Create();
+
+            await session.StoreAsync(purchase);
+            await session.SaveChangesAsync();
+            WaitForIndexing(store);
+
+            // Act
+            var list = await sut.GetNonCommittedStocks(COMPANY_ID);
+
+            // Assert
+            list.Should().HaveCount(7);
+            list.Should().BeInAscendingOrder(c => c.LotNo);
+            list.Select(x => x.Id).Should().NotContain(stockIds);
+            list[0].Inspection.AnalysisResult.Count.Should().Be(inspection.AnalysisResult.Count);
+            list[0].SupplierName.Should().Be(supplier.Name);
+        }
 
         [Fact]
         public async Task MoveInspectionToStock_ShouldCreateANewStock()

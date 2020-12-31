@@ -6,6 +6,7 @@ using AmberwoodCore.Extensions;
 using AmberwoodCore.Models;
 using AmbRcnTradeServer.Constants;
 using AmbRcnTradeServer.Models.DictionaryModels;
+using AmbRcnTradeServer.Models.InspectionModels;
 using AmbRcnTradeServer.Models.PurchaseModels;
 using AmbRcnTradeServer.Models.StockModels;
 using AutoFixture;
@@ -32,17 +33,40 @@ namespace Tests
             var sut = GetPurchaseService(session);
             var fixture = new Fixture();
 
-            var stocks = fixture.DefaultEntity<Stock>().CreateMany().ToList();
+            var location = fixture.DefaultEntity<Customer>().Create();
+            await session.StoreAsync(location);
+
+            var supplier = fixture.DefaultEntity<Customer>().Create();
+            await session.StoreAsync(supplier);
+
+            var analysisResult = fixture.Build<Analysis>().Create();
+
+            var inspection = fixture.DefaultEntity<Inspection>()
+                .With(c => c.AnalysisResult, analysisResult)
+                .Create();
+            
+            await session.StoreAsync(inspection);
+
+            var stocks = fixture.DefaultEntity<Stock>()
+                .With(c => c.LocationId, location.Id)
+                .Without(c => c.LocationName)
+                .With(c => c.SupplierId, supplier.Id)
+                .With(c => c.InspectionId, inspection.Id)
+                .Without(c => c.Inspection)
+                .Without(c => c.SupplierName)
+                .Without(c => c.AnalysisResult)
+                .CreateMany().ToList();
             await stocks.SaveList(session);
             await session.SaveChangesAsync();
 
-            var purchases = fixture.Build<PurchaseDetail>()
+            var purchaseDetails = fixture.Build<PurchaseDetail>()
                 .With(c => c.StockIds, stocks.Select(x => x.Id).ToList)
+                .Without(c => c.Stocks)
                 .CreateMany()
                 .ToList();
 
             var purchase = fixture.DefaultEntity<Purchase>()
-                .With(c => c.PurchaseDetails, purchases)
+                .With(c => c.PurchaseDetails, purchaseDetails)
                 .Create();
             await session.StoreAsync(purchase);
             await session.SaveChangesAsync();
@@ -57,8 +81,12 @@ namespace Tests
 
             foreach (var stock in actual.PurchaseDetails[0].Stocks)
             {
-                var foundStock = stocks.FirstOrDefault(c => c.Id == stock.Id);
+                var foundStock = stocks.Single(c => c.Id == stock.Id);
                 foundStock.Should().NotBeNull();
+                foundStock.LocationName.Should().Be(location.Name);
+                foundStock.SupplierName.Should().Be(supplier.Name);
+                foundStock.AnalysisResult.Should().NotBeNull();
+                foundStock.AnalysisResult.Should().Be(analysisResult);
             }
         }
 
@@ -71,8 +99,12 @@ namespace Tests
             var sut = GetPurchaseService(session);
             var fixture = new Fixture();
 
-            var supplier = fixture.DefaultEntity<Customer>().Create();
-            await session.StoreAsync(supplier);
+            var supplier1 = fixture.DefaultEntity<Customer>().Create();
+            await session.StoreAsync(supplier1);
+
+            var supplier2 = fixture.DefaultEntity<Customer>().Create();
+            await session.StoreAsync(supplier2);
+
 
             var stocks = fixture.DefaultEntity<Stock>().CreateMany().ToList();
             await stocks.SaveList(session);
@@ -82,27 +114,38 @@ namespace Tests
                 .CreateMany()
                 .ToList();
 
-            var purchase = fixture.DefaultEntity<Purchase>()
+            var purchase1 = fixture.DefaultEntity<Purchase>()
                 .With(c => c.PurchaseDetails, purchaseDetails)
-                .With(c => c.SupplierId, supplier.Id)
+                .With(c => c.SupplierId, supplier1.Id)
                 .With(c => c.PurchaseNumber, 7)
                 .Create();
-            await session.StoreAsync(purchase);
+            await session.StoreAsync(purchase1);
+
+            var purchase2 = fixture.DefaultEntity<Purchase>()
+                .With(c => c.PurchaseDetails, purchaseDetails)
+                .With(c => c.SupplierId, supplier2.Id)
+                .With(c => c.PurchaseNumber, 7)
+                .Create();
+            await session.StoreAsync(purchase2);
 
             await session.SaveChangesAsync();
 
             // Act
-            var list = await sut.LoadList(COMPANY_ID);
+            var list = await sut.LoadList(COMPANY_ID, supplier1.Id);
 
             // Assert
-            list.Should().Contain(c => c.SupplierId == purchase.SupplierId);
-            list.Should().Contain(c => c.SupplierName == supplier.Name);
-            list.Should().Contain(c => c.Id == purchase.Id);
-            list.Should().Contain(c => c.PurchaseNumber == purchase.PurchaseNumber);
-            list.Should().Contain(c => c.PurchaseDate == purchase.PurchaseDate);
+            list.Should().Contain(c => c.SupplierId == purchase1.SupplierId);
+            list.Should().Contain(c => c.SupplierName == supplier1.Name);
+            list.Should().Contain(c => c.Id == purchase1.Id);
+            list.Should().Contain(c => c.PurchaseNumber == purchase1.PurchaseNumber);
+            list.Should().Contain(c => c.PurchaseDate == purchase1.PurchaseDate);
             list.Should().Contain(c => c.StockIn != null);
             list.Should().Contain(c => c.StockOut != null);
             list.Should().Contain(c => c.StockBalance != null);
+            list.Should().OnlyContain(c => c.SupplierId == supplier1.Id);
+            list.Should().Contain(c => Math.Abs(c.PricePerKg - purchaseDetails[0].PricePerKg) < 0.01);
+            list.Should().Contain(c => c.Currency == purchaseDetails[0].Currency);
+            list.Should().Contain(c => Math.Abs(c.ExchangeRate - purchaseDetails[0].ExchangeRate) < 0.01);
         }
 
         [Fact]
@@ -128,6 +171,7 @@ namespace Tests
                 PurchaseNumber = default,
                 CompanyId = COMPANY_ID,
                 SupplierId = supplier.Id,
+                QuantityMt = 200.0,
                 PurchaseDetails = new List<PurchaseDetail>
                 {
                     new() {StockIds = stocks.Select(x => x.Id).ToList(), PricePerKg = 400.0, Currency = Currency.CFA, ExchangeRate = 555.0, Date = new DateTime(2013, 1, 1)}
@@ -141,6 +185,7 @@ namespace Tests
             var actual = await session.LoadAsync<Purchase>(response.Id);
             actual.Should().NotBeNull();
             actual.PurchaseNumber.Should().Be(1L);
+            actual.QuantityMt.Should().Be(200);
         }
     }
 }

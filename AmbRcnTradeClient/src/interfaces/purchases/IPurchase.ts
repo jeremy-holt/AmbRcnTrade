@@ -9,4 +9,5 @@ export interface IPurchase extends IEntityCompany {
     purchaseNumber: number;
     supplierId: string;
     purchaseDate: string;
+    quantityMt: number;
 }

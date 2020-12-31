@@ -46,6 +46,6 @@ export interface IState {
   attachmentRoutes: IAttachmentInfo[];
   inspection: { current: IInspection, list: IInspectionListItem[], movedToStockId: string; };
   stock: { current: IStock, list: IStockListItem[], stockBalanceList: IStockBalanceListItem[] };
-  purchase: { current: IPurchase, list: IPurchaseListItem[] };
+  purchase: { current: IPurchase, list: IPurchaseListItem[], nonCommittedStocksList:IStock[] };
 
 }

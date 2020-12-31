@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AmberwoodCore.Controllers;
@@ -38,9 +39,16 @@ namespace AmbRcnTradeServer.Controllers
 
         [Authorize]
         [HttpGet("[action]")]
-        public async Task<ActionResult<List<PurchaseListItem>>> LoadList(string companyId)
+        public async Task<ActionResult<List<PurchaseListItem>>> LoadList(string companyId, string supplierId)
         {
-            return await _service.LoadList(companyId);
+            return await _service.LoadList(companyId, supplierId);
+        }
+
+        [Authorize]
+        [HttpGet("[action]")]
+        public async Task<ActionResult<ServerResponse<Purchase>>> Create(string companyId)
+        {
+            return await Task.FromResult(new ServerResponse<Purchase>(new Purchase {CompanyId = companyId, PurchaseDate = DateTime.Today}));
         }
     }
 }

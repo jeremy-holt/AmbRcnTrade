@@ -1,8 +1,10 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using AmberwoodCore.Controllers;
 using AmberwoodCore.Responses;
 using AmbRcnTradeServer.Models.StockManagementModels;
+using AmbRcnTradeServer.Models.StockModels;
 using AmbRcnTradeServer.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -33,6 +35,13 @@ namespace AmbRcnTradeServer.Controllers
         public async Task<ActionResult<ServerResponse>> RemoveInspectionFromStock(RemoveInspectionFromStockRequest request)
         {
             return await _service.RemoveInspectionFromStock(request.InspectionId, request.StockId);
+        }
+
+        [Authorize]
+        [HttpGet("[action]")]
+        public async Task<ActionResult<List<Stock>>> GetNonCommittedStocks(string companyId)
+        {
+            return await _service.GetNonCommittedStocks(companyId);
         }
     }
 }
