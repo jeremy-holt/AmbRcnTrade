@@ -153,7 +153,7 @@ namespace Tests
             details[0].Currency.Should().Be(purchaseDetails[0].Currency);
             details[0].StockIds.Should().BeEquivalentTo(purchaseDetails[0].StockIds);
             details[0].Stocks[0].AnalysisResult.Should().Be(inspection.AnalysisResult);
-            details[0].Stocks[0].Bags.Should().Be(stocks[0].Bags);
+            details[0].Stocks[0].StockIn.Bags.Should().Be(stocks[0].Bags);
         }
 
         [Fact]

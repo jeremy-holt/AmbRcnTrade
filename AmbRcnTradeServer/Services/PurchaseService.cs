@@ -91,7 +91,12 @@ namespace AmbRcnTradeServer.Services
 
             var stockIds = purchases.SelectMany(c => c.PurchaseDetails.SelectMany(x => x.StockIds)).ToList();
 
-            var stocks = await _session.LoadListFromMultipleIdsAsync<Stock>(stockIds);
+            var stocksDictionary = await _session
+                .Include<Stock>(c=>c.InspectionId)
+                .LoadAsync<Stock>(stockIds);
+            var stocks = stocksDictionary.Where(c => c.Value != null).Select(c => c.Value).ToList();
+
+            var inspections = await _session.LoadListFromMultipleIdsAsync<Inspection>(stocks.Select(x => x.InspectionId));
 
             var purchaseList = new List<PurchaseListItem>();
 
@@ -109,7 +114,7 @@ namespace AmbRcnTradeServer.Services
 
                 foreach (var detail in purchase.PurchaseDetails)
                 {
-                    var listItem = new PurchaseDetailListItem
+                    var detailListItem = new PurchaseDetailListItem
                     {
                         Currency = detail.Currency,
                         Date = detail.Date,
@@ -117,44 +122,50 @@ namespace AmbRcnTradeServer.Services
                         StockIds = detail.StockIds
                     };
                     var foundStocks = stocks.Where(c => c.Id.In(detail.StockIds)).ToList();
-                    listItem.Stocks = foundStocks.Select(c => new PurchaseDetailStockListItem()
+                    
+                    detailListItem.Stocks = foundStocks.Select(c => new PurchaseDetailStockListItem
                     {
-                        Bags = c.Bags,
                         StockId = c.Id,
                         InspectionId = c.InspectionId,
                         IsStockIn = c.IsStockIn,
-                        AnalysisResult = c.AnalysisResult
+                        StockIn = c.IsStockIn ? new StockInfo(c.Bags, c.WeightKg) : new StockInfo(),
+                        StockOut = c.IsStockIn ? new StockInfo() : new StockInfo(c.Bags, c.WeightKg),
+                        AnalysisResult = inspections.FirstOrDefault(x=>x.Id==c.InspectionId)?.AnalysisResult
                     }).ToList();
                     
+                    detailListItem.AnalysisResult = new Analysis()
+                    {
+                        Kor = foundStocks.Average(c => c.AnalysisResult.Kor),
+                        Count = foundStocks.Average(c => c.AnalysisResult.Count),
+                        Moisture = foundStocks.Average(c => c.AnalysisResult.Moisture)
+                    };
+                    
+                    foreach (var item in detailListItem.Stocks)
+                    {
+                        item.StockBalance = new StockInfo(item.StockIn.Bags - item.StockOut.Bags, item.StockIn.WeightKg - item.StockOut.WeightKg);
+                    }
 
-                    purchaseListItem.PurchaseDetails.Add(listItem);
+                    detailListItem.StockIn = new StockInfo(detailListItem.Stocks.Sum(x => x.StockIn.Bags), detailListItem.Stocks.Sum(x => x.StockIn.WeightKg));
+                    detailListItem.StockOut = new StockInfo(detailListItem.Stocks.Sum(x => x.StockOut.Bags), detailListItem.Stocks.Sum(x => x.StockOut.WeightKg));
+                    detailListItem.StockBalance = new StockInfo(detailListItem.StockIn.Bags - detailListItem.StockOut.Bags,
+                        detailListItem.StockIn.WeightKg - detailListItem.StockOut.WeightKg);
+                    
+                    purchaseListItem.PurchaseDetails.Add(detailListItem);
                 }
 
-                // foreach (var detail in purchase.PurchaseDetails)
-                // {
-                //     var xpurchaseItem = new PurchaseListItem
-                //     {
-                //         SupplierName = suppliers.FirstOrDefault(c => c.Id == purchase.SupplierId)?.Name,
-                //         Id = purchase.Id,
-                //         SupplierId = purchase.SupplierId,
-                //         PurchaseDate = purchase.PurchaseDate,
-                //         PurchaseNumber = purchase.PurchaseNumber,
-                //         PricePerKg = detail.PricePerKg,
-                //         Currency = detail.Currency,
-                //         ExchangeRate = detail.ExchangeRate,
-                //         QuantityMt = purchase.QuantityMt
-                //     };
-                //
-                //     var stockIdsForItem = purchase.PurchaseDetails.SelectMany(c => c.StockIds).ToList();
-                //     var stocksForItem = stocks.Where(c => c.Id.In(stockIdsForItem)).ToList();
-                //
-                //     purchaseListItem.StockIn = new StockInfo(stocksForItem.Where(c => c.IsStockIn).Sum(c => c.Bags), stocksForItem.Where(c => c.IsStockIn).Sum(c => c.WeightKg));
-                //     purchaseListItem.StockOut = new StockInfo(stocksForItem.Where(c => !c.IsStockIn).Sum(c => c.Bags), stocksForItem.Where(c => c.IsStockIn).Sum(c => c.WeightKg));
-                //     purchaseListItem.StockBalance = new StockInfo(purchaseListItem.StockIn.Bags + purchaseListItem.StockOut.Bags,
-                //         purchaseListItem.StockIn.WeightKg + purchaseListItem.StockOut.WeightKg);
-                //
-                //     
-                // }
+                var stockInBags = purchaseListItem.PurchaseDetails.SelectMany(c => c.Stocks).Sum(x => x.StockIn.Bags);
+                var stockInWeightKg = purchaseListItem.PurchaseDetails.SelectMany(c => c.Stocks).Sum(x => x.StockIn.WeightKg);
+
+                purchaseListItem.StockIn = new StockInfo(stockInBags, stockInWeightKg);
+
+                var stockOutBags = purchaseListItem.PurchaseDetails.SelectMany(c => c.Stocks).Sum(x => x.StockOut.Bags);
+                var stockOutWeightKg = purchaseListItem.PurchaseDetails.SelectMany(c => c.Stocks).Sum(x => x.StockOut.WeightKg);
+
+                purchaseListItem.StockOut = new StockInfo(stockOutBags, stockOutWeightKg);
+
+                var stockBalanceBags = new StockInfo(stockInBags - stockOutBags, stockInWeightKg - stockOutWeightKg);
+                purchaseListItem.StockBalance = stockBalanceBags;
+
                 purchaseList.Add(purchaseListItem);
             }
 

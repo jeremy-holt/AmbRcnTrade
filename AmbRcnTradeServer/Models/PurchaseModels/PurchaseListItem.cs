@@ -17,13 +17,10 @@ namespace AmbRcnTradeServer.Models.PurchaseModels
         public string SupplierName { get; set; }
         public long PurchaseNumber { get; set; }
         public DateTime PurchaseDate { get; set; }
-        // public StockInfo StockIn { get; set; }
-        // public StockInfo StockOut { get; set; }
-        // public StockInfo StockBalance { get; set; }
-        // public double PricePerKg { get; set; }
-        // public Currency Currency { get; set; }
-        // public double ExchangeRate { get; set; }
         public double QuantityMt { get; set; }
         public List<PurchaseDetailListItem> PurchaseDetails { get; set; } = new();
+        public StockInfo StockIn { get; set; } = new();
+        public StockInfo StockOut { get; set; } = new();
+        public StockInfo StockBalance { get; set; } = new();
     }
 }
