@@ -25,7 +25,7 @@ namespace AmbRcnTradeServer.Controllers
         [HttpPost("[action]")]
         public async Task<ActionResult<ServerResponse<MovedInspectionResult>>> MoveInspectionToStock(MoveInspectionToStockRequest request)
         {
-            return await _service.MoveInspectionToStock(request.InspectionId, request.Bags, request.Date, request.StockId, request.LocationId);
+            return await _service.MoveInspectionToStock(request.InspectionId, request.Bags, request.Date, request.LotNo, request.LocationId);
         }
 
         [Authorize]

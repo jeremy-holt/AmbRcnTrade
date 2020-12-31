@@ -8,6 +8,6 @@ namespace AmbRcnTradeServer.Models.StockManagementModels
         public double Bags { get; set; }
         public DateTime Date { get; set; }
         public string LocationId { get; set; }
-        public string StockId { get; set; }
+        public long LotNo { get; set; }
     }
 }

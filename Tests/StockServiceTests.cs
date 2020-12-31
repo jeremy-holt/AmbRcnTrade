@@ -71,6 +71,7 @@ namespace Tests
                 .Without(c => c.StockOutDate)
                 .Without(c => c.InspectionIds)
                 .Without(c => c.LocationId)
+                .Without(c=>c.LotNo)
                 .Create();
             await sut.Save(stockIn1);
 
@@ -78,6 +79,7 @@ namespace Tests
                 .Without(c => c.StockOutDate)
                 .Without(c => c.InspectionIds)
                 .Without(c => c.LocationId)
+                .Without(c=>c.LotNo)
                 .Create();
             await sut.Save(stockIn2);
 
@@ -86,6 +88,7 @@ namespace Tests
                 .Without(c => c.InspectionIds)
                 .With(c => c.LotNo, stockIn2.LotNo)
                 .Without(c => c.LocationId)
+                .Without(c=>c.LotNo)
                 .Create();
             await sut.Save(stockOut);
 
@@ -93,6 +96,7 @@ namespace Tests
                 .Without(c => c.StockOutDate)
                 .Without(c => c.InspectionIds)
                 .Without(c => c.LocationId)
+                .Without(c=>c.LotNo)
                 .Create();
             await sut.Save(stockIn3);
 

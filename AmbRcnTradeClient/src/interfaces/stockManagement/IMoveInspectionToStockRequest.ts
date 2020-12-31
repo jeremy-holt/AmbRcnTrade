@@ -3,5 +3,5 @@ export interface IMoveInspectionToStockRequest {
   bags: number;
   date: string;
   locationId: string;
-  stockId: string;
+  lotNo: number;
 }

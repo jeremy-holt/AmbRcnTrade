@@ -47,7 +47,7 @@ namespace AmbRcnTradeServer.Services
                 stock.WeightKg = -stock.WeightKg;
             }
 
-            if (stock.Id.IsNullOrEmpty() && stock.IsStockIn)
+            if (stock.Id.IsNullOrEmpty() && stock.IsStockIn && stock.LotNo == 0)
             {
                 stock.LotNo = await _counterService.GetNextLotNumber(stock.CompanyId);
             }
@@ -90,7 +90,7 @@ namespace AmbRcnTradeServer.Services
                 ? results.Average(field)
                 : 0;
         }
-        
+
         public async Task<List<StockListItem>> LoadStockList(string companyId, long? lotNo, string locationId)
         {
             var query = _session.Query<Stock>()
@@ -113,9 +113,9 @@ namespace AmbRcnTradeServer.Services
 
             var analysisResult = new Analysis
             {
-                Count = GetAverageAnalysisResultForStock(inspections,c=>c.AnalysisResult.Count),
-                Kor = GetAverageAnalysisResultForStock(inspections,c=>c.AnalysisResult.Kor),
-                Moisture = GetAverageAnalysisResultForStock(inspections,c=>c.AnalysisResult.Moisture),
+                Count = GetAverageAnalysisResultForStock(inspections, c => c.AnalysisResult.Count),
+                Kor = GetAverageAnalysisResultForStock(inspections, c => c.AnalysisResult.Kor),
+                Moisture = GetAverageAnalysisResultForStock(inspections, c => c.AnalysisResult.Moisture),
                 RejectsPct = GetAverageAnalysisResultForStock(inspections, c => c.AnalysisResult.RejectsPct),
                 SoundPct = GetAverageAnalysisResultForStock(inspections, c => c.AnalysisResult.SoundPct),
                 SpottedPct = GetAverageAnalysisResultForStock(inspections, c => c.AnalysisResult.SpottedPct)

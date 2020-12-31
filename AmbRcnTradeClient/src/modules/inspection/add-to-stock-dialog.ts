@@ -86,7 +86,7 @@ export class AddToStockDialog {
       bags: this.model.bags,
       date: this.model.date,
       locationId: this.selectedLocation.id,
-      stockId: this.newStockItem ? null : this.stockList.find(c => c.selected)?.stockId
+      lotNo: this.newStockItem ? 0 : this.stockList.find(c => c.selected)?.lotNo
     };
   }
 

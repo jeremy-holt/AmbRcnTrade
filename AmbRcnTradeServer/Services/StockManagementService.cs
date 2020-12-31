@@ -16,7 +16,7 @@ namespace AmbRcnTradeServer.Services
 {
     public interface IStockManagementService
     {
-        Task<ServerResponse<MovedInspectionResult>> MoveInspectionToStock(string inspectionId, double bags, DateTime date, string stockId, string locationId);
+        Task<ServerResponse<MovedInspectionResult>> MoveInspectionToStock(string inspectionId, double bags, DateTime date, long lotNo, string locationId);
         Task<ServerResponse> RemoveInspectionFromStock(string inspectionId, string stockId);
     }
 
@@ -33,28 +33,22 @@ namespace AmbRcnTradeServer.Services
             _inspectionService = inspectionService;
         }
 
-        public async Task<ServerResponse<MovedInspectionResult>> MoveInspectionToStock(string inspectionId, double bags, DateTime date, string stockId, string locationId)
+        public async Task<ServerResponse<MovedInspectionResult>> MoveInspectionToStock(string inspectionId, double bags, DateTime date, long lotNo, string locationId)
         {
             Debug.WriteLine(_session.Advanced.NumberOfRequests);
 
             var inspection = await _inspectionService.Load(inspectionId);
 
-            var stock = stockId.IsNotNullOrEmpty() ? await _stockService.Load(stockId) : new Stock();
-
-            if (stockId.IsNullOrEmpty())
-            {
+            var stock = new Stock(); {
                 stock.Bags = bags;
                 stock.StockInDate = date;
                 stock.SupplierId = inspection.SupplierId;
                 stock.CompanyId = inspection.CompanyId;
                 stock.InspectionIds = new List<string> {inspectionId};
                 stock.LocationId = locationId;
+                stock.LotNo = lotNo;
             }
-            else
-            {
-                if (!stock.InspectionIds.Contains(inspectionId))
-                    stock.InspectionIds.Add(inspectionId);
-            }
+        
 
             var stockResponse = await _stockService.Save(stock);
 
