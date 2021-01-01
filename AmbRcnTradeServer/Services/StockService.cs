@@ -18,6 +18,7 @@ namespace AmbRcnTradeServer.Services
         Task<Stock> Load(string id);
         Task<List<StockBalanceListItem>> LoadStockBalanceList(string companyId, long? lotNo, string locationId);
         Task<List<StockListItem>> LoadStockList(string companyId, long? lotNo, string locationId);
+        Task<List<StockListItem>> LoadStockList(string companyId, List<string> stockIds);
     }
 
     public class StockService : IStockService
@@ -87,7 +88,17 @@ namespace AmbRcnTradeServer.Services
             return list;
         }
 
-        public async Task<List<StockListItem>> LoadStockList(string companyId, long? lotNo, string locationId)
+        public Task<List<StockListItem>> LoadStockList(string companyId, long? lotNo, string locationId)
+        {
+            return LoadStockList(companyId, lotNo, locationId, null);
+        }
+
+        public async Task<List<StockListItem>> LoadStockList(string companyId, List<string> stockIds)
+        {
+            return await LoadStockList(companyId, null, null, stockIds);
+        }
+
+        private async Task<List<StockListItem>> LoadStockList(string companyId, long? lotNo, string locationId, List<string> stockIds)
         {
             var query = _session.Query<StockListItem, Stocks_ById>()
                 .Where(c => c.CompanyId == companyId);
@@ -97,6 +108,11 @@ namespace AmbRcnTradeServer.Services
 
             if (locationId.IsNotNullOrEmpty())
                 query = query.Where(c => c.LocationId == locationId);
+
+            if (stockIds != null && stockIds.Any())
+            {
+                query = query.Where(c => c.StockId.In(stockIds));
+            }
 
             var stocks = await query
                 .OrderBy(c => c.LotNo)

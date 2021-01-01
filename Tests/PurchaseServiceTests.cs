@@ -32,6 +32,7 @@ namespace Tests
             using var store = GetDocumentStore();
             using var session = store.OpenAsyncSession();
             var sut = GetPurchaseService(session);
+            var inspectionService = GetInspectionService(session);
             await InitializeIndexes(store);
             var fixture = new Fixture();
 
@@ -44,11 +45,10 @@ namespace Tests
             // var analysisResult = fixture.Build<AnalysisResult>().Create();
 
             var inspection = fixture.DefaultEntity<Inspection>()
-                // .With(c => c.AnalysisResult, analysisResult)
                 .Without(c => c.AnalysisResult)
                 .Create();
-
-            await session.StoreAsync(inspection);
+            await inspectionService.Save(inspection);
+            
 
             var stocks = fixture.DefaultEntity<Stock>()
                 .With(c => c.LocationId, location.Id)
@@ -81,20 +81,16 @@ namespace Tests
 
             foreach (var stock in actual.PurchaseDetails[0].Stocks)
             {
-                var foundStock = stocks.Single(c => c.Id == stock.Id);
-                foundStock.Should().NotBeNull();
-                foundStock.LocationName.Should().Be(location.Name);
-                foundStock.SupplierName.Should().Be(supplier.Name);
-                foundStock.AnalysisResult.Should().NotBeNull();
-
-                var expectedCount = inspection.Analyses.Average(c => c.Count);
-                foundStock.AnalysisResult.Count.Should().Be(expectedCount);
+                stock.LocationName.Should().Be(location.Name);
+                stock.SupplierName.Should().Be(supplier.Name);
+                stock.AnalysisResult.Should().NotBeNull();
             }
         }
 
         private static async Task InitializeIndexes(IDocumentStore store)
         {
             await new Inspections_ByAnalysisResult().ExecuteAsync(store);
+            await new Stocks_ById().ExecuteAsync(store);
         }
 
         [Fact]

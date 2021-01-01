@@ -1,3 +1,4 @@
+import { IListItem } from "interfaces/IEntity";
 import { DialogController } from "aurelia-dialog";
 import { autoinject, observable } from "aurelia-framework";
 import { connectTo } from "aurelia-store";
@@ -10,6 +11,7 @@ import { IStockListItem } from "./../../interfaces/stocks/IStockListItem";
 export class UncommittedStocksDialog {
   @observable public state: IState = undefined!;
   public list: IStockListItem[] = [];
+  public supplier: IListItem = undefined!;
 
   constructor(
     private controller: DialogController
@@ -19,8 +21,9 @@ export class UncommittedStocksDialog {
     this.list = _.cloneDeep(state.purchase.nonCommittedStocksList);
   }
 
-  protected async activate(uncomittedStocks: IStockListItem[]) {
-    this.list = uncomittedStocks;
+  protected async activate(model: { uncomittedStocks: IStockListItem[], supplier: IListItem }) {
+    this.list = model.uncomittedStocks;
+    this.supplier = model.supplier;
   }
 
   protected selectRow(item: IStockListItem) {
@@ -32,6 +35,10 @@ export class UncommittedStocksDialog {
   }
 
   private getSelectedStocks() {
-    return this.list.filter(c => c.selected);
+    return this.list ? this.list.filter(c => c.selected) : [];
+  }
+
+  protected get canSave() {
+    return this.getSelectedStocks().length > 0;
   }
 }

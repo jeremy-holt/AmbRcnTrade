@@ -218,6 +218,92 @@ namespace Tests
         }
 
         [Fact]
+        public async Task LoadStockList_ShouldLoadListOfStocksForStockIds()
+        {
+            // Arrange
+            using var store = GetDocumentStore();
+            using var session = store.OpenAsyncSession();
+            var sut = GetStockService(session);
+            var fixture = new Fixture();
+            await InitializeIndexes(store);
+
+            await session.StoreAsync(new Company(COMPANY_ID));
+
+            var supplier = fixture.DefaultEntity<Customer>().Create();
+            await session.StoreAsync(supplier);
+
+            var location = fixture.DefaultEntity<Customer>().Create();
+            await session.StoreAsync(location);
+
+            var analysisResult = fixture.Build<AnalysisResult>().With(c => c.Approved, Approval.Approved).Create();
+
+            var inspections = fixture.DefaultEntity<Inspection>()
+                .With(c => c.SupplierId, supplier.Id)
+                .With(c => c.AnalysisResult, analysisResult)
+                .CreateMany().ToList();
+            await inspections.SaveList(session);
+
+            var stockIn1 = fixture.DefaultEntity<Stock>()
+                .Without(c => c.StockOutDate)
+                .Without(c => c.InspectionId)
+                .Without(c => c.LocationId)
+                .With(c => c.SupplierId, supplier.Id)
+                .Create();
+            await sut.Save(stockIn1);
+
+            var stockIn2 = fixture.DefaultEntity<Stock>()
+                .Without(c => c.StockOutDate)
+                .With(c => c.InspectionId, inspections[0].Id)
+                .With(c => c.LocationId, location.Id)
+                .With(c => c.SupplierId, supplier.Id)
+                .Create();
+            await sut.Save(stockIn2);
+
+            var stockOut = fixture.DefaultEntity<Stock>()
+                .Without(c => c.StockInDate)
+                .Without(c => c.InspectionId)
+                .With(c => c.LotNo, stockIn2.LotNo)
+                .Without(c => c.LocationId)
+                .Without(c => c.SupplierId)
+                .Create();
+            await sut.Save(stockOut);
+
+            var stockIn3 = fixture.DefaultEntity<Stock>()
+                .Without(c => c.StockOutDate)
+                .Without(c => c.InspectionId)
+                .Without(c => c.LocationId)
+                .With(c => c.SupplierId, supplier.Id)
+                .Create();
+            await sut.Save(stockIn3);
+
+            await session.SaveChangesAsync();
+
+            WaitForIndexing(store);
+
+            // Act
+            var list = await sut.LoadStockList(COMPANY_ID,new List<string>(){stockIn1.Id,stockIn2.Id});
+            list.Should().BeInAscendingOrder(c => c.LotNo);
+            list.Should().HaveCount(2);
+            list.Should().Contain(c => c.StockId == stockIn1.Id);
+            list.Should().Contain(c => c.StockId == stockIn2.Id);
+            
+            // var actual = list.Single(c => c.StockId == stockIn2.Id);
+            // actual.BagsIn.Should().Be(stockIn2.Bags);
+            // actual.BagsOut.Should().Be(0);
+            // actual.LocationId.Should().Be(stockIn2.LocationId);
+            // actual.LocationName.Should().Be(location.Name);
+            // actual.LotNo.Should().Be(stockIn2.LotNo);
+            // actual.IsStockIn.Should().BeTrue();
+            // actual.StockDate.Should().Be(stockIn2.StockInDate ?? DateTime.MinValue);
+            // actual.StockDate.Should().NotBe(DateTime.MinValue);
+            // actual.Origin.Should().Be(stockIn2.Origin);
+            // actual.SupplierName.Should().Be(supplier.Name);
+            // actual.SupplierId.Should().Be(supplier.Id);
+            // actual.InspectionId.Should().Be(stockIn2.InspectionId);
+            // // actual.Inspection.Should().Be(inspections[0]);
+        }
+
+        [Fact]
         public async Task Save_ShouldGenerateLotNumber()
         {
             // Arrange

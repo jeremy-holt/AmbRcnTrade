@@ -21,7 +21,7 @@ namespace AmbRcnTradeServer.Models.PurchaseModels
         public DateTime PriceAgreedDate { get; set; }
 
         [JsonIgnore]
-        public List<Stock> Stocks { get; set; } = new();
+        public List<StockListItem> Stocks { get; set; } = new();
     }
 
     public class PurchaseDetailListItem

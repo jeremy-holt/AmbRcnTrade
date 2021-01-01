@@ -1,15 +1,15 @@
-import { IStock } from "interfaces/stocks/IStock";
-import { fixAspNetCoreDate } from "./../core/helpers";
-import { IPurchaseListItem } from "./../interfaces/purchases/IPurchaseListItem";
-import { IPurchase } from "./../interfaces/purchases/IPurchase";
-import { Router } from "aurelia-router";
 import { HttpClient } from "aurelia-fetch-client";
-import { FetchService } from "./fetch-service";
 import { autoinject } from "aurelia-framework";
+import { Router } from "aurelia-router";
 import { Store } from "aurelia-store";
-import { IState } from "store/state";
 import _ from "lodash";
 import { QueryId } from "models/QueryId";
+import { IState } from "store/state";
+import { fixAspNetCoreDate } from "./../core/helpers";
+import { IPurchase } from "./../interfaces/purchases/IPurchase";
+import { IPurchaseListItem } from "./../interfaces/purchases/IPurchaseListItem";
+import { IStockListItem } from "./../interfaces/stocks/IStockListItem";
+import { FetchService } from "./fetch-service";
 
 @autoinject
 export class PurchaseService extends FetchService {
@@ -44,12 +44,12 @@ export class PurchaseService extends FetchService {
     return super.get([super.currentCompanyIdQuery()], "create", purchaseEditAction);
   }
 
-  public getStockAverages(stocks: IStock[]) {
-    const bags = stocks.reduce((a, b) => a += b.bags, 0);
-    const kor = stocks.reduce((a, b) => a += (b.bags * b.analysisResult.kor), 0) / bags;
-    const count=stocks.reduce((a, b) => a += (b.bags * b.analysisResult.count), 0) / bags;
-    const moisture =stocks.reduce((a, b) => a += (b.bags * b.analysisResult.moisture), 0) / bags;
-    
+  public getStockAverages(stocks: IStockListItem[]) {
+    const bags = stocks.reduce((a, b) => a += b.bagsIn, 0);
+    const kor = bags > 0 ? stocks.reduce((a, b) => a += (b.bagsIn * b.analysisResult.kor), 0) / bags : 0;
+    const count = bags > 0 ? stocks.reduce((a, b) => a += (b.bagsIn * b.analysisResult.count), 0) / bags : 0;
+    const moisture = bags > 0 ? stocks.reduce((a, b) => a += (b.bagsIn * b.analysisResult.moisture), 0) / bags : 0;
+
     return {
       bags,
       kor,
@@ -61,7 +61,7 @@ export class PurchaseService extends FetchService {
 
 export function purchaseEditAction(state: IState, purchase: IPurchase) {
   purchase.purchaseDate = fixAspNetCoreDate(purchase.purchaseDate, false);
-  purchase.deliveryDate=fixAspNetCoreDate(purchase.deliveryDate,false);
+  purchase.deliveryDate = fixAspNetCoreDate(purchase.deliveryDate, false);
   purchase.purchaseDetails.forEach(c => {
     c.priceAgreedDate = fixAspNetCoreDate(c.priceAgreedDate, false);
   });

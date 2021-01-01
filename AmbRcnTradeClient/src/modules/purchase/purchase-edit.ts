@@ -2,7 +2,6 @@
 import { DialogService } from "aurelia-dialog";
 import { autoinject, observable } from "aurelia-framework";
 import { connectTo } from "aurelia-store";
-import { IStock } from "interfaces/stocks/IStock";
 import _ from "lodash";
 import { StockManagementService } from "services/stock-management-service";
 import { IState } from "store/state";
@@ -78,14 +77,14 @@ export class PurchaseEdit {
     this.dialogService.open(
       {
         viewModel: UncommittedStocksDialog,
-        model: this.uncommittedStocks
+        model: {uncommittedStocks:this.uncommittedStocks, supplier: this.selectedSupplier}
       }
     ).whenClosed(result => {
       if (!result.wasCancelled) {
         const detail = this.model.purchaseDetails[index];
-        const stocks = result.output as IStock[];
+        const stocks = result.output as IStockListItem[];
 
-        detail.stockIds = stocks.map(x => x.id);
+        detail.stockIds = stocks.map(x => x.stockId);
         detail.stocks = stocks;
         detail.values = this.purchaseService.getStockAverages(stocks);
       }

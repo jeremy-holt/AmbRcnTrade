@@ -125,7 +125,7 @@ namespace Tests.Base
 
         protected IPurchaseService GetPurchaseService(IAsyncDocumentSession session)
         {
-            return new PurchaseService(session, new CounterService(session), GetInspectionService(session));
+            return new PurchaseService(session, new CounterService(session), GetInspectionService(session), GetStockService(session));
         }
 
         protected IStockManagementService GetStockManagementService(IAsyncDocumentSession session)

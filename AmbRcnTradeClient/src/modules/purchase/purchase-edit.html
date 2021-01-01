@@ -85,10 +85,10 @@
                     <td>${stock.lotNo}</td>
                     <td>${stock.locationName}</td>
                     <td>${stock.supplierName}</td>
-                    <td class="text-right">${stock.bags | numberFormat: "0,0"}</td>
-                    <td class="text-right">${stock.inspection.analysisResult.kor | numberFormat: "0,0.00"}</td>
-                    <td class="text-right">${stock.inspection.analysisResult.count | numberFormat: "0,0.0"}</td>
-                    <td class="text-right">${stock.inspection.analysisResult.moisture/100 | numberFormat: "0.00%"}</td>
+                    <td class="text-right">${stock.bagsIn | numberFormat: "0,0"}</td>
+                    <td class="text-right">${stock.analysisResult.kor | numberFormat: "0,0.00"}</td>
+                    <td class="text-right">${stock.analysisResult.count | numberFormat: "0,0.0"}</td>
+                    <td class="text-right">${stock.analysisResult.moisture/100 | numberFormat: "0.00%"}</td>
                     <td class="text-right">
                       <a disabled.bind="model.id" href="#" class="text-danger"
                         click.delegate="deleteStockDetail(detail, $index)">
