@@ -4,8 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using AmberwoodCore.Controllers;
 using AmberwoodCore.Responses;
-using AmbRcnTradeServer.Constants;
-using AmbRcnTradeServer.Models.InspectionModels;
 using AmbRcnTradeServer.Models.StockModels;
 using AmbRcnTradeServer.Services;
 using Microsoft.AspNetCore.Authorization;

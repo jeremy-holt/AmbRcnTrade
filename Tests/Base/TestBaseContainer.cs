@@ -120,12 +120,12 @@ namespace Tests.Base
 
         protected IStockService GetStockService(IAsyncDocumentSession session)
         {
-            return new StockService(session, new CounterService(session));
+            return new StockService(session, new CounterService(session), GetInspectionService(session));
         }
 
         protected IPurchaseService GetPurchaseService(IAsyncDocumentSession session)
         {
-            return new PurchaseService(session, new CounterService(session));
+            return new PurchaseService(session, new CounterService(session), GetInspectionService(session));
         }
 
         protected IStockManagementService GetStockManagementService(IAsyncDocumentSession session)

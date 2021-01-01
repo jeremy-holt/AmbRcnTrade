@@ -9,6 +9,7 @@ using AmbRcnTradeServer.Models.DictionaryModels;
 using AmbRcnTradeServer.Models.InspectionModels;
 using AmbRcnTradeServer.Models.PurchaseModels;
 using AmbRcnTradeServer.Models.StockModels;
+using AmbRcnTradeServer.RavenIndexes;
 using AutoFixture;
 using FluentAssertions;
 using Raven.Client.Documents;
@@ -31,6 +32,7 @@ namespace Tests
             using var store = GetDocumentStore();
             using var session = store.OpenAsyncSession();
             var sut = GetPurchaseService(session);
+            await InitializeIndexes(store);
             var fixture = new Fixture();
 
             var location = fixture.DefaultEntity<Customer>().Create();
@@ -39,10 +41,11 @@ namespace Tests
             var supplier = fixture.DefaultEntity<Customer>().Create();
             await session.StoreAsync(supplier);
 
-            var analysisResult = fixture.Build<AnalysisResult>().Create();
+            // var analysisResult = fixture.Build<AnalysisResult>().Create();
 
             var inspection = fixture.DefaultEntity<Inspection>()
-                .With(c => c.AnalysisResult, analysisResult)
+                // .With(c => c.AnalysisResult, analysisResult)
+                .Without(c => c.AnalysisResult)
                 .Create();
 
             await session.StoreAsync(inspection);
@@ -52,7 +55,7 @@ namespace Tests
                 .Without(c => c.LocationName)
                 .With(c => c.SupplierId, supplier.Id)
                 .With(c => c.InspectionId, inspection.Id)
-                .Without(c => c.Inspection)
+                // .Without(c => c.Inspection)
                 .Without(c => c.SupplierName)
                 .Without(c => c.AnalysisResult)
                 .CreateMany().ToList();
@@ -86,8 +89,15 @@ namespace Tests
                 foundStock.LocationName.Should().Be(location.Name);
                 foundStock.SupplierName.Should().Be(supplier.Name);
                 foundStock.AnalysisResult.Should().NotBeNull();
-                foundStock.AnalysisResult.Should().Be(analysisResult);
+
+                var expectedCount = inspection.Analyses.Average(c => c.Count);
+                foundStock.AnalysisResult.Count.Should().Be(expectedCount);
             }
+        }
+
+        private static async Task InitializeIndexes(IDocumentStore store)
+        {
+            await new Inspections_ByAnalysisResult().ExecuteAsync(store);
         }
 
         [Fact]
@@ -97,6 +107,7 @@ namespace Tests
             using var store = GetDocumentStore();
             using var session = store.OpenAsyncSession();
             var sut = GetPurchaseService(session);
+            await InitializeIndexes(store);
             var fixture = new Fixture();
 
             var supplier1 = fixture.DefaultEntity<Customer>().Create();
@@ -110,7 +121,7 @@ namespace Tests
 
             var stocks = fixture.DefaultEntity<Stock>()
                 .With(c => c.InspectionId, inspection.Id)
-                .Without(c => c.Inspection)
+                // .Without(c => c.Inspection)
                 .Without(c => c.AnalysisResult)
                 .CreateMany().ToList();
             await stocks.SaveList(session);
@@ -146,7 +157,7 @@ namespace Tests
             list.Should().Contain(c => c.Id == purchase1.Id);
             list.Should().Contain(c => c.PurchaseNumber == purchase1.PurchaseNumber);
             list.Should().Contain(c => c.PurchaseDate == purchase1.PurchaseDate);
-            
+
             var details = list[0].PurchaseDetails;
             details.Should().HaveCount(3);
             details[0].PricePerKg.Should().Be(purchaseDetails[0].PricePerKg);

@@ -20,7 +20,7 @@ namespace AmbRcnTradeServer.RavenIndexes
                     InspectionId = inspection.Id,
                     inspection.AnalysisResult.Approved,
                     analysis.Count,
-                    Kor = analysis.SpottedGm / 2 + analysis.SoundGm * 80 * 2.20462 / 1000,
+                    Kor = ((analysis.SpottedGm * 0.5) + analysis.SoundGm) * 0.1763696,
                     analysis.Moisture,
                     analysis.SoundGm,
                     analysis.RejectsGm,
@@ -46,21 +46,19 @@ namespace AmbRcnTradeServer.RavenIndexes
                     RejectsGm = grp.Average(c => c.RejectsGm),
                     SpottedGm = grp.Average(c => c.SpottedGm),
                     TotalRejects = totalRejects,
-                    SoundPct = 100 * grp.Sum(c => c.SoundGm) / totalRejects,
-                    RejectsPct = 100 * grp.Sum(c => c.RejectsGm) / totalRejects,
-                    SpottedPct = 100 * grp.Sum(c => c.SpottedGm) / totalRejects
+                    SoundPct = grp.Sum(c => c.SoundGm) / totalRejects,
+                    RejectsPct = grp.Sum(c => c.RejectsGm) / totalRejects,
+                    SpottedPct = grp.Sum(c => c.SpottedGm) / totalRejects
                 };
 
             Index(x => x.InspectionId, FieldIndexing.Default);
             Index(x => x.Approved, FieldIndexing.Default);
-
             Store(x => x.InspectionId, FieldStorage.Yes);
             Store(x => x.Count, FieldStorage.Yes);
             Store(x => x.Moisture, FieldStorage.Yes);
             Store(x => x.SoundPct, FieldStorage.Yes);
             Store(x => x.RejectsPct, FieldStorage.Yes);
             Store(x => x.SpottedPct, FieldStorage.Yes);
-            Store(x => x.Approved, FieldStorage.Yes);
         }
 
         public class Result

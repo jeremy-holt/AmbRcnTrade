@@ -95,7 +95,8 @@ export const initialState: IState = {
         approved: Approval.Rejected,        
         soundPct: undefined!,
         spottedPct: undefined!,
-        rejectsPct: undefined!        
+        rejectsPct: undefined!       ,
+        inspectionId:undefined! 
       }
     },
     list: [],
@@ -114,7 +115,7 @@ export const initialState: IState = {
       bags: undefined!,
       weightKg: undefined!,
       inspectionId: undefined!,
-      inspection: undefined!,
+      // inspection: undefined!,
       isStockIn: undefined!,
       origin: undefined!,
       supplierId: undefined!,

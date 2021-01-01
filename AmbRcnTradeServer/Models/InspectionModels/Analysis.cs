@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using AmbRcnTradeServer.Constants;
 using Raven.Client.Documents;
@@ -27,6 +26,6 @@ namespace AmbRcnTradeServer.Models.InspectionModels
         public double RejectsPct { get; set; }
         public double Kor { get; set; }
         public Approval Approved { get; set; }
+        public string InspectionId { get; set; }
     }
-        
 }

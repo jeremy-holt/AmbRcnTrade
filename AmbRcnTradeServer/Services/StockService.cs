@@ -4,9 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using AmberwoodCore.Extensions;
 using AmberwoodCore.Responses;
-using AmbRcnTradeServer.Constants;
 using AmbRcnTradeServer.Models.DictionaryModels;
-using AmbRcnTradeServer.Models.InspectionModels;
 using AmbRcnTradeServer.Models.StockModels;
 using AmbRcnTradeServer.RavenIndexes;
 using Raven.Client.Documents;
@@ -26,12 +24,14 @@ namespace AmbRcnTradeServer.Services
     public class StockService : IStockService
     {
         private readonly ICounterService _counterService;
+        private readonly IInspectionService _inspectionService;
         private readonly IAsyncDocumentSession _session;
 
-        public StockService(IAsyncDocumentSession session, ICounterService counterService)
+        public StockService(IAsyncDocumentSession session, ICounterService counterService, IInspectionService inspectionService)
         {
             _session = session;
             _counterService = counterService;
+            _inspectionService = inspectionService;
         }
 
         public async Task<ServerResponse<Stock>> Save(Stock stock)
@@ -39,6 +39,7 @@ namespace AmbRcnTradeServer.Services
             if (stock.StockInDate != null && stock.StockOutDate != null)
                 throw new InvalidOperationException("A stock cannot have both a Stock In date and a Stock Out date");
 
+            stock.AnalysisResult = await _inspectionService.GetAnalysisResult(stock.InspectionId);
             stock.IsStockIn = stock.StockInDate != null;
 
             if (!stock.IsStockIn)
@@ -60,8 +61,12 @@ namespace AmbRcnTradeServer.Services
         {
             var stock = await _session.Include<Stock>(c => c.InspectionId).LoadAsync<Stock>(id);
 
-            stock.Inspection = await _session.LoadAsync<Inspection>(stock.InspectionId);
-            stock.AnalysisResult = stock.Inspection?.AnalysisResult;
+            if (stock.InspectionId.IsNotNullOrEmpty())
+            {
+                // stock.Inspection = await _session.LoadAsync<Inspection>(stock.InspectionId);
+                // stock.Inspection.AnalysisResult = await _inspectionService.GetAnalysisResult(stock.InspectionId);
+                stock.AnalysisResult =await _inspectionService.GetAnalysisResult(stock.InspectionId);
+            }
 
             return stock;
         }
@@ -88,7 +93,7 @@ namespace AmbRcnTradeServer.Services
         public async Task<List<StockListItem>> LoadStockList(string companyId, long? lotNo, string locationId)
         {
             var query = _session.Query<Stock>()
-                .Include(c => c.InspectionId)
+                // .Include(c => c.InspectionId)
                 .Include(c => c.LocationId)
                 .Include(c => c.SupplierId)
                 .Where(c => c.CompanyId == companyId);
@@ -103,7 +108,8 @@ namespace AmbRcnTradeServer.Services
 
             var locations = await _session.LoadListFromMultipleIdsAsync<Customer>(stocks.Select(c => c.LocationId));
             var suppliers = await _session.LoadListFromMultipleIdsAsync<Customer>(stocks.Select(x => x.SupplierId));
-            var inspections = await _session.LoadListFromMultipleIdsAsync<Inspection>(stocks.Select(x => x.InspectionId));
+            // var inspections = await _session.LoadListFromMultipleIdsAsync<Inspection>(stocks.Select(x => x.InspectionId));
+            var analysisResults = await _inspectionService.GetAnalysisResult(stocks.Select(x => x.InspectionId));
 
             return stocks.Select(item => new StockListItem
                 {
@@ -123,23 +129,10 @@ namespace AmbRcnTradeServer.Services
                     SupplierId = item.SupplierId,
                     SupplierName = suppliers.FirstOrDefault(c => c.Id == item.SupplierId)?.Name,
                     InspectionId = item.InspectionId,
-                    Inspection = inspections.FirstOrDefault(c => c.Id == item.InspectionId)
+                    AnalysisResult = analysisResults.FirstOrDefault(c=>c.InspectionId==item.InspectionId)
+                    // Inspection = inspections.FirstOrDefault(c => c.Id == item.InspectionId)
                 })
                 .ToList();
-        }
-
-        private static double GetAverageAnalysisResult(IEnumerable<Analysis> analyses, Func<Analysis, double> field)
-        {
-            return analyses.Average(field);
-        }
-
-        private static double GetAverageAnalysisResultForStock(IEnumerable<Inspection> inspections, Func<Inspection, double> field)
-        {
-            var results = inspections.Where(c => c.AnalysisResult.Approved == Approval.Approved).ToList();
-
-            return results.Any()
-                ? results.Average(field)
-                : 0;
         }
     }
 }

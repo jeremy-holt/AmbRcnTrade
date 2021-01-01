@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using AmberwoodCore.Responses;
 using AmbRcnTradeServer.Models.DictionaryModels;
 using AmbRcnTradeServer.Models.InspectionModels;
+using AmbRcnTradeServer.RavenIndexes;
 using Raven.Client.Documents;
 using Raven.Client.Documents.Linq;
 using Raven.Client.Documents.Session;
@@ -15,6 +16,8 @@ namespace AmbRcnTradeServer.Services
         Task<ServerResponse<Inspection>> Save(Inspection inspection);
         Task<Inspection> Load(string id);
         Task<List<InspectionListItem>> LoadList(InspectionQueryParams prms);
+        Task<List<AnalysisResult>> GetAnalysisResult(IEnumerable<string> inspectionIds);
+        Task<AnalysisResult> GetAnalysisResult(string inspectionId);
     }
 
     public class InspectionService : IInspectionService
@@ -76,6 +79,22 @@ namespace AmbRcnTradeServer.Services
             }
 
             return list;
+        }
+
+        public async Task<List<AnalysisResult>> GetAnalysisResult(IEnumerable<string> inspectionIds)
+        {
+            var query = await _session.Query<Inspections_ByAnalysisResult.Result, Inspections_ByAnalysisResult>()
+                .Where(c => c.InspectionId.In(inspectionIds))
+                .ProjectInto<AnalysisResult>()
+                .ToListAsync();
+
+            return query;
+        }
+
+        public async Task<AnalysisResult> GetAnalysisResult(string inspectionId)
+        {
+            var result = await GetAnalysisResult(new[] {inspectionId});
+            return result.Count == 0 ? new AnalysisResult() : result.First();
         }
     }
 }

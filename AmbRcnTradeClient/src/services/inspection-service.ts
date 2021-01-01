@@ -72,7 +72,8 @@ export class InspectionService extends FetchService {
           soundPct: soundPct,
           rejectsPct: rejectsPct,
           spottedPct: spottedPct,
-          approved
+          approved,
+          inspectionId:undefined!
         });
     });
 
@@ -83,7 +84,8 @@ export class InspectionService extends FetchService {
       soundPct: this.sumAnalysisResult(arrayAnalysisResult, c => c.soundPct),
       rejectsPct: this.sumAnalysisResult(arrayAnalysisResult, c => c.rejectsPct),
       spottedPct: this.sumAnalysisResult(arrayAnalysisResult, c => c.spottedPct),
-      approved
+      approved,
+      inspectionId:undefined!
     };
 
     return result;

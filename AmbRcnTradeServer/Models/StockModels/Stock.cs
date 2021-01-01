@@ -21,10 +21,9 @@ namespace AmbRcnTradeServer.Models.StockModels
         public string InspectionId { get; set; }
         public bool IsStockIn { get; set; }
 
-        [JsonIgnore] public Inspection Inspection { get; set; } = new();
+       [Obsolete] [JsonIgnore] public Inspection Inspection { get; set; } = new();
         public string Origin { get; set; }
         public string SupplierId { get; set; }
-        [JsonIgnore]
         public AnalysisResult AnalysisResult { get; set; }
         [JsonIgnore]
         public string LocationName { get; set; }

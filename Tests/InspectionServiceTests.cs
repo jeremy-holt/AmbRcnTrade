@@ -6,6 +6,7 @@ using AmberwoodCore.Extensions;
 using AmbRcnTradeServer.Constants;
 using AmbRcnTradeServer.Models.DictionaryModels;
 using AmbRcnTradeServer.Models.InspectionModels;
+using AmbRcnTradeServer.RavenIndexes;
 using AutoFixture;
 using FluentAssertions;
 using Raven.Client.Documents;
@@ -20,6 +21,55 @@ namespace Tests
     public class InspectionServiceTests : TestBaseContainer
     {
         public InspectionServiceTests(ITestOutputHelper output) : base(output) { }
+
+        private static async Task InitializeIndexes(IDocumentStore store)
+        {
+            await new Inspections_ByAnalysisResult().ExecuteAsync(store);
+        }
+
+        [Fact]
+        public async Task GetAnalysisResult_ShouldReturnAverageAnalysisResultForInspectionIds()
+        {
+            // Arrange
+            using var store = GetDocumentStore();
+            using var session = store.OpenAsyncSession();
+            var sut = GetInspectionService(session);
+            await InitializeIndexes(store);
+            var fixture = new Fixture();
+
+            var analysis1 = new Analysis
+            {
+                Count = 190,
+                Moisture = 7,
+                RejectsGm = 130,
+                SoundGm = 240,
+                SpottedGm = 16
+            };
+            var analysis2 = new Analysis
+            {
+                Count = 190,
+                Moisture = 7,
+                RejectsGm = 130,
+                SoundGm = 240,
+                SpottedGm = 16
+            };
+
+            var inspections = fixture.DefaultEntity<Inspection>()
+                .With(c => c.Analyses, new List<Analysis> {analysis1, analysis2})
+                .CreateMany()
+                .ToList();
+
+            await inspections.SaveList(session);
+            WaitForIndexing(store);
+
+            // Act
+            var actual = await sut.GetAnalysisResult(inspections.Select(c => c.Id));
+
+            // Assert
+            actual[0].Approved.Should().Be(inspections[0].AnalysisResult.Approved);
+            actual[0].Count.Should().Be(inspections[0].Analyses.Average(c => c.Count));
+            actual[0].InspectionId.Should().Be(inspections[0].Id);
+        }
 
         [Fact]
         public async Task Load_ShouldLoadInspection()
@@ -121,7 +171,7 @@ namespace Tests
                 {
                     Count = 180,
                     Moisture = 10,
-                    Kor = 47,
+                    Kor = 47
                 }
             };
             var inspection = new Inspection

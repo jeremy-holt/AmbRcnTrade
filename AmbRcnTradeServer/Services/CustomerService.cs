@@ -112,13 +112,7 @@ namespace AmbRcnTradeServer.Services
                 .Where(c => c.CompanyId == companyId && c.Users.Contains(appUserId))
                 .ProjectInto<Contracts_ByAppUser.Result>()
                 .ToListAsync();
-
-            var temp = query.Where(c => c.Id.IsNotNullOrEmpty())
-                .Select(c => new ListItem(c.CustomerId, c.CustomerName, c.CompanyId))
-                .DistinctBy(c => c.Id)
-                .OrderBy(c => c.Name)
-                .ToList();
-
+            
             return query.Where(c => c.Id.IsNotNullOrEmpty())
                 .Select(c => new ListItem(c.CustomerId, c.CustomerName, c.CompanyId))
                 .DistinctBy(c => c.Id)

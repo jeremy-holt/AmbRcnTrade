@@ -46,9 +46,9 @@ export class PurchaseService extends FetchService {
 
   public getStockAverages(stocks: IStock[]) {
     const bags = stocks.reduce((a, b) => a += b.bags, 0);
-    const kor = stocks.reduce((a, b) => a += (b.bags * b.inspection.analysisResult.kor), 0) / bags;
-    const count=stocks.reduce((a, b) => a += (b.bags * b.inspection.analysisResult.count), 0) / bags;
-    const moisture =stocks.reduce((a, b) => a += (b.bags * b.inspection.analysisResult.moisture), 0) / bags;
+    const kor = stocks.reduce((a, b) => a += (b.bags * b.analysisResult.kor), 0) / bags;
+    const count=stocks.reduce((a, b) => a += (b.bags * b.analysisResult.count), 0) / bags;
+    const moisture =stocks.reduce((a, b) => a += (b.bags * b.analysisResult.moisture), 0) / bags;
     
     return {
       bags,

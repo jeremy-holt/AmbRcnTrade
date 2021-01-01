@@ -30,51 +30,7 @@ namespace Tests
             await new Stocks_ByPurchases().ExecuteAsync(store);
             await new Inspections_ByAnalysisResult().ExecuteAsync(store);
         }
-
-        [Fact]
-        public async Task GetAnalysisResult_ShouldReturnAverageAnalysisResultForInspectionIds()
-        {
-            // Arrange
-            using var store = GetDocumentStore();
-            using var session = store.OpenAsyncSession();
-            var sut = GetStockManagementService(session);
-            await InitializeIndexes(store);
-            var fixture = new Fixture();
-
-            var analysis1 = new Analysis()
-            {
-                Count = 190,
-                Moisture = 7,
-                RejectsGm = 130,
-                SoundGm = 240,
-                SpottedGm = 16
-            };
-            var analysis2 = new Analysis()
-            {
-                Count = 190,
-                Moisture = 7,
-                RejectsGm = 130,
-                SoundGm = 240,
-                SpottedGm = 16
-            };
-            
-            var inspections = fixture.DefaultEntity<Inspection>()
-                .With(c=>c.Analyses,new List<Analysis>(){analysis1,analysis2})
-                .CreateMany()
-                .ToList();
-            
-            await inspections.SaveList(session);
-            WaitForIndexing(store);
-            WaitForUserToContinueTheTest(store);
-            
-            // Act
-            AnalysisResult actual = await sut.GetAnalysisResult(inspections[0].Id);
-            
-            // Assert
-            actual.Approved.Should().Be(inspections[0].AnalysisResult.Approved);
-            actual.Count.Should().Be(inspections[0].Analyses.Average(c => c.Count));
-        }
-
+        
         [Fact]
         public async Task GetNonCommittedStocks()
         {
@@ -93,7 +49,7 @@ namespace Tests
 
             var stocks = fixture.DefaultEntity<Stock>()
                 .With(c => c.IsStockIn, true)
-                .With(c => c.Inspection, inspection)
+                // .With(c => c.Inspection, inspection)
                 .With(c => c.InspectionId, inspection.Id)
                 .Without(c => c.SupplierName)
                 .With(c => c.SupplierId, supplier.Id)
@@ -120,7 +76,7 @@ namespace Tests
             list.Should().HaveCount(7);
             list.Should().BeInAscendingOrder(c => c.LotNo);
             list.Select(x => x.Id).Should().NotContain(stockIds);
-            list[0].Inspection.AnalysisResult.Count.Should().Be(inspection.AnalysisResult.Count);
+            // list[0].Inspection.AnalysisResult.Count.Should().Be(inspection.AnalysisResult.Count);
             list[0].SupplierName.Should().Be(supplier.Name);
         }
 
@@ -131,6 +87,7 @@ namespace Tests
             using var store = GetDocumentStore();
             using var session = store.OpenAsyncSession();
             var sut = GetStockManagementService(session);
+            await InitializeIndexes(store);
             var fixture = new Fixture();
 
             await session.StoreAsync(new Company(COMPANY_ID));
@@ -191,6 +148,7 @@ namespace Tests
             using var store = GetDocumentStore();
             using var session = store.OpenAsyncSession();
             var sut = GetStockManagementService(session);
+            await InitializeIndexes(store);
             var fixture = new Fixture();
 
             await session.StoreAsync(new Company(COMPANY_ID));

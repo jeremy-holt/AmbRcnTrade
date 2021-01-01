@@ -21,7 +21,6 @@ namespace AmbRcnTradeServer.Services
         Task<ServerResponse<MovedInspectionResult>> MoveInspectionToStock(string inspectionId, double bags, DateTime date, long lotNo, string locationId);
         Task<ServerResponse> RemoveInspectionFromStock(string inspectionId, string stockId);
         Task<List<Stock>> GetNonCommittedStocks(string companyId);
-        Task<AnalysisResult> GetAnalysisResult(string inspectionId);
     }
 
     public class StockManagementService : IStockManagementService
@@ -97,8 +96,8 @@ namespace AmbRcnTradeServer.Services
 
             var stocks = await _session.Query<Stock>()
                 .Include(c => c.LocationId)
-                .Include(c=>c.InspectionId)
-                .Include(c=>c.SupplierId)
+                .Include(c => c.InspectionId)
+                .Include(c => c.SupplierId)
                 .Where(c => c.CompanyId == companyId)
                 .OrderBy(c => c.LotNo)
                 .ToListAsync();
@@ -111,26 +110,17 @@ namespace AmbRcnTradeServer.Services
 
             var nonCommittedStocks = await _session.LoadListFromMultipleIdsAsync<Stock>(nonCommittedStocksIds);
             var locations = await _session.LoadListFromMultipleIdsAsync<Customer>(nonCommittedStocks.Select(c => c.LocationId));
-            var inspections = await _session.LoadListFromMultipleIdsAsync<Inspection>(nonCommittedStocks.Select(x => x.InspectionId));
+            // var inspections = await _session.LoadListFromMultipleIdsAsync<Inspection>(nonCommittedStocks.Select(x => x.InspectionId));
             var suppliers = await _session.LoadListFromMultipleIdsAsync<Customer>(nonCommittedStocks.Select(c => c.SupplierId));
-            
+
             foreach (var item in nonCommittedStocks)
             {
                 item.LocationName = locations.FirstOrDefault(c => c.Id == item.LocationId)?.Name;
-                item.Inspection = inspections.FirstOrDefault(c => c.Id == item.InspectionId) ?? new Inspection();
+                // item.Inspection = inspections.FirstOrDefault(c => c.Id == item.InspectionId) ?? new Inspection();
                 item.SupplierName = suppliers.FirstOrDefault(c => c.Id == item.SupplierId)?.Name;
             }
+
             return nonCommittedStocks;
-        }
-
-        public async Task<AnalysisResult> GetAnalysisResult(string inspectionId)
-        {
-            var query = await _session.Query<Inspections_ByAnalysisResult.Result, Inspections_ByAnalysisResult>()
-                .Where(c => c.InspectionId == inspectionId)
-                .ProjectInto<AnalysisResult>()
-                .FirstOrDefaultAsync();
-
-            return query;
         }
     }
 }

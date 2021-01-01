@@ -13,7 +13,7 @@ export interface IStock extends IEntityCompany {
   bags: number;
   weightKg: number;
   inspectionId: string;
-  inspection?: IInspection;
+  // inspection?: IInspection;
   stockOutDate: string | null;
   isStockIn: boolean;
   origin: string;
