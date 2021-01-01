@@ -133,7 +133,7 @@ namespace AmbRcnTradeServer.Services
                         AnalysisResult = inspections.FirstOrDefault(x=>x.Id==c.InspectionId)?.AnalysisResult
                     }).ToList();
                     
-                    detailListItem.AnalysisResult = new Analysis()
+                    detailListItem.AnalysisResult = new AnalysisResult()
                     {
                         Kor = foundStocks.Average(c => c.AnalysisResult.Kor),
                         Count = foundStocks.Average(c => c.AnalysisResult.Count),

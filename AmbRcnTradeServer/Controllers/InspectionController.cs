@@ -53,7 +53,7 @@ namespace AmbRcnTradeServer.Controllers
             return await Task.FromResult(new Inspection
             {
                 InspectionDate = DateTime.Today,
-                AnalysisResult = new Analysis
+                AnalysisResult = new AnalysisResult
                 {
                     Approved = Approval.Rejected
                 }

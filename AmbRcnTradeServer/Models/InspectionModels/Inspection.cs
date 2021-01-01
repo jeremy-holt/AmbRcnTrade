@@ -24,6 +24,6 @@ namespace AmbRcnTradeServer.Models.InspectionModels
         public string TruckPlate { get; set; }
         public List<StockReference> StockReferences { get; set; } = new();
         public List<Analysis> Analyses { get; init; } = new();
-        public Analysis AnalysisResult { get; set; } = new();
+        public AnalysisResult AnalysisResult { get; set; } = new();
     }
 }

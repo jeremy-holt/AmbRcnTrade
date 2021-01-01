@@ -52,13 +52,13 @@ namespace Tests
             var customer = fixture.DefaultEntity<Customer>().Create();
             await session.StoreAsync(customer);
 
-            var analysisResult1 = fixture.Build<Analysis>()
+            var analysisResult1 = fixture.Build<AnalysisResult>()
                 .With(c => c.Approved, Approval.Approved)
                 .Create();
-            var analysisResult2 = fixture.Build<Analysis>()
+            var analysisResult2 = fixture.Build<AnalysisResult>()
                 .With(c => c.Approved, Approval.Approved)
                 .Create();
-            var analysisResult3 = fixture.Build<Analysis>()
+            var analysisResult3 = fixture.Build<AnalysisResult>()
                 .With(c => c.Approved, Approval.Rejected)
                 .Create();
 
@@ -121,11 +121,7 @@ namespace Tests
                 {
                     Count = 180,
                     Moisture = 10,
-                    RejectsPct = 4.5,
-                    SoundPct = 65,
-                    SpottedPct = 7,
                     Kor = 47,
-                    Approved = Approval.Approved
                 }
             };
             var inspection = new Inspection

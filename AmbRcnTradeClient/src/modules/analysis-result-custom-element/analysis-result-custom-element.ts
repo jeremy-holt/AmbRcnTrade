@@ -1,11 +1,11 @@
-import { encodeParams } from "./../../core/helpers";
-import { IAnalysis } from "interfaces/inspections/IAnalysis";
 import { autoinject, bindable, observable } from "aurelia-framework";
 import { Approval, APPROVAL_LIST } from "constants/app-constants";
+import { IAnalysisResult } from "interfaces/inspections/IAnalysis";
+import { encodeParams } from "./../../core/helpers";
 
 @autoinject
 export class AnalysisResultCustomElement {
-  @bindable public model: IAnalysis = undefined!
+  @bindable public model: IAnalysisResult = undefined!
   @bindable protected approvalChecked = false;
   @bindable public caption = "";
   @bindable public inspectionId = "";

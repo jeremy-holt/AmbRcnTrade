@@ -8,7 +8,7 @@ import { QueryId } from "models/QueryId";
 import { IState } from "store/state";
 import { Approval } from "./../constants/app-constants";
 import { fixAspNetCoreDate } from "./../core/helpers";
-import { IAnalysis } from "./../interfaces/inspections/IAnalysis";
+import { IAnalysis, IAnalysisResult } from "./../interfaces/inspections/IAnalysis";
 import { IInspection } from "./../interfaces/inspections/IInspection";
 import { IInspectionListItem } from "./../interfaces/inspections/IInspectionListItem";
 import { FetchService } from "./fetch-service";
@@ -52,67 +52,62 @@ export class InspectionService extends FetchService {
     return bagsAlreadyAllocated < inspection.bags;
   }
 
-  public bagsAlreadyAllocated(inspection: IInspection):number{
+  public bagsAlreadyAllocated(inspection: IInspection): number {
     return inspection.stockReferences.reduce((a, b) => a += b.bags, 0);
   }
 
-  public getAnalysisResult(list: IAnalysis[], approved: Approval): IAnalysis {
-    const bags = list.reduce((a, b) => a += b.bags, 0);
+  public getAnalysisResult(analyses: IAnalysis[], approved: Approval): IAnalysisResult {
+    // const bags = list.reduce((a, b) => a += b.bags, 0);
 
-    if (bags === 0) {
-      return {} as IAnalysis;
-    }
+    // if (bags === 0) {
+    //   return {} as IAnalysis;
+    // }
 
-    const array: IAnalysis[] = [];
+    const arrayAnalysisResult: IAnalysisResult[] = [];
 
-    list.forEach(item => {
-      item.kor = this.calcKor(item);
+    analyses.forEach(analysis => {
+      analysis.kor = this.calcKor(analysis);
 
-      const { soundPct, spottedPct, rejectsPct } = this.calcPercentages(item);
+      const { soundPct, spottedPct, rejectsPct } = this.calcPercentages(analysis);
 
-      item.soundPct = soundPct;
-      item.spottedPct = spottedPct;
-      item.rejectsPct = rejectsPct;
+      // item.soundPct = soundPct;
+      // item.spottedPct = spottedPct;
+      // item.rejectsPct = rejectsPct;
 
-      array.push(
+      arrayAnalysisResult.push(
         {
-          bags: this.calcAverageResult(item, c => c.bags),
-          count: this.calcAverageResult(item, c => c.count),
-          moisture: this.calcAverageResult(item, c => c.moisture),
-          kor: this.calcAverageResult(item, c => c.kor),
-          soundPct: this.calcAverageResult(item, c => c.soundPct),
-          rejectsPct: this.calcAverageResult(item, c => c.rejectsPct),
-          spottedPct: this.calcAverageResult(item, c => c.spottedPct),
-          soundGm: 0,
-          rejectsGm: 0,
-          spottedGm: 0,
+          count: analysis.count,
+          moisture: analysis.moisture,
+          kor: analysis.kor,
+          soundPct: soundPct,
+          rejectsPct: rejectsPct,
+          spottedPct: spottedPct,
           approved
         });
     });
 
-    const result: IAnalysis = {
-      bags: this.sumAnalysisResult(array, c => c.bags) / bags,
-      count: this.sumAnalysisResult(array, c => c.count) / bags,
-      moisture: this.sumAnalysisResult(array, c => c.moisture) / bags,
-      kor: this.sumAnalysisResult(array, c => c.kor) / bags,
-      soundPct: this.sumAnalysisResult(array, c => c.soundPct) / bags,
-      rejectsPct: this.sumAnalysisResult(array, c => c.rejectsPct) / bags,
-      spottedPct: this.sumAnalysisResult(array, c => c.spottedPct) / bags,
-      soundGm: 0,
-      rejectsGm: 0,
-      spottedGm: 0,
+    const result: IAnalysisResult = {
+      count: this.sumAnalysisResult(arrayAnalysisResult, c => c.count),
+      moisture: this.sumAnalysisResult(arrayAnalysisResult, c => c.moisture),
+      kor: this.sumAnalysisResult(arrayAnalysisResult, c => c.kor),
+      soundPct: this.sumAnalysisResult(arrayAnalysisResult, c => c.soundPct),
+      rejectsPct: this.sumAnalysisResult(arrayAnalysisResult, c => c.rejectsPct),
+      spottedPct: this.sumAnalysisResult(arrayAnalysisResult, c => c.spottedPct),
       approved
     };
 
     return result;
   }
 
-  private calcAverageResult(analysis: IAnalysis, field: Fn<IAnalysis, number>): number {
-    return analysis.bags * (field(analysis) || 0);
-  }
+  // private calcAverageResult(analysis: IAnalysis, field: Fn<IAnalysis, number>): number {
+  //   return analysis.bags * (field(analysis) || 0);
+  // }
 
-  private sumAnalysisResult(list: IAnalysis[], field: Fn<IAnalysis, number>) {
-    return list.reduce((a, b) => a += field(b), 0);
+  private sumAnalysisResult(array: IAnalysisResult[], field: Fn<IAnalysisResult, number>) {
+    if (array.length === 0) {
+      return 0;
+    }
+    return array.reduce((a, b) => a += field(b), 0) / array.length;
   }
 
   private calcKor(analysis: IAnalysis): number {

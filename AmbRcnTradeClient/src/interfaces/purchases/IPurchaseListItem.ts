@@ -1,6 +1,6 @@
 import { Currency } from "constants/app-constants";
-import { IAnalysis } from "interfaces/inspections/IAnalysis";
 import { IStockInfo } from "interfaces/stocks/IStockInfo";
+import { IAnalysisResult } from "./../inspections/IAnalysis";
 
 export interface IPurchaseListItem {
   id: string;
@@ -21,7 +21,7 @@ export interface IPurchaseDetailListItem {
   pricePerKg: number;
   date: Date | string;
   stocks: IPurchaseDetailStockListItem[];
-  analysisResult: IAnalysis;
+  analysisResult: IAnalysisResult;
   stockIn: IStockInfo;
   stockOut: IStockInfo;
   stockBalance: IStockInfo;
@@ -31,7 +31,7 @@ export interface IPurchaseDetailStockListItem {
   stockId: string;
   inspectionId: string;
   isStockIn: boolean;
-  analysisResult: IAnalysis;
+  analysisResult: IAnalysisResult;
   stockIn: IStockInfo;
   stockOut: IStockInfo;
   stockBalance: IStockInfo;

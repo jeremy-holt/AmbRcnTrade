@@ -31,7 +31,7 @@ namespace AmbRcnTradeServer.Models.PurchaseModels
         public double PricePerKg { get; set; }
         public DateTime Date { get; set; }
         public List<PurchaseDetailStockListItem> Stocks { get; set; } = new();
-        public Analysis AnalysisResult { get; set; } = new();
+        public AnalysisResult AnalysisResult { get; set; } = new();
         public StockInfo StockIn { get; set; } = new();
         public StockInfo StockOut { get; set; } = new();
         public StockInfo StockBalance { get; set; } = new();
@@ -42,7 +42,7 @@ namespace AmbRcnTradeServer.Models.PurchaseModels
         public string StockId { get; set; }
         public string InspectionId { get; set; }
         public bool IsStockIn { get; set; }
-        public Analysis AnalysisResult { get; set; }
+        public AnalysisResult AnalysisResult { get; set; }
         public StockInfo StockIn { get; set; } = new();
         public StockInfo StockOut { get; set; } = new();
         public StockInfo StockBalance { get; set; } = new();

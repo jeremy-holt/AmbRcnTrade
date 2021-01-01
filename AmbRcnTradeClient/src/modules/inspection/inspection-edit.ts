@@ -80,7 +80,7 @@ export class InspectionEdit {
 
   protected get canSaveAnalysis() {
     return this.model && !this.model.analyses.some(
-      c => c.count === undefined! || c.bags === undefined ||
+      c => c.count === undefined! ||
         c.moisture === undefined || c.soundGm === undefined ||
         c.rejectsGm === undefined || c.spottedGm === undefined ||
         c.kor === undefined);
@@ -92,9 +92,7 @@ export class InspectionEdit {
   }
 
   protected addAnalysis() {
-    this.model.analyses.push({
-      approved: Approval.Rejected
-    } as IAnalysis);
+    this.model.analyses.push({} as IAnalysis);
   }
 
   protected removeRow(index: number) {
@@ -123,7 +121,7 @@ export class InspectionEdit {
     return this.inspectionService.canAddInspectionToStock(this.model);
   }
 
-  protected get showCanAddInspectionToStock(){
+  protected get showCanAddInspectionToStock() {
     return isInRole(["warehouseManager"], this.state);
   }
 
@@ -146,8 +144,8 @@ export class InspectionEdit {
     });
   }
 
-  protected get remainingBagsToAllocate(){
-    return this.model.bags -  this.inspectionService.bagsAlreadyAllocated(this.model);
+  protected get remainingBagsToAllocate() {
+    return this.model.bags - this.inspectionService.bagsAlreadyAllocated(this.model);
   }
 
   protected encode(value: string) {

@@ -39,7 +39,7 @@ namespace Tests
             var supplier = fixture.DefaultEntity<Customer>().Create();
             await session.StoreAsync(supplier);
 
-            var analysisResult = fixture.Build<Analysis>().Create();
+            var analysisResult = fixture.Build<AnalysisResult>().Create();
 
             var inspection = fixture.DefaultEntity<Inspection>()
                 .With(c => c.AnalysisResult, analysisResult)

@@ -25,7 +25,7 @@ namespace AmbRcnTradeServer.Models.StockModels
         public string Origin { get; set; }
         public string SupplierId { get; set; }
         [JsonIgnore]
-        public Analysis AnalysisResult { get; set; }
+        public AnalysisResult AnalysisResult { get; set; }
         [JsonIgnore]
         public string LocationName { get; set; }
         public string Id { get; set; }

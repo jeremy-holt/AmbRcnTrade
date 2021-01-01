@@ -96,7 +96,7 @@ namespace Tests
             var location = fixture.DefaultEntity<Customer>().Create();
             await session.StoreAsync(location);
 
-            var analysisResult = fixture.Build<Analysis>()
+            var analysisResult = fixture.Build<AnalysisResult>()
                 .With(c => c.Approved, Approval.Approved)
                 .Create();
 
@@ -156,7 +156,7 @@ namespace Tests
             var location = fixture.DefaultEntity<Customer>().Create();
             await session.StoreAsync(location);
 
-            var analysisResult = fixture.Build<Analysis>()
+            var analysisResult = fixture.Build<AnalysisResult>()
                 .With(c => c.Approved, Approval.Approved)
                 .Create();
 

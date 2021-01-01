@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using AmbRcnTradeServer.Constants;
 using Raven.Client.Documents;
@@ -11,14 +12,21 @@ namespace AmbRcnTradeServer.Models.InspectionModels
     {
         public double Moisture { get; set; }
         public double Count { get; set; }
-        public double SpottedPct { get; set; }
         public double SpottedGm { get; set; }
-        public double SoundPct { get; set; }
         public double SoundGm { get; set; }
-        public double RejectsPct { get; set; }
         public double RejectsGm { get; set; }
         public double Kor { get; set; }
-        public Approval Approved { get; set; }
-        public double Bags { get; set; }
     }
+
+    public class AnalysisResult
+    {
+        public double Moisture { get; set; }
+        public double Count { get; set; }
+        public double SpottedPct { get; set; }
+        public double SoundPct { get; set; }
+        public double RejectsPct { get; set; }
+        public double Kor { get; set; }
+        public Approval Approved { get; set; }
+    }
+        
 }

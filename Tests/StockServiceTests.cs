@@ -144,7 +144,7 @@ namespace Tests
             var location = fixture.DefaultEntity<Customer>().Create();
             await session.StoreAsync(location);
 
-            var analysisResult = fixture.Build<Analysis>().With(c => c.Approved, Approval.Approved).Create();
+            var analysisResult = fixture.Build<AnalysisResult>().With(c => c.Approved, Approval.Approved).Create();
 
             var inspections = fixture.DefaultEntity<Inspection>()
                 .With(c => c.SupplierId, supplier.Id)

@@ -1,3 +1,4 @@
+import { IAnalysisResult } from "./../inspections/IAnalysis";
 import { IEntityCompany } from "interfaces/IEntity";
 import { IInspection } from "interfaces/inspections/IInspection";
 
@@ -16,6 +17,7 @@ export interface IStock extends IEntityCompany {
   stockOutDate: string | null;
   isStockIn: boolean;
   origin: string;
+  analysisResult: IAnalysisResult,
   supplierId: string;
   supplierName?: string;
 

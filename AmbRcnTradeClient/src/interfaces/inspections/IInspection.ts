@@ -1,5 +1,5 @@
 import { IEntityCompany } from "interfaces/IEntity";
-import { IAnalysis } from "./IAnalysis";
+import { IAnalysis, IAnalysisResult } from "./IAnalysis";
 import { IStockReference } from "./IStockReference";
 
 export interface IInspection extends IEntityCompany {
@@ -14,6 +14,6 @@ export interface IInspection extends IEntityCompany {
   companyId: string;
   analyses: IAnalysis[];
   supplierId: string;
-  analysisResult: IAnalysis;
+  analysisResult: IAnalysisResult;
   stockReferences: IStockReference[];
 }

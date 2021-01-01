@@ -91,15 +91,11 @@ export const initialState: IState = {
       analysisResult: {
         count: 0,
         moisture: 0,
-        kor: 0,
-        soundGm: 0,
-        rejectsGm: 0,
-        approved: Approval.Rejected,
-        spottedGm: 0,
+        kor: 0,      
+        approved: Approval.Rejected,        
         soundPct: undefined!,
         spottedPct: undefined!,
-        rejectsPct: undefined!,
-        bags: 0
+        rejectsPct: undefined!        
       }
     },
     list: [],
@@ -121,7 +117,8 @@ export const initialState: IState = {
       inspection: undefined!,
       isStockIn: undefined!,
       origin: undefined!,
-      supplierId: undefined!
+      supplierId: undefined!,
+      analysisResult:undefined!
     },
     list: [],
     stockBalanceList: []

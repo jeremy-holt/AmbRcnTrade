@@ -59,10 +59,10 @@ namespace AmbRcnTradeServer.Services
         public async Task<Stock> Load(string id)
         {
             var stock = await _session.Include<Stock>(c => c.InspectionId).LoadAsync<Stock>(id);
-            
+
             stock.Inspection = await _session.LoadAsync<Inspection>(stock.InspectionId);
             stock.AnalysisResult = stock.Inspection?.AnalysisResult;
-            
+
             return stock;
         }
 
@@ -128,12 +128,9 @@ namespace AmbRcnTradeServer.Services
                 .ToList();
         }
 
-        private static double GetAverageAnalysisResult(IEnumerable<Analysis> analyses, Func<Analysis, double> field, double bags)
+        private static double GetAverageAnalysisResult(IEnumerable<Analysis> analyses, Func<Analysis, double> field)
         {
-            if (bags == 0)
-                return 0;
-            
-            return analyses.Where(c => c.Approved == Approval.Approved).Sum(x => x.Bags * field(x)) / bags;
+            return analyses.Average(field);
         }
 
         private static double GetAverageAnalysisResultForStock(IEnumerable<Inspection> inspections, Func<Inspection, double> field)
