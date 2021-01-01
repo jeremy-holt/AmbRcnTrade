@@ -153,4 +153,8 @@ export class InspectionEdit {
   }
 
   protected listItemMatcher = (a: IListItem, b: IListItem) => a?.id === b?.id;
+
+  protected navigateToStockList(){
+    this.router.navigateToRoute("stockList");
+  }
 }

@@ -58,4 +58,8 @@ export class InspectionList {
         model: item
       });
   }
+
+  protected navigateToStockList(){
+    this.router.navigateToRoute("stockList");
+  }
 }

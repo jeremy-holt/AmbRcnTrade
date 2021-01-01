@@ -5,7 +5,8 @@
 
   <div class="mb-4 d-flex justify-content-between align-items-end">
     <div class="mr-2 w-100">
-      <select-input source.bind="locations" value.bind="selectedLocation" label="Select warehouse location" warn-null="false">
+      <select-input source.bind="locations" value.bind="selectedLocation" label="Select warehouse location"
+        warn-null="false">
       </select-input>
     </div>
 
@@ -24,7 +25,7 @@
       <tr>
         <th>Lot no</th>
         <th>Date</th>
-        <th>Location</th>        
+        <th>Location</th>
         <th>Origin</th>
         <th>Stock in</th>
         <th>Stock out</th>
@@ -34,27 +35,25 @@
     </thead>
     <tr repeat.for="item of list">
       <td>
-        <a route-href="stockEdit; params.bind:{id: encode(item.stockId)}" class="with-decoration">Stock: Lot ${item.lotNo}</a>
+        <a route-href="stockEdit; params.bind:{id: encode(item.stockId)}" class="with-decoration">Stock: Lot
+          ${item.lotNo}</a>
       </td>
-      <td>${item.date | dateFormat: "DD/MM/YYYY"}</td>
-      <td>${item.locationName}</td>      
+      <td>${item.stockDate | dateFormat: "DD/MM/YYYY"}</td>
+      <td>${item.locationName}</td>
       <td>${item.origin}</td>
       <td>
         <div>${item.bagsIn | numberFormat: "0,0"} bags
         </div>
       </td>
+      <td> ${item.bagsOut | numberFormat: "0,0"} bags </td>
       <td>
-        <div if.bind="item.bagsOut > 0">
-          ${item.bagsOut | numberFormat: "0,0"} bags
-        </div>
+        KOR ${item.analysisResult.kor | numberFormat: "0,0.00"}<br>
+        Count ${item.analysisResult.count | numberFormat: "0,0"}<br>
+        Moisture ${item.analysisResult.moisture/100 | numberFormat: "0.00%"}
       </td>
       <td>
-        KOR ${item.inspection.analysisResult.kor | numberFormat: "0,0.00"}<br>
-        Count ${item.inspection.analysisResult.count | numberFormat: "0,0"}<br>
-        Moisture ${item.inspection.analysisResult.moisture/100 | numberFormat: "0.00%"}
-      </td>
-      <td>
-        <a route-href="inspectionEdit; params.bind:{id: encode(item.inspectionId)}" class="with-decoration">Inspection: ${item.inspection.inspectionDate | dateFormat: "DD/MM/YYYY"}</a>
+        <a route-href="inspectionEdit; params.bind:{id: encode(item.inspectionId)}" class="with-decoration">Inspection:
+          ${item.inspectionDate | dateFormat: "DD/MM/YYYY"}</a>
       </td>
     </tr>
   </table>

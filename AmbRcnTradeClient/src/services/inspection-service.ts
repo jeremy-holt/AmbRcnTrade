@@ -56,6 +56,10 @@ export class InspectionService extends FetchService {
     return inspection.stockReferences.reduce((a, b) => a += b.bags, 0);
   }
 
+  public wouldExceedInspectionBags(inspection: IInspection, bagsToAdd: number):boolean{
+    return this.bagsAlreadyAllocated(inspection) + bagsToAdd > inspection.bags;
+  }
+
   public getAnalysisResult(analyses: IAnalysis[], approved: Approval): IAnalysisResult {
     const arrayAnalysisResult: IAnalysisResult[] = [];
 

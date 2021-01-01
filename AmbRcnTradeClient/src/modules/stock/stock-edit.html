@@ -4,8 +4,6 @@
   <toolbar type="menu" caption="Stock" list-route="stockList" disabled-save.bind="!canSave" save.call="save()">
   </toolbar>
 
-  <debug-console model.bind="model"></debug-console>
-
   <div class="row">
     <div class="col">
       <h4 class="${model.isStockIn ? '' : 'text-blue'}">
@@ -47,7 +45,6 @@
     </div>
   </div>
 
-  <analysis-result model.bind="model.analysisResult" inspection-id.bind="model.inspectionId" caption="${model.inspection.bags | numberFormat: '0,0'} bags inspected by ${model.inspection.inspector} on ${model.inspection.inspectionDate |
-      dateFormat: 'DD/MM/YYYY' }"></analysis-result>
+  <analysis-result model.bind="model.analysisResult" inspection-id.bind="model.inspectionId" caption="Go to the inspection"></analysis-result>
 
 </template>

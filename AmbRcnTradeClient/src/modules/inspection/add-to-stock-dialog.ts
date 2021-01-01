@@ -1,5 +1,3 @@
-import { IStockListItem } from "./../../interfaces/stocks/IStockListItem";
-import { StockService } from "./../../services/stock-service";
 import { DialogController } from "aurelia-dialog";
 import { autoinject, observable } from "aurelia-framework";
 import { Router } from "aurelia-router";
@@ -8,10 +6,13 @@ import { DATEFORMAT } from "constants/app-constants";
 import { IInspection } from "interfaces/inspections/IInspection";
 import _ from "lodash";
 import moment from "moment";
+import { InspectionService } from "services/inspection-service";
 import { IState } from "store/state";
 import { IListItem } from "./../../interfaces/IEntity";
 import { IMoveInspectionToStockRequest } from "./../../interfaces/stockManagement/IMoveInspectionToStockRequest";
+import { IStockListItem } from "./../../interfaces/stocks/IStockListItem";
 import { CustomerService } from "./../../services/customer-service";
+import { StockService } from "./../../services/stock-service";
 
 @autoinject
 @connectTo()
@@ -30,6 +31,7 @@ export class AddToStockDialog {
     protected controller: DialogController,
     private customerService: CustomerService,
     private stockService: StockService,
+    private inspectionService: InspectionService,
     private router: Router
   ) { }
 
@@ -61,7 +63,15 @@ export class AddToStockDialog {
 
   protected get canCreate(): boolean {
     return this.model?.bags > 0 && this.model?.date && this.model?.locationId !== null &&
-      (this.newStockItem || this.stockList.some(x => x.selected));
+      (this.newStockItem || this.stockList.some(x => x.selected)) &&
+      !this.inspectionService.wouldExceedInspectionBags(this.inspection, this.model?.bags);
+    // (this.inspectionService.bagsAlreadyAllocated(this.inspection) + this.model?.bags <=this.inspection.bags);
+  }
+
+  protected get warningMessage() {
+    return this.inspectionService.wouldExceedInspectionBags(this.inspection, this?.model.bags)
+      ? `Putting ${this?.model.bags} into stock would exceed the total number of bags inspected`
+      : ""!;
   }
 
   protected selectStockRow(item: IStockListItem) {
