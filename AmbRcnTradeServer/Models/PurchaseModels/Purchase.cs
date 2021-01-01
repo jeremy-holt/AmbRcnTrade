@@ -19,5 +19,6 @@ namespace AmbRcnTradeServer.Models.PurchaseModels
         public string Name { get; set; }
         public string CompanyId { get; set; }
         public double QuantityMt { get; set; }
+        public DateTime? DeliveryDate { get; set; }
     }
 }

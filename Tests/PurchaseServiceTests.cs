@@ -188,9 +188,10 @@ namespace Tests
                 CompanyId = COMPANY_ID,
                 SupplierId = supplier.Id,
                 QuantityMt = 200.0,
+                DeliveryDate=new DateTime(2013,1,1),
                 PurchaseDetails = new List<PurchaseDetail>
                 {
-                    new() {StockIds = stocks.Select(x => x.Id).ToList(), PricePerKg = 400.0, Currency = Currency.CFA, ExchangeRate = 555.0, Date = new DateTime(2013, 1, 1)}
+                    new() {StockIds = stocks.Select(x => x.Id).ToList(), PricePerKg = 400.0, Currency = Currency.CFA, ExchangeRate = 555.0, PriceAgreedDate = new DateTime(2013, 1, 1)}
                 }
             };
 
@@ -202,6 +203,7 @@ namespace Tests
             actual.Should().NotBeNull();
             actual.PurchaseNumber.Should().Be(1L);
             actual.QuantityMt.Should().Be(200);
+            actual.DeliveryDate.Should().Be(new DateTime(2013, 1, 1));
         }
     }
 }

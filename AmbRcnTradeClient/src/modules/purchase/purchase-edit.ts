@@ -1,5 +1,4 @@
-import { IStockListItem } from "./../../interfaces/stocks/IStockListItem";
-import { IPurchaseDetail } from "./../../interfaces/purchases/IPurchaseDetail";
+
 import { DialogService } from "aurelia-dialog";
 import { autoinject, observable } from "aurelia-framework";
 import { connectTo } from "aurelia-store";
@@ -8,9 +7,12 @@ import _ from "lodash";
 import { StockManagementService } from "services/stock-management-service";
 import { IState } from "store/state";
 import { CURRENCIES_LIST, Currency } from "./../../constants/app-constants";
+import { DeleteDialog } from "./../../dialogs/delete-dialog";
 import { IListItem } from "./../../interfaces/IEntity";
 import { IParamsId } from "./../../interfaces/IParamsId";
 import { IPurchase } from "./../../interfaces/purchases/IPurchase";
+import { IPurchaseDetail } from "./../../interfaces/purchases/IPurchaseDetail";
+import { IStockListItem } from "./../../interfaces/stocks/IStockListItem";
 import { CustomerService } from "./../../services/customer-service";
 import { PurchaseService } from "./../../services/purchase-service";
 import { UncommittedStocksDialog } from "./uncommitted-stocks-dialog";
@@ -19,7 +21,7 @@ import { UncommittedStocksDialog } from "./uncommitted-stocks-dialog";
 @connectTo()
 export class PurchaseEdit {
   @observable protected state: IState = undefined!;
-  protected model: IPurchase = undefined;
+  protected model: IPurchase = { supplierId: undefined } as IPurchase;
   protected uncommittedStocks: IStockListItem[] = [];
 
   protected currencies = CURRENCIES_LIST;
@@ -32,7 +34,8 @@ export class PurchaseEdit {
     private customerService: CustomerService,
     private dialogService: DialogService,
     private stockManagementService: StockManagementService
-  ) { }
+  ) {
+  }
 
   protected stateChanged(state: IState) {
     this.suppliers = _.cloneDeep(state.userFilteredCustomers);
@@ -45,13 +48,10 @@ export class PurchaseEdit {
       });
     }
     this.uncommittedStocks = _.cloneDeep(state.purchase.nonCommittedStocksList);
-
-    this.selectedSupplier = this.suppliers.find(c => c.id === this.model?.supplierId);
   }
 
   protected async activate(params: IParamsId) {
     await this.customerService.loadCustomersForAppUserList();
-    await this.stockManagementService.getNonCommittedStocks();
 
     if (params?.id) {
       await this.purchaseService.load(params.id);
@@ -60,9 +60,13 @@ export class PurchaseEdit {
     }
   }
 
+  protected bind() {
+    this.selectedSupplier = this.suppliers.find(c => c.id === this.model?.supplierId);
+  }
+
   protected addDetail() {
     this.model.purchaseDetails.push({
-      date: this.model.purchaseDate,
+      priceAgreedDate: this.model.purchaseDate,
       currency: CURRENCIES_LIST.find(c => c.id === Currency.CFA).id,
       pricePerKg: undefined!,
       exchangeRate: undefined!,
@@ -92,10 +96,24 @@ export class PurchaseEdit {
     detail.stockIds.splice(index, 1);
     detail.stocks.splice(index);
   }
-  protected selectedSupplierChanged() {
+
+  protected async selectedSupplierChanged(value: IListItem) {
     if (this.model) {
-      this.model.supplierId = this.selectedSupplier.id;
+      this.model.supplierId = value.id;
+      if (this.model.supplierId) {
+        await this.stockManagementService.getNonCommittedStocks(this.model.supplierId);
+      }
     }
+  }
+
+  protected deletePurchaseDetail(index: number) {
+    this.dialogService.open({
+      viewModel: DeleteDialog
+    }).whenClosed(result => {
+      if (!result.wasCancelled) {
+        this.model.purchaseDetails.splice(index, 1);
+      }
+    });
   }
 
   protected get canSave() {
@@ -106,8 +124,11 @@ export class PurchaseEdit {
     const header = this.model.supplierId && this.model.purchaseDate && this.model.quantityMt > 0;
     const details = this.model?.purchaseDetails?.length > 0 && this.model.purchaseDetails.every(detail => detail.pricePerKg > 0 && detail?.stockIds?.length > 0);
 
-    return header && details;
+    if (this.model?.purchaseDetails.length === 0 && header) {
+      return true;
+    }
 
+    return header && details;
   }
 
   protected async save() {
@@ -115,6 +136,4 @@ export class PurchaseEdit {
       await this.purchaseService.save(this.model);
     }
   }
-
-  protected listItemMatcher = (a: IListItem, b: IListItem) => a?.id === b?.id;
 }

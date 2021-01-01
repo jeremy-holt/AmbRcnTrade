@@ -61,8 +61,9 @@ export class PurchaseService extends FetchService {
 
 export function purchaseEditAction(state: IState, purchase: IPurchase) {
   purchase.purchaseDate = fixAspNetCoreDate(purchase.purchaseDate, false);
+  purchase.deliveryDate=fixAspNetCoreDate(purchase.deliveryDate,false);
   purchase.purchaseDetails.forEach(c => {
-    c.date = fixAspNetCoreDate(c.date, false);
+    c.priceAgreedDate = fixAspNetCoreDate(c.priceAgreedDate, false);
   });
 
   const newState = _.cloneDeep(state);

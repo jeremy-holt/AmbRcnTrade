@@ -44,8 +44,13 @@ namespace Tests
             var inspection = fixture.DefaultEntity<Inspection>().Create();
             await session.StoreAsync(inspection);
 
-            var supplier = fixture.DefaultEntity<Customer>().Create();
-            await session.StoreAsync(supplier);
+            var supplier1 = fixture.DefaultEntity<Customer>().Create();
+            await session.StoreAsync(supplier1);
+            
+            var supplier2 = fixture.DefaultEntity<Customer>().Create();
+            await session.StoreAsync(supplier2);
+            
+            
 
             var location = fixture.DefaultEntity<Customer>().Create();
             await session.StoreAsync(location);
@@ -54,8 +59,10 @@ namespace Tests
                 .With(c => c.IsStockIn, true)
                 .With(c => c.InspectionId, inspection.Id)
                 .With(c=>c.LocationId,location.Id)
-                .With(c => c.SupplierId, supplier.Id)
+                .With(c => c.SupplierId, supplier1.Id)
                 .CreateMany(10).ToList();
+
+            stocks[9].SupplierId = supplier2.Id;
             await stocks.SaveList(session);
 
             var stockIds = stocks.Take(3).Select(c => c.Id).ToList();
@@ -72,14 +79,17 @@ namespace Tests
             WaitForIndexing(store);
 
             // Act
-            var list = await sut.GetNonCommittedStocks(COMPANY_ID);
+            var list1 = await sut.GetNonCommittedStocks(COMPANY_ID, supplier1.Id);
+            var list2 = await sut.GetNonCommittedStocks(COMPANY_ID, supplier2.Id);
 
             // Assert
-            list.Should().HaveCount(7);
-            list.Should().BeInAscendingOrder(c => c.LotNo);
-            list.Select(x => x.StockId).Should().NotContain(stockIds);
-            // list[0].Inspection.AnalysisResult.Count.Should().Be(inspection.AnalysisResult.Count);
-            list[0].SupplierName.Should().Be(supplier.Name);
+            list1.Should().HaveCount(6);
+            list1.Should().BeInAscendingOrder(c => c.LotNo);
+            list1.Select(x => x.StockId).Should().NotContain(stockIds);
+            list1[0].SupplierName.Should().Be(supplier1.Name);
+
+            list2.Should().HaveCount(1);
+            list2[0].SupplierName.Should().Be(supplier2.Name);
         }
 
         [Fact]

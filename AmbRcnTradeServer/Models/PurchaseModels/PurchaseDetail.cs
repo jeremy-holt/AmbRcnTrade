@@ -18,7 +18,7 @@ namespace AmbRcnTradeServer.Models.PurchaseModels
         public double ExchangeRate { get; set; }
         public Currency Currency { get; set; }
         public double PricePerKg { get; set; }
-        public DateTime Date { get; set; }
+        public DateTime PriceAgreedDate { get; set; }
 
         [JsonIgnore]
         public List<Stock> Stocks { get; set; } = new();

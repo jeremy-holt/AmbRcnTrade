@@ -118,7 +118,7 @@ namespace AmbRcnTradeServer.Services
                     var detailListItem = new PurchaseDetailListItem
                     {
                         Currency = detail.Currency,
-                        Date = detail.Date,
+                        Date = detail.PriceAgreedDate,
                         PricePerKg = detail.PricePerKg,
                         StockIds = detail.StockIds
                     };

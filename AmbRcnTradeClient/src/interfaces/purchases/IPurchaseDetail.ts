@@ -6,7 +6,7 @@ export interface IPurchaseDetail {
   exchangeRate: number;
   currency: Currency;
   pricePerKg: number;
-  date: string;
+  priceAgreedDate: string;
   stocks: IStock[];
 
   values?: { bags: number; kor: number; count: number; moisture: number; };

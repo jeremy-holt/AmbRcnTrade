@@ -26,6 +26,7 @@
         <th>Lot no</th>
         <th>Date</th>
         <th>Location</th>
+        <th>Supplier</th>
         <th>Origin</th>
         <th>Stock in</th>
         <th>Stock out</th>
@@ -40,6 +41,7 @@
       </td>
       <td>${item.stockDate | dateFormat: "DD/MM/YYYY"}</td>
       <td>${item.locationName}</td>
+      <td>${item.supplierName}</td>
       <td>${item.origin}</td>
       <td>
         <div>${item.bagsIn | numberFormat: "0,0"} bags

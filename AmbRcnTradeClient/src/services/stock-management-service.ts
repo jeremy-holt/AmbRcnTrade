@@ -11,6 +11,7 @@ import { IMoveInspectionToStockRequest } from "./../interfaces/stockManagement/I
 import { IRemoveInspectionFromStockRequest } from "./../interfaces/stockManagement/IRemoveInspectionFromStockRequest";
 import { FetchService } from "./fetch-service";
 import { noOpAction } from "./no-op-action";
+import { QueryId } from "models/QueryId";
 
 @autoinject
 export class StockManagementService extends FetchService {
@@ -36,8 +37,8 @@ export class StockManagementService extends FetchService {
     return super.post(request, "removeInspectionFromStock", noOpAction);
   }
 
-  public async getNonCommittedStocks() {
-    return super.getMany<IStock[]>([super.currentCompanyIdQuery()], "getNonCommittedStocks", nonCommittedStocksListAction);
+  public async getNonCommittedStocks(supplierId: string) {
+    return super.getMany<IStock[]>([super.currentCompanyIdQuery(), new QueryId("supplierId", supplierId)], "getNonCommittedStocks", nonCommittedStocksListAction);
   }
 }
 
