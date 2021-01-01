@@ -20,5 +20,6 @@ namespace AmbRcnTradeServer.Models.PurchaseModels
         public double BagsIn { get; set; }
         public double BagsOut { get; set; }
         public double Balance { get; set; }
+        public string CompanyId { get; set; }
     }
 }

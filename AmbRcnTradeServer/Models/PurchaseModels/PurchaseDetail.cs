@@ -29,12 +29,12 @@ namespace AmbRcnTradeServer.Models.PurchaseModels
         public List<string> StockIds { get; init; } = new();
         public Currency Currency { get; set; }
         public double PricePerKg { get; set; }
-        public DateTime Date { get; set; }
+        public DateTime PriceAgreedDate { get; set; }
         public List<PurchaseDetailStockListItem> Stocks { get; set; } = new();
         public AnalysisResult AnalysisResult { get; set; } = new();
         public double BagsIn { get; set; }
         public double BagsOut { get; set; }
-        public double Balance { get; set; }
+        public double Balance => BagsIn - BagsOut;
     }
 
     public class PurchaseDetailStockListItem
@@ -45,6 +45,8 @@ namespace AmbRcnTradeServer.Models.PurchaseModels
         public AnalysisResult AnalysisResult { get; set; }
         public double BagsIn { get; set; }
         public double BagsOut { get; set; }
-        public double Balance { get; set; }
+        public double Balance => BagsIn - BagsOut;
+        public double WeightKgIn { get; set; }
+        public double WeightKgOut { get; set; }
     }
 }

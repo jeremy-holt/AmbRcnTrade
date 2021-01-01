@@ -18,7 +18,7 @@ export interface IPurchaseDetailListItem {
   stockIds: string[];
   currency: Currency;
   pricePerKg: number;
-  date: Date | string;
+  priceAgreedDate: Date | string;
   stocks: IPurchaseDetailStockListItem[];
   analysisResult: IAnalysisResult;
   bagsIn: number;

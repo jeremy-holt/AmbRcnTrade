@@ -124,7 +124,7 @@ namespace AmbRcnTradeServer.Services
                     var detailListItem = new PurchaseDetailListItem
                     {
                         Currency = detail.Currency,
-                        Date = detail.PriceAgreedDate,
+                        PriceAgreedDate = detail.PriceAgreedDate,
                         PricePerKg = detail.PricePerKg,
                         StockIds = detail.StockIds
                     };
@@ -148,14 +148,14 @@ namespace AmbRcnTradeServer.Services
                     };
 
 
-                    foreach (var item in detailListItem.Stocks)
-                    {
-                        item.Balance = item.BagsIn - item.BagsOut;
-                    }
+                    // foreach (var item in detailListItem.Stocks)
+                    // {
+                    //     item.Balance = item.BagsIn - item.BagsOut;
+                    // }
 
                     detailListItem.BagsIn = detailListItem.Stocks.Sum(x => x.BagsIn);
                     detailListItem.BagsOut = detailListItem.Stocks.Sum(x => x.BagsOut);
-                    detailListItem.Balance = detailListItem.BagsIn - detailListItem.BagsOut;
+                    // detailListItem.Balance = detailListItem.BagsIn - detailListItem.BagsOut;
 
                     purchaseListItem.PurchaseDetails.Add(detailListItem);
                 }

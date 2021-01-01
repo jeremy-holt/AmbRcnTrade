@@ -26,5 +26,7 @@ namespace AmbRcnTradeServer.Models.StockModels
         public string InspectionId { get; set; }
         public DateTime? InspectionDate { get; set; }
         public AnalysisResult AnalysisResult { get; set; } = new();
+        public double WeightKgIn { get; set; }
+        public double WeightKgOut { get; set; }
     }
 }

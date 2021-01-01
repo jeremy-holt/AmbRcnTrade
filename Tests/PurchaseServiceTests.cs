@@ -90,6 +90,7 @@ namespace Tests
         {
             await new Inspections_ByAnalysisResult().ExecuteAsync(store);
             await new Stocks_ById().ExecuteAsync(store);
+            // await new Purchases_ById().ExecuteAsync(store);
         }
 
         [Fact]
@@ -113,7 +114,6 @@ namespace Tests
 
             var stocks = fixture.DefaultEntity<Stock>()
                 .With(c => c.InspectionId, inspection.Id)
-                // .Without(c => c.Inspection)
                 .Without(c => c.AnalysisResult)
                 .CreateMany().ToList();
             await stocks.SaveList(session);
@@ -156,6 +156,7 @@ namespace Tests
             details[0].Currency.Should().Be(purchaseDetails[0].Currency);
             details[0].StockIds.Should().BeEquivalentTo(purchaseDetails[0].StockIds);
             details[0].Stocks[0].BagsIn.Should().Be(stocks[0].Bags);
+            details[0].Stocks[0].WeightKgIn.Should().Be(stocks[0].WeightKg);
         }
 
         [Fact]

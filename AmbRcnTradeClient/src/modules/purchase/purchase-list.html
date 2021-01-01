@@ -83,7 +83,7 @@
             <div class="row">
               <div class="col-6 offset-6">
                 <div class="row">                
-                  <div class="col text-right">${detail.date | dateFormat: "DD/MM/YYYY"}</div>
+                  <div class="col text-right">${detail.priceAgreedDate | dateFormat: "DD/MM/YYYY"}</div>
                   <div class="col text-right">${detail.currency.toUpperCase()} ${detail.pricePerKg}</div>
                   <div class="col text-right">${detail.bagsIn | numberFormat: "0,0"} (abt ${detail.bagsIn/80 | numberFormat: "0,0"} mt)</div>
                   <div class="col text-right">Kor: ${detail.analysisResult.kor | numberFormat: "0,0.00"}, Count: ${detail.analysisResult.count | numberFormat: "0,0.0"}, Moisture: ${detail.analysisResult.moisture/100 | numberFormat: "0.00%"}</div>

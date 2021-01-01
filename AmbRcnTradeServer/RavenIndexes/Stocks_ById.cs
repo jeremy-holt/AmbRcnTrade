@@ -29,14 +29,16 @@ namespace AmbRcnTradeServer.RavenIndexes
                     LotNo = stock.LotNo,
                     BagsIn = stock.IsStockIn ? stock.Bags : 0,
                     BagsOut = stock.IsStockIn ? 0 : stock.Bags,
+                    WeightKgIn = stock.IsStockIn ? stock.WeightKg : 0,
+                    WeightKgOut = stock.IsStockIn ? 0 : stock.WeightKg,
                     AnalysisResult = stock.AnalysisResult,
                     IsStockIn = stock.IsStockIn,
                     Origin = stock.Origin,
                     InspectionId = stock.InspectionId,
                     InspectionDate = inspection.InspectionDate,
-                    StockDate = stock.IsStockIn?stock.StockInDate: stock.StockOutDate
+                    StockDate = stock.IsStockIn ? stock.StockInDate : stock.StockOutDate
                 };
-            
+
             Index(x => x.StockId, FieldIndexing.Default);
             Index(x => x.CompanyId, FieldIndexing.Default);
             Index(x => x.IsStockIn, FieldIndexing.Default);

@@ -214,7 +214,7 @@ namespace Tests
             actual.SupplierName.Should().Be(supplier.Name);
             actual.SupplierId.Should().Be(supplier.Id);
             actual.InspectionId.Should().Be(stockIn2.InspectionId);
-            // actual.Inspection.Should().Be(inspections[0]);
+            actual.WeightKgIn.Should().Be(stockIn2.WeightKg);
         }
 
         [Fact]

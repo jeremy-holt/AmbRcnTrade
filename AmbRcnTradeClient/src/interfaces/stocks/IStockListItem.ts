@@ -18,4 +18,6 @@ export interface IStockListItem {
         inspectionDate: string | null;
         analysisResult: IAnalysisResult;
         selected?: boolean;
+        weightKgIn: number;
+        weightKgOut: number;
     }

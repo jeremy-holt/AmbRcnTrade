@@ -44,10 +44,10 @@
       <td>${item.supplierName}</td>
       <td>${item.origin}</td>
       <td>
-        <div>${item.bagsIn | numberFormat: "0,0"} bags
+        <div>${item.bagsIn | numberFormat: "0,0"} bags<br>${item.weightKgIn | numberFormat:"0,0"} kg
         </div>
       </td>
-      <td> ${item.bagsOut | numberFormat: "0,0"} bags </td>
+      <td> ${item.bagsOut | numberFormat: "0,0"} bags<br>${item.weightKgOut | numberFormat:"0,0"} kg </td>
       <td>
         KOR ${item.analysisResult.kor | numberFormat: "0,0.00"}<br>
         Count ${item.analysisResult.count | numberFormat: "0,0"}<br>
