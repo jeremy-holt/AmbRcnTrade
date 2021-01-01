@@ -39,7 +39,7 @@ namespace AmbRcnTradeServer.Controllers
 
         [Authorize]
         [HttpGet("[action]")]
-        public async Task<ActionResult<List<Stock>>> GetNonCommittedStocks(string companyId)
+        public async Task<ActionResult<List<UnAllocatedStock>>> GetNonCommittedStocks(string companyId)
         {
             return await _service.GetNonCommittedStocks(companyId);
         }

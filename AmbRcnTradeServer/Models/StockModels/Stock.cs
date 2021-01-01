@@ -20,8 +20,7 @@ namespace AmbRcnTradeServer.Models.StockModels
         public double WeightKg { get; set; }
         public string InspectionId { get; set; }
         public bool IsStockIn { get; set; }
-
-       [Obsolete] [JsonIgnore] public Inspection Inspection { get; set; } = new();
+        
         public string Origin { get; set; }
         public string SupplierId { get; set; }
         public AnalysisResult AnalysisResult { get; set; }

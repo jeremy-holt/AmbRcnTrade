@@ -50,6 +50,10 @@ namespace Tests
                 .Create();
             await session.StoreAsync(stock);
 
+            await session.SaveChangesAsync();
+            WaitForIndexing(store);
+            WaitForUserToContinueTheTest(store);
+            
             // Act
             var actual = await sut.Load(stock.Id);
 
@@ -139,7 +143,7 @@ namespace Tests
             var sut = GetStockService(session);
             var fixture = new Fixture();
             await InitializeIndexes(store);
-            
+
             await session.StoreAsync(new Company(COMPANY_ID));
 
             var supplier = fixture.DefaultEntity<Customer>().Create();

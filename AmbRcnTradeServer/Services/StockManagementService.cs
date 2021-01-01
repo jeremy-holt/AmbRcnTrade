@@ -20,7 +20,7 @@ namespace AmbRcnTradeServer.Services
     {
         Task<ServerResponse<MovedInspectionResult>> MoveInspectionToStock(string inspectionId, double bags, DateTime date, long lotNo, string locationId);
         Task<ServerResponse> RemoveInspectionFromStock(string inspectionId, string stockId);
-        Task<List<Stock>> GetNonCommittedStocks(string companyId);
+        Task<List<UnAllocatedStock>> GetNonCommittedStocks(string companyId);
     }
 
     public class StockManagementService : IStockManagementService
@@ -87,40 +87,54 @@ namespace AmbRcnTradeServer.Services
             return new ServerResponse("Removed inspection from stock");
         }
 
-        public async Task<List<Stock>> GetNonCommittedStocks(string companyId)
+        public async Task<List<UnAllocatedStock>> GetNonCommittedStocks(string companyId)
         {
-            var usedStockIds = await _session.Query<Stocks_ByPurchases.Result, Stocks_ByPurchases>()
-                .Where(c => c.CompanyId == companyId)
-                .ProjectInto<Stocks_ByPurchases.Result>()
-                .ToListAsync();
+            // var usedStockIds = await _session.Query<Stocks_ByPurchases.Result, Stocks_ByPurchases>()
+            //     .Where(c => c.CompanyId == companyId)
+            //     .ProjectInto<Stocks_ByPurchases.Result>()
+            //     .ToListAsync();
 
-            var stocks = await _session.Query<Stock>()
-                .Include(c => c.LocationId)
-                .Include(c => c.InspectionId)
-                .Include(c => c.SupplierId)
-                .Where(c => c.CompanyId == companyId)
+            // var stocks = await _session.Query<Stock>()
+            //     .Include(c => c.LocationId)
+            //     .Include(c => c.InspectionId)
+            //     .Include(c => c.SupplierId)
+            //     .Where(c => c.CompanyId == companyId)
+            //     .OrderBy(c => c.LotNo)
+            //     .ToListAsync();
+            //
+
+            var stocks = await _session.Query<UnAllocatedStock, Stocks_ByPurchases>()
+                .Where(c => c.CompanyId == companyId && c.IsStockIn)
                 .OrderBy(c => c.LotNo)
+                .ProjectInto<UnAllocatedStock>()
                 .ToListAsync();
 
-            var allStockIds = stocks
-                .Where(c => c.IsStockIn)
-                .Select(c => c.Id).ToList();
+            var stocksUsedInPurchasesIds = stocks.Where(c => c.PurchaseId.IsNotNullOrEmpty() && c.IsStockIn).Distinct().Select(c => c.StockId).ToList();
+            var allStocksUsedInSystemIds = stocks.Where(c=>c.IsStockIn).Distinct().Select(x => x.StockId).ToList();
+            var unallocatedIds = allStocksUsedInSystemIds.Except(stocksUsedInPurchasesIds).ToList();
+            var unallocatedStocks = stocks.Where(c => c.StockId.In(unallocatedIds)).ToList();
 
-            var nonCommittedStocksIds = allStockIds.Except(usedStockIds.Select(c => c.StockId)).ToList();
-
-            var nonCommittedStocks = await _session.LoadListFromMultipleIdsAsync<Stock>(nonCommittedStocksIds);
-            var locations = await _session.LoadListFromMultipleIdsAsync<Customer>(nonCommittedStocks.Select(c => c.LocationId));
+            // var usedStockIds = stocks.Select(x => x.StockId).ToList();
+            // var allStockIds = stocks
+            //     .Where(c => c.IsStockIn)
+            //     .Select(c => c.StockId).ToList();
+            //
+            // var nonCommittedStocksIds = allStockIds.Except(usedStockIds).ToList();
+            //
+            //
+            // var nonCommittedStocks = await _session.LoadListFromMultipleIdsAsync<Stock>(nonCommittedStocksIds);
+            // var locations = await _session.LoadListFromMultipleIdsAsync<Customer>(nonCommittedStocks.Select(c => c.LocationId));
             // var inspections = await _session.LoadListFromMultipleIdsAsync<Inspection>(nonCommittedStocks.Select(x => x.InspectionId));
-            var suppliers = await _session.LoadListFromMultipleIdsAsync<Customer>(nonCommittedStocks.Select(c => c.SupplierId));
+            // var suppliers = await _session.LoadListFromMultipleIdsAsync<Customer>(nonCommittedStocks.Select(c => c.SupplierId));
 
-            foreach (var item in nonCommittedStocks)
-            {
-                item.LocationName = locations.FirstOrDefault(c => c.Id == item.LocationId)?.Name;
-                // item.Inspection = inspections.FirstOrDefault(c => c.Id == item.InspectionId) ?? new Inspection();
-                item.SupplierName = suppliers.FirstOrDefault(c => c.Id == item.SupplierId)?.Name;
-            }
+            // foreach (var item in nonCommittedStocks)
+            // {
+            //     // item.LocationName = locations.FirstOrDefault(c => c.Id == item.LocationId)?.Name;
+            //     // item.Inspection = inspections.FirstOrDefault(c => c.Id == item.InspectionId) ?? new Inspection();
+            //     // item.SupplierName = suppliers.FirstOrDefault(c => c.Id == item.SupplierId)?.Name;
+            // }
 
-            return nonCommittedStocks;
+            return unallocatedStocks;
         }
     }
 }

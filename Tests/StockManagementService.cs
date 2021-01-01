@@ -47,11 +47,15 @@ namespace Tests
             var supplier = fixture.DefaultEntity<Customer>().Create();
             await session.StoreAsync(supplier);
 
+            var location = fixture.DefaultEntity<Customer>().Create();
+            await session.StoreAsync(location);
+
             var stocks = fixture.DefaultEntity<Stock>()
                 .With(c => c.IsStockIn, true)
                 // .With(c => c.Inspection, inspection)
                 .With(c => c.InspectionId, inspection.Id)
                 .Without(c => c.SupplierName)
+                .With(c=>c.LocationId,location.Id)
                 .With(c => c.SupplierId, supplier.Id)
                 .CreateMany(10).ToList();
             await stocks.SaveList(session);
@@ -75,7 +79,7 @@ namespace Tests
             // Assert
             list.Should().HaveCount(7);
             list.Should().BeInAscendingOrder(c => c.LotNo);
-            list.Select(x => x.Id).Should().NotContain(stockIds);
+            list.Select(x => x.StockId).Should().NotContain(stockIds);
             // list[0].Inspection.AnalysisResult.Count.Should().Be(inspection.AnalysisResult.Count);
             list[0].SupplierName.Should().Be(supplier.Name);
         }

@@ -1,16 +1,16 @@
 import { DialogController } from "aurelia-dialog";
 import { autoinject, observable } from "aurelia-framework";
 import { connectTo } from "aurelia-store";
-import { IStock } from "interfaces/stocks/IStock";
 import _ from "lodash";
 import { IState } from "store/state";
+import { IUnAllocatedStock } from "./../../interfaces/stockManagement/IUnallocatedStock";
 import { IStockListItem } from "./../../interfaces/stocks/IStockListItem";
 
 @autoinject
 @connectTo()
 export class UncommittedStocksDialog {
   @observable public state: IState = undefined!;
-  public list: IStock[] = [];
+  public list: IUnAllocatedStock[] = [];
 
   constructor(
     private controller: DialogController
@@ -20,7 +20,7 @@ export class UncommittedStocksDialog {
     this.list = _.cloneDeep(state.purchase.nonCommittedStocksList);
   }
 
-  protected async activate(uncomittedStocks: IStock[]) {
+  protected async activate(uncomittedStocks: IUnAllocatedStock[]) {
     this.list = uncomittedStocks;
   }
 
