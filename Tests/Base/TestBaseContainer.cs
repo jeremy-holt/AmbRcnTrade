@@ -108,11 +108,6 @@ namespace Tests.Base
             return new AppUserService(session);
         }
 
-        protected IContractService GetContractService(IAsyncDocumentSession session)
-        {
-            return new ContractService(session, new CounterService(session), GetAppUserService(session));
-        }
-
         protected IInspectionService GetInspectionService(IAsyncDocumentSession session)
         {
             return new InspectionService(session);
@@ -131,6 +126,11 @@ namespace Tests.Base
         protected IStockManagementService GetStockManagementService(IAsyncDocumentSession session)
         {
             return new StockManagementService(session, GetStockService(session), GetInspectionService(session));
+        }
+
+        protected IContainerService GetContainerService(IAsyncDocumentSession session)
+        {
+            return new ContainerService(session);
         }
     }
 }

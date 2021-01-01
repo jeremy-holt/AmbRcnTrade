@@ -3,7 +3,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using AmberwoodCore.Interfaces;
 using AmbRcnTradeServer.Models.InspectionModels;
-using Newtonsoft.Json;
 using Raven.Client.Documents;
 using Raven.Client.Documents.Linq;
 using Raven.Client.Documents.Session;
@@ -24,11 +23,9 @@ namespace AmbRcnTradeServer.Models.StockModels
         public string Origin { get; set; }
         public string SupplierId { get; set; }
         public AnalysisResult AnalysisResult { get; set; }
-        [JsonIgnore][Obsolete]
-        public string LocationName { get; set; }
         public string Id { get; set; }
         public string Name { get; set; }
         public string CompanyId { get; set; }
-     [Obsolete]   [JsonIgnore]public string SupplierName { get; set; }
+        public string ContainerId { get; set; }
     }
 }

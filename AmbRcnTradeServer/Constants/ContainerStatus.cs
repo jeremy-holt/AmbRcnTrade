@@ -8,9 +8,12 @@ namespace AmbRcnTradeServer.Constants
 {
     public enum ContainerStatus
     {
-        Open = 1,
-        Shipped = 2,
-        Cancelled = 3,
-        ShippedWithoutDocuments = 4
+        Empty=1,
+        Stuffing,
+        OnWayToPort,
+        Gated,
+        OnBoardVessel,
+        Cancelled ,
+        
     }
 }

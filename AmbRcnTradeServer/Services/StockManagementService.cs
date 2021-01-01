@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using AmberwoodCore.Extensions;
 using AmberwoodCore.Responses;
+using AmbRcnTradeServer.Models.ContainerModels;
 using AmbRcnTradeServer.Models.InspectionModels;
 using AmbRcnTradeServer.Models.StockManagementModels;
 using AmbRcnTradeServer.Models.StockModels;
@@ -20,6 +21,7 @@ namespace AmbRcnTradeServer.Services
         Task<ServerResponse<MovedInspectionResult>> MoveInspectionToStock(string inspectionId, double bags, DateTime date, long lotNo, string locationId);
         Task<ServerResponse> RemoveInspectionFromStock(string inspectionId, string stockId);
         Task<List<StockListItem>> GetNonCommittedStocks(string companyId, string supplierId);
+        Task<ServerResponse<List<OutgoingStock>>> StuffContainer(StuffingRequest request);
     }
 
     public class StockManagementService : IStockManagementService
@@ -100,6 +102,44 @@ namespace AmbRcnTradeServer.Services
             var unallocatedStocks = stocks.Where(c => c.StockId.In(unallocatedIds)).ToList();
 
             return unallocatedStocks;
+        }
+
+        public async Task<ServerResponse<List<OutgoingStock>>> StuffContainer(StuffingRequest request)
+        {
+            var container = await _session.LoadAsync<Container>(request.ContainerId);
+
+            container.IncomingStocks.AddRange(request.IncomingStocks);
+
+            container.Bags = container.IncomingStocks.Sum(c => c.Bags);
+            container.StockWeightKg = container.IncomingStocks.Sum(c => c.WeightKg);
+            container.StuffingDate = request.StuffingDate;
+
+            var outgoingStocks = new List<OutgoingStock>();
+
+            foreach (var stock in request.IncomingStocks.Select(item => new Stock
+            {
+                Bags = item.Bags,
+                Origin = item.Origin,
+                AnalysisResult = item.AnalysisResult,
+                CompanyId = item.CompanyId,
+                InspectionId = item.InspectionId,
+                LocationId = item.LocationId,
+                LotNo = item.LotNo,
+                SupplierId = item.SupplierId,
+                WeightKg = item.WeightKg,
+                StockInDate = null,
+                StockOutDate = request.StuffingDate,
+                IsStockIn = false,
+                ContainerId = request.ContainerId
+            }))
+            {
+                await _session.StoreAsync(stock);
+                outgoingStocks.Add(new OutgoingStock {StockId = stock.Id});
+            }
+
+            await _session.StoreAsync(container);
+
+            return new ServerResponse<List<OutgoingStock>>(outgoingStocks, "Stuffed container");
         }
     }
 }

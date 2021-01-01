@@ -4,7 +4,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using AmberwoodCore.Extensions;
 using AmberwoodCore.Models;
+using AmberwoodCore.Responses;
 using AmbRcnTradeServer.Constants;
+using AmbRcnTradeServer.Models.ContainerModels;
 using AmbRcnTradeServer.Models.DictionaryModels;
 using AmbRcnTradeServer.Models.InspectionModels;
 using AmbRcnTradeServer.Models.PurchaseModels;
@@ -31,6 +33,68 @@ namespace Tests
             await new Inspections_ByAnalysisResult().ExecuteAsync(store);
         }
 
+        private static async Task<(Container container, StuffingRequest request)> CreateStockAndContainer(IAsyncDocumentSession session)
+        {
+            var fixture = new Fixture();
+
+            var stock = fixture.DefaultEntity<Stock>()
+                .Without(c => c.StockOutDate)
+                .With(c => c.Bags, 300)
+                .With(c => c.WeightKg, 24000)
+                .Create();
+
+            await session.StoreAsync(stock);
+
+            var container = fixture.DefaultEntity<Container>()
+                .Without(c => c.Bags)
+                .Without(c => c.StockWeightKg)
+                .Without(c => c.StuffingDate)
+                .Without(c => c.IncomingStocks)
+                .Create();
+
+            await session.StoreAsync(container);
+
+            await session.SaveChangesAsync();
+
+            // Act
+            var incomingStocks = new List<IncomingStock>
+            {
+                new()
+                {
+                    StockId = stock.Id,
+                    LotNo = stock.LotNo,
+                    Bags = 200,
+                    WeightKg = 15000,
+                    Origin = stock.Origin,
+                    AnalysisResult = stock.AnalysisResult,
+                    CompanyId = stock.CompanyId,
+                    InspectionId = stock.InspectionId,
+                    LocationId = stock.LocationId,
+                    SupplierId = stock.SupplierId
+                },
+                new()
+                {
+                    StockId = stock.Id,
+                    LotNo = stock.LotNo,
+                    Bags = 25,
+                    WeightKg = 800.0,
+                    Origin = stock.Origin,
+                    AnalysisResult = stock.AnalysisResult,
+                    CompanyId = stock.CompanyId,
+                    InspectionId = stock.InspectionId,
+                    LocationId = stock.LocationId,
+                    SupplierId = stock.SupplierId
+                }
+            };
+            var request = new StuffingRequest
+            {
+                ContainerId = container.Id,
+                StuffingDate = new DateTime(2013, 1, 1),
+                IncomingStocks = incomingStocks
+            };
+            return (container, request);
+        }
+
         [Fact]
         public async Task GetNonCommittedStocks()
         {
@@ -42,7 +106,7 @@ namespace Tests
             var fixture = new Fixture();
 
             var analysisResult = fixture.Build<AnalysisResult>().With(c => c.Approved, Approval.Approved).Create();
-            
+
             var inspection = fixture.DefaultEntity<Inspection>()
                 .With(c => c.AnalysisResult, analysisResult)
                 .Create();
@@ -260,6 +324,67 @@ namespace Tests
 
             var actualStock = await session.LoadAsync<Stock>(stock.Id);
             actualStock.InspectionId.Should().BeNullOrEmpty();
+        }
+
+        [Fact]
+        public async Task StuffContainer_Should_AddStockToContainer()
+        {
+            // Arrange
+            using var store = GetDocumentStore();
+            using var session = store.OpenAsyncSession();
+            var sut = GetStockManagementService(session);
+
+            var (container, request) = await CreateStockAndContainer(session);
+
+            // Act
+            ServerResponse response = await sut.StuffContainer(request);
+
+            // Assert
+            response.Message.Should().Be("Stuffed container");
+
+            var actualContainer = await session.LoadAsync<Container>(container.Id);
+
+            actualContainer.IncomingStocks.Should().BeEquivalentTo(request.IncomingStocks);
+            actualContainer.Bags.Should().Be(225);
+            actualContainer.StockWeightKg.Should().Be(15_800);
+            actualContainer.StuffingDate.Should().Be(new DateTime(2013, 1, 1));
+        }
+
+        [Fact]
+        public async Task StuffContainer_ShouldPostStockOut()
+        {
+            // Arrange
+            using var store = GetDocumentStore();
+            using var session = store.OpenAsyncSession();
+            var sut = GetStockManagementService(session);
+
+            var (_, request) = await CreateStockAndContainer(session);
+
+            // Act
+            var response = await sut.StuffContainer(request);
+            await session.SaveChangesAsync();
+
+            WaitForIndexing(store);
+
+            var outgoingStockIds = response.Dto.Select(x => x.StockId).ToList();
+            
+            var stocks = await session.Query<Stock>()
+                .Where(c => c.Id.In(outgoingStockIds))
+                .ToListAsync();
+
+            var stock = stocks[0];
+            stock.StockInDate.Should().BeNull();
+            stock.StockOutDate.Should().Be(request.StuffingDate);
+            stock.Bags.Should().Be(request.IncomingStocks[0].Bags);
+            stock.WeightKg.Should().Be(request.IncomingStocks[0].WeightKg);
+            stock.Id.Should().NotBeNull();
+            stock.InspectionId.Should().Be(request.IncomingStocks[0].InspectionId);
+            stock.LotNo.Should().Be(request.IncomingStocks[0].LotNo);
+            stock.AnalysisResult.Should().Be(request.IncomingStocks[0].AnalysisResult);
+            stock.SupplierId.Should().Be(request.IncomingStocks[0].SupplierId);
+            stock.LocationId.Should().Be(request.IncomingStocks[0].LocationId);
+            stock.CompanyId.Should().Be(COMPANY_ID);
+            stock.Origin.Should().Be(request.IncomingStocks[0].Origin);
         }
     }
 }

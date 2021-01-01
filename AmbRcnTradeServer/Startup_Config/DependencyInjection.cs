@@ -16,7 +16,6 @@ namespace AmbRcnTradeServer.Startup_Config
             AmberwoodCore.Initializations.DependencyInjection.Configure(services);
             services.AddScoped<IAppUserService, AppUserService>();
             services.AddScoped<IAuditingService, AuditingService>();
-            services.AddScoped<IContractService, ContractService>();
             services.AddScoped<ICounterService, CounterService>();
             services.AddScoped<ICustomerService, CustomerService>();
             services.AddScoped<IInspectionService, InspectionService>();
@@ -24,6 +23,7 @@ namespace AmbRcnTradeServer.Startup_Config
             services.AddScoped<IPurchaseService, PurchaseService>();
             services.AddScoped<IStockService, StockService>();
             services.AddScoped<IStockManagementService, StockManagementService>();
+            services.AddScoped<IContainerService, ContainerService>();
 
             Log.Logger.Information("Successfully ran DependencyInjection.Configure()");
         }

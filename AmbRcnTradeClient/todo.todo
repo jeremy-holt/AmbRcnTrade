@@ -1,6 +1,9 @@
 Purchase:
   ✔ A purchase can be made before stock has been allocated to it @done (01/01/2021, 12:54:34)
   ✔ A purchase is made up of several purchaseDetails @done (01/01/2021, 13:05:28)
-  ☐ Select stocks should limit list to purchase.supplier
+  ✔ Select stocks should limit list to purchase.supplier @done (01/01/2021, 19:54:01)
+
+Payments:
+  ☐ Payments should have the account the money was paid to, and another account for the final beneficiary
 
 

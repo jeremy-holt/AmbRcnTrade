@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using AmberwoodCore.Interfaces;
 using AmbRcnTradeServer.Constants;
+using AmbRcnTradeServer.Models.ContainerModels;
 using AmbRcnTradeServer.Models.InspectionModels;
 using Raven.Client.Documents;
 using Raven.Client.Documents.Linq;
@@ -23,21 +24,6 @@ namespace AmbRcnTradeServer.Models
         public string Id { get; set; }
         public string Name { get; set; }
         public string CompanyId { get; set; }
-    }
-
-    public class Container
-    {
-        public Guid Id { get; set; }
-        public string ContainerNumber { get; set; }
-        public string SealNumber { get; set; }
-        public List<PurchaseLot> PurchaseLots { get; set; } = new();
-        public List<string> Documents { get; set; } = new();
-        public string ForwardingAgent { get; set; }
-        public string VesselName { get; set; }
-        public DateTime? VesselEta { get; set; }
-        public string BlNumber { get; set; }
-        public DateTime? BlDate { get; set; }
-        public ContainerStatus Status { get; set; }
     }
 
     public class PurchaseLot
