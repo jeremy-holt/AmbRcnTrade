@@ -9,6 +9,7 @@
         <table class="table table table-bordered table-hover">
           <thead>
             <tr>
+              <th>Approval</th>
               <th>Lot no</th>
               <th>Location</th>
               <th>Supplier</th>
@@ -21,6 +22,7 @@
           <tbody>
             <tr repeat.for="item of list" click.delegate="selectRow(item)"
               class="cursor-pointer ${item.selected ? 'bg-highlight' : ''}">
+              <td><i class="fas fa-check-circle fa-2x ${item.analysisResult.approved == 'approved' ? 'text-success' : 'text-danger'}"></i></td>
               <td>Lot no: ${item.lotNo}</td>
               <td>${item.locationName}</td>
               <td>${item.supplierName}</td>

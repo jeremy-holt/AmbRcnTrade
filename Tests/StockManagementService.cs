@@ -30,7 +30,7 @@ namespace Tests
             await new Stocks_ByPurchases().ExecuteAsync(store);
             await new Inspections_ByAnalysisResult().ExecuteAsync(store);
         }
-        
+
         [Fact]
         public async Task GetNonCommittedStocks()
         {
@@ -41,16 +41,19 @@ namespace Tests
             await InitializeIndexes(store);
             var fixture = new Fixture();
 
-            var inspection = fixture.DefaultEntity<Inspection>().Create();
+            var analysisResult = fixture.Build<AnalysisResult>().With(c => c.Approved, Approval.Approved).Create();
+            
+            var inspection = fixture.DefaultEntity<Inspection>()
+                .With(c => c.AnalysisResult, analysisResult)
+                .Create();
             await session.StoreAsync(inspection);
 
             var supplier1 = fixture.DefaultEntity<Customer>().Create();
             await session.StoreAsync(supplier1);
-            
+
             var supplier2 = fixture.DefaultEntity<Customer>().Create();
             await session.StoreAsync(supplier2);
-            
-            
+
 
             var location = fixture.DefaultEntity<Customer>().Create();
             await session.StoreAsync(location);
@@ -58,7 +61,7 @@ namespace Tests
             var stocks = fixture.DefaultEntity<Stock>()
                 .With(c => c.IsStockIn, true)
                 .With(c => c.InspectionId, inspection.Id)
-                .With(c=>c.LocationId,location.Id)
+                .With(c => c.LocationId, location.Id)
                 .With(c => c.SupplierId, supplier1.Id)
                 .CreateMany(10).ToList();
 
@@ -87,6 +90,7 @@ namespace Tests
             list1.Should().BeInAscendingOrder(c => c.LotNo);
             list1.Select(x => x.StockId).Should().NotContain(stockIds);
             list1[0].SupplierName.Should().Be(supplier1.Name);
+            list1[0].AnalysisResult.Approved.Should().Be(Approval.Approved);
 
             list2.Should().HaveCount(1);
             list2[0].SupplierName.Should().Be(supplier2.Name);

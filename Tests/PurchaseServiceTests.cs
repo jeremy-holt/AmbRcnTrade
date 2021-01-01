@@ -83,7 +83,6 @@ namespace Tests
             {
                 stock.LocationName.Should().Be(location.Name);
                 stock.SupplierName.Should().Be(supplier.Name);
-                stock.AnalysisResult.Should().NotBeNull();
             }
         }
 
@@ -156,7 +155,6 @@ namespace Tests
             details[0].PricePerKg.Should().Be(purchaseDetails[0].PricePerKg);
             details[0].Currency.Should().Be(purchaseDetails[0].Currency);
             details[0].StockIds.Should().BeEquivalentTo(purchaseDetails[0].StockIds);
-            details[0].Stocks[0].AnalysisResult.Should().Be(inspection.AnalysisResult);
             details[0].Stocks[0].BagsIn.Should().Be(stocks[0].Bags);
         }
 
