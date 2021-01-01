@@ -28,6 +28,51 @@ namespace Tests
         private static async Task InitializeIndexes(IDocumentStore store)
         {
             await new Stocks_ByPurchases().ExecuteAsync(store);
+            await new Inspections_ByAnalysisResult().ExecuteAsync(store);
+        }
+
+        [Fact]
+        public async Task GetAnalysisResult_ShouldReturnAverageAnalysisResultForInspectionIds()
+        {
+            // Arrange
+            using var store = GetDocumentStore();
+            using var session = store.OpenAsyncSession();
+            var sut = GetStockManagementService(session);
+            await InitializeIndexes(store);
+            var fixture = new Fixture();
+
+            var analysis1 = new Analysis()
+            {
+                Count = 190,
+                Moisture = 7,
+                RejectsGm = 130,
+                SoundGm = 240,
+                SpottedGm = 16
+            };
+            var analysis2 = new Analysis()
+            {
+                Count = 190,
+                Moisture = 7,
+                RejectsGm = 130,
+                SoundGm = 240,
+                SpottedGm = 16
+            };
+            
+            var inspections = fixture.DefaultEntity<Inspection>()
+                .With(c=>c.Analyses,new List<Analysis>(){analysis1,analysis2})
+                .CreateMany()
+                .ToList();
+            
+            await inspections.SaveList(session);
+            WaitForIndexing(store);
+            WaitForUserToContinueTheTest(store);
+            
+            // Act
+            AnalysisResult actual = await sut.GetAnalysisResult(inspections[0].Id);
+            
+            // Assert
+            actual.Approved.Should().Be(inspections[0].AnalysisResult.Approved);
+            actual.Count.Should().Be(inspections[0].Analyses.Average(c => c.Count));
         }
 
         [Fact]

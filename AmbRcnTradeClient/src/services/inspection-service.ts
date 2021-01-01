@@ -57,22 +57,12 @@ export class InspectionService extends FetchService {
   }
 
   public getAnalysisResult(analyses: IAnalysis[], approved: Approval): IAnalysisResult {
-    // const bags = list.reduce((a, b) => a += b.bags, 0);
-
-    // if (bags === 0) {
-    //   return {} as IAnalysis;
-    // }
-
     const arrayAnalysisResult: IAnalysisResult[] = [];
 
     analyses.forEach(analysis => {
       analysis.kor = this.calcKor(analysis);
 
       const { soundPct, spottedPct, rejectsPct } = this.calcPercentages(analysis);
-
-      // item.soundPct = soundPct;
-      // item.spottedPct = spottedPct;
-      // item.rejectsPct = rejectsPct;
 
       arrayAnalysisResult.push(
         {
@@ -99,11 +89,7 @@ export class InspectionService extends FetchService {
     return result;
   }
 
-  // private calcAverageResult(analysis: IAnalysis, field: Fn<IAnalysis, number>): number {
-  //   return analysis.bags * (field(analysis) || 0);
-  // }
-
-  private sumAnalysisResult(array: IAnalysisResult[], field: Fn<IAnalysisResult, number>) {
+  private sumAnalysisResult(array: IAnalysisResult[], field: Fn<IAnalysisResult, number>): number {
     if (array.length === 0) {
       return 0;
     }

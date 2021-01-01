@@ -21,6 +21,7 @@ namespace AmbRcnTradeServer.Services
         Task<ServerResponse<MovedInspectionResult>> MoveInspectionToStock(string inspectionId, double bags, DateTime date, long lotNo, string locationId);
         Task<ServerResponse> RemoveInspectionFromStock(string inspectionId, string stockId);
         Task<List<Stock>> GetNonCommittedStocks(string companyId);
+        Task<AnalysisResult> GetAnalysisResult(string inspectionId);
     }
 
     public class StockManagementService : IStockManagementService
@@ -120,6 +121,16 @@ namespace AmbRcnTradeServer.Services
                 item.SupplierName = suppliers.FirstOrDefault(c => c.Id == item.SupplierId)?.Name;
             }
             return nonCommittedStocks;
+        }
+
+        public async Task<AnalysisResult> GetAnalysisResult(string inspectionId)
+        {
+            var query = await _session.Query<Inspections_ByAnalysisResult.Result, Inspections_ByAnalysisResult>()
+                .Where(c => c.InspectionId == inspectionId)
+                .ProjectInto<AnalysisResult>()
+                .FirstOrDefaultAsync();
+
+            return query;
         }
     }
 }
