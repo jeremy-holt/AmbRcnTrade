@@ -4,10 +4,11 @@
   </toolbar>
 
   <div class="my-3 w-50">
-    <select-input source.bind="suppliers" value.bind="selectedSupplier" label="Filter by suppliers" warn-null="false"></select-input>
+    <select-input source.bind="suppliers" value.bind="selectedSupplier" label="Filter by suppliers" warn-null="false">
+    </select-input>
   </div>
 
-  <div>
+  <!-- <div>
     <table class="table table-sm table-bordered">
       <thead>
         <tr>
@@ -29,11 +30,74 @@
           <td>${item.quantityMt | numberFormat: "0"} mt</td>
           <td>${item.supplierName}</td>
           <!-- <td>${item.currency.toUpperCase()} ${item.pricePerKg | numberFormat: "0,0.00"}</td> -->
-          <td class="text-right">${item.bagsIn | numberFormat: "0,0"} (abt ${item.bagsIn/80 | numberFormat : "0,0"} mt)</td>
+  <!-- <td class="text-right">${item.bagsIn | numberFormat: "0,0"} (abt ${item.bagsIn/80 | numberFormat : "0,0"} mt)</td>
           <td class="text-right">${item.bagsOut | numberFormat: "0,0"} (abt ${item.bagsOut/80 | numberFormat: "0,0"} mt)</td>
-          <td class="text-right">${item.stockBalance.bags | numberFormat: "0,0"} (abt ${item.stockBalance.bags/80 | numberFormat: "0,0"} mt)</td>
+          <td class="text-right">${item.balance | numberFormat: "0,0"} (abt ${item.balance/80 | numberFormat: "0,0"} mt)</td>
         </tr>
       </tbody>
-    </table>
+    </table> -->
+  <!-- /div> -->
+
+  <div>
+    <ul class="list-group small">
+      <li class="list-group-item font-weight-bold">
+        <div class="row">
+          <div class="col">PO Number</div>
+          <div class="col">Contract date</div>
+          <div class="col">Quantity mt</div>
+          <div class="col">Supplier</div>
+          <div class="col text-right">Stock IN (bags)</div>
+          <div class="col text-right">Stock OUT (bags)</div>
+          <div class="col text-right">Balance (bags)</div>
+        </div>
+      </li>
+      <li class="list-group-item list-group-item-light" repeat.for="purchase of list">
+        <div class="row">
+          <div class="col"> <a route-href="purchaseEdit; params.bind:{id: encode(purchase.id)}"
+              class="with-decoration">PO ${purchase.purchaseNumber | numberFormat: "00000"}</a></div>
+          <div class="col">${purchase.purchaseDate | dateFormat: "DD/MM/YYYY"}</div>
+          <div class="col">${purchase.quantityMt | numberFormat: "0"} mt</div>
+          <div class="col">${purchase.supplierName}</div>
+          <div class="col text-right">${purchase.bagsIn | numberFormat: "0,0"} (abt ${purchase.bagsIn/80 | numberFormat
+            : "0,0"} mt)</div>
+          <div class="col text-right">${purchase.bagsOut | numberFormat: "0,0"} (abt ${purchase.bagsOut/80 |
+            numberFormat: "0,0"} mt)</div>
+          <div class="col text-right">${purchase.balance | numberFormat: "0,0"} (abt ${purchase.balance/80 |
+            numberFormat: "0,0"} mt)</div>
+        </div>
+
+        <ul class="list-group mt-2" if.bind="purchase.purchaseDetails.length > 0">
+          <li class="list-group-item">
+            <div class="row">              
+              <div class="col-6 offset-6">
+                <div class="row font-weight-bold">                
+                  <div class="col text-right">Pricing date</div>
+                  <div class="col text-right">Price per kg</div>
+                  <div class="col text-right">Quantity</div>
+                  <div class="col text-right">Quality</div>
+                </div>
+              </div>
+            </div>
+          </li>
+          <li class="list-group-item" repeat.for="detail of purchase.purchaseDetails">            
+            <div class="row">
+              <div class="col-6 offset-6">
+                <div class="row">                
+                  <div class="col text-right">${detail.date | dateFormat: "DD/MM/YYYY"}</div>
+                  <div class="col text-right">${detail.currency.toUpperCase()} ${detail.pricePerKg}</div>
+                  <div class="col text-right">${detail.bagsIn | numberFormat: "0,0"} (abt ${detail.bagsIn/80 | numberFormat: "0,0"} mt)</div>
+                  <div class="col text-right">Kor: ${detail.analysisResult.kor | numberFormat: "0,0.00"}, Count: ${detail.analysisResult.count | numberFormat: "0,0.0"}, Moisture: ${detail.analysisResult.moisture/100 | numberFormat: "0.00%"}</div>
+                </div>
+              </div>
+            </div>          
+          </li>
+        </ul>
+        <ul else class="list-group">
+          <li class="list-group-item list-group-item-danger">
+            This contract is a placeholder. It has no purchase details.
+          </li>
+        </ul>
+      </li>
+    </ul>
   </div>
 </template>

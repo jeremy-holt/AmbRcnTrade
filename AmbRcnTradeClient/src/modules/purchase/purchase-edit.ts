@@ -1,6 +1,6 @@
 
 import { DialogService } from "aurelia-dialog";
-import { autoinject, observable } from "aurelia-framework";
+import { autoinject, observable, TaskQueue } from "aurelia-framework";
 import { connectTo } from "aurelia-store";
 import _ from "lodash";
 import { StockManagementService } from "services/stock-management-service";
@@ -20,7 +20,7 @@ import { UncommittedStocksDialog } from "./uncommitted-stocks-dialog";
 @connectTo()
 export class PurchaseEdit {
   @observable protected state: IState = undefined!;
-  protected model: IPurchase = { supplierId: undefined } as IPurchase;
+  protected model: IPurchase = undefined!;
   protected uncommittedStocks: IStockListItem[] = [];
 
   protected currencies = CURRENCIES_LIST;
@@ -32,7 +32,8 @@ export class PurchaseEdit {
     private purchaseService: PurchaseService,
     private customerService: CustomerService,
     private dialogService: DialogService,
-    private stockManagementService: StockManagementService
+    private stockManagementService: StockManagementService,
+    private taskQueue: TaskQueue
   ) {
   }
 
@@ -77,7 +78,7 @@ export class PurchaseEdit {
     this.dialogService.open(
       {
         viewModel: UncommittedStocksDialog,
-        model: {uncommittedStocks:this.uncommittedStocks, supplier: this.selectedSupplier}
+        model: { uncommittedStocks: this.uncommittedStocks, supplier: this.selectedSupplier }
       }
     ).whenClosed(result => {
       if (!result.wasCancelled) {
@@ -97,11 +98,8 @@ export class PurchaseEdit {
   }
 
   protected async selectedSupplierChanged(value: IListItem) {
-    if (this.model) {
-      this.model.supplierId = value.id;
-      if (this.model.supplierId) {
-        await this.stockManagementService.getNonCommittedStocks(this.model.supplierId);
-      }
+    if (value.id) {
+      await this.stockManagementService.getNonCommittedStocks(value.id);
     }
   }
 
@@ -120,7 +118,7 @@ export class PurchaseEdit {
       return false;
     }
 
-    const header = this.model.supplierId && this.model.purchaseDate && this.model.quantityMt > 0;
+    const header = this.selectedSupplier?.id && this.model.purchaseDate && this.model.quantityMt > 0;
     const details = this.model?.purchaseDetails?.length > 0 && this.model.purchaseDetails.every(detail => detail.pricePerKg > 0 && detail?.stockIds?.length > 0);
 
     if (this.model?.purchaseDetails.length === 0 && header) {
@@ -132,6 +130,7 @@ export class PurchaseEdit {
 
   protected async save() {
     if (this.canSave) {
+      this.model.supplierId = this.selectedSupplier.id;
       await this.purchaseService.save(this.model);
     }
   }
