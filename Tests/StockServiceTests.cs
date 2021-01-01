@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AmberwoodCore.Extensions;
@@ -37,13 +38,19 @@ namespace Tests
             using var store = GetDocumentStore();
             using var session = store.OpenAsyncSession();
             var sut = GetStockService(session);
+            var inspectionService = GetInspectionService(session);
+            
             await InitializeIndexes(store);
             var fixture = new Fixture();
 
-            var inspection = fixture.DefaultEntity<Inspection>().Create();
-            inspection.AnalysisResult.Approved = Approval.Approved;
-
-            await session.StoreAsync(inspection);
+            var analyses = new List<Analysis>
+            {
+                new() {Count = 200, Moisture = 7, SoundGm = 255, SpottedGm = 10}
+            };
+            var inspection = fixture.DefaultEntity<Inspection>()
+                .With(c => c.Analyses, analyses)
+                .Create();
+            await inspectionService.Save(inspection);
 
             var stock = fixture.DefaultEntity<Stock>()
                 .With(c => c.InspectionId, inspection.Id)
@@ -53,16 +60,12 @@ namespace Tests
 
             await session.SaveChangesAsync();
             WaitForIndexing(store);
-            WaitForUserToContinueTheTest(store);
             
             // Act
             var actual = await sut.Load(stock.Id);
 
             // Assert
             actual.Should().NotBeNull();
-            // actual.Inspection.Should().Be(inspection);
-            // actual.Inspection.Id.Should().Be(actual.InspectionId);
-            actual.AnalysisResult.Should().NotBeNull();
             actual.AnalysisResult.Count.Should().Be(inspection.AnalysisResult.Count);
         }
 
@@ -124,15 +127,11 @@ namespace Tests
             list.Should().OnlyHaveUniqueItems(c => c.LotNo);
             actual.LotNo.Should().Be(2);
 
-            var expectedBalanceBags = stockIn2.Bags + stockOut.Bags;
-            var expectedBalanceWeightKg = stockIn2.WeightKg + stockOut.WeightKg;
+            var expectedBalanceBags = stockIn2.Bags - stockOut.Bags;
 
-            actual.StockIn.Bags.Should().Be(stockIn2.Bags);
-            actual.StockIn.WeightKg.Should().Be(stockIn2.WeightKg);
-            actual.StockOut.Bags.Should().Be(stockOut.Bags);
-            actual.StockOut.WeightKg.Should().Be(stockOut.WeightKg);
-            actual.Balance.Bags.Should().Be(expectedBalanceBags);
-            actual.Balance.WeightKg.Should().Be(expectedBalanceWeightKg);
+            actual.BagsIn.Should().Be(stockIn2.Bags);
+            actual.BagsOut.Should().Be(stockOut.Bags);
+            actual.Balance.Should().Be(expectedBalanceBags);
         }
 
         [Fact]

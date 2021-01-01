@@ -40,14 +40,12 @@
       <td>${item.locationName}</td>      
       <td>${item.origin}</td>
       <td>
-        <div if.bind="item.stockIn.bags > 0">${item.stockIn.bags | numberFormat: "0,0"} bags
-          <span if.bind="item.stockIn.weightKg"> / ${item.stockIn.weightKg} kg</span>
+        <div>${item.bagsIn | numberFormat: "0,0"} bags
         </div>
       </td>
       <td>
-        <div if.bind="item.stockOut.bags > 0">
-          ${item.stockOut.bags | numberFormat: "0,0"} bags
-          <span if.bind="item.stockOut.weightKg"> / ${item.stockOut.weightKg | numberFormat: "0,0"} kg</span>
+        <div if.bind="item.bagsOut > 0">
+          ${item.bagsOut | numberFormat: "0,0"} bags
         </div>
       </td>
       <td>

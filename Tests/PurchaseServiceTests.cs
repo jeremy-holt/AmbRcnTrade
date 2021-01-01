@@ -52,11 +52,8 @@ namespace Tests
 
             var stocks = fixture.DefaultEntity<Stock>()
                 .With(c => c.LocationId, location.Id)
-                .Without(c => c.LocationName)
                 .With(c => c.SupplierId, supplier.Id)
                 .With(c => c.InspectionId, inspection.Id)
-                // .Without(c => c.Inspection)
-                .Without(c => c.SupplierName)
                 .Without(c => c.AnalysisResult)
                 .CreateMany().ToList();
             await stocks.SaveList(session);
@@ -164,7 +161,7 @@ namespace Tests
             details[0].Currency.Should().Be(purchaseDetails[0].Currency);
             details[0].StockIds.Should().BeEquivalentTo(purchaseDetails[0].StockIds);
             details[0].Stocks[0].AnalysisResult.Should().Be(inspection.AnalysisResult);
-            details[0].Stocks[0].StockIn.Bags.Should().Be(stocks[0].Bags);
+            details[0].Stocks[0].BagsIn.Should().Be(stocks[0].Bags);
         }
 
         [Fact]

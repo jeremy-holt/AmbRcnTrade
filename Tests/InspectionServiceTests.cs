@@ -163,6 +163,7 @@ namespace Tests
             // Arrange
             using var store = GetDocumentStore();
             using var session = store.OpenAsyncSession();
+            await InitializeIndexes(store);
             var sut = GetInspectionService(session);
 
             var analyses = new List<Analysis>
@@ -190,10 +191,14 @@ namespace Tests
 
             // Act
             var response = await sut.Save(inspection);
+            await session.SaveChangesAsync();
+            
 
             // Assert
             var actual = await session.LoadAsync<Inspection>(response.Id);
             actual.Should().NotBeNull();
+            actual.AnalysisResult.Count.Should().Be(180);
+            actual.AnalysisResult.Moisture.Should().Be(10);
         }
     }
 }

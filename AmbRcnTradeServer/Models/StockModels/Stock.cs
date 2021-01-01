@@ -24,11 +24,11 @@ namespace AmbRcnTradeServer.Models.StockModels
         public string Origin { get; set; }
         public string SupplierId { get; set; }
         public AnalysisResult AnalysisResult { get; set; }
-        [JsonIgnore]
+        [JsonIgnore][Obsolete]
         public string LocationName { get; set; }
         public string Id { get; set; }
         public string Name { get; set; }
         public string CompanyId { get; set; }
-        [JsonIgnore]public string SupplierName { get; set; }
+     [Obsolete]   [JsonIgnore]public string SupplierName { get; set; }
     }
 }

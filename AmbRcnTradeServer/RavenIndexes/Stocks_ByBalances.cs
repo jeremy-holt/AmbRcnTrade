@@ -19,11 +19,7 @@ namespace AmbRcnTradeServer.RavenIndexes
                     c.CompanyId,
                     c.LocationId,
                     BagsIn = c.Bags > 0 ? c.Bags : 0,
-                    WeightKgIn = c.WeightKg > 0 ? c.WeightKg : 0,
-                    BagsOut = c.Bags < 0 ? c.Bags : 0,
-                    WeightKgOut = c.WeightKg < 0 ? c.WeightKg : 0,
-                    StockIn = new StockInfo(),
-                    StockOut = new StockInfo()
+                    BagsOut = c.Bags < 0 ? c.Bags : 0
                 };
             Reduce = results => from c in results
                 group c by new {c.LotNo, c.CompanyId, c.LocationId}
@@ -33,12 +29,8 @@ namespace AmbRcnTradeServer.RavenIndexes
                     grp.Key.LotNo,
                     grp.Key.CompanyId,
                     grp.Key.LocationId,
-                    BagsIn = 0.0,
-                    WeightKgIn = 0.0,
-                    BagsOut = 0.0,
-                    WeightKgOut = 0.0,
-                    StockIn = new StockInfo {Bags = grp.Sum(x => x.BagsIn), WeightKg = grp.Sum(x => x.WeightKgIn)},
-                    StockOut = new StockInfo {Bags = grp.Sum(x => x.BagsOut), WeightKg = grp.Sum(x => x.WeightKgOut)}
+                    BagsIn = grp.Sum(x=>x.BagsIn),
+                    BagsOut = grp.Sum(x=>x.BagsOut),
                 };
 
             Index(x => x.LotNo, FieldIndexing.Default);
@@ -55,10 +47,6 @@ namespace AmbRcnTradeServer.RavenIndexes
             public string LocationId { get; set; }
             public double BagsIn { get; set; }
             public double BagsOut { get; set; }
-            public double WeightKgIn { get; set; }
-            public double WeightKgOut { get; set; }
-            public StockInfo StockIn { get; set; } = new();
-            public StockInfo StockOut { get; set; } = new();
         }
     }
 }

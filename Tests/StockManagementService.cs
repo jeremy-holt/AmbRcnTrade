@@ -52,9 +52,7 @@ namespace Tests
 
             var stocks = fixture.DefaultEntity<Stock>()
                 .With(c => c.IsStockIn, true)
-                // .With(c => c.Inspection, inspection)
                 .With(c => c.InspectionId, inspection.Id)
-                .Without(c => c.SupplierName)
                 .With(c=>c.LocationId,location.Id)
                 .With(c => c.SupplierId, supplier.Id)
                 .CreateMany(10).ToList();

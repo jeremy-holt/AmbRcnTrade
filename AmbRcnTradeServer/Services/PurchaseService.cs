@@ -129,8 +129,8 @@ namespace AmbRcnTradeServer.Services
                         StockId = c.Id,
                         InspectionId = c.InspectionId,
                         IsStockIn = c.IsStockIn,
-                        StockIn = c.IsStockIn ? new StockInfo(c.Bags, c.WeightKg) : new StockInfo(),
-                        StockOut = c.IsStockIn ? new StockInfo() : new StockInfo(c.Bags, c.WeightKg),
+                        BagsIn = c.IsStockIn ? c.Bags : 0,
+                        BagsOut = c.IsStockIn ? 0 : c.Bags,
                         AnalysisResult = analysisResults.FirstOrDefault(x => x.InspectionId == c.InspectionId)
                     }).ToList();
 
@@ -140,33 +140,23 @@ namespace AmbRcnTradeServer.Services
                         Count = detailListItem.Stocks.Average(c => c.AnalysisResult.Count),
                         Moisture = detailListItem.Stocks.Average(c => c.AnalysisResult.Moisture)
                     };
-                    
+
 
                     foreach (var item in detailListItem.Stocks)
                     {
-                        item.StockBalance = new StockInfo(item.StockIn.Bags - item.StockOut.Bags, item.StockIn.WeightKg - item.StockOut.WeightKg);
+                        item.Balance = item.BagsIn - item.BagsOut;
                     }
 
-                    detailListItem.StockIn = new StockInfo(detailListItem.Stocks.Sum(x => x.StockIn.Bags), detailListItem.Stocks.Sum(x => x.StockIn.WeightKg));
-                    detailListItem.StockOut = new StockInfo(detailListItem.Stocks.Sum(x => x.StockOut.Bags), detailListItem.Stocks.Sum(x => x.StockOut.WeightKg));
-                    detailListItem.StockBalance = new StockInfo(detailListItem.StockIn.Bags - detailListItem.StockOut.Bags,
-                        detailListItem.StockIn.WeightKg - detailListItem.StockOut.WeightKg);
-
+                    detailListItem.BagsIn = detailListItem.Stocks.Sum(x => x.BagsIn);
+                    detailListItem.BagsOut = detailListItem.Stocks.Sum(x => x.BagsOut);
+                    detailListItem.Balance = detailListItem.BagsIn - detailListItem.BagsOut;
+                    
                     purchaseListItem.PurchaseDetails.Add(detailListItem);
                 }
 
-                var stockInBags = purchaseListItem.PurchaseDetails.SelectMany(c => c.Stocks).Sum(x => x.StockIn.Bags);
-                var stockInWeightKg = purchaseListItem.PurchaseDetails.SelectMany(c => c.Stocks).Sum(x => x.StockIn.WeightKg);
-
-                purchaseListItem.StockIn = new StockInfo(stockInBags, stockInWeightKg);
-
-                var stockOutBags = purchaseListItem.PurchaseDetails.SelectMany(c => c.Stocks).Sum(x => x.StockOut.Bags);
-                var stockOutWeightKg = purchaseListItem.PurchaseDetails.SelectMany(c => c.Stocks).Sum(x => x.StockOut.WeightKg);
-
-                purchaseListItem.StockOut = new StockInfo(stockOutBags, stockOutWeightKg);
-
-                var stockBalanceBags = new StockInfo(stockInBags - stockOutBags, stockInWeightKg - stockOutWeightKg);
-                purchaseListItem.StockBalance = stockBalanceBags;
+                purchaseListItem.BagsIn = purchaseListItem.PurchaseDetails.SelectMany(c => c.Stocks).Sum(x => x.BagsIn);
+                purchaseListItem.BagsOut = purchaseListItem.PurchaseDetails.SelectMany(c => c.Stocks).Sum(x => x.BagsOut);
+                purchaseListItem.Balance = purchaseListItem.BagsIn - purchaseListItem.BagsOut;
 
                 purchaseList.Add(purchaseListItem);
             }

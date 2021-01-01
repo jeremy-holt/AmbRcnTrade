@@ -1,10 +1,9 @@
-import { IStockInfo } from "./IStockInfo";
 
 export interface IStockBalanceListItem {
     lotNo: number;
-    stockIn: IStockInfo;
-    stockOut: IStockInfo;
-    balance: IStockInfo;
+    bagsIn: number;
+    bagsOut: number;
+    balance: number;
     isStockZero: boolean;
 
 }

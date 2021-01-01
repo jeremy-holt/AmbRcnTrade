@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AmberwoodCore.Responses;
@@ -27,11 +28,15 @@ namespace AmbRcnTradeServer.Services
         public InspectionService(IAsyncDocumentSession session)
         {
             _session = session;
+            _session.Advanced.WaitForIndexesAfterSaveChanges(new TimeSpan(0, 0, 30));
         }
 
         public async Task<ServerResponse<Inspection>> Save(Inspection inspection)
         {
             await _session.StoreAsync(inspection);
+            await _session.SaveChangesAsync();
+            inspection.AnalysisResult = await GetAnalysisResult(inspection.Id);
+
             return new ServerResponse<Inspection>(inspection, "Saved");
         }
 

@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using AmberwoodCore.Extensions;
 using AmberwoodCore.Responses;
-using AmbRcnTradeServer.Models.DictionaryModels;
 using AmbRcnTradeServer.Models.StockModels;
 using AmbRcnTradeServer.RavenIndexes;
 using Raven.Client.Documents;
@@ -59,11 +58,11 @@ namespace AmbRcnTradeServer.Services
 
         public async Task<Stock> Load(string id)
         {
-            var stock = await _session.Include<Stock>(c => c.InspectionId).LoadAsync<Stock>(id);
+            var stock = await _session.LoadAsync<Stock>(id);
 
             if (stock.InspectionId.IsNotNullOrEmpty())
             {
-                stock.AnalysisResult =await _inspectionService.GetAnalysisResult(stock.InspectionId);
+                stock.AnalysisResult = await _inspectionService.GetAnalysisResult(stock.InspectionId);
             }
 
             return stock;

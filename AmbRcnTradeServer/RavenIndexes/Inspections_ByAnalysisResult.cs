@@ -20,15 +20,15 @@ namespace AmbRcnTradeServer.RavenIndexes
                     InspectionId = inspection.Id,
                     inspection.AnalysisResult.Approved,
                     analysis.Count,
-                    Kor = ((analysis.SpottedGm * 0.5) + analysis.SoundGm) * 0.1763696,
+                    Kor = (analysis.SpottedGm * 0.5 + analysis.SoundGm) * 0.1763696,
                     analysis.Moisture,
                     analysis.SoundGm,
                     analysis.RejectsGm,
                     analysis.SpottedGm,
                     TotalRejects = analysis.RejectsGm + analysis.SpottedGm + analysis.SoundGm,
-                    SoundPct = 0,
-                    RejectsPct = 0,
-                    SpottedPct = 0
+                    SoundPct = 0.0,
+                    RejectsPct = 0.0,
+                    SpottedPct = 0.0
                 };
 
             Reduce = results => from c in results
@@ -46,9 +46,9 @@ namespace AmbRcnTradeServer.RavenIndexes
                     RejectsGm = grp.Average(c => c.RejectsGm),
                     SpottedGm = grp.Average(c => c.SpottedGm),
                     TotalRejects = totalRejects,
-                    SoundPct = grp.Sum(c => c.SoundGm) / totalRejects,
-                    RejectsPct = grp.Sum(c => c.RejectsGm) / totalRejects,
-                    SpottedPct = grp.Sum(c => c.SpottedGm) / totalRejects
+                    SoundPct =  totalRejects == 0 ? 0 : grp.Sum(c => c.SoundGm) / totalRejects,
+                    RejectsPct =  totalRejects == 0 ? 0 : grp.Sum(c => c.RejectsGm) / totalRejects,
+                    SpottedPct = totalRejects == 0 ? 0 : grp.Sum(c => c.SpottedGm) / totalRejects
                 };
 
             Index(x => x.InspectionId, FieldIndexing.Default);

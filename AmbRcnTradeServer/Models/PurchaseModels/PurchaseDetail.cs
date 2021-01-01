@@ -32,9 +32,9 @@ namespace AmbRcnTradeServer.Models.PurchaseModels
         public DateTime Date { get; set; }
         public List<PurchaseDetailStockListItem> Stocks { get; set; } = new();
         public AnalysisResult AnalysisResult { get; set; } = new();
-        public StockInfo StockIn { get; set; } = new();
-        public StockInfo StockOut { get; set; } = new();
-        public StockInfo StockBalance { get; set; } = new();
+        public double BagsIn { get; set; }
+        public double BagsOut { get; set; }
+        public double Balance { get; set; }
     }
 
     public class PurchaseDetailStockListItem
@@ -43,8 +43,8 @@ namespace AmbRcnTradeServer.Models.PurchaseModels
         public string InspectionId { get; set; }
         public bool IsStockIn { get; set; }
         public AnalysisResult AnalysisResult { get; set; }
-        public StockInfo StockIn { get; set; } = new();
-        public StockInfo StockOut { get; set; } = new();
-        public StockInfo StockBalance { get; set; } = new();
+        public double BagsIn { get; set; }
+        public double BagsOut { get; set; }
+        public double Balance { get; set; }
     }
 }

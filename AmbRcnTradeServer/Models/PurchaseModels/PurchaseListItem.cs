@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using AmbRcnTradeServer.Models.StockModels;
 using Raven.Client.Documents;
 using Raven.Client.Documents.Linq;
 using Raven.Client.Documents.Session;
@@ -18,8 +17,8 @@ namespace AmbRcnTradeServer.Models.PurchaseModels
         public DateTime PurchaseDate { get; set; }
         public double QuantityMt { get; set; }
         public List<PurchaseDetailListItem> PurchaseDetails { get; set; } = new();
-        public StockInfo StockIn { get; set; } = new();
-        public StockInfo StockOut { get; set; } = new();
-        public StockInfo StockBalance { get; set; } = new();
+        public double BagsIn { get; set; }
+        public double BagsOut { get; set; }
+        public double Balance { get; set; }
     }
 }
