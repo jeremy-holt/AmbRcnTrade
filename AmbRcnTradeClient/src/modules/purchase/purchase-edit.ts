@@ -1,4 +1,4 @@
-import { IUnAllocatedStock } from "./../../interfaces/stockManagement/IUnallocatedStock";
+import { IStockListItem } from "./../../interfaces/stocks/IStockListItem";
 import { IPurchaseDetail } from "./../../interfaces/purchases/IPurchaseDetail";
 import { DialogService } from "aurelia-dialog";
 import { autoinject, observable } from "aurelia-framework";
@@ -20,7 +20,7 @@ import { UncommittedStocksDialog } from "./uncommitted-stocks-dialog";
 export class PurchaseEdit {
   @observable protected state: IState = undefined!;
   protected model: IPurchase = undefined;
-  protected uncommittedStocks: IUnAllocatedStock[] = [];
+  protected uncommittedStocks: IStockListItem[] = [];
 
   protected currencies = CURRENCIES_LIST;
 

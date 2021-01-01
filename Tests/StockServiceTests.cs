@@ -26,6 +26,7 @@ namespace Tests
         private static async Task InitializeIndexes(IDocumentStore store)
         {
             await new Stocks_ByBalances().ExecuteAsync(store);
+            await new Stocks_ById().ExecuteAsync(store);
             await new Inspections_ByAnalysisResult().ExecuteAsync(store);
         }
 
@@ -202,16 +203,14 @@ namespace Tests
             list.Should().BeInAscendingOrder(c => c.LotNo);
 
             var actual = list.Single(c => c.StockId == stockIn2.Id);
-            actual.StockIn.Bags.Should().Be(stockIn2.Bags);
-            actual.StockIn.WeightKg.Should().Be(stockIn2.WeightKg);
-            actual.StockOut.Bags.Should().Be(0);
-            actual.StockOut.WeightKg.Should().Be(0);
+            actual.BagsIn.Should().Be(stockIn2.Bags);
+            actual.BagsOut.Should().Be(0);
             actual.LocationId.Should().Be(stockIn2.LocationId);
             actual.LocationName.Should().Be(location.Name);
             actual.LotNo.Should().Be(stockIn2.LotNo);
             actual.IsStockIn.Should().BeTrue();
-            actual.Date.Should().Be(stockIn2.StockInDate ?? DateTime.MinValue);
-            actual.Date.Should().NotBe(DateTime.MinValue);
+            actual.StockDate.Should().Be(stockIn2.StockInDate ?? DateTime.MinValue);
+            actual.StockDate.Should().NotBe(DateTime.MinValue);
             actual.Origin.Should().Be(stockIn2.Origin);
             actual.SupplierName.Should().Be(supplier.Name);
             actual.SupplierId.Should().Be(supplier.Id);

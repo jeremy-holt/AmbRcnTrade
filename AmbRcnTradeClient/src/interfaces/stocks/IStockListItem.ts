@@ -1,19 +1,21 @@
-import { IInspection } from "./../inspections/IInspection";
-import { IStockInfo } from "./IStockInfo";
+import { IAnalysisResult } from "interfaces/inspections/IAnalysis";
 
 export interface IStockListItem {
-  stockIn: IStockInfo;
-  stockOut: IStockInfo;
-  locationId: string;
-  lotNo: number;
-  stockId: string;
-  isStockIn: boolean;
-  date: string;
-  supplierName: string;
-  supplierId: string;
-  locationName: string;
-  inspectionId: string;
-  inspection: IInspection;
-  origin: string;
-  selected?: boolean;
-}
+        companyId: string;
+        purchaseId: string;
+        locationId: string;
+        bagsIn: number;
+        bagsOut: number;
+        lotNo: number;
+        stockId: string;
+        isStockIn: boolean;
+        stockDate: string | null;
+        locationName: string;
+        origin: string;
+        supplierName: string;
+        supplierId: string;
+        inspectionId: string;
+        inspectionDate: string | null;
+        analysisResult: IAnalysisResult;
+        selected?: boolean;
+    }

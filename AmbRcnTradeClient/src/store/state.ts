@@ -1,4 +1,3 @@
-import { IUnAllocatedStock } from "./../interfaces/stockManagement/IUnallocatedStock";
 import { IAppUser, IAppUserListItem } from "interfaces/IAppUser";
 import { IAttachmentInfo } from "interfaces/IAttachmentInfo";
 import { ICompany, ICompanyListItem } from "interfaces/ICompany";
@@ -47,6 +46,6 @@ export interface IState {
   attachmentRoutes: IAttachmentInfo[];
   inspection: { current: IInspection, list: IInspectionListItem[], movedToStockId: string; };
   stock: { current: IStock, list: IStockListItem[], stockBalanceList: IStockBalanceListItem[] };
-  purchase: { current: IPurchase, list: IPurchaseListItem[], nonCommittedStocksList:IUnAllocatedStock[] };
+  purchase: { current: IPurchase, list: IPurchaseListItem[], nonCommittedStocksList:IStockListItem[] };
 
 }

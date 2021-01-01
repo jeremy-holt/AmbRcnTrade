@@ -1,4 +1,4 @@
-import { IUnAllocatedStock } from "./../interfaces/stockManagement/IUnallocatedStock";
+import { IStockListItem } from "./../interfaces/stocks/IStockListItem";
 import { HttpClient } from "aurelia-fetch-client";
 import { autoinject } from "aurelia-framework";
 import { Router } from "aurelia-router";
@@ -48,7 +48,7 @@ export function inspectionMoveToStockAction(state: IState, result: IMovedInspect
   return newState;
 }
 
-export function nonCommittedStocksListAction(state: IState, stocks: IUnAllocatedStock[]) {
+export function nonCommittedStocksListAction(state: IState, stocks: IStockListItem[]) {
   const newState = _.cloneDeep(state);
   newState.purchase.nonCommittedStocksList = stocks;
   return newState;

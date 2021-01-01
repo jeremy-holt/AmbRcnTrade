@@ -1,6 +1,5 @@
-import { IAnalysisResult } from "./../inspections/IAnalysis";
 import { IEntityCompany } from "interfaces/IEntity";
-import { IInspection } from "interfaces/inspections/IInspection";
+import { IAnalysisResult } from "./../inspections/IAnalysis";
 
 export interface IStock extends IEntityCompany {
   id: string;
@@ -13,7 +12,6 @@ export interface IStock extends IEntityCompany {
   bags: number;
   weightKg: number;
   inspectionId: string;
-  // inspection?: IInspection;
   stockOutDate: string | null;
   isStockIn: boolean;
   origin: string;

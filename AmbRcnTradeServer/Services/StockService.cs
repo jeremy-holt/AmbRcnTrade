@@ -63,8 +63,6 @@ namespace AmbRcnTradeServer.Services
 
             if (stock.InspectionId.IsNotNullOrEmpty())
             {
-                // stock.Inspection = await _session.LoadAsync<Inspection>(stock.InspectionId);
-                // stock.Inspection.AnalysisResult = await _inspectionService.GetAnalysisResult(stock.InspectionId);
                 stock.AnalysisResult =await _inspectionService.GetAnalysisResult(stock.InspectionId);
             }
 
@@ -92,10 +90,7 @@ namespace AmbRcnTradeServer.Services
 
         public async Task<List<StockListItem>> LoadStockList(string companyId, long? lotNo, string locationId)
         {
-            var query = _session.Query<Stock>()
-                // .Include(c => c.InspectionId)
-                .Include(c => c.LocationId)
-                .Include(c => c.SupplierId)
+            var query = _session.Query<StockListItem, Stocks_ById>()
                 .Where(c => c.CompanyId == companyId);
 
             if (lotNo != null)
@@ -104,35 +99,13 @@ namespace AmbRcnTradeServer.Services
             if (locationId.IsNotNullOrEmpty())
                 query = query.Where(c => c.LocationId == locationId);
 
-            var stocks = await query.OrderBy(c => c.LotNo).ThenBy(c => c.StockInDate).ToListAsync();
+            var stocks = await query
+                .OrderBy(c => c.LotNo)
+                .ThenBy(c => c.StockDate)
+                .ProjectInto<StockListItem>()
+                .ToListAsync();
 
-            var locations = await _session.LoadListFromMultipleIdsAsync<Customer>(stocks.Select(c => c.LocationId));
-            var suppliers = await _session.LoadListFromMultipleIdsAsync<Customer>(stocks.Select(x => x.SupplierId));
-            // var inspections = await _session.LoadListFromMultipleIdsAsync<Inspection>(stocks.Select(x => x.InspectionId));
-            var analysisResults = await _inspectionService.GetAnalysisResult(stocks.Select(x => x.InspectionId));
-
-            return stocks.Select(item => new StockListItem
-                {
-                    LotNo = item.LotNo,
-                    LocationId = item.LocationId,
-                    StockId = item.Id,
-                    Date = item.StockInDate ?? item.StockOutDate ?? DateTime.MinValue,
-                    IsStockIn = item.IsStockIn,
-                    Origin = item.Origin,
-                    StockIn = item.IsStockIn
-                        ? new StockInfo(item.Bags, item.WeightKg)
-                        : new StockInfo(),
-                    StockOut = item.IsStockIn
-                        ? new StockInfo()
-                        : new StockInfo(item.Bags, item.WeightKg),
-                    LocationName = locations.FirstOrDefault(c => c.Id == item.LocationId)?.Name,
-                    SupplierId = item.SupplierId,
-                    SupplierName = suppliers.FirstOrDefault(c => c.Id == item.SupplierId)?.Name,
-                    InspectionId = item.InspectionId,
-                    AnalysisResult = analysisResults.FirstOrDefault(c=>c.InspectionId==item.InspectionId)
-                    // Inspection = inspections.FirstOrDefault(c => c.Id == item.InspectionId)
-                })
-                .ToList();
+            return stocks;
         }
     }
 }
