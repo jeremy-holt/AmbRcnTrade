@@ -140,7 +140,7 @@ namespace Tests
             actual.BagsOut.Should().Be(stockOut.Bags);
             actual.Balance.Should().Be(expectedBalanceBags);
 
-            actual.BalanceStockWeightKg.Should().Be(expectedBalanceStockWeightKg);
+            actual.BalanceWeightKg.Should().Be(expectedBalanceStockWeightKg);
 
             actual.LocationName.Should().Be(location.Name);
             actual.InspectionIds.Should().HaveCountGreaterThan(0);

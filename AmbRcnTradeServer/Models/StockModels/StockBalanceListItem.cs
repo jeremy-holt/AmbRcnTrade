@@ -25,6 +25,6 @@ namespace AmbRcnTradeServer.Models.StockModels
         public double Count { get; set; }
         public double WeightKgIn { get; set; }
         public double WeightKgOut { get; set; }
-        public double BalanceStockWeightKg { get; set; }
+        public double BalanceWeightKg { get; set; }
     }
 }

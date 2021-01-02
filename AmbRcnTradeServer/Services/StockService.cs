@@ -91,7 +91,7 @@ namespace AmbRcnTradeServer.Services
                 item.Count = item.BagsIn == 0 ? 0 : item.AnalysisResults.Average(c => c.Count);
                 item.Moisture = item.BagsIn == 0 ? 0 : item.AnalysisResults.Average(c => c.Moisture);
                 item.Balance = item.BagsIn + item.BagsOut;
-                item.BalanceStockWeightKg = item.WeightKgIn + item.WeightKgOut;
+                item.BalanceWeightKg = item.WeightKgIn + item.WeightKgOut;
                 item.IsStockZero = item.Balance < 1 && item.Balance > -1;
             }
 

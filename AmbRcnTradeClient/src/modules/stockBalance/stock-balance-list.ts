@@ -1,3 +1,5 @@
+import { IAvailableContainerItem } from "./../../interfaces/stockManagement/IAvailableContainerItem";
+import { StockManagementService } from "services/stock-management-service";
 import { encodeParams } from "core/helpers";
 import { StuffContainerDialog } from "./stuff-container-dialog";
 import { DialogService } from "aurelia-dialog";
@@ -16,7 +18,8 @@ export class StockBalanceList {
 
   constructor(
     private stockService: StockService,
-    private dialogService: DialogService
+    private dialogService: DialogService,
+    private stockManagementService: StockManagementService
   ) { }
 
   public async activate(prms: { lotNo: number, locationId: string }) {
@@ -31,15 +34,18 @@ export class StockBalanceList {
     return encodeParams(value);
   }
 
-  protected openStuffContainerDialog(stockBalanceItem: IStockBalanceListItem) {
+  protected openStuffContainerDialog(stockBalance: IStockBalanceListItem) {
     this.dialogService.open(
       {
         viewModel: StuffContainerDialog,
-        model: { stockBalance: stockBalanceItem }
+        model: { stockBalance }
       }
-    ).whenClosed(result => {
-      const { container, bags, stockWeightKg } = result.output;
-      console.log("CONTAINER", container, "BAGS", bags, "STOCKWEIGHTKG", stockWeightKg);
+    ).whenClosed(async result => {
+      if (!result.wasCancelled) {
+        const { container, bags, stockWeightKg } = result.output as { container: IAvailableContainerItem; bags: number; stockWeightKg: number; };
+        const request = this.stockManagementService.getStuffingRequest(stockBalance, container, bags, stockWeightKg);
+        await this.stockManagementService.stuffContainer(request);
+      }
     });
   }
 }

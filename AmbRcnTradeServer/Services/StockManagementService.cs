@@ -168,7 +168,7 @@ namespace AmbRcnTradeServer.Services
                     ContainerNumber = item.ContainerNumber,
                     Bags = item.Bags,
                     StockWeightKg = item.StockWeightKg,
-                    IsOverweight = item.StockWeightKg > 24_500 || item.Bags > 325
+                    IsOverweight = item.StockWeightKg > 26_000 || item.Bags > 325
                 };
                 list.Add(availableContainer);
             }

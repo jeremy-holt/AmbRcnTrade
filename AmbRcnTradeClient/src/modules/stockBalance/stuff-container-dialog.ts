@@ -1,3 +1,4 @@
+import { ContainerService } from "./../../services/container-service";
 import { DialogController } from "aurelia-dialog";
 import { autoinject, observable } from "aurelia-framework";
 import { connectTo } from "aurelia-store";
@@ -13,7 +14,7 @@ export class StuffContainerDialog {
   public model: IStockBalanceListItem;
   @observable protected state: IState = undefined!;
   public list: IAvailableContainerItem[] = [];
-  public bags: number;
+  @observable public bags: number;
   public stockWeightKg: number;
 
   constructor(
@@ -41,6 +42,32 @@ export class StuffContainerDialog {
 
   protected selectedContainer() {
     return this.list.find(c => c.selected);
+  }
+
+  protected bagsChanged(value: number) {
+    this.stockWeightKg = Math.floor(+value * 80);
+  }
+
+  protected get isOverweightContainer() {
+    // const container = this.selectedContainer();
+
+    // if (!container) {
+    //   return false;
+    // }
+
+    return ContainerService.isOverweightContainer({ bags: this.loadingQuantity.bags, weightKg: this.loadingQuantity.stockWeightKg });
+    // return ContainerService.isOverweightContainer({ bags: this.bags + container.bags, weightKg: this.stockWeightKg + container.stockWeightKg });
+  }
+
+  protected get loadingQuantity() {
+    const container = this.selectedContainer();
+    if (!container) {
+      return { bags: 0, stockWeightKg: 0 };
+    }
+    return {
+      bags: this.bags + container.bags,
+      stockWeightKg: (this.stockWeightKg + container.stockWeightKg)
+    };
   }
 
   protected okClicked() {

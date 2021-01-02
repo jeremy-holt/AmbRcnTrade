@@ -30,12 +30,16 @@ export class ContainerService extends FetchService {
     return super.getMany<IContainer[]>([super.currentCompanyIdQuery(), new QueryId("status", status)], "loadList", containerListAction);
   }
 
-  public async save(container: IContainer){
-    return super.post(container,"save",containerEditAction);
+  public async save(container: IContainer) {
+    return super.post(container, "save", containerEditAction);
   }
 
-  public async createContainer(){
-    return super.get([super.currentCompanyIdQuery()],"create",containerEditAction);
+  public async createContainer() {
+    return super.get([super.currentCompanyIdQuery()], "create", containerEditAction);
+  }
+
+  public static isOverweightContainer(quantities: { bags: number, weightKg: number }) {
+    return quantities.weightKg > 26_000 || quantities.bags > 325;
   }
 }
 
