@@ -90,7 +90,7 @@ namespace Tests
             // Assert
             var actual = await session.LoadAsync<Container>(response.Id);
             actual.Should().NotBeNull();
-            actual.StockWeightKg.Should().Be(container.IncomingStocks.Sum(c => c.WeightKg));
+            actual.StuffingWeightKg.Should().Be(container.IncomingStocks.Sum(c => c.WeightKg));
             actual.Bags.Should().Be(container.IncomingStocks.Sum(c => c.Bags));
         }
     }

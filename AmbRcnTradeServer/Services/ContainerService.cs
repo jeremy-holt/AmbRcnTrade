@@ -29,7 +29,7 @@ namespace AmbRcnTradeServer.Services
         public async Task<ServerResponse<Container>> Save(Container container)
         {
             container.Bags = container.IncomingStocks.Sum(c => c.Bags);
-            container.StockWeightKg = container.IncomingStocks.Sum(c => c.WeightKg);
+            container.StuffingWeightKg = container.IncomingStocks.Sum(c => c.WeightKg);
 
             await _session.StoreAsync(container);
             return new ServerResponse<Container>(container, "Saved");

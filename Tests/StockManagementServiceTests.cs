@@ -55,7 +55,7 @@ namespace Tests
 
             var container = fixture.DefaultEntity<Container>()
                 .Without(c => c.Bags)
-                .Without(c => c.StockWeightKg)
+                .Without(c => c.StuffingWeightKg)
                 .Without(c => c.StuffingDate)
                 .Without(c => c.IncomingStocks)
                 .Create();
@@ -69,7 +69,7 @@ namespace Tests
             {
                 new()
                 {
-                    LotNo=stock1.LotNo,
+                    LotNo = stock1.LotNo,
                     StockId = stock1.Id,
                     Bags = 200,
                     WeightKg = 15000
@@ -91,7 +91,7 @@ namespace Tests
             return (container, stock1, stock2, request);
         }
 
-                [Fact]
+        [Fact]
         public async Task GetAvailableContainers_ShouldReturnEmptyOrStuffingContainers()
         {
             // Arrange
@@ -107,14 +107,14 @@ namespace Tests
                     new() {Bags = 200, WeightKg = 16_000}
                 })
                 .With(c => c.Bags, 200)
-                .With(c => c.StockWeightKg, 16_000)
+                .With(c => c.StuffingWeightKg, 16_000)
                 .Create();
 
             var container2 = fixture.DefaultEntity<Container>()
                 .With(c => c.Status, ContainerStatus.Empty)
                 .Without(c => c.IncomingStocks)
                 .Without(c => c.Bags)
-                .Without(c => c.StockWeightKg)
+                .Without(c => c.StuffingWeightKg)
                 .Create();
 
             var container3 = fixture.DefaultEntity<Container>()
@@ -125,7 +125,7 @@ namespace Tests
             var container4 = fixture.DefaultEntity<Container>()
                 .With(c => c.Status, ContainerStatus.Stuffing)
                 .With(c => c.Bags, 350)
-                .With(c => c.StockWeightKg, 25_000)
+                .With(c => c.StuffingWeightKg, 25_000)
                 .With(c => c.IncomingStocks, new List<IncomingStock>
                 {
                     new() {Bags = 350, WeightKg = 25_000}
@@ -143,7 +143,7 @@ namespace Tests
             list.Should().Contain(c => c.ContainerNumber == container1.ContainerNumber);
             list.Should().Contain(c => c.BookingNumber == container1.BookingNumber);
             list.Should().Contain(c => Math.Abs(c.Bags - container1.Bags) < 0.01);
-            list.Should().Contain(c => Math.Abs(c.StockWeightKg - container1.StockWeightKg) < 0.01);
+            list.Should().Contain(c => Math.Abs(c.StockWeightKg - container1.StuffingWeightKg) < 0.01);
 
             var overweightContainer = list.Single(c => c.ContainerId == container4.Id);
             overweightContainer.IsOverweight.Should().BeTrue();
@@ -391,6 +391,33 @@ namespace Tests
             var (container, _, _, request) = await CreateStockAndContainer(session);
 
             // Act
+            var stockBalanceItem = new StockBalanceListItem()
+            {
+                LotNo = 21,
+                Balance = 10_000,
+                BalanceWeightKg = 125_000,
+                LocationId = "locations/1-A",
+                Count = 200,
+                Kor = 48,
+                Moisture = 7,
+                AnalysisResults = new List<AnalysisResult>(),
+                BagsIn = 10000,
+                BagsOut = 0,
+                WeightKgIn = 125000,
+                WeightKgOut = 0,
+                LocationName = "Warehouse",
+                InspectionIds = new List<string> {"inspections/1-A"}
+            };
+
+            var newRequest = new
+            {
+                ContainerId = container.Id,
+                LotNo = 21,
+                Bags = 300,
+                WeightKg = 24_0000,
+                Date = new DateTime(2013, 1, 1)
+            };
+
             ServerResponse response = await sut.StuffContainer(request);
 
             // Assert
@@ -400,9 +427,165 @@ namespace Tests
 
             actualContainer.IncomingStocks.Should().BeEquivalentTo(request.IncomingStocks);
             actualContainer.Bags.Should().Be(225);
-            actualContainer.StockWeightKg.Should().Be(15_800);
+            actualContainer.StuffingWeightKg.Should().Be(15_800);
             actualContainer.StuffingDate.Should().Be(new DateTime(2013, 1, 1));
             actualContainer.Status.Should().Be(ContainerStatus.Stuffing);
+        }
+
+        [Fact]
+        public async Task StuffContainer2_ShouldAddStockToTheContainer()
+        {
+            // Arrange
+            using var store = GetDocumentStore();
+            using var session = store.OpenAsyncSession();
+            var sut = GetStockManagementService(session);
+            var fixture = new Fixture();
+
+            var stock1 = new Stock()
+            {
+                CompanyId = COMPANY_ID,
+                LotNo = 1,
+                Bags = 3000,
+                WeightKg = 24000,
+                IsStockIn = true,
+                StockInDate = new DateTime(1990, 12, 31),
+                AnalysisResult = fixture.Build<AnalysisResult>().Create()
+            };
+
+            var stock2 = new Stock()
+            {
+                CompanyId = COMPANY_ID,
+                LotNo = 1,
+                Bags = 500,
+                WeightKg = 4000,
+                IsStockIn = true,
+                StockInDate = new DateTime(1992, 6, 30),
+                AnalysisResult = fixture.Build<AnalysisResult>().Create()
+            };
+            await new[] {stock1, stock2}.SaveList(session);
+
+            var stockBalance = new StockBalanceListItem()
+            {
+                LotNo = 1,
+                Balance = stock1.Bags + stock2.Bags,
+                BalanceWeightKg = stock1.WeightKg + stock2.WeightKg,
+                AnalysisResults = new List<AnalysisResult>() {stock1.AnalysisResult, stock2.AnalysisResult},
+                LocationId = "locations/1-A"
+            };
+
+            var container = new Container
+            {
+                ContainerNumber = "TRIU 1234"
+            };
+            await session.StoreAsync(container);
+            
+            await session.SaveChangesAsync();
+            
+            // Act
+            const double incomingBags = 2000;
+            const double incomingWeightKg = 16_000;
+            ServerResponse response = await sut.StuffContainer2(container.Id, stockBalance, incomingBags, incomingWeightKg, new DateTime(2020, 1, 1));
+
+            await session.SaveChangesAsync();
+            
+            // Assert
+            var actualContainer = await session.LoadAsync<Container>(container.Id);
+            actualContainer.IncomingStocks.Should().HaveCount(1);
+            actualContainer.IncomingStocks[0].LotNo.Should().Be(1);
+            actualContainer.IncomingStocks[0].StockId.Should().BeNullOrEmpty();
+            actualContainer.IncomingStocks[0].StockIds.Should().Contain(stock1.Id);
+            actualContainer.IncomingStocks[0].StockIds.Should().Contain(stock2.Id);
+            actualContainer.IncomingStocks[0].Bags.Should().Be(incomingBags);
+            actualContainer.IncomingStocks[0].WeightKg.Should().Be(incomingWeightKg);
+            actualContainer.IncomingStocks[0].StuffingDate.Should().Be(new DateTime(2020, 1, 1));
+
+            var actualStock1 = await session.LoadAsync<Stock>(stock1.Id);
+            actualStock1.StuffingRecords[0].ContainerId.Should().Be(container.Id);
+            actualStock1.StuffingRecords[0].ContainerNumber.Should().Be(container.ContainerNumber);
+            actualStock1.StuffingRecords[0].StuffingDate.Should().Be(new DateTime(2020, 1, 1));
+        }
+
+        [Fact]
+        public async Task StuffContainer2_ShouldCreateStockOuts()
+        {
+            // Arrange
+            using var store = GetDocumentStore();
+            using var session = store.OpenAsyncSession();
+            var sut = GetStockManagementService(session);
+            var fixture = new Fixture();
+
+            var stock1 = new Stock()
+            {
+                CompanyId = COMPANY_ID,
+                LotNo = 1,
+                Bags = 3000,
+                WeightKg = 24000,
+                IsStockIn = true,
+                StockInDate = new DateTime(1990, 12, 31),
+                AnalysisResult = fixture.Build<AnalysisResult>().Create(),
+                Origin = "Origin1"
+            };
+
+            var stock2 = new Stock()
+            {
+                CompanyId = COMPANY_ID,
+                LotNo = 1,
+                Bags = 500,
+                WeightKg = 4000,
+                IsStockIn = true,
+                StockInDate = new DateTime(1992, 6, 30),
+                AnalysisResult = fixture.Build<AnalysisResult>().Create(),
+                Origin = "Origin2"
+            };
+            await new[] {stock1, stock2}.SaveList(session);
+
+            var stockBalance = new StockBalanceListItem()
+            {
+                LotNo = 1,
+                Balance = stock1.Bags + stock2.Bags,
+                BalanceWeightKg = stock1.WeightKg + stock2.WeightKg,
+                AnalysisResults = new List<AnalysisResult>() {stock1.AnalysisResult, stock2.AnalysisResult},
+                LocationId = "locations/1-A",
+                SupplierName = "Suppler Name",
+                SupplierId=stock1.SupplierId
+            };
+
+            var container = new Container
+            {
+                ContainerNumber = "TRIU 1234"
+            };
+            await session.StoreAsync(container);
+            
+            await session.SaveChangesAsync();
+            
+            // Act
+            const double incomingBags = 2000;
+            const double incomingWeightKg = 16_000;
+            var stuffingDate = new DateTime(2020, 1, 1);
+            ServerResponse response = await sut.StuffContainer2(container.Id, stockBalance, incomingBags, incomingWeightKg, stuffingDate);
+
+            await session.SaveChangesAsync();
+            
+            // Assert
+            var stockOut = await session.Query<Stock>().Where(c => !c.IsStockIn).FirstOrDefaultAsync();
+
+            stockOut.Should().NotBeNull();
+            stockOut.LotNo.Should().Be(1);
+            stockOut.Bags.Should().Be(incomingBags);
+            stockOut.WeightKg.Should().Be(incomingWeightKg);
+            stockOut.ContainerId.Should().Be(container.Id);
+            // stockOut.AnalysisResult.Should().Be(averageAnalysisResult);
+            stockOut.LocationId.Should().Be(stockBalance.LocationId);
+            stockOut.IsStockIn.Should().BeFalse();
+            stockOut.SupplierId.Should().Be(stock1.SupplierId);
+            stockOut.StockOutDate.Should().Be(stuffingDate);
+            stockOut.StockInDate.Should().BeNull();
+            stockOut.Origin.Should().Be("Origin1, Origin2");
+            stockOut.CompanyId.Should().Be(COMPANY_ID);
+            stockOut.StuffingRecords.Should().HaveCount(1);
+            stockOut.StuffingRecords[0].ContainerId.Should().Be(container.Id);
+            stockOut.StuffingRecords[0].ContainerNumber.Should().Be(container.ContainerNumber);
+            stockOut.StuffingRecords[0].StuffingDate.Should().Be(stuffingDate);
         }
 
         [Fact]

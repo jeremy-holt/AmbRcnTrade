@@ -10,11 +10,13 @@ namespace AmbRcnTradeServer.Models.ContainerModels
 {
     public class IncomingStock
     {
-        public string StockId { get; set; }
+        [Obsolete]public string StockId { get; set; }
         public double Bags { get; set; }
 
         public double WeightKg { get; set; }
         public long LotNo { get; set; }
+        public List<string> StockIds { get; set; } = new List<string>();
+        public DateTime StuffingDate { get; set; }
     }
 
     public class StuffingRequest

@@ -24,6 +24,7 @@ namespace AmbRcnTradeServer.Services
         Task<List<StockListItem>> GetNonCommittedStocks(string companyId, string supplierId);
         Task<ServerResponse<List<OutgoingStock>>> StuffContainer(StuffingRequest request);
         Task<List<AvailableContainerItem>> GetAvailableContainers(string companyId);
+        Task<ServerResponse> StuffContainer2(string containerId, StockBalanceListItem stockBalance, double bags, double weightKg, DateTime stuffingDate);
     }
 
     public class StockManagementService : IStockManagementService
@@ -113,7 +114,7 @@ namespace AmbRcnTradeServer.Services
             container.IncomingStocks.AddRange(request.IncomingStocks);
 
             container.Bags = container.IncomingStocks.Sum(c => c.Bags);
-            container.StockWeightKg = container.IncomingStocks.Sum(c => c.WeightKg);
+            container.StuffingWeightKg = container.IncomingStocks.Sum(c => c.WeightKg);
             container.StuffingDate = request.StuffingDate;
             container.Status = ContainerStatus.Stuffing;
 
@@ -167,13 +168,40 @@ namespace AmbRcnTradeServer.Services
                     BookingNumber = item.BookingNumber,
                     ContainerNumber = item.ContainerNumber,
                     Bags = item.Bags,
-                    StockWeightKg = item.StockWeightKg,
-                    IsOverweight = item.StockWeightKg > 26_000 || item.Bags > 325
+                    StockWeightKg = item.StuffingWeightKg,
+                    IsOverweight = item.StuffingWeightKg > 26_000 || item.Bags > 325
                 };
                 list.Add(availableContainer);
             }
 
             return list;
+        }
+
+        public async Task<ServerResponse> StuffContainer2(string containerId, StockBalanceListItem stockBalance, double bags, double weightKg, DateTime stuffingDate)
+        {
+            var container = await _session.LoadAsync<Container>(containerId);
+            var stocks = await _session.Query<Stock>().Where(c => c.LotNo == stockBalance.LotNo).ToListAsync();
+
+            var incomingStock = new IncomingStock
+            {
+                LotNo = stockBalance.LotNo,
+                Bags = bags,
+                WeightKg = weightKg,
+                StockIds = stocks.Select(c => c.Id).ToList(),
+                StuffingDate = stuffingDate
+            };
+            
+            container.IncomingStocks.Add(incomingStock);
+
+            container.Bags = container.IncomingStocks.Sum(x => x.Bags);
+            container.StuffingWeightKg = container.IncomingStocks.Sum(x => x.WeightKg);
+
+            foreach (var stock in stocks)
+            {
+                stock.StuffingRecords.Add(new StuffingRecord {ContainerId = container.Id, ContainerNumber = container.ContainerNumber, StuffingDate = stuffingDate});
+            }
+
+            return new ServerResponse("Stuffed container");
         }
     }
 }

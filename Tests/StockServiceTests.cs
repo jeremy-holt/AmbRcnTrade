@@ -84,9 +84,16 @@ namespace Tests
             var location = fixture.DefaultEntity<Customer>().Create();
             await session.StoreAsync(location);
 
+            var supplier1 = fixture.DefaultEntity<Customer>().Create();
+            await session.StoreAsync(supplier1);
+
+            var supplier2 = fixture.DefaultEntity<Customer>().Create();
+            await session.StoreAsync(supplier2);
+
             var stockIn1 = fixture.DefaultEntity<Stock>()
                 .Without(c => c.StockOutDate)
                 .With(c => c.LocationId, location.Id)
+                .With(c => c.SupplierId, supplier1.Id)
                 .With(c => c.LotNo, 1)
                 .With(c => c.InspectionId, "inspections/1-A")
                 .Create();
@@ -95,6 +102,7 @@ namespace Tests
             var stockIn2 = fixture.DefaultEntity<Stock>()
                 .Without(c => c.StockOutDate)
                 .With(c => c.LocationId, location.Id)
+                .With(c => c.SupplierId, supplier2.Id)
                 .With(c => c.LotNo, 2)
                 .With(c => c.Bags, 500)
                 .With(c => c.InspectionId, "inspections/1-A")
@@ -105,6 +113,7 @@ namespace Tests
                 .Without(c => c.StockInDate)
                 .With(c => c.LotNo, stockIn2.LotNo)
                 .With(c => c.LocationId, location.Id)
+                .With(c => c.SupplierId, supplier2.Id)
                 .With(c => c.LotNo, 2)
                 .With(c => c.Bags, -150)
                 .With(c => c.InspectionId, "inspections/1-A")
@@ -114,6 +123,7 @@ namespace Tests
             var stockIn3 = fixture.DefaultEntity<Stock>()
                 .Without(c => c.StockOutDate)
                 .With(c => c.LocationId, location.Id)
+                .With(c => c.SupplierId, supplier1.Id)
                 .With(c => c.LotNo, 3)
                 .With(c => c.InspectionId, "inspections/1-A")
                 .Create();
@@ -142,7 +152,11 @@ namespace Tests
 
             actual.BalanceWeightKg.Should().Be(expectedBalanceStockWeightKg);
 
+            actual.LocationId.Should().Be(stockIn2.LocationId);
             actual.LocationName.Should().Be(location.Name);
+            
+            actual.SupplierId.Should().Be(stockIn2.SupplierId);
+            actual.SupplierName.Should().Be(supplier2.Name);
             actual.InspectionIds.Should().HaveCountGreaterThan(0);
             actual.AnalysisResults.Should().HaveCountGreaterThan(0);
         }

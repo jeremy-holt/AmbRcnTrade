@@ -15,4 +15,5 @@ export interface IStockBalanceListItem {
     weightKgIn: number;
     weightKgOut: number;
     balanceWeightKg: number;
+    
 }
