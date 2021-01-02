@@ -5,5 +5,6 @@ export interface IStockBalanceListItem {
     bagsOut: number;
     balance: number;
     isStockZero: boolean;
+    locationName: string;
 
 }

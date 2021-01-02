@@ -18,5 +18,6 @@ export interface IInspectionListItem {
   rejectsPct: number;
   stockReferences: IStockReference[];
   stockAllocations: number;
+  unallocatedBags:number;
   css?: string;
 }

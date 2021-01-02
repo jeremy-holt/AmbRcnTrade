@@ -158,6 +158,30 @@ namespace Tests
         }
 
         [Fact]
+        public async Task LoadList_ShouldShowUnallocatedBags()
+        {
+            // Arrange
+            using var store = GetDocumentStore();
+            using var session = store.OpenAsyncSession();
+            var sut = GetInspectionService(session);
+            var fixture = new Fixture();
+
+            var inspection = fixture.DefaultEntity<Inspection>().Create();
+            await session.StoreAsync(inspection);
+
+            await session.SaveChangesAsync();
+            WaitForIndexing(store);
+            
+            // Act
+            var prms = new InspectionQueryParams() {CompanyId = COMPANY_ID};
+            var list = await sut.LoadList(prms);
+            
+            // Assert
+            list[0].UnallocatedBags.Should().Be(inspection.Bags - inspection.StockReferences.Sum(x => x.Bags));
+
+        }
+
+        [Fact]
         public async Task Save_ShouldSaveAnInspection()
         {
             // Arrange

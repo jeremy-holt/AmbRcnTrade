@@ -15,12 +15,13 @@
         <th>Inspection date</th>
         <th>Bags</th>
         <th>Stock allocations</th>
+        <th class="text-right">Unallocated bags</th>
         <th>KOR</th>
         <th>Count</th>
         <th>Moisture</th>
         <th>Rejects</th>
         <th>SupplierName</th>
-        <th>Location</th>
+        <th>Inspection location</th>
         <th>Inspector</th>
 
       </tr>
@@ -42,6 +43,7 @@
               stock allocation(s)</a>
           </div>
         </td>
+        <td class="text-right">${item.unallocatedBags | numberFormat:"0,0"}</td>
         <td class.bind="item.css">${item.kor | numberFormat:"0,0.00"}</td>
         <td class.bind="item.css">${item.count | numberFormat: "0,0.00"}</td>
         <td class.bind="item.css">${item.moisture/100 | numberFormat: "0.00%"}</td>

@@ -81,10 +81,13 @@ namespace Tests
 
             await session.StoreAsync(new Company(COMPANY_ID));
 
+            var location = fixture.DefaultEntity<Customer>().Create();
+            await session.StoreAsync(location);
+            
             var stockIn1 = fixture.DefaultEntity<Stock>()
                 .Without(c => c.StockOutDate)
                 .Without(c => c.InspectionId)
-                .Without(c => c.LocationId)
+                .With(c => c.LocationId,location.Id)
                 .Without(c => c.LotNo)
                 .Create();
             await sut.Save(stockIn1);
@@ -92,7 +95,7 @@ namespace Tests
             var stockIn2 = fixture.DefaultEntity<Stock>()
                 .Without(c => c.StockOutDate)
                 .Without(c => c.InspectionId)
-                .Without(c => c.LocationId)
+                .With(c => c.LocationId,location.Id)
                 .Without(c => c.LotNo)
                 .Create();
             await sut.Save(stockIn2);
@@ -101,7 +104,7 @@ namespace Tests
                 .Without(c => c.StockInDate)
                 .Without(c => c.InspectionId)
                 .With(c => c.LotNo, stockIn2.LotNo)
-                .Without(c => c.LocationId)
+                .With(c => c.LocationId,location.Id)
                 .Without(c => c.LotNo)
                 .Create();
             await sut.Save(stockOut);
@@ -109,7 +112,7 @@ namespace Tests
             var stockIn3 = fixture.DefaultEntity<Stock>()
                 .Without(c => c.StockOutDate)
                 .Without(c => c.InspectionId)
-                .Without(c => c.LocationId)
+                .With(c => c.LocationId,location.Id)
                 .Without(c => c.LotNo)
                 .Create();
             await sut.Save(stockIn3);
@@ -132,6 +135,7 @@ namespace Tests
             actual.BagsIn.Should().Be(stockIn2.Bags);
             actual.BagsOut.Should().Be(stockOut.Bags);
             actual.Balance.Should().Be(expectedBalanceBags);
+            actual.LocationName.Should().Be(location.Name);
         }
 
         [Fact]

@@ -72,7 +72,8 @@ namespace AmbRcnTradeServer.Services
                     Moisture = c.AnalysisResult.Moisture,
                     RejectsPct = c.AnalysisResult.RejectsPct,
                     StockReferences = c.StockReferences,
-                    StockAllocations = c.StockReferences.Count
+                    StockAllocations = c.StockReferences.Count,
+                    UnallocatedBags = c.Bags - c.StockReferences.Sum(x => x.Bags)
                 })
                 .ToListAsync();
 

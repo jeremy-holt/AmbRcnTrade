@@ -13,6 +13,8 @@ namespace AmbRcnTradeServer.Models.StockModels
         public double BagsIn { get; set; }
         public double BagsOut { get; set; }
         public double Balance => BagsIn - BagsOut;
+        public string LocationName { get; set; }
+        public string LocationId { get; set; }
         public bool IsStockZero => Balance > 1 || Balance < -1;
     }
 }

@@ -66,6 +66,7 @@ export class App {
         // Stocks
         { route: "stock/list/:lotNo?/:locationId?", href: "stock/list", name: "stockList", title: "Stocks", nav: true, moduleId: "modules/stock/stock-list", roles: ["admin", "user", "guest", "inspector"] },
         { route: "stock/edit/:id?", name: "stockEdit", title: "Stock", moduleId: "modules/stock/stock-edit", roles: ["admin", "user", "guest", "inspector"] },
+        {route:"stock/stockbalance/:lotNo?/:locationId?", href:"stock/stockbalance",name:"stockBalanceList",title: "Stock balances", nav:true,moduleId:"modules/stockBalance/stock-balance-list",roles:["admin", "user", "guest", "inspector"]},
 
         // Purchase
         { route: "purchase/list", name: "purchaseList", title: "Purchases", nav: true, moduleId: "modules/purchase/purchase-list", roles: ["admin", "user", "inspector", "warehouseMan"] },
