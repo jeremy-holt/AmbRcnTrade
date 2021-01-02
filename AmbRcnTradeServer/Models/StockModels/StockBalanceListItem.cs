@@ -11,7 +11,7 @@ namespace AmbRcnTradeServer.Models.StockModels
     public class StockBalanceListItem
     {
         public long LotNo { get; set; }
-        
+
         public double BagsIn { get; set; }
         public double BagsOut { get; set; }
         public double Balance { get; set; }
@@ -23,6 +23,8 @@ namespace AmbRcnTradeServer.Models.StockModels
         public double Kor { get; set; }
         public double Moisture { get; set; }
         public double Count { get; set; }
+        public double WeightKgIn { get; set; }
+        public double WeightKgOut { get; set; }
         public double BalanceStockWeightKg { get; set; }
     }
 }

@@ -1,13 +1,13 @@
-import { encodeParams } from "./../../core/helpers";
-import { CustomerService } from "./../../services/customer-service";
-import { IListItem } from "interfaces/IEntity";
-import { IStockListItem } from "./../../interfaces/stocks/IStockListItem";
-import { IState } from "store/state";
-import { Router } from "aurelia-router";
-import { StockService } from "./../../services/stock-service";
 import { autoinject, observable } from "aurelia-framework";
+import { Router } from "aurelia-router";
 import { connectTo } from "aurelia-store";
+import { IListItem } from "interfaces/IEntity";
 import _ from "lodash";
+import { IState } from "store/state";
+import { decodeParams, encodeParams } from "./../../core/helpers";
+import { IStockListItem } from "./../../interfaces/stocks/IStockListItem";
+import { CustomerService } from "./../../services/customer-service";
+import { StockService } from "./../../services/stock-service";
 
 @autoinject
 @connectTo()
@@ -15,6 +15,7 @@ export class StockList {
   @observable state: IState = undefined!;
   public list: IStockListItem[] = [];
   public selectedLotNo: number = undefined!;
+  private prmLocationId = "";
 
   public locations: IListItem[] = [];
   @observable selectedLocation: IListItem = undefined!
@@ -32,8 +33,19 @@ export class StockList {
     this.locations.unshift({ id: null, name: "[All]" });
   }
 
-  protected async activate() {
+  protected async activate(prms: { lotNo?: number, locationId?: string }) {
     await this.customerService.loadCustomersForAppUserList();
+    this.selectedLotNo = +prms?.lotNo === -1 ? null : prms?.lotNo;
+
+    if (prms?.locationId) {
+      this.prmLocationId = decodeParams(prms?.locationId);
+    }
+  }
+
+  protected bind() {
+    if (this.prmLocationId) {
+      this.selectedLocation = this.locations.find(c => c.id === decodeParams(this.prmLocationId));
+    }
   }
 
   protected async selectedLocationChanged() {
@@ -48,7 +60,7 @@ export class StockList {
     this.stockService.loadStockList(this.selectedLotNo, this.selectedLocation.id);
   }
 
-  protected encode(value: string){
+  protected encode(value: string) {
     return encodeParams(value);
   }
 }

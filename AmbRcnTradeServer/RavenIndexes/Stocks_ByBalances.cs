@@ -24,6 +24,8 @@ namespace AmbRcnTradeServer.RavenIndexes
                     c.LocationId,
                     BagsIn = c.Bags > 0 ? c.Bags : 0,
                     BagsOut = c.Bags < 0 ? c.Bags : 0,
+                    WeightKgIn = c.WeightKg > 0 ? c.WeightKg : 0,
+                    WeightKgOut = c.WeightKg < 0 ? c.WeightKg : 0,
                     LocationName = location.Name,
                     c.AnalysisResult,
                     c.InspectionId,
@@ -40,6 +42,8 @@ namespace AmbRcnTradeServer.RavenIndexes
                     grp.Key.LocationId,
                     BagsIn = grp.Sum(x => x.BagsIn),
                     BagsOut = grp.Sum(x => x.BagsOut),
+                    WeightKgIn=grp.Sum(x=>x.WeightKgIn),
+                    WeightKgOut=grp.Sum(x=>x.WeightKgOut),
                     grp.Key.LocationName,
                     AnalysisResult = default(object),
                     InspectionId = default(string),
@@ -61,6 +65,8 @@ namespace AmbRcnTradeServer.RavenIndexes
             public string LocationId { get; set; }
             public double BagsIn { get; set; }
             public double BagsOut { get; set; }
+            public double WeightKgIn { get; set; }
+            public double WeightKgOut { get; set; }
             public string LocationName { get; set; }
             public AnalysisResult AnalysisResult { get; set; }
             public string InspectionId { get; set; }

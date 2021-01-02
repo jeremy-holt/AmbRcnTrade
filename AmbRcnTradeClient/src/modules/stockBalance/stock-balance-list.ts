@@ -1,3 +1,4 @@
+import { encodeParams } from "core/helpers";
 import { StuffContainerDialog } from "./stuff-container-dialog";
 import { DialogService } from "aurelia-dialog";
 import { StockService } from "./../../services/stock-service";
@@ -26,15 +27,19 @@ export class StockBalanceList {
     this.list = _.cloneDeep(state.stock.stockBalanceList);
   }
 
+  protected encode(value: string) {
+    return encodeParams(value);
+  }
+
   protected openStuffContainerDialog(stockBalanceItem: IStockBalanceListItem) {
     this.dialogService.open(
       {
         viewModel: StuffContainerDialog,
-        model: {stockBalance: stockBalanceItem}
+        model: { stockBalance: stockBalanceItem }
       }
     ).whenClosed(result => {
       const { container, bags, stockWeightKg } = result.output;
-      console.log("CONTAINER", container,"BAGS", bags, "STOCKWEIGHTKG", stockWeightKg);
+      console.log("CONTAINER", container, "BAGS", bags, "STOCKWEIGHTKG", stockWeightKg);
     });
   }
 }

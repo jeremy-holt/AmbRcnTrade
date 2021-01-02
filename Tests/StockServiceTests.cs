@@ -135,13 +135,13 @@ namespace Tests
 
             var expectedBalanceBags = stockIn2.Bags + stockOut.Bags;
             var expectedBalanceStockWeightKg = stockIn2.WeightKg + stockOut.WeightKg;
-            
+
             actual.BagsIn.Should().Be(stockIn2.Bags);
             actual.BagsOut.Should().Be(stockOut.Bags);
             actual.Balance.Should().Be(expectedBalanceBags);
 
             actual.BalanceStockWeightKg.Should().Be(expectedBalanceStockWeightKg);
-            
+
             actual.LocationName.Should().Be(location.Name);
             actual.InspectionIds.Should().HaveCountGreaterThan(0);
             actual.AnalysisResults.Should().HaveCountGreaterThan(0);
@@ -294,7 +294,7 @@ namespace Tests
             WaitForIndexing(store);
 
             // Act
-            var list = await sut.LoadStockList(COMPANY_ID, new List<string>() {stockIn1.Id, stockIn2.Id});
+            var list = await sut.LoadStockList(COMPANY_ID, new List<string> {stockIn1.Id, stockIn2.Id});
             list.Should().BeInAscendingOrder(c => c.LotNo);
             list.Should().HaveCount(2);
             list.Should().Contain(c => c.StockId == stockIn1.Id);

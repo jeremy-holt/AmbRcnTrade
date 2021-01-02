@@ -12,4 +12,7 @@ export interface IStockBalanceListItem {
     kor: number;
     moisture: number;
     count: number;
+    weightKgIn: number;
+    weightKgOut: number;
+    balanceStockWeightKg: number;
 }
