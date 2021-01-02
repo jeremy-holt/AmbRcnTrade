@@ -34,7 +34,7 @@ namespace AmbRcnTradeServer.RavenIndexes
                     grp.Key.LocationId,
                     BagsIn = grp.Sum(x => x.BagsIn),
                     BagsOut = grp.Sum(x => x.BagsOut),
-                    LocationName = grp.Key.LocationName
+                    grp.Key.LocationName
                 };
 
             Index(x => x.LotNo, FieldIndexing.Default);

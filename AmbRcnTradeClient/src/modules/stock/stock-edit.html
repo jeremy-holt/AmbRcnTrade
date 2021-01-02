@@ -20,20 +20,22 @@
     </div>
 
     <div class="col">
-      <select-input source.bind="locations" value.bind="selectedLocation" label="Stock location"
-        matcher.bind="listItemMatcher"></select-input>
-    </div>
+      <text-input value.bind="model.origin" label="Origin of goods"></text-input>
+    </div>    
   </div>
 
 
   <div class="row">
     <div class="col">
+      <select-input source.bind="locations" value.bind="selectedLocation" label="Stock location"
+        matcher.bind="listItemMatcher"></select-input>
+    </div>
+    
+    <div class="col">
       <select-input source.bind="suppliers" value.bind="selectedSupplier" label="Supplier"
         matcher.bind="listItemMatcher"></select-input>
     </div>
-    <div class="col">
-      <text-input value.bind="model.origin" label="Origin of goods"></text-input>
-    </div>
+
   </div>
 
   <div class="row">
