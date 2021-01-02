@@ -6,12 +6,12 @@ import _ from "lodash";
 import { StockManagementService } from "services/stock-management-service";
 import { IState } from "store/state";
 import { IAvailableContainerItem } from "./../../interfaces/stockManagement/IAvailableContainerItem";
-import { IStockBalanceListItem } from "./../../interfaces/stocks/IStockBalanceListItem";
+import { IStockBalance } from "./../../interfaces/stocks/IStockBalanceListItem";
 
 @autoinject
 @connectTo()
 export class StuffContainerDialog {
-  public model: IStockBalanceListItem;
+  public model: IStockBalance;
   @observable protected state: IState = undefined!;
   public list: IAvailableContainerItem[] = [];
   @observable public bags: number;
@@ -22,7 +22,7 @@ export class StuffContainerDialog {
     private stocksManagementService: StockManagementService
   ) { }
 
-  protected async activate(model: { stockBalance: IStockBalanceListItem }) {
+  protected async activate(model: { stockBalance: IStockBalance }) {
     this.model = model.stockBalance;
     await this.stocksManagementService.getAvailableContainers();
   }

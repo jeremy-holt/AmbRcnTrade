@@ -11,7 +11,6 @@ export interface IStock extends IEntityCompany {
   weightKg: number;
   lotNo: number;
   companyId: string;
-  containerId: string;
   id: string;
   inspectionId: string;
   name: string;

@@ -1,5 +1,5 @@
 import { fixAspNetCoreDate } from "./../core/helpers";
-import { IStockBalanceListItem } from "./../interfaces/stocks/IStockBalanceListItem";
+import { IStockBalance } from "./../interfaces/stocks/IStockBalanceListItem";
 import { IStockListItem } from "./../interfaces/stocks/IStockListItem";
 import { IStock } from "interfaces/stocks/IStock";
 import { Router } from "aurelia-router";
@@ -74,7 +74,7 @@ export function stockListAction(state: IState, list: IStockListItem[]) {
   return newState;
 }
 
-export function stockBalanceListAction(state: IState, list: IStockBalanceListItem[]) {
+export function stockBalanceListAction(state: IState, list: IStockBalance[]) {
   const newState = _.cloneDeep(state);
   newState.stock.stockBalanceList = list;
   return newState;

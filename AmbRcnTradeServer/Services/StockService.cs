@@ -16,7 +16,7 @@ namespace AmbRcnTradeServer.Services
     {
         Task<ServerResponse<Stock>> Save(Stock stock);
         Task<Stock> Load(string id);
-        Task<List<StockBalanceListItem>> LoadStockBalanceList(string companyId, long? lotNo, string locationId);
+        Task<List<StockBalance>> LoadStockBalanceList(string companyId, long? lotNo, string locationId);
         Task<List<StockListItem>> LoadStockList(string companyId, long? lotNo, string locationId);
         Task<List<StockListItem>> LoadStockList(string companyId, List<string> stockIds);
     }
@@ -69,7 +69,7 @@ namespace AmbRcnTradeServer.Services
             return stock;
         }
 
-        public async Task<List<StockBalanceListItem>> LoadStockBalanceList(string companyId, long? lotNo, string locationId)
+        public async Task<List<StockBalance>> LoadStockBalanceList(string companyId, long? lotNo, string locationId)
         {
             var query = _session.Query<Stocks_ByBalances.Result, Stocks_ByBalances>()
                 .OrderBy(c => c.LotNo)
@@ -82,7 +82,7 @@ namespace AmbRcnTradeServer.Services
                 query = query.Where(c => c.LocationId == locationId);
 
             var list = await query
-                .ProjectInto<StockBalanceListItem>()
+                .ProjectInto<StockBalance>()
                 .ToListAsync();
 
             foreach (var item in list)

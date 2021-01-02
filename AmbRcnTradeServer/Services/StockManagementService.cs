@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using AmberwoodCore.Extensions;
 using AmberwoodCore.Responses;
 using AmbRcnTradeServer.Constants;
+using AmbRcnTradeServer.Interfaces;
 using AmbRcnTradeServer.Models.ContainerModels;
 using AmbRcnTradeServer.Models.InspectionModels;
 using AmbRcnTradeServer.Models.StockManagementModels;
@@ -24,7 +25,7 @@ namespace AmbRcnTradeServer.Services
         Task<List<StockListItem>> GetNonCommittedStocks(string companyId, string supplierId);
         Task<ServerResponse<List<OutgoingStock>>> StuffContainer(StuffingRequest request);
         Task<List<AvailableContainerItem>> GetAvailableContainers(string companyId);
-        Task<ServerResponse> StuffContainer2(string containerId, StockBalanceListItem stockBalance, double bags, double weightKg, DateTime stuffingDate);
+        Task<ServerResponse> StuffContainer2(string containerId, StockBalance stockBalance, double bags, double weightKg, DateTime stuffingDate);
     }
 
     public class StockManagementService : IStockManagementService
@@ -140,8 +141,7 @@ namespace AmbRcnTradeServer.Services
 
                     StockInDate = null,
                     StockOutDate = request.StuffingDate,
-                    IsStockIn = false,
-                    ContainerId = request.ContainerId
+                    IsStockIn = false
                 };
                 await _session.StoreAsync(stock);
                 outgoingStocks.Add(new OutgoingStock {StockId = stock.Id});
@@ -177,7 +177,7 @@ namespace AmbRcnTradeServer.Services
             return list;
         }
 
-        public async Task<ServerResponse> StuffContainer2(string containerId, StockBalanceListItem stockBalance, double bags, double weightKg, DateTime stuffingDate)
+        public async Task<ServerResponse> StuffContainer2(string containerId, StockBalance stockBalance, double bags, double weightKg, DateTime stuffingDate)
         {
             var container = await _session.LoadAsync<Container>(containerId);
             var stocks = await _session.Query<Stock>().Where(c => c.LotNo == stockBalance.LotNo).ToListAsync();
@@ -190,7 +190,7 @@ namespace AmbRcnTradeServer.Services
                 StockIds = stocks.Select(c => c.Id).ToList(),
                 StuffingDate = stuffingDate
             };
-            
+
             container.IncomingStocks.Add(incomingStock);
 
             container.Bags = container.IncomingStocks.Sum(x => x.Bags);
@@ -200,6 +200,35 @@ namespace AmbRcnTradeServer.Services
             {
                 stock.StuffingRecords.Add(new StuffingRecord {ContainerId = container.Id, ContainerNumber = container.ContainerNumber, StuffingDate = stuffingDate});
             }
+
+            var stockOut = new Stock
+            {
+                LotNo = stockBalance.LotNo,
+                Bags = bags,
+                WeightKg = weightKg,
+                StockOutDate = stuffingDate,
+                AnalysisResult = stocks.AverageAnalysisResults(),
+                LocationId = stockBalance.LocationId,
+                IsStockIn = false,
+                SupplierId = stockBalance.SupplierId,
+                Origin = stocks.Select(x => x.Origin).ToAggregateString(),
+                CompanyId = stocks.FirstOrDefault()?.CompanyId,
+                StuffingRecords = new List<StuffingRecord>
+                {
+                    new()
+                    {
+                        ContainerId = containerId,
+                        ContainerNumber = container.ContainerNumber,
+                        StuffingDate = stuffingDate
+                    }
+                },
+
+                StockInDate = null,
+                Id = null,
+                InspectionId = null
+            };
+
+            await _session.StoreAsync(stockOut);
 
             return new ServerResponse("Stuffed container");
         }

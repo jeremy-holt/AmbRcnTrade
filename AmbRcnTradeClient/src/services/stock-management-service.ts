@@ -1,5 +1,5 @@
 import { DATEFORMAT } from "constants/app-constants";
-import { IStockBalanceListItem } from "./../interfaces/stocks/IStockBalanceListItem";
+import { IStockBalance } from "./../interfaces/stocks/IStockBalanceListItem";
 import { IAvailableContainerItem } from "./../interfaces/stockManagement/IAvailableContainerItem";
 import { IOutgoingStock } from "./../interfaces/stockManagement/IIncomingStock";
 import { IStockListItem } from "./../interfaces/stocks/IStockListItem";

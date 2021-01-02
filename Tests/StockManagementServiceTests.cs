@@ -6,6 +6,7 @@ using AmberwoodCore.Extensions;
 using AmberwoodCore.Models;
 using AmberwoodCore.Responses;
 using AmbRcnTradeServer.Constants;
+using AmbRcnTradeServer.Interfaces;
 using AmbRcnTradeServer.Models.ContainerModels;
 using AmbRcnTradeServer.Models.DictionaryModels;
 using AmbRcnTradeServer.Models.InspectionModels;
@@ -90,6 +91,8 @@ namespace Tests
             };
             return (container, stock1, stock2, request);
         }
+
+        
 
         [Fact]
         public async Task GetAvailableContainers_ShouldReturnEmptyOrStuffingContainers()
@@ -391,7 +394,7 @@ namespace Tests
             var (container, _, _, request) = await CreateStockAndContainer(session);
 
             // Act
-            var stockBalanceItem = new StockBalanceListItem()
+            var stockBalanceItem = new StockBalance()
             {
                 LotNo = 21,
                 Balance = 10_000,
@@ -464,7 +467,7 @@ namespace Tests
             };
             await new[] {stock1, stock2}.SaveList(session);
 
-            var stockBalance = new StockBalanceListItem()
+            var stockBalance = new StockBalance()
             {
                 LotNo = 1,
                 Balance = stock1.Bags + stock2.Bags,
@@ -478,16 +481,16 @@ namespace Tests
                 ContainerNumber = "TRIU 1234"
             };
             await session.StoreAsync(container);
-            
+
             await session.SaveChangesAsync();
-            
+
             // Act
             const double incomingBags = 2000;
             const double incomingWeightKg = 16_000;
             ServerResponse response = await sut.StuffContainer2(container.Id, stockBalance, incomingBags, incomingWeightKg, new DateTime(2020, 1, 1));
 
             await session.SaveChangesAsync();
-            
+
             // Assert
             var actualContainer = await session.LoadAsync<Container>(container.Id);
             actualContainer.IncomingStocks.Should().HaveCount(1);
@@ -522,7 +525,7 @@ namespace Tests
                 WeightKg = 24000,
                 IsStockIn = true,
                 StockInDate = new DateTime(1990, 12, 31),
-                AnalysisResult = fixture.Build<AnalysisResult>().Create(),
+                AnalysisResult = fixture.Build<AnalysisResult>().With(c => c.Approved, Approval.Approved).Create(),
                 Origin = "Origin1"
             };
 
@@ -534,12 +537,15 @@ namespace Tests
                 WeightKg = 4000,
                 IsStockIn = true,
                 StockInDate = new DateTime(1992, 6, 30),
-                AnalysisResult = fixture.Build<AnalysisResult>().Create(),
+                AnalysisResult = fixture.Build<AnalysisResult>().With(c => c.Approved, Approval.Approved).Create(),
                 Origin = "Origin2"
             };
-            await new[] {stock1, stock2}.SaveList(session);
+            var stocks = new[] {stock1, stock2};
+            await stocks.SaveList(session);
 
-            var stockBalance = new StockBalanceListItem()
+            var averageAnalysisResult = stocks.AverageAnalysisResults();
+
+            var stockBalance = new StockBalance()
             {
                 LotNo = 1,
                 Balance = stock1.Bags + stock2.Bags,
@@ -547,7 +553,7 @@ namespace Tests
                 AnalysisResults = new List<AnalysisResult>() {stock1.AnalysisResult, stock2.AnalysisResult},
                 LocationId = "locations/1-A",
                 SupplierName = "Suppler Name",
-                SupplierId=stock1.SupplierId
+                SupplierId = stock1.SupplierId
             };
 
             var container = new Container
@@ -555,9 +561,9 @@ namespace Tests
                 ContainerNumber = "TRIU 1234"
             };
             await session.StoreAsync(container);
-            
+
             await session.SaveChangesAsync();
-            
+
             // Act
             const double incomingBags = 2000;
             const double incomingWeightKg = 16_000;
@@ -565,7 +571,7 @@ namespace Tests
             ServerResponse response = await sut.StuffContainer2(container.Id, stockBalance, incomingBags, incomingWeightKg, stuffingDate);
 
             await session.SaveChangesAsync();
-            
+
             // Assert
             var stockOut = await session.Query<Stock>().Where(c => !c.IsStockIn).FirstOrDefaultAsync();
 
@@ -573,8 +579,7 @@ namespace Tests
             stockOut.LotNo.Should().Be(1);
             stockOut.Bags.Should().Be(incomingBags);
             stockOut.WeightKg.Should().Be(incomingWeightKg);
-            stockOut.ContainerId.Should().Be(container.Id);
-            // stockOut.AnalysisResult.Should().Be(averageAnalysisResult);
+            stockOut.AnalysisResult.Should().BeEquivalentTo(averageAnalysisResult);
             stockOut.LocationId.Should().Be(stockBalance.LocationId);
             stockOut.IsStockIn.Should().BeFalse();
             stockOut.SupplierId.Should().Be(stock1.SupplierId);

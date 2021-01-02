@@ -4,7 +4,7 @@ import { encodeParams } from "core/helpers";
 import { StuffContainerDialog } from "./stuff-container-dialog";
 import { DialogService } from "aurelia-dialog";
 import { StockService } from "./../../services/stock-service";
-import { IStockBalanceListItem } from "./../../interfaces/stocks/IStockBalanceListItem";
+import { IStockBalance } from "./../../interfaces/stocks/IStockBalanceListItem";
 import { autoinject, observable } from "aurelia-framework";
 import { connectTo } from "aurelia-store";
 import { IState } from "store/state";
@@ -14,7 +14,7 @@ import _ from "lodash";
 @connectTo()
 export class StockBalanceList {
   @observable public state: IState = undefined!;
-  protected list: IStockBalanceListItem[] = [];
+  protected list: IStockBalance[] = [];
 
   constructor(
     private stockService: StockService,
@@ -34,7 +34,7 @@ export class StockBalanceList {
     return encodeParams(value);
   }
 
-  protected openStuffContainerDialog(stockBalance: IStockBalanceListItem) {
+  protected openStuffContainerDialog(stockBalance: IStockBalance) {
     this.dialogService.open(
       {
         viewModel: StuffContainerDialog,

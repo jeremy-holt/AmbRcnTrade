@@ -46,7 +46,7 @@ namespace AmbRcnTradeServer.Controllers
 
         [Authorize]
         [HttpGet("[action]")]
-        public async Task<ActionResult<List<StockBalanceListItem>>> LoadStockBalanceList(string companyId, long? lotNo, string locationId)
+        public async Task<ActionResult<List<StockBalance>>> LoadStockBalanceList(string companyId, long? lotNo, string locationId)
         {
             return await _service.LoadStockBalanceList(companyId, lotNo, locationId);
         }

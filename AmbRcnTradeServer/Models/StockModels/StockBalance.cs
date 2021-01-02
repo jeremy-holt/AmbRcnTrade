@@ -9,7 +9,7 @@ using Raven.Client.Documents.Session;
 
 namespace AmbRcnTradeServer.Models.StockModels
 {
-    public class StockBalanceListItem
+    public class StockBalance
     {
         public long LotNo { get; set; }
 

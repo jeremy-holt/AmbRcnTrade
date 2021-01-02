@@ -14,7 +14,7 @@ import { IInspection } from "./../interfaces/inspections/IInspection";
 import { IInspectionListItem } from "./../interfaces/inspections/IInspectionListItem";
 import { IPurchase } from "./../interfaces/purchases/IPurchase";
 import { IPurchaseListItem } from "./../interfaces/purchases/IPurchaseListItem";
-import { IStockBalanceListItem } from "./../interfaces/stocks/IStockBalanceListItem";
+import { IStockBalance } from "./../interfaces/stocks/IStockBalanceListItem";
 import { IStockListItem } from "./../interfaces/stocks/IStockListItem";
 import { IContainer } from "interfaces/shipping/IContainer";
 
@@ -48,7 +48,7 @@ export interface IState {
   port: { current: IPort, list: IPort[] };
   attachmentRoutes: IAttachmentInfo[];
   inspection: { current: IInspection, list: IInspectionListItem[], movedToStockId: string; };
-  stock: { current: IStock, list: IStockListItem[], stockBalanceList: IStockBalanceListItem[] };
+  stock: { current: IStock, list: IStockListItem[], stockBalanceList: IStockBalance[] };
   purchase: { current: IPurchase, list: IPurchaseListItem[], nonCommittedStocksList: IStockListItem[] };
   stockManagement: { stuffContainer: IOutgoingStock[], availableContainers: IAvailableContainerItem[] };
   container: { current: IContainer; list: IContainer[] };
