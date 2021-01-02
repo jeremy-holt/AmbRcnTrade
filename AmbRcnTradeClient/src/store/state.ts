@@ -1,3 +1,4 @@
+import { IOutgoingStock } from "./../interfaces/stockManagement/IIncomingStock";
 import { IAppUser, IAppUserListItem } from "interfaces/IAppUser";
 import { IAttachmentInfo } from "interfaces/IAttachmentInfo";
 import { ICompany, ICompanyListItem } from "interfaces/ICompany";
@@ -14,6 +15,7 @@ import { IPurchase } from "./../interfaces/purchases/IPurchase";
 import { IPurchaseListItem } from "./../interfaces/purchases/IPurchaseListItem";
 import { IStockBalanceListItem } from "./../interfaces/stocks/IStockBalanceListItem";
 import { IStockListItem } from "./../interfaces/stocks/IStockListItem";
+import { IContainer } from "interfaces/shipping/IContainer";
 
 export interface IState {
   userFilteredCustomers: IListItem[];
@@ -46,6 +48,7 @@ export interface IState {
   attachmentRoutes: IAttachmentInfo[];
   inspection: { current: IInspection, list: IInspectionListItem[], movedToStockId: string; };
   stock: { current: IStock, list: IStockListItem[], stockBalanceList: IStockBalanceListItem[] };
-  purchase: { current: IPurchase, list: IPurchaseListItem[], nonCommittedStocksList:IStockListItem[] };
-
+  purchase: { current: IPurchase, list: IPurchaseListItem[], nonCommittedStocksList: IStockListItem[] };
+  stockManagement: { stuffContainer: IOutgoingStock[] };
+  container: { current: IContainer; list: IContainer[] };
 }

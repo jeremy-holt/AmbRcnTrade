@@ -1,3 +1,4 @@
+import { IOutgoingStock } from "./../interfaces/stockManagement/IIncomingStock";
 import { IStockListItem } from "./../interfaces/stocks/IStockListItem";
 import { HttpClient } from "aurelia-fetch-client";
 import { autoinject } from "aurelia-framework";
@@ -12,6 +13,7 @@ import { IRemoveInspectionFromStockRequest } from "./../interfaces/stockManageme
 import { FetchService } from "./fetch-service";
 import { noOpAction } from "./no-op-action";
 import { QueryId } from "models/QueryId";
+import { IStuffingRequest } from "interfaces/stockManagement/IIncomingStock";
 
 @autoinject
 export class StockManagementService extends FetchService {
@@ -25,6 +27,7 @@ export class StockManagementService extends FetchService {
     store.registerAction("inspectionMoveToStockAction", inspectionMoveToStockAction);
     store.registerAction("inspectionMoveToStockClearAction", inspectionMoveToStockClearAction);
     store.registerAction("nonCommittedStocksListAction", nonCommittedStocksListAction);
+    store.registerAction("stuffContainerAction", stuffContainerAction);
   }
 
   public async moveInspectionToStock(request: IMoveInspectionToStockRequest) {
@@ -40,6 +43,10 @@ export class StockManagementService extends FetchService {
   public async getNonCommittedStocks(supplierId: string) {
     return super.getMany<IStock[]>([super.currentCompanyIdQuery(), new QueryId("supplierId", supplierId)], "getNonCommittedStocks", nonCommittedStocksListAction);
   }
+
+  public async stuffContainer(request: IStuffingRequest) {
+    return super.post(request, "stuffContainer", stuffContainerAction);
+  }
 }
 
 export function inspectionMoveToStockAction(state: IState, result: IMovedInspectionResult) {
@@ -52,6 +59,12 @@ export function inspectionMoveToStockAction(state: IState, result: IMovedInspect
 export function nonCommittedStocksListAction(state: IState, stocks: IStockListItem[]) {
   const newState = _.cloneDeep(state);
   newState.purchase.nonCommittedStocksList = stocks;
+  return newState;
+}
+
+export function stuffContainerAction(state: IState, result: IOutgoingStock[]) {
+  const newState = _.cloneDeep(state);
+  newState.stockManagement.stuffContainer = result;
   return newState;
 }
 

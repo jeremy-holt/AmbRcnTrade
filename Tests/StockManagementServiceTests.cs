@@ -33,17 +33,25 @@ namespace Tests
             await new Inspections_ByAnalysisResult().ExecuteAsync(store);
         }
 
-        private static async Task<(Container container, StuffingRequest request)> CreateStockAndContainer(IAsyncDocumentSession session)
+        private static async Task<(Container container, Stock stock1, Stock stock2, StuffingRequest request)> CreateStockAndContainer(IAsyncDocumentSession session)
         {
             var fixture = new Fixture();
 
-            var stock = fixture.DefaultEntity<Stock>()
+            var stock1 = fixture.DefaultEntity<Stock>()
                 .Without(c => c.StockOutDate)
                 .With(c => c.Bags, 300)
                 .With(c => c.WeightKg, 24000)
                 .Create();
 
-            await session.StoreAsync(stock);
+            await session.StoreAsync(stock1);
+
+            var stock2 = fixture.DefaultEntity<Stock>()
+                .Without(c => c.StockOutDate)
+                .With(c => c.Bags, 50)
+                .With(c => c.WeightKg, 4000)
+                .Create();
+
+            await session.StoreAsync(stock2);
 
             var container = fixture.DefaultEntity<Container>()
                 .Without(c => c.Bags)
@@ -61,29 +69,31 @@ namespace Tests
             {
                 new()
                 {
-                    StockId = stock.Id,
-                    LotNo = stock.LotNo,
+                    // Stock=stock,
+                    StockId = stock1.Id,
+                    // LotNo = stock.LotNo,
                     Bags = 200,
-                    WeightKg = 15000,
-                    Origin = stock.Origin,
-                    AnalysisResult = stock.AnalysisResult,
-                    CompanyId = stock.CompanyId,
-                    InspectionId = stock.InspectionId,
-                    LocationId = stock.LocationId,
-                    SupplierId = stock.SupplierId
+                    WeightKg = 15000
+                    // Origin = stock.Origin,
+                    // AnalysisResult = stock.AnalysisResult,
+                    // CompanyId = stock.CompanyId,
+                    // InspectionId = stock.InspectionId,
+                    // LocationId = stock.LocationId,
+                    // SupplierId = stock.SupplierId
                 },
                 new()
                 {
-                    StockId = stock.Id,
-                    LotNo = stock.LotNo,
+                    // Stock=stock,
+                    StockId = stock2.Id,
+                    // LotNo = stock.LotNo,
                     Bags = 25,
-                    WeightKg = 800.0,
-                    Origin = stock.Origin,
-                    AnalysisResult = stock.AnalysisResult,
-                    CompanyId = stock.CompanyId,
-                    InspectionId = stock.InspectionId,
-                    LocationId = stock.LocationId,
-                    SupplierId = stock.SupplierId
+                    WeightKg = 800.0
+                    // Origin = stock.Origin,
+                    // AnalysisResult = stock.AnalysisResult,
+                    // CompanyId = stock.CompanyId,
+                    // InspectionId = stock.InspectionId,
+                    // LocationId = stock.LocationId,
+                    // SupplierId = stock.SupplierId
                 }
             };
             var request = new StuffingRequest
@@ -92,7 +102,7 @@ namespace Tests
                 StuffingDate = new DateTime(2013, 1, 1),
                 IncomingStocks = incomingStocks
             };
-            return (container, request);
+            return (container, stock1, stock2, request);
         }
 
         [Fact]
@@ -334,7 +344,7 @@ namespace Tests
             using var session = store.OpenAsyncSession();
             var sut = GetStockManagementService(session);
 
-            var (container, request) = await CreateStockAndContainer(session);
+            var (container, _, _, request) = await CreateStockAndContainer(session);
 
             // Act
             ServerResponse response = await sut.StuffContainer(request);
@@ -348,6 +358,7 @@ namespace Tests
             actualContainer.Bags.Should().Be(225);
             actualContainer.StockWeightKg.Should().Be(15_800);
             actualContainer.StuffingDate.Should().Be(new DateTime(2013, 1, 1));
+            actualContainer.Status.Should().Be(ContainerStatus.Stuffing);
         }
 
         [Fact]
@@ -358,7 +369,7 @@ namespace Tests
             using var session = store.OpenAsyncSession();
             var sut = GetStockManagementService(session);
 
-            var (_, request) = await CreateStockAndContainer(session);
+            var (_, stock1, stock2, request) = await CreateStockAndContainer(session);
 
             // Act
             var response = await sut.StuffContainer(request);
@@ -367,24 +378,30 @@ namespace Tests
             WaitForIndexing(store);
 
             var outgoingStockIds = response.Dto.Select(x => x.StockId).ToList();
-            
-            var stocks = await session.Query<Stock>()
+
+            var outgoingStocks = await session.Query<Stock>()
                 .Where(c => c.Id.In(outgoingStockIds))
                 .ToListAsync();
 
-            var stock = stocks[0];
-            stock.StockInDate.Should().BeNull();
-            stock.StockOutDate.Should().Be(request.StuffingDate);
-            stock.Bags.Should().Be(request.IncomingStocks[0].Bags);
-            stock.WeightKg.Should().Be(request.IncomingStocks[0].WeightKg);
-            stock.Id.Should().NotBeNull();
-            stock.InspectionId.Should().Be(request.IncomingStocks[0].InspectionId);
-            stock.LotNo.Should().Be(request.IncomingStocks[0].LotNo);
-            stock.AnalysisResult.Should().Be(request.IncomingStocks[0].AnalysisResult);
-            stock.SupplierId.Should().Be(request.IncomingStocks[0].SupplierId);
-            stock.LocationId.Should().Be(request.IncomingStocks[0].LocationId);
-            stock.CompanyId.Should().Be(COMPANY_ID);
-            stock.Origin.Should().Be(request.IncomingStocks[0].Origin);
+            var outgoingStock = outgoingStocks[0];
+            outgoingStock.StockInDate.Should().BeNull();
+            outgoingStock.StockOutDate.Should().Be(request.StuffingDate);
+            outgoingStock.Bags.Should().Be(request.IncomingStocks[0].Bags);
+            outgoingStock.WeightKg.Should().Be(request.IncomingStocks[0].WeightKg);
+            outgoingStock.Id.Should().NotBeNull();
+            outgoingStock.InspectionId.Should().Be(stock1.InspectionId);
+            outgoingStock.LotNo.Should().Be(stock1.LotNo);
+            outgoingStock.AnalysisResult.Should().Be(stock1.AnalysisResult);
+            outgoingStock.SupplierId.Should().Be(stock1.SupplierId);
+            outgoingStock.LocationId.Should().Be(stock1.LocationId);
+            outgoingStock.CompanyId.Should().Be(COMPANY_ID);
+            outgoingStock.Origin.Should().Be(stock1.Origin);
+
+            var allStocks = await session.Query<Stock>().ToListAsync();
+            allStocks.Should().Contain(c => c.Id == stock1.Id);
+            allStocks.Should().Contain(c => c.Id == stock2.Id);
+            allStocks.Should().Contain(c => c.Id == outgoingStockIds[0]);
+            allStocks.Should().Contain(c => c.Id == outgoingStockIds[1]);
         }
     }
 }

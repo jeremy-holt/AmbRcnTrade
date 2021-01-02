@@ -8,12 +8,12 @@ namespace AmbRcnTradeServer.Constants
 {
     public enum ContainerStatus
     {
-        Empty=1,
+        Empty = 1,
         Stuffing,
         OnWayToPort,
         Gated,
         OnBoardVessel,
-        Cancelled ,
-        
+        Shipped,
+        Cancelled
     }
 }

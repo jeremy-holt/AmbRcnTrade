@@ -71,6 +71,10 @@ export class App {
         { route: "purchase/list", name: "purchaseList", title: "Purchases", nav: true, moduleId: "modules/purchase/purchase-list", roles: ["admin", "user", "inspector", "warehouseMan"] },
         { route: "purchase/edit/:id?", name: "purchaseEdit", title: "Purchase", moduleId: "modules/purchase/purchase-edit", roles: ["admin", "user", "inspector", "warehouseMan"] },
 
+        // Container
+        { route: "container/list", name: "containerList", title: "Containers", nav: true, moduleId: "modules/container/container-list", roles: ["admin", "user", "inspector", "warehouseMan"] },
+        { route: "container/edit/:id?", name: "containerEdit", title: "Container", moduleId: "modules/container/container-edit", roles: ["admin", "user", "inspector", "warehouseMan"] },
+
         // Dictionary items       
         { route: "dictionary/customer/edit", name: "customerEdit", title: "Customers", nav: true, moduleId: "modules/dictionary/customer/customer-edit", roles: ["admin"] },
         { route: "dictionary/port/edit", name: "portEdit", title: "Ports", nav: true, moduleId: "modules/dictionary/port/port-edit", roles: ["admin"] },

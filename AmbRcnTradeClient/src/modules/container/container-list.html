@@ -1,0 +1,42 @@
+<template>
+  <require from="./container-status-formatter-valueconverter"></require>
+
+  <toolbar type="menu" caption="Containers">
+    <toolbar-item icon="fas fa-plus" click.call="addContainer()"></toolbar-item>
+  </toolbar>
+
+  <div class="row my-3">
+    <div class="col">
+      <select-input source.bind="containerStatusList" value.bind="selectedContainerStatus" label="Filter by container status" warn-null="false"></select-input>
+    </div>
+  </div>
+
+  <table class="table table-sm table-bordered">
+    <thead>
+      <tr>
+        <th>Container number        </th>
+        <th>Seal number</th>
+        <th>Stuffing date</th>
+        <th>Dispatch date</th>
+        <th>Bags</th>
+        <th>Stock weight</th>
+        <th>Weighbridge weight</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr repeat.for="item of list">
+        <td>
+          <a route-href="containerEdit; params.bind:{id: encode(item.id)}">${item.containerNumber}</a>
+        </td>
+        <td>${item.sealNumber}</td>
+        <td>${item.stuffingDate | dateFormat: "DD/MM/YYYY"}</td>
+        <td>${item.dispatchDate | dateFormat: "DD/MM/YYYY"}</td>
+        <td>${item.bags | numberFormat: "0,0"}</td>
+        <td>${item.stockWeightKg | numberFormat: "0,0"}</td>
+        <td>${item.weighbridgeWeightKg | numberFormat: "0,0"}</td>
+        <td>${item.status | containerStatusFormatter}</td>
+      </tr>
+    </tbody>
+  </table>
+</template>

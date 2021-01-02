@@ -1,0 +1,48 @@
+<template>
+  <toolbar type="menu" caption="Container" disabled-save.bind="!canSave" save.call="save()" list-route="containerList">
+  </toolbar>
+
+  <div class="card">
+    <div class="card-header">
+      <h4 if.bind="model.id">Container ${model.containerNumber}</h4>
+      <h4 else>New container</h4>
+    </div>
+
+    <div class="card-body">
+      <div class="row">
+        <div class="col-6">
+          <select-input source.bind="containerStatusList" value.bind="selectedContainerStatus" label="Status"></select-input>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col">
+          <text-input value.bind="model.containerNumber" label="Container number"></text-input>
+        </div>
+        <div class="col">
+          <text-input value.bind="model.sealNumber" label="Seal number"></text-input>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col">
+          <date-input value.bind="model.stuffingDate" disabled="true" label="Stuffing date"></date-input>
+        </div>
+        <div class="col">
+          <date-input value.bind="model.dispatchDate" label="Dispatched to port"></date-input>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col mt-1">
+          <div class="form-label">Stuffed quantities from stock</div>
+          ${model.bags | numberFormat: "0,0"} bags<br>
+          ${model.stockWeightKg | numberFormat: "0,0"} kg (from stock)
+        </div>
+        <div class="col">
+          <number-input value.bind="model.weighbridgeWeightKg" label="Weighbridge weight kg"></number-input>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>

@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using AmberwoodCore.Extensions;
 using AmberwoodCore.Responses;
+using AmbRcnTradeServer.Constants;
 using AmbRcnTradeServer.Models.ContainerModels;
 using AmbRcnTradeServer.Models.InspectionModels;
 using AmbRcnTradeServer.Models.StockManagementModels;
@@ -113,26 +114,33 @@ namespace AmbRcnTradeServer.Services
             container.Bags = container.IncomingStocks.Sum(c => c.Bags);
             container.StockWeightKg = container.IncomingStocks.Sum(c => c.WeightKg);
             container.StuffingDate = request.StuffingDate;
+            container.Status = ContainerStatus.Stuffing;
 
             var outgoingStocks = new List<OutgoingStock>();
 
-            foreach (var stock in request.IncomingStocks.Select(item => new Stock
+            var stocks = await _session.LoadListFromMultipleIdsAsync<Stock>(request.IncomingStocks.Select(x => x.StockId));
+
+            foreach (var item in stocks)
             {
-                Bags = item.Bags,
-                Origin = item.Origin,
-                AnalysisResult = item.AnalysisResult,
-                CompanyId = item.CompanyId,
-                InspectionId = item.InspectionId,
-                LocationId = item.LocationId,
-                LotNo = item.LotNo,
-                SupplierId = item.SupplierId,
-                WeightKg = item.WeightKg,
-                StockInDate = null,
-                StockOutDate = request.StuffingDate,
-                IsStockIn = false,
-                ContainerId = request.ContainerId
-            }))
-            {
+                var bags = request.IncomingStocks.Single(c => c.StockId == item.Id).Bags;
+                var weightKg = request.IncomingStocks.Single(c => c.StockId == item.Id).WeightKg;
+                var stock = new Stock
+                {
+                    Bags = bags,
+                    WeightKg = weightKg,
+                    Origin = item.Origin,
+                    AnalysisResult = item.AnalysisResult,
+                    CompanyId = item.CompanyId,
+                    InspectionId = item.InspectionId,
+                    LocationId = item.LocationId,
+                    LotNo = item.LotNo,
+                    SupplierId = item.SupplierId,
+
+                    StockInDate = null,
+                    StockOutDate = request.StuffingDate,
+                    IsStockIn = false,
+                    ContainerId = request.ContainerId
+                };
                 await _session.StoreAsync(stock);
                 outgoingStocks.Add(new OutgoingStock {StockId = stock.Id});
             }

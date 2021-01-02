@@ -108,17 +108,17 @@ export const initialState: IState = {
       name: undefined!,
       companyId: undefined!,
       locationId: undefined!,
-      locationName: undefined!,
       stockInDate: undefined!,
       stockOutDate: undefined!,
       lotNo: undefined!,
       bags: undefined!,
       weightKg: undefined!,
-      inspectionId: undefined!,      
+      inspectionId: undefined!,
       isStockIn: undefined!,
       origin: undefined!,
       supplierId: undefined!,
-      analysisResult: undefined!
+      analysisResult: undefined!,
+      containerId: undefined!
     },
     list: [],
     stockBalanceList: []
@@ -137,5 +137,9 @@ export const initialState: IState = {
     },
     list: [],
     nonCommittedStocksList: []
-  }
+  },
+  stockManagement: {
+    stuffContainer: []
+  },
+  container: { current: undefined!, list: [] }
 };

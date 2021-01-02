@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using AmberwoodCore.Controllers;
 using AmberwoodCore.Responses;
+using AmbRcnTradeServer.Models.ContainerModels;
 using AmbRcnTradeServer.Models.StockManagementModels;
 using AmbRcnTradeServer.Models.StockModels;
 using AmbRcnTradeServer.Services;
@@ -35,6 +36,13 @@ namespace AmbRcnTradeServer.Controllers
         public async Task<ActionResult<ServerResponse>> RemoveInspectionFromStock(RemoveInspectionFromStockRequest request)
         {
             return await _service.RemoveInspectionFromStock(request.InspectionId, request.StockId);
+        }
+
+        [Authorize]
+        [HttpPost("[action]")]
+        public async Task<ActionResult<ServerResponse<List<OutgoingStock>>>> StuffContainer(StuffingRequest request)
+        {
+            return await _service.StuffContainer(request);
         }
 
         [Authorize]

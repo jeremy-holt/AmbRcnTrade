@@ -2,22 +2,21 @@ import { IEntityCompany } from "interfaces/IEntity";
 import { IAnalysisResult } from "./../inspections/IAnalysis";
 
 export interface IStock extends IEntityCompany {
-  id: string;
-  name: string;
-  companyId: string;
   locationId: string;
-  locationName?: string;
+  analysisResult: IAnalysisResult;
+  isStockIn: boolean;
   stockInDate: string | null;
-  lotNo: number;
+  stockOutDate: string | null;
   bags: number;
   weightKg: number;
+  lotNo: number;
+  companyId: string;
+  containerId: string;
+  id: string;
   inspectionId: string;
-  stockOutDate: string | null;
-  isStockIn: boolean;
+  name: string;
   origin: string;
-  analysisResult: IAnalysisResult,
   supplierId: string;
-  supplierName?: string;
 
   selected?: boolean;
 }
