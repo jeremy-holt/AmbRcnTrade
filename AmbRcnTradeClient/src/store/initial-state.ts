@@ -139,7 +139,8 @@ export const initialState: IState = {
     nonCommittedStocksList: []
   },
   stockManagement: {
-    stuffContainer: []
+    stuffContainer: [],
+    availableContainers: []
   },
   container: { current: undefined!, list: [] }
 };

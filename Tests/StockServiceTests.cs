@@ -39,7 +39,7 @@ namespace Tests
             using var session = store.OpenAsyncSession();
             var sut = GetStockService(session);
             var inspectionService = GetInspectionService(session);
-            
+
             await InitializeIndexes(store);
             var fixture = new Fixture();
 
@@ -60,7 +60,7 @@ namespace Tests
 
             await session.SaveChangesAsync();
             WaitForIndexing(store);
-            
+
             // Act
             var actual = await sut.Load(stock.Id);
 
@@ -83,41 +83,39 @@ namespace Tests
 
             var location = fixture.DefaultEntity<Customer>().Create();
             await session.StoreAsync(location);
-            
+
             var stockIn1 = fixture.DefaultEntity<Stock>()
                 .Without(c => c.StockOutDate)
-                .Without(c => c.InspectionId)
-                .With(c => c.LocationId,location.Id)
-                .With(c => c.LotNo,1)
-                .With(c=>c.InspectionId,"inspections/1-A")
+                .With(c => c.LocationId, location.Id)
+                .With(c => c.LotNo, 1)
+                .With(c => c.InspectionId, "inspections/1-A")
                 .Create();
             await session.StoreAsync(stockIn1);
 
             var stockIn2 = fixture.DefaultEntity<Stock>()
                 .Without(c => c.StockOutDate)
-                .Without(c => c.InspectionId)
-                .With(c => c.LocationId,location.Id)
-                .With(c => c.LotNo,2)
-                .With(c=>c.InspectionId,"inspections/1-A")
+                .With(c => c.LocationId, location.Id)
+                .With(c => c.LotNo, 2)
+                .With(c => c.Bags, 500)
+                .With(c => c.InspectionId, "inspections/1-A")
                 .Create();
             await session.StoreAsync(stockIn2);
 
             var stockOut = fixture.DefaultEntity<Stock>()
                 .Without(c => c.StockInDate)
-                .Without(c => c.InspectionId)
                 .With(c => c.LotNo, stockIn2.LotNo)
-                .With(c => c.LocationId,location.Id)
-                .With(c => c.LotNo,2)
-                .With(c=>c.InspectionId,"inspections/1-A")
+                .With(c => c.LocationId, location.Id)
+                .With(c => c.LotNo, 2)
+                .With(c => c.Bags, -150)
+                .With(c => c.InspectionId, "inspections/1-A")
                 .Create();
             await session.StoreAsync(stockOut);
 
             var stockIn3 = fixture.DefaultEntity<Stock>()
                 .Without(c => c.StockOutDate)
-                .Without(c => c.InspectionId)
-                .With(c => c.LocationId,location.Id)
-                .With(c => c.LotNo,3)
-                .With(c=>c.InspectionId,"inspections/1-A")
+                .With(c => c.LocationId, location.Id)
+                .With(c => c.LotNo, 3)
+                .With(c => c.InspectionId, "inspections/1-A")
                 .Create();
             await session.StoreAsync(stockIn3);
 
@@ -127,18 +125,23 @@ namespace Tests
 
             // Act
             var list = await sut.LoadStockBalanceList(COMPANY_ID, null, null);
-            var actual = list[1];
 
             // Assert
             list.Should().HaveCount(3);
             list.Should().OnlyHaveUniqueItems(c => c.LotNo);
+
+            var actual = list.First(c => c.LotNo == stockIn2.LotNo);
             actual.LotNo.Should().Be(2);
 
-            var expectedBalanceBags = stockIn2.Bags - stockOut.Bags;
-
+            var expectedBalanceBags = stockIn2.Bags + stockOut.Bags;
+            var expectedBalanceStockWeightKg = stockIn2.WeightKg + stockOut.WeightKg;
+            
             actual.BagsIn.Should().Be(stockIn2.Bags);
             actual.BagsOut.Should().Be(stockOut.Bags);
             actual.Balance.Should().Be(expectedBalanceBags);
+
+            actual.BalanceStockWeightKg.Should().Be(expectedBalanceStockWeightKg);
+            
             actual.LocationName.Should().Be(location.Name);
             actual.InspectionIds.Should().HaveCountGreaterThan(0);
             actual.AnalysisResults.Should().HaveCountGreaterThan(0);
@@ -291,12 +294,12 @@ namespace Tests
             WaitForIndexing(store);
 
             // Act
-            var list = await sut.LoadStockList(COMPANY_ID,new List<string>(){stockIn1.Id,stockIn2.Id});
+            var list = await sut.LoadStockList(COMPANY_ID, new List<string>() {stockIn1.Id, stockIn2.Id});
             list.Should().BeInAscendingOrder(c => c.LotNo);
             list.Should().HaveCount(2);
             list.Should().Contain(c => c.StockId == stockIn1.Id);
             list.Should().Contain(c => c.StockId == stockIn2.Id);
-            
+
             // var actual = list.Single(c => c.StockId == stockIn2.Id);
             // actual.BagsIn.Should().Be(stockIn2.Bags);
             // actual.BagsOut.Should().Be(0);

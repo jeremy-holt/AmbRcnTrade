@@ -14,14 +14,15 @@ namespace AmbRcnTradeServer.Models.StockModels
         
         public double BagsIn { get; set; }
         public double BagsOut { get; set; }
-        public double Balance => BagsIn - BagsOut;
+        public double Balance { get; set; }
         public string LocationName { get; set; }
         public string LocationId { get; set; }
-        public bool IsStockZero => Balance > 1 || Balance < -1;
+        public bool IsStockZero { get; set; }
         public List<AnalysisResult> AnalysisResults { get; set; } = new();
         public List<string> InspectionIds { get; set; } = new();
         public double Kor { get; set; }
         public double Moisture { get; set; }
         public double Count { get; set; }
+        public double BalanceStockWeightKg { get; set; }
     }
 }

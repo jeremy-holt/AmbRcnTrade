@@ -19,6 +19,7 @@ namespace Tests
     {
         public ContainerServiceTests(ITestOutputHelper output) : base(output) { }
 
+
         [Fact]
         public async Task Load_ShouldLoadContainer()
         {
@@ -64,6 +65,7 @@ namespace Tests
             list.Should().HaveCount(1);
             list[0].Id.Should().Be(containers[1].Id);
             list[0].BookingNumber.Should().Be(containers[1].BookingNumber);
+            list[0].NettWeightKg.Should().Be(containers[1].NettWeightKg);
         }
 
         [Fact]
@@ -78,6 +80,8 @@ namespace Tests
             var container = fixture.DefaultEntity<Container>()
                 .With(c => c.StuffingDate, new DateTime(2013, 1, 1))
                 .With(c => c.DispatchDate, default(DateTime?))
+                .Without(c => c.Bags)
+                .Without(c => c.NettWeightKg)
                 .Create();
 
             // Act
@@ -86,6 +90,8 @@ namespace Tests
             // Assert
             var actual = await session.LoadAsync<Container>(response.Id);
             actual.Should().NotBeNull();
+            actual.StockWeightKg.Should().Be(container.IncomingStocks.Sum(c => c.WeightKg));
+            actual.Bags.Should().Be(container.IncomingStocks.Sum(c => c.Bags));
         }
     }
 }

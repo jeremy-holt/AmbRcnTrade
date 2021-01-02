@@ -1,3 +1,4 @@
+import { IAvailableContainerItem } from "./../interfaces/stockManagement/IAvailableContainerItem";
 import { IOutgoingStock } from "./../interfaces/stockManagement/IIncomingStock";
 import { IAppUser, IAppUserListItem } from "interfaces/IAppUser";
 import { IAttachmentInfo } from "interfaces/IAttachmentInfo";
@@ -49,6 +50,6 @@ export interface IState {
   inspection: { current: IInspection, list: IInspectionListItem[], movedToStockId: string; };
   stock: { current: IStock, list: IStockListItem[], stockBalanceList: IStockBalanceListItem[] };
   purchase: { current: IPurchase, list: IPurchaseListItem[], nonCommittedStocksList: IStockListItem[] };
-  stockManagement: { stuffContainer: IOutgoingStock[] };
+  stockManagement: { stuffContainer: IOutgoingStock[], availableContainers: IAvailableContainerItem[] };
   container: { current: IContainer; list: IContainer[] };
 }

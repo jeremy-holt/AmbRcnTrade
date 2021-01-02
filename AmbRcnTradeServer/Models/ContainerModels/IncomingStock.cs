@@ -14,6 +14,7 @@ namespace AmbRcnTradeServer.Models.ContainerModels
         public double Bags { get; set; }
 
         public double WeightKg { get; set; }
+        public long LotNo { get; set; }
     }
 
     public class StuffingRequest

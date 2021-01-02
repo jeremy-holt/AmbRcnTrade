@@ -41,8 +41,8 @@ namespace AmbRcnTradeServer.RavenIndexes
                     BagsIn = grp.Sum(x => x.BagsIn),
                     BagsOut = grp.Sum(x => x.BagsOut),
                     grp.Key.LocationName,
-                    AnalysisResult=default(object),
-                    InspectionId=default(string),
+                    AnalysisResult = default(object),
+                    InspectionId = default(string),
                     AnalysisResults = grp.Select(x => x.AnalysisResult),
                     InspectionIds = grp.Select(x => x.InspectionId).ToList()
                 };

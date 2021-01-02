@@ -25,5 +25,6 @@ namespace AmbRcnTradeServer.Models.ContainerModels
         public DateTime? DispatchDate { get; set; }
         public double StockWeightKg { get; set; }
         public List<IncomingStock> IncomingStocks { get; set; } = new();
+        public double NettWeightKg { get; set; }
     }
 }

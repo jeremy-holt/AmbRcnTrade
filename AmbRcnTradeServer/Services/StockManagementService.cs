@@ -23,6 +23,7 @@ namespace AmbRcnTradeServer.Services
         Task<ServerResponse> RemoveInspectionFromStock(string inspectionId, string stockId);
         Task<List<StockListItem>> GetNonCommittedStocks(string companyId, string supplierId);
         Task<ServerResponse<List<OutgoingStock>>> StuffContainer(StuffingRequest request);
+        Task<List<AvailableContainerItem>> GetAvailableContainers(string companyId);
     }
 
     public class StockManagementService : IStockManagementService
@@ -148,6 +149,31 @@ namespace AmbRcnTradeServer.Services
             await _session.StoreAsync(container);
 
             return new ServerResponse<List<OutgoingStock>>(outgoingStocks, "Stuffed container");
+        }
+
+        public async Task<List<AvailableContainerItem>> GetAvailableContainers(string companyId)
+        {
+            var containers = await _session.Query<Container>()
+                .Where(c => c.CompanyId == companyId && (c.Status == ContainerStatus.Empty || c.Status == ContainerStatus.Stuffing))
+                .ToListAsync();
+
+            var list = new List<AvailableContainerItem>();
+            foreach (var item in containers)
+            {
+                var availableContainer = new AvailableContainerItem
+                {
+                    ContainerId = item.Id,
+                    Status = item.Status,
+                    BookingNumber = item.BookingNumber,
+                    ContainerNumber = item.ContainerNumber,
+                    Bags = item.Bags,
+                    StockWeightKg = item.StockWeightKg,
+                    IsOverweight = item.StockWeightKg > 24_500 || item.Bags > 325
+                };
+                list.Add(availableContainer);
+            }
+
+            return list;
         }
     }
 }

@@ -4,8 +4,8 @@
   <ul class="list-group small">
     <li class="list-group-item font-weight-bold">
       <div class="row">
-        <di class="col">Warehouse</di>
         <div class="col">Lot no</div>
+        <div class="col">Warehouse</div>
         <div class="text-right col">Bags IN</div>
         <div class="text-right col">Bags OUT</div>
         <div class="text-right col">Balance</div>
@@ -13,9 +13,12 @@
       </div>
     </li>
     <li class="list-group-item" repeat.for="item of list">
-      <div class="row">
+      <div class="row">        
+        <div class="col"><a href="#" class="with-decoration" click.delegate="openStuffContainerDialog(item)">
+          <i class="far fa-fw fa-container-storage mr-2"></i>
+          Lot ${item.lotNo} 
+        </a></div>
         <div class="col">${item.locationName}</div>
-        <div class="col">${item.lotNo}</div>
         <div class="text-right col">${item.bagsIn | numberFormat:"0,0"}</div>
         <div class="text-right col">${item.bagsOut | numberFormat:"0,0"}</div>
         <div class="text-right col">${item.balance | numberFormat:"0,0"}</div>

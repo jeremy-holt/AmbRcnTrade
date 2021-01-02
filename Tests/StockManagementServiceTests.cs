@@ -69,31 +69,17 @@ namespace Tests
             {
                 new()
                 {
-                    // Stock=stock,
+                    LotNo=stock1.LotNo,
                     StockId = stock1.Id,
-                    // LotNo = stock.LotNo,
                     Bags = 200,
                     WeightKg = 15000
-                    // Origin = stock.Origin,
-                    // AnalysisResult = stock.AnalysisResult,
-                    // CompanyId = stock.CompanyId,
-                    // InspectionId = stock.InspectionId,
-                    // LocationId = stock.LocationId,
-                    // SupplierId = stock.SupplierId
                 },
                 new()
                 {
-                    // Stock=stock,
                     StockId = stock2.Id,
-                    // LotNo = stock.LotNo,
+                    LotNo = stock2.LotNo,
                     Bags = 25,
                     WeightKg = 800.0
-                    // Origin = stock.Origin,
-                    // AnalysisResult = stock.AnalysisResult,
-                    // CompanyId = stock.CompanyId,
-                    // InspectionId = stock.InspectionId,
-                    // LocationId = stock.LocationId,
-                    // SupplierId = stock.SupplierId
                 }
             };
             var request = new StuffingRequest
@@ -103,6 +89,64 @@ namespace Tests
                 IncomingStocks = incomingStocks
             };
             return (container, stock1, stock2, request);
+        }
+
+                [Fact]
+        public async Task GetAvailableContainers_ShouldReturnEmptyOrStuffingContainers()
+        {
+            // Arrange
+            using var store = GetDocumentStore();
+            using var session = store.OpenAsyncSession();
+            var sut = GetStockManagementService(session);
+            var fixture = new Fixture();
+
+            var container1 = fixture.DefaultEntity<Container>()
+                .With(c => c.Status, ContainerStatus.Stuffing)
+                .With(c => c.IncomingStocks, new List<IncomingStock>
+                {
+                    new() {Bags = 200, WeightKg = 16_000}
+                })
+                .With(c => c.Bags, 200)
+                .With(c => c.StockWeightKg, 16_000)
+                .Create();
+
+            var container2 = fixture.DefaultEntity<Container>()
+                .With(c => c.Status, ContainerStatus.Empty)
+                .Without(c => c.IncomingStocks)
+                .Without(c => c.Bags)
+                .Without(c => c.StockWeightKg)
+                .Create();
+
+            var container3 = fixture.DefaultEntity<Container>()
+                .With(c => c.Status, ContainerStatus.OnWayToPort)
+                .Without(c => c.IncomingStocks)
+                .Create();
+
+            var container4 = fixture.DefaultEntity<Container>()
+                .With(c => c.Status, ContainerStatus.Stuffing)
+                .With(c => c.Bags, 350)
+                .With(c => c.StockWeightKg, 25_000)
+                .With(c => c.IncomingStocks, new List<IncomingStock>
+                {
+                    new() {Bags = 350, WeightKg = 25_000}
+                })
+                .Create();
+
+            await new[] {container1, container2, container3, container4}.SaveList(session);
+            WaitForIndexing(store);
+
+            // Act
+            var list = await sut.GetAvailableContainers(COMPANY_ID);
+
+            // Assert
+            list.Should().OnlyContain(c => c.Status == ContainerStatus.Empty || c.Status == ContainerStatus.Stuffing);
+            list.Should().Contain(c => c.ContainerNumber == container1.ContainerNumber);
+            list.Should().Contain(c => c.BookingNumber == container1.BookingNumber);
+            list.Should().Contain(c => Math.Abs(c.Bags - container1.Bags) < 0.01);
+            list.Should().Contain(c => Math.Abs(c.StockWeightKg - container1.StockWeightKg) < 0.01);
+
+            var overweightContainer = list.Single(c => c.ContainerId == container4.Id);
+            overweightContainer.IsOverweight.Should().BeTrue();
         }
 
         [Fact]

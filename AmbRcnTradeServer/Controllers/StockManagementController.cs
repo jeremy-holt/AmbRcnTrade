@@ -51,5 +51,12 @@ namespace AmbRcnTradeServer.Controllers
         {
             return await _service.GetNonCommittedStocks(companyId, supplierId);
         }
+
+        [Authorize]
+        [HttpGet("[action]")]
+        public async Task<ActionResult<List<AvailableContainerItem>>> GetAvailableContainers(string companyId)
+        {
+            return await _service.GetAvailableContainers(companyId);
+        }
     }
 }

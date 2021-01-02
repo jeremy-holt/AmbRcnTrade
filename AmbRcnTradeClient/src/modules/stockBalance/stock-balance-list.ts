@@ -1,3 +1,5 @@
+import { StuffContainerDialog } from "./stuff-container-dialog";
+import { DialogService } from "aurelia-dialog";
 import { StockService } from "./../../services/stock-service";
 import { IStockBalanceListItem } from "./../../interfaces/stocks/IStockBalanceListItem";
 import { autoinject, observable } from "aurelia-framework";
@@ -12,7 +14,8 @@ export class StockBalanceList {
   protected list: IStockBalanceListItem[] = [];
 
   constructor(
-    private stockService: StockService
+    private stockService: StockService,
+    private dialogService: DialogService
   ) { }
 
   public async activate(prms: { lotNo: number, locationId: string }) {
@@ -21,5 +24,17 @@ export class StockBalanceList {
 
   protected stateChanged(state: IState) {
     this.list = _.cloneDeep(state.stock.stockBalanceList);
+  }
+
+  protected openStuffContainerDialog(stockBalanceItem: IStockBalanceListItem) {
+    this.dialogService.open(
+      {
+        viewModel: StuffContainerDialog,
+        model: {stockBalance: stockBalanceItem}
+      }
+    ).whenClosed(result => {
+      const { container, bags, stockWeightKg } = result.output;
+      console.log("CONTAINER", container,"BAGS", bags, "STOCKWEIGHTKG", stockWeightKg);
+    });
   }
 }

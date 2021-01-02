@@ -1,3 +1,4 @@
+import { Router } from "aurelia-router";
 import { CONTAINER_STATUS_LIST, IContainerStatus } from "./../../constants/app-constants";
 import { IParamsId } from "interfaces/IParamsId";
 import { ContainerService } from "./../../services/container-service";
@@ -16,7 +17,8 @@ export class ContainerEdit {
   @observable protected selectedContainerStatus: IContainerStatus = undefined;
 
   constructor(
-    private containerService: ContainerService
+    private containerService: ContainerService,
+    private router: Router
   ) { }
 
   protected async activate(prms: IParamsId) {
@@ -43,11 +45,8 @@ export class ContainerEdit {
     if (this.canSave) {
       this.model.status = this.selectedContainerStatus.id;
       await this.containerService.save(this.model);
+      this.router.navigateToRoute("containerList");
     }
-  }
-
-  protected async addContainer() {
-    await this.containerService.createContainer();
-  }
+  }  
 
 }

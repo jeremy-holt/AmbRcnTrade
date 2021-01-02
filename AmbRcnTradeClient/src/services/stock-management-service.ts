@@ -1,3 +1,4 @@
+import { IAvailableContainerItem } from "./../interfaces/stockManagement/IAvailableContainerItem";
 import { IOutgoingStock } from "./../interfaces/stockManagement/IIncomingStock";
 import { IStockListItem } from "./../interfaces/stocks/IStockListItem";
 import { HttpClient } from "aurelia-fetch-client";
@@ -28,6 +29,7 @@ export class StockManagementService extends FetchService {
     store.registerAction("inspectionMoveToStockClearAction", inspectionMoveToStockClearAction);
     store.registerAction("nonCommittedStocksListAction", nonCommittedStocksListAction);
     store.registerAction("stuffContainerAction", stuffContainerAction);
+    store.registerAction("availableContainersAction",availableContainersAction);
   }
 
   public async moveInspectionToStock(request: IMoveInspectionToStockRequest) {
@@ -47,6 +49,10 @@ export class StockManagementService extends FetchService {
   public async stuffContainer(request: IStuffingRequest) {
     return super.post(request, "stuffContainer", stuffContainerAction);
   }
+
+  public async getAvailableContainers(){
+    return super.get([super.currentCompanyIdQuery()],"getAvailableContainers",availableContainersAction);
+  }
 }
 
 export function inspectionMoveToStockAction(state: IState, result: IMovedInspectionResult) {
@@ -65,6 +71,12 @@ export function nonCommittedStocksListAction(state: IState, stocks: IStockListIt
 export function stuffContainerAction(state: IState, result: IOutgoingStock[]) {
   const newState = _.cloneDeep(state);
   newState.stockManagement.stuffContainer = result;
+  return newState;
+}
+
+export function availableContainersAction(state: IState, result: IAvailableContainerItem[]){
+  const newState = _.cloneDeep(state);
+  newState.stockManagement.availableContainers=result;
   return newState;
 }
 

@@ -15,4 +15,5 @@ export interface IContainer extends IEntityCompany {
     dispatchDate: string | null;
     stockWeightKg: number;
     incomingStocks: IIncomingStock[];
+    nettWeightKg: number;
 }

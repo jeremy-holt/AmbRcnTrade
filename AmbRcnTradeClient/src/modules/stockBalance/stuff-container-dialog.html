@@ -1,0 +1,59 @@
+<template>
+  <ux-dialog style="min-width:800px;">
+    <ux-dialog-header>
+      <h4>Move stocks from Lot ${model.lotNo} into a container</h4>
+    </ux-dialog-header>
+
+    <ux-dialog-body>
+      <ul class="list-group small" style="height:300px; overflow:auto">
+        <li class="list-group-item font-weight-bold">
+          <div class="row">
+            <div class="col">Container number</div>
+            <div class="col">Booking number</div>
+            <div class="col">Bags already in container</div>
+            <div class="col">Incoming weight from stock</div>
+            <div class="col"></div>
+          </div>
+        </li>
+        <li class="list-group-item ${item.selected ? 'list-group-item-highlight' : ''}" repeat.for="item of list">
+          <a href="#" click.delegate="selectRow($index)" class="text-decoration-none">
+            <div class="row">
+              <div class="col">${item.containerNumber}</div>
+              <div class="col">${item.bookingNumber}</div>
+              <div class="col">${item.bags | numberFormat: "0,0"}</div>
+              <div class="col">${item.stockWeightKg | numberFormat: "0,0"}</div>
+              <div class="col">
+                <i if.bind="item.isOverweight" class="fas fa-exclamation-triangle bg-warning"
+                  title="This container is possibly already at capacity"></i>
+              </div>
+            </div>
+          </a>
+        </li>
+      </ul>
+
+      <div class="row">
+        <div class="col">
+          ${model.balance | numberFormat:"0,0"} bags available on stock
+        </div>
+        <div class="col">
+          ${model.balanceKg | numberFormat: "0,0"} kg available on stock
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col">
+          <number-input value.bind="bags" label="Bags to add to container"></number-input>
+        </div>
+        <div class="col">
+          <number-input value.bind="stockWeightKg" label="Quantity kg to add to container"></number-input>
+        </div>
+      </div>
+
+    </ux-dialog-body>
+
+    <ux-dialog-footer>
+      <button type="button" class="btn btn-danger" disabled.bind="!canSave" click.delegate="okClicked()">Ok</button>
+      <button type="button" class="btn btn-secondary" click.delegate="controller.cancel()">Cancel</button>
+    </ux-dialog-footer>
+  </ux-dialog>
+</template>
