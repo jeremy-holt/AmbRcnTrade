@@ -88,34 +88,38 @@ namespace Tests
                 .Without(c => c.StockOutDate)
                 .Without(c => c.InspectionId)
                 .With(c => c.LocationId,location.Id)
-                .Without(c => c.LotNo)
+                .With(c => c.LotNo,1)
+                .With(c=>c.InspectionId,"inspections/1-A")
                 .Create();
-            await sut.Save(stockIn1);
+            await session.StoreAsync(stockIn1);
 
             var stockIn2 = fixture.DefaultEntity<Stock>()
                 .Without(c => c.StockOutDate)
                 .Without(c => c.InspectionId)
                 .With(c => c.LocationId,location.Id)
-                .Without(c => c.LotNo)
+                .With(c => c.LotNo,2)
+                .With(c=>c.InspectionId,"inspections/1-A")
                 .Create();
-            await sut.Save(stockIn2);
+            await session.StoreAsync(stockIn2);
 
             var stockOut = fixture.DefaultEntity<Stock>()
                 .Without(c => c.StockInDate)
                 .Without(c => c.InspectionId)
                 .With(c => c.LotNo, stockIn2.LotNo)
                 .With(c => c.LocationId,location.Id)
-                .Without(c => c.LotNo)
+                .With(c => c.LotNo,2)
+                .With(c=>c.InspectionId,"inspections/1-A")
                 .Create();
-            await sut.Save(stockOut);
+            await session.StoreAsync(stockOut);
 
             var stockIn3 = fixture.DefaultEntity<Stock>()
                 .Without(c => c.StockOutDate)
                 .Without(c => c.InspectionId)
                 .With(c => c.LocationId,location.Id)
-                .Without(c => c.LotNo)
+                .With(c => c.LotNo,3)
+                .With(c=>c.InspectionId,"inspections/1-A")
                 .Create();
-            await sut.Save(stockIn3);
+            await session.StoreAsync(stockIn3);
 
             await session.SaveChangesAsync();
 
@@ -136,6 +140,8 @@ namespace Tests
             actual.BagsOut.Should().Be(stockOut.Bags);
             actual.Balance.Should().Be(expectedBalanceBags);
             actual.LocationName.Should().Be(location.Name);
+            actual.InspectionIds.Should().HaveCountGreaterThan(0);
+            actual.AnalysisResults.Should().HaveCountGreaterThan(0);
         }
 
         [Fact]

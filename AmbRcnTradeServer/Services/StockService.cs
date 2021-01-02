@@ -85,6 +85,13 @@ namespace AmbRcnTradeServer.Services
                 .ProjectInto<StockBalanceListItem>()
                 .ToListAsync();
 
+            foreach (var item in list)
+            {
+                item.Kor = item.BagsIn == 0 ? 0 : item.AnalysisResults.Average(c => c.Kor);
+                item.Count = item.BagsIn == 0 ? 0 : item.AnalysisResults.Average(c => c.Count);
+                item.Moisture = item.BagsIn == 0 ? 0 : item.AnalysisResults.Average(c => c.Moisture);
+            }
+
             return list;
         }
 

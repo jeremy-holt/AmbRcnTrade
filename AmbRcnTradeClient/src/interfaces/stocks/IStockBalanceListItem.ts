@@ -1,3 +1,4 @@
+import { IAnalysisResult } from "interfaces/inspections/IAnalysis";
 
 export interface IStockBalanceListItem {
     lotNo: number;
@@ -6,5 +7,9 @@ export interface IStockBalanceListItem {
     balance: number;
     isStockZero: boolean;
     locationName: string;
-
+    analysisResults: IAnalysisResult[];
+    inspectionIds: string[];
+    kor: number;
+    moisture: number;
+    count: number;
 }

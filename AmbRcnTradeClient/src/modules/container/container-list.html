@@ -11,11 +11,12 @@
     </div>
   </div>
 
-  <table class="table table-sm table-bordered">
+  <table class="table table-sm table-bordered small">
     <thead>
-      <tr>
-        <th>Container number        </th>
+      <tr>        
+        <th>Container number        </th>        
         <th>Seal number</th>
+        <th>Booking number</th>
         <th>Stuffing date</th>
         <th>Dispatch date</th>
         <th>Bags</th>
@@ -30,6 +31,7 @@
           <a route-href="containerEdit; params.bind:{id: encode(item.id)}">${item.containerNumber}</a>
         </td>
         <td>${item.sealNumber}</td>
+        <td>${item.bookingNumber}</td>
         <td>${item.stuffingDate | dateFormat: "DD/MM/YYYY"}</td>
         <td>${item.dispatchDate | dateFormat: "DD/MM/YYYY"}</td>
         <td>${item.bags | numberFormat: "0,0"}</td>

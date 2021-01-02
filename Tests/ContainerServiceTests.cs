@@ -63,6 +63,7 @@ namespace Tests
             // Assert
             list.Should().HaveCount(1);
             list[0].Id.Should().Be(containers[1].Id);
+            list[0].BookingNumber.Should().Be(containers[1].BookingNumber);
         }
 
         [Fact]

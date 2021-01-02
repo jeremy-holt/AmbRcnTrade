@@ -14,6 +14,7 @@ namespace AmbRcnTradeServer.Models.ContainerModels
     {
         public string ContainerNumber { get; set; }
         public string SealNumber { get; set; }
+        public string BookingNumber { get; set; }
         public double Bags { get; set; }
         public double WeighbridgeWeightKg { get; set; } 
         public ContainerStatus Status { get; set; }

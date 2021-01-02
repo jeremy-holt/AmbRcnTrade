@@ -4,6 +4,7 @@ import { IIncomingStock } from "./../stockManagement/IIncomingStock";
 export interface IContainer extends IEntityCompany {
     containerNumber: string;
     sealNumber: string;
+    bookingNumber: string;
     bags: number;
     weighbridgeWeightKg: number; 
     status: ContainerStatus;

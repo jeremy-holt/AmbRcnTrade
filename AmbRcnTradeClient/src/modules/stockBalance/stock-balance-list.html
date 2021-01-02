@@ -9,6 +9,7 @@
         <div class="text-right col">Bags IN</div>
         <div class="text-right col">Bags OUT</div>
         <div class="text-right col">Balance</div>
+        <div class="col">Quality</div>
       </div>
     </li>
     <li class="list-group-item" repeat.for="item of list">
@@ -18,6 +19,7 @@
         <div class="text-right col">${item.bagsIn | numberFormat:"0,0"}</div>
         <div class="text-right col">${item.bagsOut | numberFormat:"0,0"}</div>
         <div class="text-right col">${item.balance | numberFormat:"0,0"}</div>
+        <div class="col">Kor: ${item.kor | numberFormat: "0,.00"}, Count: ${item.count | numberFormat: "0,0.0"}, Moisture: ${item.moisture/100 | numberFormat:"0.00%"}</div>
       </div>
     </li>
   </ul>

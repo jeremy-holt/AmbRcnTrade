@@ -1,5 +1,7 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using AmbRcnTradeServer.Models.InspectionModels;
 using Raven.Client.Documents;
 using Raven.Client.Documents.Linq;
 using Raven.Client.Documents.Session;
@@ -16,5 +18,10 @@ namespace AmbRcnTradeServer.Models.StockModels
         public string LocationName { get; set; }
         public string LocationId { get; set; }
         public bool IsStockZero => Balance > 1 || Balance < -1;
+        public List<AnalysisResult> AnalysisResults { get; set; } = new();
+        public List<string> InspectionIds { get; set; } = new();
+        public double Kor { get; set; }
+        public double Moisture { get; set; }
+        public double Count { get; set; }
     }
 }

@@ -1,6 +1,8 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using AmbRcnTradeServer.Models.DictionaryModels;
+using AmbRcnTradeServer.Models.InspectionModels;
 using AmbRcnTradeServer.Models.StockModels;
 using Raven.Client.Documents;
 using Raven.Client.Documents.Indexes;
@@ -22,7 +24,11 @@ namespace AmbRcnTradeServer.RavenIndexes
                     c.LocationId,
                     BagsIn = c.Bags > 0 ? c.Bags : 0,
                     BagsOut = c.Bags < 0 ? c.Bags : 0,
-                    LocationName = location.Name
+                    LocationName = location.Name,
+                    c.AnalysisResult,
+                    c.InspectionId,
+                    AnalysisResults = new List<object>(),
+                    InspectionIds = new List<string>()
                 };
             Reduce = results => from c in results
                 group c by new {c.CompanyId, c.LocationId, c.LocationName, c.LotNo}
@@ -34,7 +40,11 @@ namespace AmbRcnTradeServer.RavenIndexes
                     grp.Key.LocationId,
                     BagsIn = grp.Sum(x => x.BagsIn),
                     BagsOut = grp.Sum(x => x.BagsOut),
-                    grp.Key.LocationName
+                    grp.Key.LocationName,
+                    AnalysisResult=default(object),
+                    InspectionId=default(string),
+                    AnalysisResults = grp.Select(x => x.AnalysisResult),
+                    InspectionIds = grp.Select(x => x.InspectionId).ToList()
                 };
 
             Index(x => x.LotNo, FieldIndexing.Default);
@@ -52,6 +62,10 @@ namespace AmbRcnTradeServer.RavenIndexes
             public double BagsIn { get; set; }
             public double BagsOut { get; set; }
             public string LocationName { get; set; }
+            public AnalysisResult AnalysisResult { get; set; }
+            public string InspectionId { get; set; }
+            public IEnumerable<AnalysisResult> AnalysisResults { get; set; }
+            public IEnumerable<string> InspectionIds { get; set; }
         }
     }
 }
