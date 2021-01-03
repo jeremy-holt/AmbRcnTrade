@@ -1,0 +1,16 @@
+<template>
+  <ux-dialog>
+    <ux-dialog-header class="bg-danger">
+      <h4>Unstuff container</h4>
+    </ux-dialog-header>
+
+    <ux-dialog-body>
+      If you unstuff this container the goods inside will return to stock
+    </ux-dialog-body>
+
+    <ux-dialog-footer>
+      <button type="button" class="btn btn-danger" click.delegate="controller.ok()">Unstuff</button>
+      <button type="button" class="btn btn-secondary" click.delegate="controller.cancel()">Cancel</button>
+    </ux-dialog-footer>
+  </ux-dialog>
+</template>

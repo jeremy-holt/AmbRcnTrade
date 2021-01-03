@@ -64,6 +64,7 @@ namespace AmbRcnTradeServer.Services
             var stocks = await _session.LoadListFromMultipleIdsAsync<Stock>(container.IncomingStocks.SelectMany(stock => stock.StockIds.Select(stockItem => stockItem.StockId)));
 
             var removableStatus = new[] {ContainerStatus.Cancelled, ContainerStatus.Empty, ContainerStatus.Stuffing};
+            
             if (!container.Status.In(removableStatus))
                 throw new InvalidOperationException("Cannot remove stock from a container that is no longer in the warehouse");
 

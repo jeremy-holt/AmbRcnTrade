@@ -5,42 +5,53 @@
     <toolbar-item icon="fas fa-plus" click.call="addContainer()"></toolbar-item>
   </toolbar>
 
-  <div class="row my-3">
-    <div class="col">
-      <select-input source.bind="containerStatusList" value.bind="selectedContainerStatus" label="Filter by container status" warn-null="false"></select-input>
+  <div class="card">
+    <div class="card-header">
+      <h4>Containers list</h4>
+      <div class="my-4">Go to the <a route-href="stockBalanceList" class="with-decoration">Stock balances</a> page to select the stock to stuff into a container</div>
+    </div>
+
+    <div class="card-body">
+      <div class="row mb-3">
+        <div class="col">
+          <select-input source.bind="containerStatusList" value.bind="selectedContainerStatus"
+            label="Filter by container status" warn-null="false"></select-input>
+        </div>
+      </div>
+
+      <table class="table table-sm table-bordered small">
+        <thead>
+          <tr>
+            <th>Status</th>
+            <th>Container number </th>
+            <th>Seal number</th>
+            <th>Booking number</th>
+            <th>Stuffing date</th>
+            <th>Dispatch date</th>
+            <th class="text-right">Bags</th>
+            <th class="text-right">Stuffed weight</th>
+            <th class="text-right">Weighbridge weight</th>
+            <th class="text-right">Nett weight</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr repeat.for="item of list">
+            <td>${item.status | containerStatusFormatter}</td>
+            <td>
+              <a route-href="containerEdit; params.bind:{id: encode(item.id)}"
+                class="with-decoration">${item.containerNumber}</a>
+            </td>
+            <td>${item.sealNumber}</td>
+            <td>${item.bookingNumber}</td>
+            <td>${item.stuffingDate | dateFormat: "DD/MM/YYYY"}</td>
+            <td>${item.dispatchDate | dateFormat: "DD/MM/YYYY"}</td>
+            <td class="text-right">${item.bags | numberFormat: "0,0"}</td>
+            <td class="text-right">${item.stuffingWeightKg | numberFormat: "0,0"}</td>
+            <td class="text-right">${item.weighbridgeWeightKg | numberFormat: "0,0"}</td>
+            <td class="text-right">${item.nettWeightKg | numberFormat: "0,0"}</td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   </div>
-
-  <table class="table table-sm table-bordered small">
-    <thead>
-      <tr>        
-        <th>Container number        </th>        
-        <th>Seal number</th>
-        <th>Booking number</th>
-        <th>Stuffing date</th>
-        <th>Dispatch date</th>
-        <th class="text-right">Bags</th>
-        <th class="text-right">Stuffed weight</th>
-        <th class="text-right">Weighbridge weight</th>
-        <th class="text-right">Nett weight</th>
-        <th>Status</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr repeat.for="item of list">
-        <td>
-          <a route-href="containerEdit; params.bind:{id: encode(item.id)}" class="with-decoration">${item.containerNumber}</a>
-        </td>
-        <td>${item.sealNumber}</td>
-        <td>${item.bookingNumber}</td>
-        <td>${item.stuffingDate | dateFormat: "DD/MM/YYYY"}</td>
-        <td>${item.dispatchDate | dateFormat: "DD/MM/YYYY"}</td>
-        <td class="text-right">${item.bags | numberFormat: "0,0"}</td>
-        <td class="text-right">${item.stuffingWeightKg | numberFormat: "0,0"}</td>
-        <td class="text-right">${item.weighbridgeWeightKg | numberFormat: "0,0"}</td>
-        <td class="text-right">${item.nettWeightKg | numberFormat: "0,0"}</td>
-        <td>${item.status | containerStatusFormatter}</td>
-      </tr>
-    </tbody>
-  </table>
 </template>

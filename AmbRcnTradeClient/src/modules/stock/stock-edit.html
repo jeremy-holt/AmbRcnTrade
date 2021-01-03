@@ -72,7 +72,7 @@
 
   <div>
     <button type="button" disabled.bind="!canDelete" class="btn btn-danger" click.delegate="deleteStock()">Delete this stock</button>
-    <div if.bind="!canDelete">This stock cannot be deleted because it has already been stuffed into a container</div>
+    <div if.bind="!canDelete" class="text-warning">This stock cannot be deleted because it has already been stuffed into a container</div>
   </div>
 
 </template>

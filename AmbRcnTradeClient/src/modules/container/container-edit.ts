@@ -1,3 +1,5 @@
+import { UnstuffContainerDialog } from "./unstuff-container-dialog";
+import { DialogService } from "aurelia-dialog";
 import { Router } from "aurelia-router";
 import { CONTAINER_STATUS_LIST, IContainerStatus } from "./../../constants/app-constants";
 import { IParamsId } from "interfaces/IParamsId";
@@ -18,6 +20,7 @@ export class ContainerEdit {
 
   constructor(
     private containerService: ContainerService,
+    private dialogService: DialogService,
     private router: Router
   ) { }
 
@@ -34,7 +37,7 @@ export class ContainerEdit {
   }
 
   protected bind() {
-    this.selectedContainerStatus = this.containerStatusList.find(c => c.id === this.model.id);
+    this.selectedContainerStatus = this.containerStatusList.find(c => c.id === this.model.status);
   }
 
   protected get canSave() {
@@ -47,6 +50,23 @@ export class ContainerEdit {
       await this.containerService.save(this.model);
       this.router.navigateToRoute("containerList");
     }
-  }  
+  }
+
+  protected unstuffContainer() {
+    this.dialogService.open(
+      {
+        viewModel: UnstuffContainerDialog
+      }
+    ).whenClosed(async result => {
+      if (!result.wasCancelled) {
+        await this.containerService.unstuffContainer({ containerId: this.model.id });
+      }
+    });
+  }
+
+  protected get canUnstuffContainer() {
+    return this.containerService.canUnstuffContainer(this.model);
+  }
+
 
 }

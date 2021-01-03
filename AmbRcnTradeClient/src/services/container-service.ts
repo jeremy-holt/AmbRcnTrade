@@ -44,6 +44,10 @@ export class ContainerService extends FetchService {
     return super.post(request, "unstuffContainer", noOpAction);
   }
 
+  public canUnstuffContainer(container: IContainer) {
+    return [ContainerStatus.Cancelled, ContainerStatus.Empty, ContainerStatus.Stuffing].includes(container?.status) && container?.bags > 0;
+  }
+
   public static isOverweightContainer(quantities: { bags: number, weightKg: number }) {
     return quantities.weightKg > 26_000 || quantities.bags > 325;
   }

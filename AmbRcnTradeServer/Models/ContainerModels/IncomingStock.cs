@@ -40,6 +40,8 @@ namespace AmbRcnTradeServer.Models.ContainerModels
             StockId = stockId;
             IsStockIn = isStockIn;
         }
+
+        public IncomingStockItem() { }
         public string StockId { get; set; }
         public bool IsStockIn { get; set; }
     }

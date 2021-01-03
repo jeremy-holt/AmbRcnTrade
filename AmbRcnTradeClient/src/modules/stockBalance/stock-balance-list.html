@@ -1,51 +1,62 @@
 <template>
-  <toolbar type="menu" caption="Stock Balance" list-route="stockList"></toolbar>
+  <toolbar type="menu" caption="Stock Balances" list-route="stockList"></toolbar>
 
-  <ul class="list-group small">
-    <li class="list-group-item font-weight-bold">
-      <div class="row">
-        <div class="col-2">Lot no</div>
-        <div class="col">Warehouse/ Supplier</div>
-        <div class="text-right col">Bags IN</div>
-        <div class="text-right col">Bags OUT</div>
-        <div class="text-right col">Balance Bags</div>
-        <div class="text-right col">Weight kg IN</div>
-        <div class="text-right col">Weight kg Out</div>
-        <div class="text-right col">Balance kg</div>
-        <div class="col">Quality</div>
-      </div>
-    </li>
-    <li class="list-group-item" repeat.for="item of list">
-      <div class="row">
-        <div class="col-2">
-          <div>
-            <a route-href="stockList; params.bind:{lotNo:item.lotNo, locationId:''}" class="with-decoration"><i
-                class="fas fa-fw fa-list mr-2"></i>Lot no
-              ${item.lotNo}</a>
-          </div>
+  <div class="card card-">
+    <div class="card-header">
+      <h4>Stock Balances</h4>
+      <div class="my-4">Select the <i class="fas fa-fw fa-container-storage text-blue"></i> container button to stuff a container</div>
+    </div>
 
-          <div>${item.analysisResults.length} stock entries</div>
-          <div class="mt-2">
-            <a href="#" class="with-decoration" click.delegate="openStuffContainerDialog(item)">
-              <i class="far fa-fw fa-container-storage mr-2"></i>Container
-            </a>
+    <div class="card-body">
+      <ul class="list-group small">
+        <li class="list-group-item font-weight-bold">
+          <div class="row">
+            <div class="col-2">Lot no</div>
+            <div class="col">Warehouse/ Supplier</div>
+            <div class="text-right col">Bags IN</div>
+            <div class="text-right col">Bags OUT</div>
+            <div class="text-right col">Balance Bags</div>
+            <div class="text-right col">Weight kg IN</div>
+            <div class="text-right col">Weight kg Out</div>
+            <div class="text-right col">Balance kg</div>
+            <div class="col">Quality</div>
           </div>
-        </div>
-        
-        <div class="col"><a class="with-decoration text-nowrap"
-            route-href="stockList; params.bind:{lotNo:-1, locationId:encode(item.locationId)}"><i
-              class="fas fa-fw fa-warehouse mr-2"></i>${item.locationName}/<br>
-            <i class="fas fa-fw fa-user-cowboy mr-2"></i>${item.supplierName}</a>
-        </div>
-        <div class="text-right col"><span if.bind="item.bagsIn">${item.bagsIn | numberFormat:"0,0"}</span></div>
-        <div class="text-right col"><span if.bind="item.bagsOut">${item.bagsOut | numberFormat:"0,0"}</span></div>
-        <div class="text-right col font-weight-bold">${item.balance | numberFormat:"0,0"}</div>
-        <div class="text-right col"><span if.bind="item.weightKgIn">${item.weightKgIn | numberFormat:"0,0"}</span></div>
-        <div class="text-right col"><span if.bind="item.weightKgOut">${item.weightKgOut | numberFormat:"0,0"}</span></div>
-        <div class="text-right col font-weight-bold">${item.balanceStockWeightKg | numberFormat:"0,0"}</div>
-        <div class="col">Kor: ${item.kor | numberFormat: "0,.00"}, Count: ${item.count | numberFormat: "0,0.0"},
-          Moisture: ${item.moisture/100 | numberFormat:"0.00%"}</div>
-      </div>
-    </li>
-  </ul>
+        </li>
+        <li class="list-group-item" repeat.for="item of list">
+          <div class="row">
+            <div class="col-2">
+              <div>
+                <a route-href="stockList; params.bind:{lotNo:item.lotNo, locationId:''}" class="with-decoration"><i
+                    class="fas fa-fw fa-list mr-2"></i>Lot no
+                  ${item.lotNo}</a>
+              </div>
+
+              <div>${item.analysisResults.length} stock entries</div>
+              <div class="mt-2">
+                <a href="#" class="with-decoration" click.delegate="openStuffContainerDialog(item)">
+                  <i class="far fa-fw fa-container-storage mr-2"></i>Container
+                </a>
+              </div>
+            </div>
+
+            <div class="col"><a class="with-decoration text-nowrap"
+                route-href="stockList; params.bind:{lotNo:-1, locationId:encode(item.locationId)}"><i
+                  class="fas fa-fw fa-warehouse mr-2"></i>${item.locationName}/<br>
+                <i class="fas fa-fw fa-user-cowboy mr-2"></i>${item.supplierName}</a>
+            </div>
+            <div class="text-right col"><span if.bind="item.bagsIn">${item.bagsIn | numberFormat:"0,0"}</span></div>
+            <div class="text-right col"><span if.bind="item.bagsOut">${item.bagsOut | numberFormat:"0,0"}</span></div>
+            <div class="text-right col font-weight-bold">${item.balance | numberFormat:"0,0"}</div>
+            <div class="text-right col"><span if.bind="item.weightKgIn">${item.weightKgIn | numberFormat:"0,0"}</span>
+            </div>
+            <div class="text-right col"><span if.bind="item.weightKgOut">${item.weightKgOut | numberFormat:"0,0"}</span>
+            </div>
+            <div class="text-right col font-weight-bold">${item.balanceStockWeightKg | numberFormat:"0,0"}</div>
+            <div class="col">Kor: ${item.kor | numberFormat: "0,.00"}, Count: ${item.count | numberFormat: "0,0.0"},
+              Moisture: ${item.moisture/100 | numberFormat:"0.00%"}</div>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
 </template>
