@@ -3,7 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using AmberwoodCore.Interfaces;
 using AmberwoodCore.Testing;
-using AmbRcnTradeServer.Models.Attachments;
+using AmbRcnTradeServer.Models.AttachmentModels;
 using AmbRcnTradeServer.Services;
 using AmbRcnTradeServer.Startup_Config;
 using FakeItEasy;

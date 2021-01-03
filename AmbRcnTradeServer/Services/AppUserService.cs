@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using AmberwoodCore.Models;
 using AmberwoodCore.Responses;
 using AmbRcnTradeServer.Models;
+using AmbRcnTradeServer.Models.AppUserModels;
 using AmbRcnTradeServer.RavenIndexes;
 using Raven.Client.Documents;
 using Raven.Client.Documents.Linq;

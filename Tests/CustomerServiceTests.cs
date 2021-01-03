@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using AmberwoodCore.Extensions;
 using AmberwoodCore.Models;
 using AmbRcnTradeServer.Models;
+using AmbRcnTradeServer.Models.AppUserModels;
 using AmbRcnTradeServer.Models.DictionaryModels;
 using AmbRcnTradeServer.RavenIndexes;
 using AmbRcnTradeServer.Services;

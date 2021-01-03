@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using AmberwoodCore.Interfaces;
 using AmberwoodCore.Models;
+using AmbRcnTradeServer.Models.AppUserModels;
 using Raven.Client.Documents;
 using Raven.Client.Documents.Linq;
 using Raven.Client.Documents.Session;

@@ -6,7 +6,7 @@ using Raven.Client.Documents;
 using Raven.Client.Documents.Linq;
 using Raven.Client.Documents.Session;
 
-namespace AmbRcnTradeServer.Models.Attachments
+namespace AmbRcnTradeServer.Models.AttachmentModels
 {
     public class PostAttachmentRequest : BaseAttachmentRequest
     {
