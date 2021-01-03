@@ -21,7 +21,6 @@ namespace AmbRcnTradeServer.Models.ContainerModels
         public string Id { get; set; }
         public string Name { get; set; }
         public string CompanyId { get; set; }
-        public DateTime? StuffingDate { get; set; }
         public DateTime? DispatchDate { get; set; }
         public double StuffingWeightKg { get; set; }
         public List<IncomingStock> IncomingStocks { get; set; } = new();

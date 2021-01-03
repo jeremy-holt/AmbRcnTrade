@@ -1,8 +1,10 @@
-import { IIncomingStock } from "./IIncomingStock";
+import { IStockBalance } from "interfaces/stocks/IStockBalance";
 
 
 export interface IStuffingRequest {
   containerId: string;
   stuffingDate: string;
-  incomingStocks: IIncomingStock[];
+  stockBalance: IStockBalance;
+  bags: number;
+  weightKg: number;
 }

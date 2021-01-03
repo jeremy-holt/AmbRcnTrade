@@ -1,11 +1,11 @@
 import { ContainerStatus } from "constants/app-constants";
-export interface IAvailableContainerItem {
+export interface IAvailableContainer {
     status: ContainerStatus;
     containerNumber: string;
     bookingNumber: string;
     bags: number;
     stockWeightKg: number;
-    containerId: string;
+    id: string;
     isOverweight: boolean;
 
     selected?:boolean;

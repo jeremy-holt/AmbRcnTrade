@@ -1,5 +1,6 @@
 import { IEntityCompany } from "interfaces/IEntity";
 import { IAnalysisResult } from "./../inspections/IAnalysis";
+import { IStuffingRecord } from "./IStuffingRecord";
 
 export interface IStock extends IEntityCompany {
   locationId: string;
@@ -16,6 +17,7 @@ export interface IStock extends IEntityCompany {
   name: string;
   origin: string;
   supplierId: string;
+  stuffingRecords: IStuffingRecord[];
 
   selected?: boolean;
 }

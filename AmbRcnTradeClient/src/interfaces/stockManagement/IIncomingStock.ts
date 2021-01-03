@@ -1,5 +1,4 @@
-export interface IIncomingStock {
-    stockId: string;
+export interface IIncomingStock {    
     bags: number;
     weightKg: number;
     lotNo: number;

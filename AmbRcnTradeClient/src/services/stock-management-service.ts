@@ -1,6 +1,6 @@
 import { DATEFORMAT } from "constants/app-constants";
-import { IStockBalance } from "./../interfaces/stocks/IStockBalanceListItem";
-import { IAvailableContainerItem } from "./../interfaces/stockManagement/IAvailableContainerItem";
+import { IStockBalance } from "./../interfaces/stocks/IStockBalance";
+import { IAvailableContainer } from "./../interfaces/stockManagement/IAvailableContainerItem";
 import { IOutgoingStock } from "./../interfaces/stockManagement/IIncomingStock";
 import { IStockListItem } from "./../interfaces/stocks/IStockListItem";
 import { HttpClient } from "aurelia-fetch-client";
@@ -57,17 +57,13 @@ export class StockManagementService extends FetchService {
     return super.get([super.currentCompanyIdQuery()], "getAvailableContainers", availableContainersAction);
   }
 
-  public getStuffingRequest(stockId: string, containerId: string, bags: number, weightKg: number): IStuffingRequest {
+  public getStuffingRequest(containerId: string, stockBalance: IStockBalance, bags: number, weightKg: number): IStuffingRequest {
     return {
       containerId,
-      stuffingDate: moment().format(DATEFORMAT),
-      incomingStocks: [
-        {
-          stockId,
-          bags,
-          weightKg
-        }
-      ]
+      stuffingDate: moment().format(DATEFORMAT),      
+      stockBalance,
+      bags,
+      weightKg      
     };
   }
 }
@@ -91,7 +87,7 @@ export function stuffContainerAction(state: IState, result: IOutgoingStock[]) {
   return newState;
 }
 
-export function availableContainersAction(state: IState, result: IAvailableContainerItem[]) {
+export function availableContainersAction(state: IState, result: IAvailableContainer[]) {
   const newState = _.cloneDeep(state);
   newState.stockManagement.availableContainers = result;
   return newState;

@@ -157,7 +157,6 @@ namespace Tests
             
             actual.SupplierId.Should().Be(stockIn2.SupplierId);
             actual.SupplierName.Should().Be(supplier2.Name);
-            actual.InspectionIds.Should().HaveCountGreaterThan(0);
             actual.AnalysisResults.Should().HaveCountGreaterThan(0);
         }
 

@@ -6,4 +6,10 @@ Purchase:
 Payments:
   ☐ Payments should have the account the money was paid to, and another account for the final beneficiary
 
+StockBalance:
+  ☐ Need to check calculation for stockBalance
+
+Purchases:
+  ☐ Soemthing wrong with add stocks to detail
+
 

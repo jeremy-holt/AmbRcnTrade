@@ -1,5 +1,6 @@
 import { IAnalysisResult } from "interfaces/inspections/IAnalysis";
 
+
 export interface IStockBalance {
   lotNo: number;
 
@@ -9,7 +10,7 @@ export interface IStockBalance {
   locationName: string;
   locationId: string;
   isStockZero: boolean;
-  analysisResults: IAnalysisResult[];  
+  analysisResults: IAnalysisResult[];
   kor: number;
   moisture: number;
   count: number;

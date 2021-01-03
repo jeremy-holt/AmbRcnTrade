@@ -118,7 +118,7 @@ export const initialState: IState = {
       origin: undefined!,
       supplierId: undefined!,
       analysisResult: undefined!,
-      containerId: undefined!
+      stuffingRecords: []
     },
     list: [],
     stockBalanceList: []

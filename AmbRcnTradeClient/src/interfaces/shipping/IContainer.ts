@@ -10,8 +10,7 @@ export interface IContainer extends IEntityCompany {
   status: ContainerStatus;
   id: string;
   name: string;
-  companyId: string;
-  stuffingDate:  string | null;
+  companyId: string;  
   dispatchDate:  string | null;
   stuffingWeightKg: number;
   incomingStocks: IIncomingStock[];

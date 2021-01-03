@@ -4,8 +4,8 @@
   <ul class="list-group small">
     <li class="list-group-item font-weight-bold">
       <div class="row">
-        <div class="col">Lot no</div>
-        <div class="col">Warehouse</div>
+        <div class="col-2">Lot no</div>
+        <div class="col">Warehouse/ Supplier</div>
         <div class="text-right col">Bags IN</div>
         <div class="text-right col">Bags OUT</div>
         <div class="text-right col">Balance Bags</div>
@@ -17,17 +17,25 @@
     </li>
     <li class="list-group-item" repeat.for="item of list">
       <div class="row">
-        <div class="col">
-          <a route-href="stockList; params.bind:{lotNo:item.lotNo, locationId:''}" class="with-decoration"><i class="fas fa-fw fa-list mr-2"></i>Lot no
-            ${item.lotNo}</a>
+        <div class="col-2">
+          <div>
+            <a route-href="stockList; params.bind:{lotNo:item.lotNo, locationId:''}" class="with-decoration"><i
+                class="fas fa-fw fa-list mr-2"></i>Lot no
+              ${item.lotNo}</a>
+          </div>
+
+          <div>${item.analysisResults.length} stock entries</div>
           <div class="mt-2">
             <a href="#" class="with-decoration" click.delegate="openStuffContainerDialog(item)">
               <i class="far fa-fw fa-container-storage mr-2"></i>Container
             </a>
           </div>
         </div>
+        
         <div class="col"><a class="with-decoration text-nowrap"
-            route-href="stockList; params.bind:{lotNo:-1, locationId:encode(item.locationId)}"><i class="fas fa-fw fa-warehouse mr-2"></i>${item.locationName}</a>
+            route-href="stockList; params.bind:{lotNo:-1, locationId:encode(item.locationId)}"><i
+              class="fas fa-fw fa-warehouse mr-2"></i>${item.locationName}/<br>
+            <i class="fas fa-fw fa-user-cowboy mr-2"></i>${item.supplierName}</a>
         </div>
         <div class="text-right col">${item.bagsIn | numberFormat:"0,0"}</div>
         <div class="text-right col">${item.bagsOut | numberFormat:"0,0"}</div>

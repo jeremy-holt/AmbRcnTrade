@@ -1,3 +1,4 @@
+import { encodeParams } from "core/helpers";
 import { autoinject, observable } from "aurelia-framework";
 import { Router } from "aurelia-router";
 import { connectTo } from "aurelia-store";
@@ -71,6 +72,10 @@ export class StockEdit {
     if (this.model) {
       this.model.supplierId = this.selectedSupplier.id;
     }
+  }
+
+  protected encode(value: string){
+    return encodeParams(value);
   }
 
   protected listItemMatcher = (a: IListItem, b: IListItem) => a?.id === b?.id;

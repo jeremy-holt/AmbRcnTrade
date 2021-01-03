@@ -40,9 +40,9 @@ namespace AmbRcnTradeServer.Controllers
 
         [Authorize]
         [HttpPost("[action]")]
-        public async Task<ActionResult<ServerResponse<List<OutgoingStock>>>> StuffContainer(StuffingRequest request)
+        public async Task<ActionResult<ServerResponse<OutgoingStock>>> StuffContainer(StuffingRequest request)
         {
-            return await _service.StuffContainer(request);
+            return await _service.StuffContainer(request.ContainerId,request.StockBalance,request.Bags,request.WeightKg,request.StuffingDate);
         }
 
         [Authorize]
@@ -54,7 +54,7 @@ namespace AmbRcnTradeServer.Controllers
 
         [Authorize]
         [HttpGet("[action]")]
-        public async Task<ActionResult<List<AvailableContainerItem>>> GetAvailableContainers(string companyId)
+        public async Task<ActionResult<List<AvailableContainer>>> GetAvailableContainers(string companyId)
         {
             return await _service.GetAvailableContainers(companyId);
         }

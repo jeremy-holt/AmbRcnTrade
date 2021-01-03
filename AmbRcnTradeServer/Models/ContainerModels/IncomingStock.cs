@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AmbRcnTradeServer.Models.StockModels;
 using Raven.Client.Documents;
 using Raven.Client.Documents.Linq;
 using Raven.Client.Documents.Session;
@@ -10,7 +11,6 @@ namespace AmbRcnTradeServer.Models.ContainerModels
 {
     public class IncomingStock
     {
-        [Obsolete]public string StockId { get; set; }
         public double Bags { get; set; }
 
         public double WeightKg { get; set; }
@@ -23,7 +23,9 @@ namespace AmbRcnTradeServer.Models.ContainerModels
     {
         public string ContainerId { get; set; }
         public DateTime StuffingDate { get; set; }
-        public List<IncomingStock> IncomingStocks { get; set; } = new();
+        public StockBalance StockBalance { get; set; }
+        public double Bags { get; set; }
+        public double WeightKg { get; set; }
     }
 
     public class OutgoingStock

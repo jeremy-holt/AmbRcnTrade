@@ -1,5 +1,5 @@
 import { fixAspNetCoreDate } from "./../core/helpers";
-import { IStockBalance } from "./../interfaces/stocks/IStockBalanceListItem";
+import { IStockBalance } from "./../interfaces/stocks/IStockBalance";
 import { IStockListItem } from "./../interfaces/stocks/IStockListItem";
 import { IStock } from "interfaces/stocks/IStock";
 import { Router } from "aurelia-router";

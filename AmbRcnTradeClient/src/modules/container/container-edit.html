@@ -11,8 +11,17 @@
 
     <div class="card-body">
       <div class="row">
+        <div class="col">
+          <h4>${model.bags | numberFormat: "0,0"} bags</h4>
+        </div>
+        <div class="col">
+          <h4>${model.weighbridgeWeightKg | numberFormat: "0,0"} kg final weight</h4>
+        </div>
+      </div>
+      <div class="row">
         <div class="col-6">
-          <select-input source.bind="containerStatusList" value.bind="selectedContainerStatus" label="Status"></select-input>
+          <select-input source.bind="containerStatusList" value.bind="selectedContainerStatus" label="Status">
+          </select-input>
         </div>
         <div class="col">
           <text-input value.bind="model.bookingNumber" label="Booking number"></text-input>
@@ -29,22 +38,52 @@
       </div>
 
       <div class="row">
-        <div class="col">
-          <date-input value.bind="model.stuffingDate" disabled="true" label="Stuffing date"></date-input>
-        </div>
-        <div class="col">
+
+        <div class="col-6">
           <date-input value.bind="model.dispatchDate" label="Dispatched to port"></date-input>
         </div>
       </div>
 
       <div class="row">
-        <div class="col mt-1">
-          <div class="form-label">Stuffed quantities from stock</div>
-          ${model.bags | numberFormat: "0,0"} bags<br>
-          ${model.stockWeightKg | numberFormat: "0,0"} kg (from stock)
-        </div>
         <div class="col">
           <number-input value.bind="model.weighbridgeWeightKg" label="Weighbridge weight kg"></number-input>
+        </div>
+        <div class="col">
+          <number-input value.bind="model.netWeightKg" label="Container nett weight"></number-input>
+        </div>
+      </div>
+
+      <div class="row mt-2">
+        <div class="col">
+          <div class="form-label">Stuffed quantities from stock</div>
+          <ul class="list-group">
+            <li class="list-group-item">
+              <div class="row">
+                <div class="col">
+                  ${model.bags | numberFormat: "0,0"} bags
+                </div>
+                <div class="col">
+                  ${model.stuffingWeightKg | numberFormat: "0,0"} kg (from stuffing)
+                </div>
+              </div>
+            </li>
+          </ul>
+        </div>
+
+        <div class="col">
+          <div class="form-label">Stuffing information</div>
+          <ul class="list-group">
+            <li class="list-group-item">
+              <div repeat.for="item of model.incomingStocks" class="row">
+                <div class="col">${item.bags | numberFormat:"0,0"} bags</div>
+                <div class="col">
+                  <a class="with-decoration" route-href="stockBalanceList; params.bind:{lotNo:item.lotNo}">Lot no:
+                    ${item.lotNo}</a>
+                </div>
+                <div class="col">${item.stuffingDate | dateFormat: "DD/MM/YYYY"}</div>
+              </div>
+            </li>
+          </ul>
         </div>
       </div>
     </div>

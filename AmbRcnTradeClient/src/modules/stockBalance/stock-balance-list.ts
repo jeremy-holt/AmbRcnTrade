@@ -1,10 +1,10 @@
-import { IAvailableContainerItem } from "./../../interfaces/stockManagement/IAvailableContainerItem";
+import { IAvailableContainer } from "./../../interfaces/stockManagement/IAvailableContainerItem";
 import { StockManagementService } from "services/stock-management-service";
 import { encodeParams } from "core/helpers";
 import { StuffContainerDialog } from "./stuff-container-dialog";
 import { DialogService } from "aurelia-dialog";
 import { StockService } from "./../../services/stock-service";
-import { IStockBalance } from "./../../interfaces/stocks/IStockBalanceListItem";
+import { IStockBalance } from "./../../interfaces/stocks/IStockBalance";
 import { autoinject, observable } from "aurelia-framework";
 import { connectTo } from "aurelia-store";
 import { IState } from "store/state";
@@ -42,8 +42,8 @@ export class StockBalanceList {
       }
     ).whenClosed(async result => {
       if (!result.wasCancelled) {
-        const { container, bags, stockWeightKg } = result.output as { container: IAvailableContainerItem; bags: number; stockWeightKg: number; };
-        const request = this.stockManagementService.getStuffingRequest(stockBalance, container, bags, stockWeightKg);
+        const { container, bags, stockWeightKg } = result.output as { container: IAvailableContainer; bags: number; stockWeightKg: number; };
+        const request = this.stockManagementService.getStuffingRequest(container.id, stockBalance, bags, stockWeightKg);
         await this.stockManagementService.stuffContainer(request);
       }
     });

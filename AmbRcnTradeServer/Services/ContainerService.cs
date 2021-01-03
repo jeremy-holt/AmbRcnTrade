@@ -46,7 +46,8 @@ namespace AmbRcnTradeServer.Services
             if (status != null)
                 query = query.Where(c => c.Status == status);
 
-            return await query.OrderBy(c => c.StuffingDate).ToListAsync();
+            var list = await query.ToListAsync();
+            return list.OrderBy(c => c.IncomingStocks.OrderBy(incomingStock => incomingStock.StuffingDate).FirstOrDefault()?.StuffingDate).ToList();
         }
     }
 }

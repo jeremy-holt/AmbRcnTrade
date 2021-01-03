@@ -78,7 +78,6 @@ namespace Tests
             var fixture = new Fixture();
 
             var container = fixture.DefaultEntity<Container>()
-                .With(c => c.StuffingDate, new DateTime(2013, 1, 1))
                 .With(c => c.DispatchDate, default(DateTime?))
                 .Without(c => c.Bags)
                 .Without(c => c.NettWeightKg)
@@ -92,6 +91,7 @@ namespace Tests
             actual.Should().NotBeNull();
             actual.StuffingWeightKg.Should().Be(container.IncomingStocks.Sum(c => c.WeightKg));
             actual.Bags.Should().Be(container.IncomingStocks.Sum(c => c.Bags));
+            actual.WeighbridgeWeightKg.Should().Be(container.WeighbridgeWeightKg);
         }
     }
 }

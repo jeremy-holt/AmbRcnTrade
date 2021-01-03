@@ -34,65 +34,6 @@ namespace Tests
             await new Inspections_ByAnalysisResult().ExecuteAsync(store);
         }
 
-        private static async Task<(Container container, Stock stock1, Stock stock2, StuffingRequest request)> CreateStockAndContainer(IAsyncDocumentSession session)
-        {
-            var fixture = new Fixture();
-
-            var stock1 = fixture.DefaultEntity<Stock>()
-                .Without(c => c.StockOutDate)
-                .With(c => c.Bags, 300)
-                .With(c => c.WeightKg, 24000)
-                .Create();
-
-            await session.StoreAsync(stock1);
-
-            var stock2 = fixture.DefaultEntity<Stock>()
-                .Without(c => c.StockOutDate)
-                .With(c => c.Bags, 50)
-                .With(c => c.WeightKg, 4000)
-                .Create();
-
-            await session.StoreAsync(stock2);
-
-            var container = fixture.DefaultEntity<Container>()
-                .Without(c => c.Bags)
-                .Without(c => c.StuffingWeightKg)
-                .Without(c => c.StuffingDate)
-                .Without(c => c.IncomingStocks)
-                .Create();
-
-            await session.StoreAsync(container);
-
-            await session.SaveChangesAsync();
-
-            // Act
-            var incomingStocks = new List<IncomingStock>
-            {
-                new()
-                {
-                    LotNo = stock1.LotNo,
-                    StockId = stock1.Id,
-                    Bags = 200,
-                    WeightKg = 15000
-                },
-                new()
-                {
-                    StockId = stock2.Id,
-                    LotNo = stock2.LotNo,
-                    Bags = 25,
-                    WeightKg = 800.0
-                }
-            };
-            var request = new StuffingRequest
-            {
-                ContainerId = container.Id,
-                StuffingDate = new DateTime(2013, 1, 1),
-                IncomingStocks = incomingStocks
-            };
-            return (container, stock1, stock2, request);
-        }
-
-        
 
         [Fact]
         public async Task GetAvailableContainers_ShouldReturnEmptyOrStuffingContainers()
@@ -147,8 +88,9 @@ namespace Tests
             list.Should().Contain(c => c.BookingNumber == container1.BookingNumber);
             list.Should().Contain(c => Math.Abs(c.Bags - container1.Bags) < 0.01);
             list.Should().Contain(c => Math.Abs(c.StockWeightKg - container1.StuffingWeightKg) < 0.01);
+            list.Should().Contain(c => c.Id == container1.Id);
 
-            var overweightContainer = list.Single(c => c.ContainerId == container4.Id);
+            var overweightContainer = list.Single(c => c.Id == container4.Id);
             overweightContainer.IsOverweight.Should().BeTrue();
         }
 
@@ -383,60 +325,9 @@ namespace Tests
             actualStock.InspectionId.Should().BeNullOrEmpty();
         }
 
-        [Fact]
-        public async Task StuffContainer_Should_AddStockToContainer()
-        {
-            // Arrange
-            using var store = GetDocumentStore();
-            using var session = store.OpenAsyncSession();
-            var sut = GetStockManagementService(session);
-
-            var (container, _, _, request) = await CreateStockAndContainer(session);
-
-            // Act
-            var stockBalanceItem = new StockBalance()
-            {
-                LotNo = 21,
-                Balance = 10_000,
-                BalanceWeightKg = 125_000,
-                LocationId = "locations/1-A",
-                Count = 200,
-                Kor = 48,
-                Moisture = 7,
-                AnalysisResults = new List<AnalysisResult>(),
-                BagsIn = 10000,
-                BagsOut = 0,
-                WeightKgIn = 125000,
-                WeightKgOut = 0,
-                LocationName = "Warehouse",
-                InspectionIds = new List<string> {"inspections/1-A"}
-            };
-
-            var newRequest = new
-            {
-                ContainerId = container.Id,
-                LotNo = 21,
-                Bags = 300,
-                WeightKg = 24_0000,
-                Date = new DateTime(2013, 1, 1)
-            };
-
-            ServerResponse response = await sut.StuffContainer(request);
-
-            // Assert
-            response.Message.Should().Be("Stuffed container");
-
-            var actualContainer = await session.LoadAsync<Container>(container.Id);
-
-            actualContainer.IncomingStocks.Should().BeEquivalentTo(request.IncomingStocks);
-            actualContainer.Bags.Should().Be(225);
-            actualContainer.StuffingWeightKg.Should().Be(15_800);
-            actualContainer.StuffingDate.Should().Be(new DateTime(2013, 1, 1));
-            actualContainer.Status.Should().Be(ContainerStatus.Stuffing);
-        }
 
         [Fact]
-        public async Task StuffContainer2_ShouldAddStockToTheContainer()
+        public async Task StuffContainer_ShouldAddStockToTheContainer()
         {
             // Arrange
             using var store = GetDocumentStore();
@@ -444,7 +335,7 @@ namespace Tests
             var sut = GetStockManagementService(session);
             var fixture = new Fixture();
 
-            var stock1 = new Stock()
+            var stock1 = new Stock
             {
                 CompanyId = COMPANY_ID,
                 LotNo = 1,
@@ -455,7 +346,7 @@ namespace Tests
                 AnalysisResult = fixture.Build<AnalysisResult>().Create()
             };
 
-            var stock2 = new Stock()
+            var stock2 = new Stock
             {
                 CompanyId = COMPANY_ID,
                 LotNo = 1,
@@ -467,12 +358,12 @@ namespace Tests
             };
             await new[] {stock1, stock2}.SaveList(session);
 
-            var stockBalance = new StockBalance()
+            var stockBalance = new StockBalance
             {
                 LotNo = 1,
                 Balance = stock1.Bags + stock2.Bags,
                 BalanceWeightKg = stock1.WeightKg + stock2.WeightKg,
-                AnalysisResults = new List<AnalysisResult>() {stock1.AnalysisResult, stock2.AnalysisResult},
+                AnalysisResults = new List<AnalysisResult> {stock1.AnalysisResult, stock2.AnalysisResult},
                 LocationId = "locations/1-A"
             };
 
@@ -487,15 +378,16 @@ namespace Tests
             // Act
             const double incomingBags = 2000;
             const double incomingWeightKg = 16_000;
-            ServerResponse response = await sut.StuffContainer2(container.Id, stockBalance, incomingBags, incomingWeightKg, new DateTime(2020, 1, 1));
+            ServerResponse response = await sut.StuffContainer(container.Id, stockBalance, incomingBags, incomingWeightKg, new DateTime(2020, 1, 1));
 
             await session.SaveChangesAsync();
 
             // Assert
+            response.Message.Should().Be("Stuffed container");
+
             var actualContainer = await session.LoadAsync<Container>(container.Id);
             actualContainer.IncomingStocks.Should().HaveCount(1);
             actualContainer.IncomingStocks[0].LotNo.Should().Be(1);
-            actualContainer.IncomingStocks[0].StockId.Should().BeNullOrEmpty();
             actualContainer.IncomingStocks[0].StockIds.Should().Contain(stock1.Id);
             actualContainer.IncomingStocks[0].StockIds.Should().Contain(stock2.Id);
             actualContainer.IncomingStocks[0].Bags.Should().Be(incomingBags);
@@ -509,7 +401,7 @@ namespace Tests
         }
 
         [Fact]
-        public async Task StuffContainer2_ShouldCreateStockOuts()
+        public async Task StuffContainer_ShouldCreateStockOuts()
         {
             // Arrange
             using var store = GetDocumentStore();
@@ -517,7 +409,7 @@ namespace Tests
             var sut = GetStockManagementService(session);
             var fixture = new Fixture();
 
-            var stock1 = new Stock()
+            var stock1 = new Stock
             {
                 CompanyId = COMPANY_ID,
                 LotNo = 1,
@@ -529,7 +421,7 @@ namespace Tests
                 Origin = "Origin1"
             };
 
-            var stock2 = new Stock()
+            var stock2 = new Stock
             {
                 CompanyId = COMPANY_ID,
                 LotNo = 1,
@@ -545,12 +437,12 @@ namespace Tests
 
             var averageAnalysisResult = stocks.AverageAnalysisResults();
 
-            var stockBalance = new StockBalance()
+            var stockBalance = new StockBalance
             {
                 LotNo = 1,
                 Balance = stock1.Bags + stock2.Bags,
                 BalanceWeightKg = stock1.WeightKg + stock2.WeightKg,
-                AnalysisResults = new List<AnalysisResult>() {stock1.AnalysisResult, stock2.AnalysisResult},
+                AnalysisResults = new List<AnalysisResult> {stock1.AnalysisResult, stock2.AnalysisResult},
                 LocationId = "locations/1-A",
                 SupplierName = "Suppler Name",
                 SupplierId = stock1.SupplierId
@@ -568,7 +460,7 @@ namespace Tests
             const double incomingBags = 2000;
             const double incomingWeightKg = 16_000;
             var stuffingDate = new DateTime(2020, 1, 1);
-            ServerResponse response = await sut.StuffContainer2(container.Id, stockBalance, incomingBags, incomingWeightKg, stuffingDate);
+            await sut.StuffContainer(container.Id, stockBalance, incomingBags, incomingWeightKg, stuffingDate);
 
             await session.SaveChangesAsync();
 
@@ -591,49 +483,6 @@ namespace Tests
             stockOut.StuffingRecords[0].ContainerId.Should().Be(container.Id);
             stockOut.StuffingRecords[0].ContainerNumber.Should().Be(container.ContainerNumber);
             stockOut.StuffingRecords[0].StuffingDate.Should().Be(stuffingDate);
-        }
-
-        [Fact]
-        public async Task StuffContainer_ShouldPostStockOut()
-        {
-            // Arrange
-            using var store = GetDocumentStore();
-            using var session = store.OpenAsyncSession();
-            var sut = GetStockManagementService(session);
-
-            var (_, stock1, stock2, request) = await CreateStockAndContainer(session);
-
-            // Act
-            var response = await sut.StuffContainer(request);
-            await session.SaveChangesAsync();
-
-            WaitForIndexing(store);
-
-            var outgoingStockIds = response.Dto.Select(x => x.StockId).ToList();
-
-            var outgoingStocks = await session.Query<Stock>()
-                .Where(c => c.Id.In(outgoingStockIds))
-                .ToListAsync();
-
-            var outgoingStock = outgoingStocks[0];
-            outgoingStock.StockInDate.Should().BeNull();
-            outgoingStock.StockOutDate.Should().Be(request.StuffingDate);
-            outgoingStock.Bags.Should().Be(request.IncomingStocks[0].Bags);
-            outgoingStock.WeightKg.Should().Be(request.IncomingStocks[0].WeightKg);
-            outgoingStock.Id.Should().NotBeNull();
-            outgoingStock.InspectionId.Should().Be(stock1.InspectionId);
-            outgoingStock.LotNo.Should().Be(stock1.LotNo);
-            outgoingStock.AnalysisResult.Should().Be(stock1.AnalysisResult);
-            outgoingStock.SupplierId.Should().Be(stock1.SupplierId);
-            outgoingStock.LocationId.Should().Be(stock1.LocationId);
-            outgoingStock.CompanyId.Should().Be(COMPANY_ID);
-            outgoingStock.Origin.Should().Be(stock1.Origin);
-
-            var allStocks = await session.Query<Stock>().ToListAsync();
-            allStocks.Should().Contain(c => c.Id == stock1.Id);
-            allStocks.Should().Contain(c => c.Id == stock2.Id);
-            allStocks.Should().Contain(c => c.Id == outgoingStockIds[0]);
-            allStocks.Should().Contain(c => c.Id == outgoingStockIds[1]);
         }
     }
 }

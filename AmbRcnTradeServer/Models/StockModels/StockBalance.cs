@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AmbRcnTradeServer.Models.InspectionModels;
@@ -20,7 +19,6 @@ namespace AmbRcnTradeServer.Models.StockModels
         public string LocationId { get; set; }
         public bool IsStockZero { get; set; }
         public List<AnalysisResult> AnalysisResults { get; set; } = new();
-        [Obsolete]public List<string> InspectionIds { get; set; } = new();
         public double Kor { get; set; }
         public double Moisture { get; set; }
         public double Count { get; set; }

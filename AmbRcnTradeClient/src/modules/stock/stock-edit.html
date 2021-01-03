@@ -47,6 +47,24 @@
     </div>
   </div>
 
+  <div class="form-label mt-2">Container information</div>
+  <div class="row">
+    <div class="col-6">
+      <ul class="list-group">
+        <li class="list-group-item" repeat.for="item of model.stuffingRecords">
+          <div class="row">
+            <div class="col">
+              <a class="with-decoration" route-href="containerEdit; params.bind:{id:encode(item.containerId)}">Container no: ${item.containerNumber}</a>
+            </div>
+            <div class="col">
+              Stuffed on: ${item.stuffingDate | dateFormat: "DD/MM/YYYY"}
+            </div>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+
   <analysis-result model.bind="model.analysisResult" inspection-id.bind="model.inspectionId" caption="Go to the inspection"></analysis-result>
 
 </template>

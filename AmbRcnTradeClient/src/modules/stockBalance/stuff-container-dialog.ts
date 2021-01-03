@@ -5,15 +5,15 @@ import { connectTo } from "aurelia-store";
 import _ from "lodash";
 import { StockManagementService } from "services/stock-management-service";
 import { IState } from "store/state";
-import { IAvailableContainerItem } from "./../../interfaces/stockManagement/IAvailableContainerItem";
-import { IStockBalance } from "./../../interfaces/stocks/IStockBalanceListItem";
+import { IAvailableContainer } from "./../../interfaces/stockManagement/IAvailableContainerItem";
+import { IStockBalance } from "./../../interfaces/stocks/IStockBalance";
 
 @autoinject
 @connectTo()
 export class StuffContainerDialog {
   public model: IStockBalance;
   @observable protected state: IState = undefined!;
-  public list: IAvailableContainerItem[] = [];
+  public list: IAvailableContainer[] = [];
   @observable public bags: number;
   public stockWeightKg: number;
 
