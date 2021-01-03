@@ -42,6 +42,13 @@ export class StockList {
     }
   }
 
+  protected get stockBalance() {
+    return {
+      bags: this.list.reduce((a, b) => a += (b.bagsIn - b.bagsOut), 0),
+      weightKg: this.list.reduce((a, b) => a += (b.weightKgIn - b.weightKgOut), 0)
+    };
+  }
+
   protected bind() {
     if (this.prmLocationId) {
       this.selectedLocation = this.locations.find(c => c.id === decodeParams(this.prmLocationId));

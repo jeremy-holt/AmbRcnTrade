@@ -7,9 +7,9 @@ Payments:
   ☐ Payments should have the account the money was paid to, and another account for the final beneficiary
 
 StockBalance:
-  ☐ Need to check calculation for stockBalance
+  ✔ Need to check calculation for stockBalance @done (03/01/2021, 01:06:28)
 
 Purchases:
-  ☐ Soemthing wrong with add stocks to detail
+  ☐ Soemthing wrong with add stocks to detail @high
 
 

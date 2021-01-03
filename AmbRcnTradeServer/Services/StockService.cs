@@ -42,11 +42,11 @@ namespace AmbRcnTradeServer.Services
             stock.AnalysisResult = await _inspectionService.GetAnalysisResult(stock.InspectionId);
             stock.IsStockIn = stock.StockInDate != null;
 
-            if (!stock.IsStockIn)
-            {
-                stock.Bags = -stock.Bags;
-                stock.WeightKg = -stock.WeightKg;
-            }
+            // if (!stock.IsStockIn)
+            // {
+            //     stock.Bags = -stock.Bags;
+            //     stock.WeightKg = -stock.WeightKg;
+            // }
 
             if (stock.Id.IsNullOrEmpty() && stock.IsStockIn && stock.LotNo == 0)
             {
@@ -90,8 +90,9 @@ namespace AmbRcnTradeServer.Services
                 item.Kor = item.BagsIn == 0 ? 0 : item.AnalysisResults.Average(c => c.Kor);
                 item.Count = item.BagsIn == 0 ? 0 : item.AnalysisResults.Average(c => c.Count);
                 item.Moisture = item.BagsIn == 0 ? 0 : item.AnalysisResults.Average(c => c.Moisture);
-                item.Balance = item.BagsIn + item.BagsOut;
-                item.BalanceWeightKg = item.WeightKgIn + item.WeightKgOut;
+                
+                item.Balance = item.BagsIn - item.BagsOut;
+                item.BalanceWeightKg = item.WeightKgIn - item.WeightKgOut;
                 item.IsStockZero = item.Balance < 1 && item.Balance > -1;
             }
 

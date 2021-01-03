@@ -96,6 +96,7 @@ namespace Tests
                 .With(c => c.SupplierId, supplier1.Id)
                 .With(c => c.LotNo, 1)
                 .With(c => c.InspectionId, "inspections/1-A")
+                .With(c => c.IsStockIn, true)
                 .Create();
             await session.StoreAsync(stockIn1);
 
@@ -106,6 +107,7 @@ namespace Tests
                 .With(c => c.LotNo, 2)
                 .With(c => c.Bags, 500)
                 .With(c => c.InspectionId, "inspections/1-A")
+                .With(c => c.IsStockIn, true)
                 .Create();
             await session.StoreAsync(stockIn2);
 
@@ -115,8 +117,9 @@ namespace Tests
                 .With(c => c.LocationId, location.Id)
                 .With(c => c.SupplierId, supplier2.Id)
                 .With(c => c.LotNo, 2)
-                .With(c => c.Bags, -150)
+                .With(c => c.Bags, 150)
                 .With(c => c.InspectionId, "inspections/1-A")
+                .With(c => c.IsStockIn, false)
                 .Create();
             await session.StoreAsync(stockOut);
 
@@ -126,6 +129,7 @@ namespace Tests
                 .With(c => c.SupplierId, supplier1.Id)
                 .With(c => c.LotNo, 3)
                 .With(c => c.InspectionId, "inspections/1-A")
+                .With(c => c.IsStockIn, true)
                 .Create();
             await session.StoreAsync(stockIn3);
 
@@ -143,8 +147,8 @@ namespace Tests
             var actual = list.First(c => c.LotNo == stockIn2.LotNo);
             actual.LotNo.Should().Be(2);
 
-            var expectedBalanceBags = stockIn2.Bags + stockOut.Bags;
-            var expectedBalanceStockWeightKg = stockIn2.WeightKg + stockOut.WeightKg;
+            var expectedBalanceBags = stockIn2.Bags - stockOut.Bags;
+            var expectedBalanceStockWeightKg = stockIn2.WeightKg - stockOut.WeightKg;
 
             actual.BagsIn.Should().Be(stockIn2.Bags);
             actual.BagsOut.Should().Be(stockOut.Bags);
@@ -154,7 +158,7 @@ namespace Tests
 
             actual.LocationId.Should().Be(stockIn2.LocationId);
             actual.LocationName.Should().Be(location.Name);
-            
+
             actual.SupplierId.Should().Be(stockIn2.SupplierId);
             actual.SupplierName.Should().Be(supplier2.Name);
             actual.AnalysisResults.Should().HaveCountGreaterThan(0);
@@ -379,8 +383,8 @@ namespace Tests
 
             // Assert
             var actual = await sut.Load(response.Id);
-            actual.Bags.Should().Be(-100);
-            actual.WeightKg.Should().Be(-80_000);
+            actual.Bags.Should().Be(100);
+            actual.WeightKg.Should().Be(80_000);
         }
 
         [Fact]

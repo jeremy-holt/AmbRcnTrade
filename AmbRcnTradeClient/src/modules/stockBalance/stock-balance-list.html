@@ -37,12 +37,12 @@
               class="fas fa-fw fa-warehouse mr-2"></i>${item.locationName}/<br>
             <i class="fas fa-fw fa-user-cowboy mr-2"></i>${item.supplierName}</a>
         </div>
-        <div class="text-right col">${item.bagsIn | numberFormat:"0,0"}</div>
-        <div class="text-right col">${item.bagsOut | numberFormat:"0,0"}</div>
-        <div class="text-right col">${item.balance | numberFormat:"0,0"}</div>
-        <div class="text-right col">${item.weightKgIn | numberFormat:"0,0"}</div>
-        <div class="text-right col">${item.weightKgOut | numberFormat:"0,0"}</div>
-        <div class="text-right col">${item.balanceStockWeightKg | numberFormat:"0,0"}</div>
+        <div class="text-right col"><span if.bind="item.bagsIn">${item.bagsIn | numberFormat:"0,0"}</span></div>
+        <div class="text-right col"><span if.bind="item.bagsOut">${item.bagsOut | numberFormat:"0,0"}</span></div>
+        <div class="text-right col font-weight-bold">${item.balance | numberFormat:"0,0"}</div>
+        <div class="text-right col"><span if.bind="item.weightKgIn">${item.weightKgIn | numberFormat:"0,0"}</span></div>
+        <div class="text-right col"><span if.bind="item.weightKgOut">${item.weightKgOut | numberFormat:"0,0"}</span></div>
+        <div class="text-right col font-weight-bold">${item.balanceStockWeightKg | numberFormat:"0,0"}</div>
         <div class="col">Kor: ${item.kor | numberFormat: "0,.00"}, Count: ${item.count | numberFormat: "0,0.0"},
           Moisture: ${item.moisture/100 | numberFormat:"0.00%"}</div>
       </div>

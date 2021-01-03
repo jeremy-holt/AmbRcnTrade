@@ -17,23 +17,23 @@ namespace AmbRcnTradeServer.RavenIndexes
         {
             Map = stocks => from c in stocks
                 let location = LoadDocument<Customer>(c.LocationId)
-                let supplier=LoadDocument<Customer>(c.SupplierId)
+                let supplier = LoadDocument<Customer>(c.SupplierId)
                 select new
                 {
                     c.LotNo,
                     c.CompanyId,
                     c.LocationId,
-                    BagsIn = c.Bags > 0 ? c.Bags : 0,
-                    BagsOut = c.Bags < 0 ? c.Bags : 0,
-                    WeightKgIn = c.WeightKg > 0 ? c.WeightKg : 0,
-                    WeightKgOut = c.WeightKg < 0 ? c.WeightKg : 0,
+                    BagsIn = c.IsStockIn ? c.Bags : 0,
+                    BagsOut = c.IsStockIn ? 0 : c.Bags,
+                    WeightKgIn = c.IsStockIn ? c.WeightKg : 0,
+                    WeightKgOut = c.IsStockIn ? 0 : c.WeightKg,
                     LocationName = location.Name,
                     c.AnalysisResult,
                     c.InspectionId,
                     AnalysisResults = new List<object>(),
                     InspectionIds = new List<string>(),
                     c.SupplierId,
-                    SupplierName=supplier.Name
+                    SupplierName = supplier.Name
                 };
             Reduce = results => from c in results
                 group c by new {c.CompanyId, c.LocationId, c.LocationName, c.LotNo, c.SupplierId, c.SupplierName}
