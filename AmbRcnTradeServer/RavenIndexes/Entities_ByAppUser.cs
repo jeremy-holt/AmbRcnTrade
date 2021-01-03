@@ -10,9 +10,9 @@ using Raven.Client.Documents.Session;
 
 namespace AmbRcnTradeServer.RavenIndexes
 {
-    public class Contracts_ByAppUser : AbstractMultiMapIndexCreationTask<Contracts_ByAppUser.Result>
+    public class Entities_ByAppUser : AbstractMultiMapIndexCreationTask<Entities_ByAppUser.Result>
     {
-        public Contracts_ByAppUser()
+        public Entities_ByAppUser()
         {
             AddMap<Contract>(contracts => from c in contracts
                 let customer = LoadDocument<Customer>(c.SellerId)

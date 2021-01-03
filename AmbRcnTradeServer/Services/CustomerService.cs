@@ -18,10 +18,10 @@ namespace AmbRcnTradeServer.Services
     {
         Task<ServerResponse<Customer>> SaveCustomer(Customer customer);
         Task<Customer> LoadCustomer(string id);
-        Task<List<Customer>> LoadCustomerList(string companyId);
+        Task<List<Customer>> LoadAllCustomers(string companyId);
         Task<ServerResponse<Customer>> AddUser(string customerId, AppUser appUser);
         Task<List<CustomerUserListItem>> ListCustomersAndUsers(string companyId);
-        Task<List<ListItem>> LoadCustomerListForAppUser(string companyId, string appUserId);
+        Task<List<ListItem>> LoadCustomerListForAppUser(string companyId, string appUserId, bool isAdmin);
     }
 
     public class CustomerService : ICustomerService
@@ -44,7 +44,7 @@ namespace AmbRcnTradeServer.Services
             return await _session.LoadAsync<Customer>(id);
         }
 
-        public async Task<List<Customer>> LoadCustomerList(string companyId)
+        public async Task<List<Customer>> LoadAllCustomers(string companyId)
         {
             var query = await _session.Query<Customer>()
                 .Where(c => c.CompanyId == companyId)
@@ -98,9 +98,9 @@ namespace AmbRcnTradeServer.Services
             return list;
         }
 
-        public async Task<List<ListItem>> LoadCustomerListForAppUser(string companyId, string appUserId)
+        public async Task<List<ListItem>> LoadCustomerListForAppUser(string companyId, string appUserId, bool isAdmin)
         {
-            if (appUserId.IsNullOrEmpty())
+            if (isAdmin)
             {
                 return await _session.Query<Customer>()
                     .Where(c => c.CompanyId == companyId)
@@ -109,9 +109,9 @@ namespace AmbRcnTradeServer.Services
                     .ToListAsync();
             }
 
-            var query = await _session.Query<Contracts_ByAppUser.Result, Contracts_ByAppUser>()
+            var query = await _session.Query<Entities_ByAppUser.Result, Entities_ByAppUser>()
                 .Where(c => c.CompanyId == companyId && c.Users.Contains(appUserId))
-                .ProjectInto<Contracts_ByAppUser.Result>()
+                .ProjectInto<Entities_ByAppUser.Result>()
                 .ToListAsync();
             
             return query.Where(c => c.Id.IsNotNullOrEmpty())

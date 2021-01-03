@@ -41,19 +41,19 @@ namespace AmbRcnTradeServer.Controllers
 
         [Authorize]
         [HttpGet("[action]")]
-        public async Task<ActionResult<List<Customer>>> LoadCustomerList(string companyId)
+        public async Task<ActionResult<List<Customer>>> LoadAllCustomers(string companyId)
         {
-            return await _customerService.LoadCustomerList(companyId);
+            return await _customerService.LoadAllCustomers(companyId);
         }
 
         [Authorize]
         [HttpGet("[action]")]
-        public async Task<ActionResult<List<ListItem>>> LoadCustomerListForAppUser(string companyId, string appUserId)
+        public async Task<ActionResult<List<ListItem>>> LoadCustomerListForAppUser(string companyId)
         {
             var appuserId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.PrimarySid)?.Value;
             var isAdmin = User.HasClaim(c => c.Type == ClaimTypes.Role && c.Value.Contains("admin"));
             
-            return await _customerService.LoadCustomerListForAppUser(companyId, appuserId);
+            return await _customerService.LoadCustomerListForAppUser(companyId, appuserId, isAdmin);
         }
 
         [Authorize]

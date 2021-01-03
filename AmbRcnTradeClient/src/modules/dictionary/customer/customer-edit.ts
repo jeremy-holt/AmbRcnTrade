@@ -45,7 +45,7 @@ export class CustomerEdit {
   }
 
   protected async activate(params: IParamsId): Promise<void> {
-    await this.customerService.loadCustomerList();
+    await this.customerService.loadAllCustomers();
     await this.adminService.loadUsersList();
 
     if (params.id) {
@@ -68,7 +68,7 @@ export class CustomerEdit {
 
   protected async save(): Promise<void> {
     await this.customerService.saveCustomer(this.model);
-    await this.customerService.loadCustomerList();
+    await this.customerService.loadAllCustomers();
     this.selectedCustomer = this.list.find(c => c.name === this.model.name) as ICustomer;
   }
 

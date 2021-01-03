@@ -26,7 +26,7 @@ namespace Tests
         private static async Task InitializeIndexes(IDocumentStore store)
         {
             await new Customers_ByAppUserId().ExecuteAsync(store);
-            await new Contracts_ByAppUser().ExecuteAsync(store);
+            await new Entities_ByAppUser().ExecuteAsync(store);
         }
 
         private ICustomerService GetCustomerService(IAsyncDocumentSession session)
@@ -63,34 +63,39 @@ namespace Tests
             await InitializeIndexes(store);
             var fixture = new Fixture();
 
-            var appUser = fixture.DefaultIdentity<AppUser>().Create();
+            var appUser = fixture.DefaultIdentity<AppUser>().With(c=>c.Name,"Shalin").Create();
             await session.StoreAsync(appUser);
 
             var users = new List<User>
             {
                 new(appUser.Id, appUser.Name)
             };
+            
             var customerTerraNova = fixture.DefaultEntity<Customer>()
                 .With(c => c.Users, users)
+                .With(c=>c.Name,"Terra Nova")
                 .Create();
             await session.StoreAsync(customerTerraNova);
 
-            var otherCustomers = fixture.DefaultEntity<Customer>()
+            var customerGreenangle = fixture.DefaultEntity<Customer>()
                 .Without(c => c.Users)
-                .CreateMany(2).ToList();
-            await otherCustomers.SaveList(session);
+                .Create();
+            await session.StoreAsync(customerGreenangle);
+                
+            
 
             var contract = fixture.DefaultEntity<Contract>()
                 .With(c => c.SellerId, customerTerraNova.Id)
-                .With(c => c.BuyerId, otherCustomers[0].Id)
+                .With(c => c.BuyerId, customerGreenangle.Id)
                 .Create();
             await session.StoreAsync(contract);
             await session.SaveChangesAsync();
 
             WaitForIndexing(store);
+            WaitForUserToContinueTheTest(store);
 
             // Act
-            var list = await sut.LoadCustomerListForAppUser(COMPANY_ID, appUser.Id);
+            var list = await sut.LoadCustomerListForAppUser(COMPANY_ID, appUser.Id, false);
 
             // Assert
             list.Should().OnlyContain(c => c.Id == customerTerraNova.Id);

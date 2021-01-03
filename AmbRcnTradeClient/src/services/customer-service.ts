@@ -32,21 +32,17 @@ export class CustomerService extends FetchService {
     return super.post(model, "save", customerEditAction);
   }
 
-  public async loadCustomerList() {
-    return super.getMany<ICustomer>([super.currentCompanyIdQuery()], "loadCustomerList", customerListAction);
+  public async loadAllCustomers() {
+    return super.getMany<ICustomer>([super.currentCompanyIdQuery()], "loadAllCustomers", customerListAction);
   }
 
   public async createCustomer() {
     return super.get([], "create", customerEditAction);
   }
 
-  public async loadCustomersForAppUserList() {
-    const state = this.getCurrentState();
-    const appUserId = isInRole(["admin", "user", "inspector"], state) ? null : state.user.id;
-
+  public async loadCustomersForAppUserList() {    
     return super.getMany<IListItem>([
-      super.currentCompanyIdQuery(),
-      new QueryId("appUserId", appUserId)
+      super.currentCompanyIdQuery()
     ], "loadCustomerListForAppUser", customerAppUserListAction);
   }
 }
