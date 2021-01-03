@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using AmberwoodCore.Extensions;
 using AmberwoodCore.Models;
 using AmbRcnTradeServer.Constants;
+using AmbRcnTradeServer.Models.ContainerModels;
 using AmbRcnTradeServer.Models.DictionaryModels;
 using AmbRcnTradeServer.Models.InspectionModels;
 using AmbRcnTradeServer.Models.StockModels;
@@ -29,6 +30,114 @@ namespace Tests
             await new Stocks_ByBalances().ExecuteAsync(store);
             await new Stocks_ById().ExecuteAsync(store);
             await new Inspections_ByAnalysisResult().ExecuteAsync(store);
+        }
+
+        [Fact]
+        public async Task Delete_StockIn_ShouldDeleteStockAndRemoveItFromInspection()
+        {
+            // Arrange
+            using var store = GetDocumentStore();
+            using var session = store.OpenAsyncSession();
+            var sut = GetStockService(session);
+            var fixture = new Fixture();
+
+            const string inspectionId = "inspections/1-A";
+            const string stockId = "stocks/1-A";
+
+            var stockReferences = new List<StockReference>
+            {
+                new(stockId, 100, DateTime.Today, 1),
+                new("stocks/2-A", 100, DateTime.Today, 1)
+            };
+
+            var inspection = fixture.DefaultEntity<Inspection>()
+                .With(c => c.Id, inspectionId)
+                .With(c => c.StockReferences, stockReferences)
+                .Create();
+
+            await session.StoreAsync(inspection);
+
+            var stock = fixture.DefaultEntity<Stock>()
+                .With(c => c.Id, stockId)
+                .With(c => c.InspectionId, inspectionId)
+                .With(c => c.IsStockIn, true)
+                .Without(c => c.StuffingRecords)
+                .Create();
+            await session.StoreAsync(stock);
+
+            await session.SaveChangesAsync();
+
+            // Act
+            var response = await sut.DeleteStock(stockId);
+            await session.SaveChangesAsync();
+
+            // Assert
+            using var session2 = store.OpenAsyncSession();
+
+            var actualStock = await session2.LoadAsync<Stock>(stockId);
+            actualStock.Should().BeNull();
+
+            var actualInspection = await session2.LoadAsync<Inspection>(inspectionId);
+            actualInspection.StockReferences.Should().OnlyContain(c => c.StockId == "stocks/2-A");
+        }
+
+        [Fact]
+        public async Task Delete_StockIn_ShouldThrowExceptionIfStockIsAlreadyStuffedInContainer()
+        {
+            // Arrange
+            using var store = GetDocumentStore();
+            using var session = store.OpenAsyncSession();
+            var sut = GetStockService(session);
+            var fixture = new Fixture();
+
+            const string inspectionId = "inspections/1-A";
+            const string stockId = "stocks/1-A";
+
+            var stock = fixture.DefaultEntity<Stock>()
+                .With(c => c.Id, stockId)
+                .With(c => c.InspectionId, inspectionId)
+                .With(c => c.IsStockIn, true)
+                .With(c => c.StuffingRecords, fixture.Build<StuffingRecord>().CreateMany().ToList)
+                .Create();
+            await session.StoreAsync(stock);
+
+            await session.SaveChangesAsync();
+
+            // Act
+            Func<Task> act = async () => await sut.DeleteStock(stockId);
+
+            // Assert
+            await act.Should().ThrowAsync<InvalidOperationException>().WithMessage("This stock has already been stuffed into a container. It cannot be deleted");
+        }
+
+        [Fact]
+        public async Task Delete_StockOut_ShouldThrowExeption()
+        {
+            // Arrange
+            using var store = GetDocumentStore();
+            using var session = store.OpenAsyncSession();
+            var sut = GetStockService(session);
+            var fixture = new Fixture();
+            
+            const string inspectionId = "inspections/1-A";
+            const string stockId = "stocks/1-A";
+
+            var stock = fixture.DefaultEntity<Stock>()
+                .With(c => c.Id, stockId)
+                .With(c => c.InspectionId, inspectionId)
+                .With(c => c.IsStockIn, false)
+                .With(c => c.StuffingRecords, fixture.Build<StuffingRecord>().CreateMany().ToList)
+                .Create();
+            await session.StoreAsync(stock);
+
+            await session.SaveChangesAsync();
+
+            // Act
+            Func<Task> act = async () => await sut.DeleteStock(stockId);
+
+            // Assert
+            await act.Should().ThrowAsync<InvalidOperationException>().WithMessage("This stock has already been stuffed into a container. It cannot be deleted");
+            
         }
 
         [Fact]
@@ -190,6 +299,14 @@ namespace Tests
                 .CreateMany().ToList();
             await inspections.SaveList(session);
 
+            var incomingStocks = fixture.Build<IncomingStock>()
+                .With(c => c.StockIds, new List<string>() {"stocks/1-A", "stocks/2-A"})
+                .CreateMany().ToList();
+            var container = fixture.DefaultEntity<Container>()
+                .With(c => c.IncomingStocks,incomingStocks )
+                .Create();
+            await session.StoreAsync(container);
+
             var stockIn1 = fixture.DefaultEntity<Stock>()
                 .Without(c => c.StockOutDate)
                 .Without(c => c.InspectionId)
@@ -316,21 +433,6 @@ namespace Tests
             list.Should().HaveCount(2);
             list.Should().Contain(c => c.StockId == stockIn1.Id);
             list.Should().Contain(c => c.StockId == stockIn2.Id);
-
-            // var actual = list.Single(c => c.StockId == stockIn2.Id);
-            // actual.BagsIn.Should().Be(stockIn2.Bags);
-            // actual.BagsOut.Should().Be(0);
-            // actual.LocationId.Should().Be(stockIn2.LocationId);
-            // actual.LocationName.Should().Be(location.Name);
-            // actual.LotNo.Should().Be(stockIn2.LotNo);
-            // actual.IsStockIn.Should().BeTrue();
-            // actual.StockDate.Should().Be(stockIn2.StockInDate ?? DateTime.MinValue);
-            // actual.StockDate.Should().NotBe(DateTime.MinValue);
-            // actual.Origin.Should().Be(stockIn2.Origin);
-            // actual.SupplierName.Should().Be(supplier.Name);
-            // actual.SupplierId.Should().Be(supplier.Id);
-            // actual.InspectionId.Should().Be(stockIn2.InspectionId);
-            // // actual.Inspection.Should().Be(inspections[0]);
         }
 
         [Fact]

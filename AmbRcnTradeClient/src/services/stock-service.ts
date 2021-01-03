@@ -10,6 +10,7 @@ import { Store } from "aurelia-store";
 import { IState } from "store/state";
 import _ from "lodash";
 import { QueryId } from "models/QueryId";
+import { noOpAction } from "./no-op-action";
 
 @autoinject
 export class StockService extends FetchService {
@@ -55,6 +56,10 @@ export class StockService extends FetchService {
 
   public async createStock() {
     return super.get([super.currentCompanyIdQuery()], "create", stockEditAction);
+  }
+
+  public async deleteStock(id: string){
+    return super.delete(id,"delete",noOpAction);
   }
 }
 

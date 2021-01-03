@@ -60,5 +60,12 @@ namespace AmbRcnTradeServer.Controllers
                 CompanyId = companyId, StockInDate = DateTime.Today
             });
         }
+
+        [Authorize]
+        [HttpDelete("[action]")]
+        public async Task<ActionResult<ServerResponse>> Delete(string id)
+        {
+            return await _service.DeleteStock(id);
+        }
     }
 }

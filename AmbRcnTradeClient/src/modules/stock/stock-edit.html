@@ -4,11 +4,11 @@
   <toolbar type="menu" caption="Stock" list-route="stockList" disabled-save.bind="!canSave" save.call="save()">
   </toolbar>
 
-  <div class="row">
+  <div class="row mt-2">
     <div class="col">
-      <h4 class="${model.isStockIn ? '' : 'text-blue'}">
-        Stock ${model.isStockIn ? "IN" : OUT} - Lot no ${model.lotNo}
-      </h4>
+      <h3 class="${model.isStockIn ? '' : 'text-blue'}">
+        Stock ${model.isStockIn ? "IN" : "OUT"} - Lot no ${model.lotNo}
+      </h3>
     </div>
   </div>
   <div class="row">
@@ -48,7 +48,7 @@
   </div>
 
   <div class="form-label mt-2">Container information</div>
-  <div class="row">
+  <div if.bind="model.stuffingRecords.length" class="row">
     <div class="col-6">
       <ul class="list-group">
         <li class="list-group-item" repeat.for="item of model.stuffingRecords">
@@ -64,7 +64,15 @@
       </ul>
     </div>
   </div>
+  <div else>
+    <div class="alert alert-info mt-1">None of this stock has been stuffed in a container yet</div>
+  </div>
 
   <analysis-result model.bind="model.analysisResult" inspection-id.bind="model.inspectionId" caption="Go to the inspection"></analysis-result>
+
+  <div>
+    <button type="button" disabled.bind="!canDelete" class="btn btn-danger" click.delegate="deleteStock()">Delete this stock</button>
+    <div if.bind="!canDelete">This stock cannot be deleted because it has already been stuffed into a container</div>
+  </div>
 
 </template>

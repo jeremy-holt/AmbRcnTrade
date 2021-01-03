@@ -1,3 +1,5 @@
+import { DeleteDialog } from "./../../dialogs/delete-dialog";
+import { DialogService } from "aurelia-dialog";
 import { encodeParams } from "core/helpers";
 import { autoinject, observable } from "aurelia-framework";
 import { Router } from "aurelia-router";
@@ -17,7 +19,6 @@ export class StockEdit {
   protected model: IStock = undefined!;
   protected locations: IListItem[] = [];
   protected suppliers: IListItem[] = [];
-  // protected approvalChecked: Approval = null;
 
   @observable protected selectedLocation: IListItem = undefined!;
   @observable protected selectedSupplier: IListItem = undefined!;
@@ -25,6 +26,7 @@ export class StockEdit {
   constructor(
     private stockService: StockService,
     private customerService: CustomerService,
+    private dialogService: DialogService,
     private router: Router
   ) { }
 
@@ -74,8 +76,24 @@ export class StockEdit {
     }
   }
 
-  protected encode(value: string){
+  protected encode(value: string) {
     return encodeParams(value);
+  }
+
+  protected get canDelete() {
+    return this.model?.isStockIn && this.model?.stuffingRecords.length === 0 ;
+  }
+
+  protected deleteStock() {
+    this.dialogService.open({
+      viewModel: DeleteDialog,
+      model: { body: "Are you sure you want to delete this stock? After deleting it the inspection will be shown as unallocated" }
+    }).whenClosed(async result => {
+      if (!result.wasCancelled) {
+        await this.stockService.deleteStock(this.model.id);
+        this.router.navigateToRoute("stockList");
+      }
+    });
   }
 
   protected listItemMatcher = (a: IListItem, b: IListItem) => a?.id === b?.id;

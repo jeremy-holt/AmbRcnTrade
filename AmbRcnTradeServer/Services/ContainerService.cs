@@ -15,6 +15,8 @@ namespace AmbRcnTradeServer.Services
         Task<ServerResponse<Container>> Save(Container container);
         Task<Container> Load(string id);
         Task<List<Container>> LoadList(string companyId, ContainerStatus? status);
+
+        Task<ServerResponse> RemoveStock(string stockId);
     }
 
     public class ContainerService : IContainerService
@@ -48,6 +50,11 @@ namespace AmbRcnTradeServer.Services
 
             var list = await query.ToListAsync();
             return list.OrderBy(c => c.IncomingStocks.OrderBy(incomingStock => incomingStock.StuffingDate).FirstOrDefault()?.StuffingDate).ToList();
+        }
+
+        public async Task<ServerResponse> RemoveStock(string stockId)
+        {
+            throw new System.NotImplementedException();
         }
     }
 }

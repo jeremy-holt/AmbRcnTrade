@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using AmberwoodCore.Extensions;
 using AmberwoodCore.Responses;
+using AmbRcnTradeServer.Models.InspectionModels;
 using AmbRcnTradeServer.Models.StockModels;
 using AmbRcnTradeServer.RavenIndexes;
 using Raven.Client.Documents;
@@ -19,6 +20,7 @@ namespace AmbRcnTradeServer.Services
         Task<List<StockBalance>> LoadStockBalanceList(string companyId, long? lotNo, string locationId);
         Task<List<StockListItem>> LoadStockList(string companyId, long? lotNo, string locationId);
         Task<List<StockListItem>> LoadStockList(string companyId, List<string> stockIds);
+        Task<ServerResponse> DeleteStock(string stockId);
     }
 
     public class StockService : IStockService
@@ -107,6 +109,24 @@ namespace AmbRcnTradeServer.Services
         public async Task<List<StockListItem>> LoadStockList(string companyId, List<string> stockIds)
         {
             return await LoadStockList(companyId, null, null, stockIds);
+        }
+
+        public async Task<ServerResponse> DeleteStock(string stockId)
+        {
+            var stock = await _session
+                .Include<Stock>(c=>c.InspectionId)
+                .LoadAsync<Stock>(stockId);
+
+
+            if ((stock.IsStockIn && stock.StuffingRecords.Any()) || !stock.IsStockIn)
+                throw new InvalidOperationException("This stock has already been stuffed into a container. It cannot be deleted");
+
+            var inspection = await _session.LoadAsync<Inspection>(stock.InspectionId);
+            inspection.StockReferences.RemoveAll(c => c.StockId == stockId);
+
+            _session.Delete(stock);
+
+            return new ServerResponse("Deleted stock");
         }
 
         private async Task<List<StockListItem>> LoadStockList(string companyId, long? lotNo, string locationId, List<string> stockIds)
