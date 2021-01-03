@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AmberwoodCore.Extensions;
 using AmberwoodCore.Responses;
 using AmbRcnTradeServer.Constants;
 using AmbRcnTradeServer.Models.ContainerModels;
@@ -18,7 +19,7 @@ namespace AmbRcnTradeServer.Services
         Task<Container> Load(string id);
         Task<List<Container>> LoadList(string companyId, ContainerStatus? status);
 
-        Task<ServerResponse> UnstuffContainer(string containerId, string stockId);
+        Task<ServerResponse> UnStuffContainer(string containerId);
     }
 
     public class ContainerService : IContainerService
@@ -54,35 +55,35 @@ namespace AmbRcnTradeServer.Services
             return list.OrderBy(c => c.IncomingStocks.OrderBy(incomingStock => incomingStock.StuffingDate).FirstOrDefault()?.StuffingDate).ToList();
         }
 
-        public async Task<ServerResponse> UnstuffContainer(string containerId, string stockId)
+        public async Task<ServerResponse> UnStuffContainer(string containerId)
         {
-            var stock = await _session
-                .Include<Stock>(c => c.StuffingRecords.Select(x => x.ContainerId))
-                .LoadAsync<Stock>(stockId);
+            var container = await _session
+                .Include<Container>(c => c.IncomingStocks.SelectMany(stock => stock.StockIds.Select(stockItem => stockItem.StockId)))
+                .LoadAsync<Container>(containerId);
 
-            var container = await _session.LoadAsync<Container>(containerId);
+            var stocks = await _session.LoadListFromMultipleIdsAsync<Stock>(container.IncomingStocks.SelectMany(stock => stock.StockIds.Select(stockItem => stockItem.StockId)));
 
             var removableStatus = new[] {ContainerStatus.Cancelled, ContainerStatus.Empty, ContainerStatus.Stuffing};
             if (!container.Status.In(removableStatus))
                 throw new InvalidOperationException("Cannot remove stock from a container that is no longer in the warehouse");
 
-            foreach (var incomingStock in container.IncomingStocks)
+            foreach (var stock in stocks)
             {
-                incomingStock.Bags -= stock.Bags;
-                incomingStock.WeightKg -= stock.WeightKg;
-                incomingStock.StockIds.RemoveAll(c => c == stockId);
+                stock.StuffingRecords.RemoveAll(c => c.ContainerId == containerId);
             }
 
-            container.Bags -= stock.Bags;
-            container.StuffingWeightKg -= stock.WeightKg;
-
-            if (container.IncomingStocks.All(x => !x.StockIds.Any()))
+            var stockOuts = stocks.Where(c => !c.IsStockIn);
+            foreach (var stockOut in stockOuts)
             {
-                container.IncomingStocks = new List<IncomingStock>();
+                _session.Delete(stockOut);
             }
-            
 
-            return new ServerResponse("Removed stock from container");
+            container.IncomingStocks = new List<IncomingStock>();
+            container.Bags = 0;
+            container.StuffingWeightKg = 0;
+            container.Status = ContainerStatus.Empty;
+
+            return new ServerResponse("Unstuffed container");
         }
     }
 }

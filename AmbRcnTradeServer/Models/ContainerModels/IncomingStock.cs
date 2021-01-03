@@ -15,7 +15,7 @@ namespace AmbRcnTradeServer.Models.ContainerModels
 
         public double WeightKg { get; set; }
         public long LotNo { get; set; }
-        public List<string> StockIds { get; set; } = new List<string>();
+        public List<IncomingStockItem> StockIds { get; set; } = new List<IncomingStockItem>();
         public DateTime StuffingDate { get; set; }
     }
 
@@ -31,5 +31,16 @@ namespace AmbRcnTradeServer.Models.ContainerModels
     public class OutgoingStock
     {
         public string StockId { get; set; }
+    }
+
+    public class IncomingStockItem
+    {
+        public IncomingStockItem(string stockId, bool isStockIn)
+        {
+            StockId = stockId;
+            IsStockIn = isStockIn;
+        }
+        public string StockId { get; set; }
+        public bool IsStockIn { get; set; }
     }
 }

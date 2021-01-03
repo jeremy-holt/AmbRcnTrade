@@ -2,12 +2,14 @@ import { HttpClient } from "aurelia-fetch-client";
 import { autoinject } from "aurelia-framework";
 import { Router } from "aurelia-router";
 import { Store } from "aurelia-store";
+import { IUnstuffContainerRequest } from "interfaces/shipping/IUnstuffContainerRequest";
 import _ from "lodash";
 import { QueryId } from "models/QueryId";
 import { IState } from "store/state";
 import { ContainerStatus } from "./../constants/app-constants";
 import { IContainer } from "./../interfaces/shipping/IContainer";
 import { FetchService } from "./fetch-service";
+import { noOpAction } from "./no-op-action";
 
 @autoinject
 export class ContainerService extends FetchService {
@@ -36,6 +38,10 @@ export class ContainerService extends FetchService {
 
   public async createContainer() {
     return super.get([super.currentCompanyIdQuery()], "create", containerEditAction);
+  }
+
+  public async unstuffContainer(request: IUnstuffContainerRequest) {
+    return super.post(request, "unstuffContainer", noOpAction);
   }
 
   public static isOverweightContainer(quantities: { bags: number, weightKg: number }) {

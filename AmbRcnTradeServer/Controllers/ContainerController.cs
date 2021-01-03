@@ -50,5 +50,17 @@ namespace AmbRcnTradeServer.Controllers
         {
             return await Task.FromResult(new Container() {CompanyId = companyId});
         }
+
+        [Authorize]
+        [HttpPost("[action]")]
+        public async Task<ActionResult<ServerResponse>> UnstuffContainer(UnstuffContainerRequest request)
+        {
+            return await _service.UnStuffContainer(request.ContainerId);
+        }
+
+        public class UnstuffContainerRequest
+        {
+            public string ContainerId { get; set; }
+        }
     }
 }

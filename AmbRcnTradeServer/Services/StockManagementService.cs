@@ -143,7 +143,7 @@ namespace AmbRcnTradeServer.Services
                 LotNo = stockBalance.LotNo,
                 Bags = bags,
                 WeightKg = weightKg,
-                StockIds = stocks.Select(c => c.Id).ToList(),
+                StockIds = stocks.Select(c => new IncomingStockItem(c.Id,true)).ToList(),
                 StuffingDate = stuffingDate
             };
 
@@ -185,6 +185,7 @@ namespace AmbRcnTradeServer.Services
             };
 
             await _session.StoreAsync(stockOut);
+            incomingStock.StockIds.Add(new IncomingStockItem(stockOut.Id,false));
 
             return new ServerResponse<OutgoingStock>(new OutgoingStock {StockId = stockOut.Id}, "Stuffed container");
         }

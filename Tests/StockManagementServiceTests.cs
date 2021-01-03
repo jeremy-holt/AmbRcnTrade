@@ -388,8 +388,9 @@ namespace Tests
             var actualContainer = await session.LoadAsync<Container>(container.Id);
             actualContainer.IncomingStocks.Should().HaveCount(1);
             actualContainer.IncomingStocks[0].LotNo.Should().Be(1);
-            actualContainer.IncomingStocks[0].StockIds.Should().Contain(stock1.Id);
-            actualContainer.IncomingStocks[0].StockIds.Should().Contain(stock2.Id);
+            actualContainer.IncomingStocks[0].StockIds.Should().ContainEquivalentOf(new IncomingStockItem(stock1.Id, true));
+            actualContainer.IncomingStocks[0].StockIds.Should().ContainEquivalentOf(new IncomingStockItem(stock2.Id, true));
+            actualContainer.IncomingStocks[0].StockIds.Should().ContainEquivalentOf(new IncomingStockItem("stocks/3-A", false));
             actualContainer.IncomingStocks[0].Bags.Should().Be(incomingBags);
             actualContainer.IncomingStocks[0].WeightKg.Should().Be(incomingWeightKg);
             actualContainer.IncomingStocks[0].StuffingDate.Should().Be(new DateTime(2020, 1, 1));
@@ -466,6 +467,7 @@ namespace Tests
 
             // Assert
             var stockOut = await session.Query<Stock>().Where(c => !c.IsStockIn).FirstOrDefaultAsync();
+            var actualContainer = await session.LoadAsync<Container>(container.Id);
 
             stockOut.Should().NotBeNull();
             stockOut.LotNo.Should().Be(1);
@@ -483,6 +485,9 @@ namespace Tests
             stockOut.StuffingRecords[0].ContainerId.Should().Be(container.Id);
             stockOut.StuffingRecords[0].ContainerNumber.Should().Be(container.ContainerNumber);
             stockOut.StuffingRecords[0].StuffingDate.Should().Be(stuffingDate);
+
+            var incomingStocksIds = actualContainer.IncomingStocks.SelectMany(c => c.StockIds).Select(x=>x.StockId).ToList();
+            incomingStocksIds.Should().Contain(new[] {stock1.Id, stock2.Id, stockOut.Id});
         }
     }
 }
