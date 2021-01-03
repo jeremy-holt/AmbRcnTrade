@@ -1,5 +1,5 @@
 
-import { UserService } from "./../../../services/user-service";
+import { AppUserService } from "../../../services/app-user-service";
 import { autoinject, observable } from "aurelia-framework";
 import { connectTo } from "aurelia-store";
 import { IState } from "store/state";
@@ -12,7 +12,7 @@ export class CustomerUsersList {
   public list: ICustomerUserListItem[] = [];
 
   constructor(
-    private userService: UserService
+    private userService: AppUserService
   ) { }
 
   protected async activate() {

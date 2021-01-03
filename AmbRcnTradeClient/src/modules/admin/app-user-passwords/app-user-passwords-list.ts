@@ -1,5 +1,5 @@
 import { IAppUserPassword } from "./../../../interfaces/IAppUserPassword";
-import { UserService } from "./../../../services/user-service";
+import { AppUserService } from "../../../services/app-user-service";
 import { autoinject } from "aurelia-framework";
 
 @autoinject
@@ -7,7 +7,7 @@ export class AppUserPasswordsList {
   public list: IAppUserPassword[] = [];
 
   constructor(
-    private userService: UserService
+    private userService: AppUserService
   ) { }
 
   protected async activate() {

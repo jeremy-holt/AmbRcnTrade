@@ -6,7 +6,7 @@ import { IAppUser, IAppUserListItem } from "../../../interfaces/IAppUser";
 import { IRoleNameItem } from "../../../interfaces/IRoleNameItem";
 import { RoleType } from "../../../interfaces/types";
 import { AdminService } from "../../../services/admin-service";
-import { UserService } from "../../../services/user-service";
+import { AppUserService } from "../../../services/app-user-service";
 import _ from "lodash";
 
 @autoinject
@@ -24,7 +24,7 @@ export class AppUserEdit {
   @observable public selectedAppUser: IAppUserListItem = undefined!;
 
   constructor(
-    private userService: UserService,
+    private userService: AppUserService,
     private adminService: AdminService
   ) { }
 

@@ -19,13 +19,13 @@ using Raven.Client.Documents.Session;
 
 namespace AmbRcnTradeServer.Controllers
 {
-    public class UserController : RavenController
+    public class AppUserController : RavenController
     {
         private readonly IAppUserService _appUserService;
         private readonly ICustomerService _customerService;
-        private readonly IUserService _service;
+        private readonly IAdminService _service;
 
-        public UserController(IAsyncDocumentSession session, IUserService service, IAppUserService appUserService, ICustomerService customerService) : base(session)
+        public AppUserController(IAsyncDocumentSession session, IAdminService service, IAppUserService appUserService, ICustomerService customerService) : base(session)
         {
             _service = service;
             _appUserService = appUserService;

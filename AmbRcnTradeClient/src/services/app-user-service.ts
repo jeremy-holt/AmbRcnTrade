@@ -4,22 +4,22 @@ import { Router } from "aurelia-router";
 import { Store } from "aurelia-store";
 import _ from "lodash";
 import { IState } from "../store/state";
-import { IAppUserPassword } from "./../interfaces/IAppUserPassword";
-import { ICustomerUserListItem } from "./../interfaces/ICustomerUserListItem";
-import { IListItem } from "./../interfaces/IEntity";
-import { IPayload } from "./../interfaces/IPayload";
+import { IAppUserPassword } from "../interfaces/IAppUserPassword";
+import { ICustomerUserListItem } from "../interfaces/ICustomerUserListItem";
+import { IListItem } from "../interfaces/IEntity";
+import { IPayload } from "../interfaces/IPayload";
 import { FetchService } from "./fetch-service";
 import { noOpAction } from "./no-op-action";
 
 @autoinject
-export class UserService extends FetchService {
+export class AppUserService extends FetchService {
 
   constructor(
     http: HttpClient,
     store: Store<IState>,
     router: Router
   ) {
-    super("api/user", http, store, router);
+    super("api/appUser", http, store, router);
 
     store.registerAction("userCompaniesAction", userCompaniesAction);
     store.registerAction("userCustomersAction", userCustomersAction);

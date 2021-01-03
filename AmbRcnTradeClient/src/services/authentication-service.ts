@@ -11,7 +11,7 @@ import { IState } from "../store/state";
 import { LOCAL_STORAGE } from "./../localStorage-consts";
 import { AdminService } from "./admin-service";
 import { ServerMessageService } from "./server-message-service";
-import { UserService } from "./user-service";
+import { AppUserService } from "./app-user-service";
 
 @autoinject
 export class AuthenticationService {
@@ -20,7 +20,7 @@ export class AuthenticationService {
     public store: Store<IState>,
     private serverMessageService: ServerMessageService,
     private adminService: AdminService,
-    private userService: UserService,
+    private userService: AppUserService,
     private taskQueue: TaskQueue,
     private i18n: I18N,
     private router: Router) {
