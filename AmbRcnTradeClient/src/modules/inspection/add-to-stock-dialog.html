@@ -1,52 +1,77 @@
 <template>
-  <ux-dialog>
+  <ux-dialog style="width: 550px;">
     <ux-dialog-header>
-      <h4>Create stock from inspection</h4>
+      <h4>Create stock from inspection from supplier: ${supplierName}</h4>
     </ux-dialog-header>
 
     <ux-dialog-body>      
-      <p>Select an existing stock to move the bags into, or create a new stock entry</p>
 
-      <h5>Stock list</h5>
-      <ul class="list-group small" style="height: 300px; overflow-y: auto;">
-        <li repeat.for="item of stockList" class="list-group-item  ${item.selected ? 'list-group-item-success' : ''}">
+      <div class="row mb-3">
+        <div class="col">
+          <div class="custom-control custom-checkbox">
+            <input type="checkbox" class="custom-control-input" checked.bind="newStockItem" id="chk1">
+            <label for="chk1" class="custom-control-label">Create new stock entry or select existing stock to add bags to</label>
+          </div>
+        </div>
+      </div>
+
+      <h5>Stocks from ${supplierName}</h5>
+
+      <ul class="list-group small" style="max-height: 300px; overflow-y: auto;">
+        <li class="list-group-item font-weight-bold">
+          <div class="row">
+            <div class="col">Lot no</div>
+            <div class="col">Place of inspection</div>
+            <div class="col">Bags</div>
+            <div class="col">Quality</div>
+          </div>
+        </li>
+        <li repeat.for="item of stockList" class="list-group-item ${newStockItem ? 'bg-light' : ''} ${item.selected ? 'list-group-item-success' : ''}">
           <a href="#" class="text-decoration-none" click.trigger="selectStockRow(item)">
             <div class="row">
               <div class="col">Lot no ${item.lotNo}</div>
               <div class="col">${item.locationName}</div>
               <div class="col">Bags ${item.bagsIn | numberFormat: "0,0"}</div>
-              <div>KOR ${item.analysisResult.kor | numberFormat: "0,0.00"}</div>
+              <div class="col">KOR ${item.analysisResult.kor | numberFormat: "0,0.00"}</div>
             </div>
           </a>
         </li>
       </ul>
 
-      <div class="row">
-        <div class="col">
-          <date-input value.bind="model.date" label="Date stock enters"></date-input>
-        </div>
-        <div class="col">
-          <number-input value.bind="model.bags" label="Number of bags to enter stock"></number-input>
-        </div>
+      <div class="d-flex justify-content-between small font-italic mt-1">
+        <div class="mr-4">${stockItemsSelectedCount} rows selected</div>
+  
+        <div if.bind="pleaseSelectMessage.length" class="mb-2 text-warning">${pleaseSelectMessage}</div>
       </div>
 
-      <div class="row mb-3">
-        <div class="col">
-          <select-input source.bind="locations" value.bind="selectedLocation" label="Select the warehouse">
-          </select-input>
-        </div>
-      </div>
-
-      <div class="row">
-        <div class="col">
-          <div class="custom-control custom-checkbox">
-            <input type="checkbox" class="custom-control-input" checked.bind="newStockItem" id="chk1">
-            <label for="chk1" class="custom-control-label">Create new stock entry</label>
+      <section class="mt-2">
+        <div class="row">
+          <div class="col">
+            <date-input value.bind="model.date" label="Date stock enters"></date-input>
+          </div>
+          <div class="col">
+            <number-input value.bind="model.bags" label="Number of bags to enter stock"></number-input>
           </div>
         </div>
-      </div>
-
-      <div if.bind="warningMessage" class="alert alert-danger">${warningMessage}</div>
+  
+        <div class="row mb-3">
+          <div class="col">
+            <select-input source.bind="locations" value.bind="selectedLocation" label="Select the warehouse">
+            </select-input>
+          </div>
+        </div>
+  
+        <!-- <div class="row">
+          <div class="col">
+            <div class="custom-control custom-checkbox">
+              <input type="checkbox" class="custom-control-input" checked.bind="newStockItem" id="chk1">
+              <label for="chk1" class="custom-control-label">Create new stock entry</label>
+            </div>
+          </div>
+        </div> -->
+  
+        <div if.bind="warningMessage" class="alert alert-danger">${warningMessage}</div>
+      </section>
 
     </ux-dialog-body>
 

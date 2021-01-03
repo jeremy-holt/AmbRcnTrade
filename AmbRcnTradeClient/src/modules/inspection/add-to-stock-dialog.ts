@@ -26,6 +26,7 @@ export class AddToStockDialog {
   @observable public newStockItem = false;
   public model: IMoveInspectionToStockRequest = {} as IMoveInspectionToStockRequest;
   public inspection: IInspection
+  public supplierName = "";
 
   constructor(
     protected controller: DialogController,
@@ -47,10 +48,11 @@ export class AddToStockDialog {
     }
   }
 
-  protected async activate(model: { inspection: IInspection }) {
+  protected async activate(model: { inspection: IInspection, supplierName: string }) {
     await this.customerService.loadCustomersForAppUserList();
     await this.stockService.loadStockList(null, null);
     this.inspection = model.inspection;
+    this.supplierName = model.supplierName;
 
     this.model.bags = this.inspection.bags - this.inspection.stockReferences.reduce((a, b) => a += b.bags, 0);
     this.model.inspectionId = this.inspection.id;
@@ -80,6 +82,14 @@ export class AddToStockDialog {
     if (item.selected) {
       this.newStockItem = false;
     }
+  }
+
+  protected get pleaseSelectMessage(): string {
+    return this.stockList.every(c => !c.selected) && !this.newStockItem ? "Please select one or several stock rows or create a new stock" : "";
+  }
+
+  protected get stockItemsSelectedCount(){
+    return this.stockList.filter(c=>c.selected).length;
   }
 
   protected newStockItemChanged() {

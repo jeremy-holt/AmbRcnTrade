@@ -129,7 +129,7 @@ export class InspectionEdit {
     this.dialogService.open(
       {
         viewModel: AddToStockDialog,
-        model: { inspection: this.model }
+        model: { inspection: this.model, supplierName: this.selectedSupplier.name }
       }
     ).whenClosed(async result => {
       if (!result.wasCancelled) {

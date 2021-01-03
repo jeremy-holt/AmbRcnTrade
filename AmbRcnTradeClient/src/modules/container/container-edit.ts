@@ -60,6 +60,7 @@ export class ContainerEdit {
     ).whenClosed(async result => {
       if (!result.wasCancelled) {
         await this.containerService.unstuffContainer({ containerId: this.model.id });
+        await this.containerService.load(this.model.id);
       }
     });
   }

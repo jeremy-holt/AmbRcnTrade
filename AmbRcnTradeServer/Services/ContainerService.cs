@@ -52,7 +52,13 @@ namespace AmbRcnTradeServer.Services
                 query = query.Where(c => c.Status == status);
 
             var list = await query.ToListAsync();
-            return list.OrderBy(c => c.IncomingStocks.OrderBy(incomingStock => incomingStock.StuffingDate).FirstOrDefault()?.StuffingDate).ToList();
+
+            foreach (var container in list)
+                container.StuffingDate = container.IncomingStocks.FirstOrDefault()?.StuffingDate;
+
+            return list
+                .OrderBy(c => Enum.GetName(typeof(ContainerStatus), c.Status))
+                .ThenBy(c => c.IncomingStocks.OrderBy(incomingStock => incomingStock.StuffingDate).FirstOrDefault()?.StuffingDate).ToList();
         }
 
         public async Task<ServerResponse> UnStuffContainer(string containerId)
@@ -63,8 +69,8 @@ namespace AmbRcnTradeServer.Services
 
             var stocks = await _session.LoadListFromMultipleIdsAsync<Stock>(container.IncomingStocks.SelectMany(stock => stock.StockIds.Select(stockItem => stockItem.StockId)));
 
-            var removableStatus = new[] {ContainerStatus.Cancelled, ContainerStatus.Empty, ContainerStatus.Stuffing};
-            
+            var removableStatus = new[] {ContainerStatus.Cancelled, ContainerStatus.Empty, ContainerStatus.Stuffing, ContainerStatus.StuffingComplete};
+
             if (!container.Status.In(removableStatus))
                 throw new InvalidOperationException("Cannot remove stock from a container that is no longer in the warehouse");
 

@@ -1,6 +1,6 @@
 import { IEntity, IIdentity } from "./../interfaces/IEntity";
 import { Container } from "aurelia-framework";
-import { I18N } from "aurelia-i18n";
+import { I18N, RtValueConverter } from "aurelia-i18n";
 import _ from "lodash";
 import moment from "moment";
 import "moment/locale/fr";
@@ -99,7 +99,7 @@ export const toNumber = (value: string | number) => {
   return +value;
 };
 
-export const concatStringArray = (array: string[], seperator: string = ", ") => {
+export const concatStringArray = (array: string[], seperator = ", ") => {
   if (!array) {
     return "";
   }
@@ -221,6 +221,13 @@ export const distinct = (list: IEntity[]) => {
   }
   return result;
 };
+
+export const groupBy = ((list: unknown[], key: string | number) => {
+  return list.reduce((rv, x) => {
+    (rv[x[key]] = rv[x[key]] || []).push(x);
+    return rv;
+  }, {});
+});
 
 export const randomHtmlId = (prefix: string) => {
   return `${prefix.replace(" ", "_")}_${Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15)}`;

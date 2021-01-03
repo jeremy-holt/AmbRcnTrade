@@ -66,9 +66,11 @@ namespace Tests
 
             // Assert
             list.Should().HaveCount(1);
+            list.Should().BeInAscendingOrder(c => c.Status);
             list[0].Id.Should().Be(containers[1].Id);
             list[0].BookingNumber.Should().Be(containers[1].BookingNumber);
             list[0].NettWeightKg.Should().Be(containers[1].NettWeightKg);
+            list[0].StuffingDate.Should().Be(containers[1].IncomingStocks[0].StuffingDate);
         }
 
         [Fact]

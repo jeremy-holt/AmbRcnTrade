@@ -1,3 +1,4 @@
+import { fixAspNetCoreDate } from "./../core/helpers";
 import { HttpClient } from "aurelia-fetch-client";
 import { autoinject } from "aurelia-framework";
 import { Router } from "aurelia-router";
@@ -45,7 +46,7 @@ export class ContainerService extends FetchService {
   }
 
   public canUnstuffContainer(container: IContainer) {
-    return [ContainerStatus.Cancelled, ContainerStatus.Empty, ContainerStatus.Stuffing].includes(container?.status) && container?.bags > 0;
+    return [ContainerStatus.Cancelled, ContainerStatus.Empty, ContainerStatus.Stuffing, ContainerStatus.StuffingComplete].includes(container?.status) && container?.bags > 0;
   }
 
   public static isOverweightContainer(quantities: { bags: number, weightKg: number }) {
@@ -54,6 +55,11 @@ export class ContainerService extends FetchService {
 }
 
 export function containerEditAction(state: IState, container: IContainer) {
+  container.dispatchDate=fixAspNetCoreDate(container.dispatchDate,false);
+  container.incomingStocks.forEach(c=>{
+    c.stuffingDate=fixAspNetCoreDate(c.stuffingDate, false);
+  });
+  
   const newState = _.cloneDeep(state);
   newState.container.current = container;
   return newState;

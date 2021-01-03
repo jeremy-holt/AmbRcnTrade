@@ -130,7 +130,7 @@ namespace AmbRcnTradeServer.Services
                 list.Add(availableContainer);
             }
 
-            return list;
+            return list.OrderBy(c=>Enum.GetName(typeof(ContainerStatus),c.Status)).ToList();
         }
 
         public async Task<ServerResponse<OutgoingStock>> StuffContainer(string containerId, StockBalance stockBalance, double bags, double weightKg, DateTime stuffingDate)

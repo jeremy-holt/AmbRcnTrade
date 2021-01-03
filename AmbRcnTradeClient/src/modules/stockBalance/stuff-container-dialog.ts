@@ -1,3 +1,4 @@
+import { encodeParams } from "./../../core/helpers";
 import { ContainerService } from "./../../services/container-service";
 import { DialogController } from "aurelia-dialog";
 import { autoinject, observable } from "aurelia-framework";
@@ -7,6 +8,7 @@ import { StockManagementService } from "services/stock-management-service";
 import { IState } from "store/state";
 import { IAvailableContainer } from "./../../interfaces/stockManagement/IAvailableContainerItem";
 import { IStockBalance } from "./../../interfaces/stocks/IStockBalance";
+import { Router } from "aurelia-router";
 
 @autoinject
 @connectTo()
@@ -19,7 +21,8 @@ export class StuffContainerDialog {
 
   constructor(
     private controller: DialogController,
-    private stocksManagementService: StockManagementService
+    private stocksManagementService: StockManagementService,
+    private router: Router
   ) { }
 
   protected async activate(model: { stockBalance: IStockBalance }) {
@@ -49,14 +52,7 @@ export class StuffContainerDialog {
   }
 
   protected get isOverweightContainer() {
-    // const container = this.selectedContainer();
-
-    // if (!container) {
-    //   return false;
-    // }
-
     return ContainerService.isOverweightContainer({ bags: this.loadingQuantity.bags, weightKg: this.loadingQuantity.stockWeightKg });
-    // return ContainerService.isOverweightContainer({ bags: this.bags + container.bags, weightKg: this.stockWeightKg + container.stockWeightKg });
   }
 
   protected get loadingQuantity() {
@@ -76,5 +72,14 @@ export class StuffContainerDialog {
       bags: this.bags,
       stockWeightKg: this.stockWeightKg
     });
+  }
+
+  protected encode(value: string) {
+    return encodeParams(value);
+  }
+
+  protected navigateToContainer(containerId: string) {
+    this.router.navigateToRoute("containerEdit", { id: encodeParams(containerId) });
+    this.controller.cancel();
   }
 }

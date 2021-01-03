@@ -54,7 +54,7 @@ export class StockManagementService extends FetchService {
   }
 
   public async getAvailableContainers() {
-    return super.get([super.currentCompanyIdQuery()], "getAvailableContainers", availableContainersAction);
+    return super.get<IAvailableContainer[]>([super.currentCompanyIdQuery()], "getAvailableContainers", availableContainersAction);
   }
 
   public getStuffingRequest(containerId: string, stockBalance: IStockBalance, bags: number, weightKg: number): IStuffingRequest {

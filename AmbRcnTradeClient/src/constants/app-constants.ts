@@ -53,6 +53,7 @@ export interface IInspectionFilter { id: InspectionFilters | null; name: string;
 export enum ContainerStatus {
   Empty = "empty",
   Stuffing = "stuffing",
+  StuffingComplete = "stuffingComplete",
   OnWayToPort = "onWayToPort",
   Gated = "gated",
   OnBoardVessel = "onBoardVessel",
@@ -65,6 +66,7 @@ export interface IContainerStatus { id: ContainerStatus; name: string; }
 export const CONTAINER_STATUS_LIST: IContainerStatus[] = [
   { id: ContainerStatus.Empty, name: "Empty container" },
   { id: ContainerStatus.Stuffing, name: "Container is being stuffed" },
+  { id: ContainerStatus.StuffingComplete, name: "Stuffing complete" },
   { id: ContainerStatus.OnWayToPort, name: "On way to port" },
   { id: ContainerStatus.Gated, name: "Gated" },
   { id: ContainerStatus.OnBoardVessel, name: "On board the vessel" },

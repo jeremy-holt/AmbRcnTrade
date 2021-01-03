@@ -6,6 +6,6 @@ import { autoinject } from "aurelia-framework";
 export class UnstuffContainerDialog {
   constructor(
     private containerService: ContainerService,
-    private controoler: DialogController
+    protected controller: DialogController
   ) { }  
 }

@@ -19,4 +19,6 @@ export interface IStockBalance {
   balanceWeightKg: number;
   supplierName: string;
   supplierId: string;
+
+  selected?:boolean;
 }

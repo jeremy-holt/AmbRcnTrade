@@ -22,7 +22,7 @@ export class ContainerList {
   ) { }
 
   protected async activate() {
-    this.containerStatusList.unshift({ id: null, name: "[Select]" });
+    this.containerStatusList.unshift({ id: null, name: "[All]" });
   }
 
   protected stateChanged(state: IState) {

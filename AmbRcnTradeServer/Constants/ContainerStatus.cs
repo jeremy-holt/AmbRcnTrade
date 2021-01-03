@@ -10,6 +10,7 @@ namespace AmbRcnTradeServer.Constants
     {
         Empty = 1,
         Stuffing,
+        StuffingComplete,
         OnWayToPort,
         Gated,
         OnBoardVessel,
