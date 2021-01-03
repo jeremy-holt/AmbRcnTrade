@@ -92,7 +92,7 @@ namespace AmbRcnTradeServer.Services
                 item.Kor = item.BagsIn == 0 ? 0 : item.AnalysisResults.Average(c => c.Kor);
                 item.Count = item.BagsIn == 0 ? 0 : item.AnalysisResults.Average(c => c.Count);
                 item.Moisture = item.BagsIn == 0 ? 0 : item.AnalysisResults.Average(c => c.Moisture);
-                
+
                 item.Balance = item.BagsIn - item.BagsOut;
                 item.BalanceWeightKg = item.WeightKgIn - item.WeightKgOut;
                 item.IsStockZero = item.Balance < 1 && item.Balance > -1;
@@ -114,7 +114,7 @@ namespace AmbRcnTradeServer.Services
         public async Task<ServerResponse> DeleteStock(string stockId)
         {
             var stock = await _session
-                .Include<Stock>(c=>c.InspectionId)
+                .Include<Stock>(c => c.InspectionId)
                 .LoadAsync<Stock>(stockId);
 
 
@@ -148,6 +148,7 @@ namespace AmbRcnTradeServer.Services
             var stocks = await query
                 .OrderBy(c => c.LotNo)
                 .ThenBy(c => c.StockDate)
+                .ThenBy(c => c.BagsOut)
                 .ProjectInto<StockListItem>()
                 .ToListAsync();
 

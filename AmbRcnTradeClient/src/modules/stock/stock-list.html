@@ -42,7 +42,7 @@
             <th>Stock in</th>
             <th>Stock out</th>
             <th>Avg. quality</th>
-            <th>Inspected on</th>
+            <!-- <th>Inspected on</th> -->
             <th>Container details</th>
           </tr>
         </thead>
@@ -50,7 +50,10 @@
           <tr repeat.for="item of list">
             <td>
               <a route-href="stockEdit; params.bind:{id: encode(item.stockId)}" class="with-decoration">Stock: Lot
-                ${item.lotNo}</a>
+                ${item.lotNo}</a><br>
+                <a route-href="inspectionEdit; params.bind:{id: encode(item.inspectionId)}"
+                class="with-decoration">Inspection:
+                ${item.inspectionDate | dateFormat: "DD/MM/YYYY"}</a>
             </td>
             <td>${item.stockDate | dateFormat: "DD/MM/YYYY"}</td>
             <td>${item.locationName}</td>
@@ -71,11 +74,11 @@
               Count ${item.analysisResult.count | numberFormat: "0,0"}<br>
               Moisture ${item.analysisResult.moisture/100 | numberFormat: "0.00%"}
             </td>
-            <td>
+            <!-- <td>
               <a route-href="inspectionEdit; params.bind:{id: encode(item.inspectionId)}"
                 class="with-decoration">Inspection:
                 ${item.inspectionDate | dateFormat: "DD/MM/YYYY"}</a>
-            </td>
+            </td> -->
             <td>
               <ul class="list-unstyled">
                 <li repeat.for="sr of item.stuffingRecords">

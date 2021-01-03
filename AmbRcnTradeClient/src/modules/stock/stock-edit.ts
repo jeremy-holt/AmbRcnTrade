@@ -81,7 +81,7 @@ export class StockEdit {
   }
 
   protected get canDelete() {
-    return this.model?.isStockIn && this.model?.stuffingRecords.length === 0 ;
+    return this.model?.isStockIn && this.model?.stuffingRecords.length === 0;
   }
 
   protected deleteStock() {
@@ -94,6 +94,10 @@ export class StockEdit {
         this.router.navigateToRoute("stockList");
       }
     });
+  }
+
+  protected calcWeightKg() {
+    this.model.weightKg = this.model.bags * 80;
   }
 
   protected listItemMatcher = (a: IListItem, b: IListItem) => a?.id === b?.id;
