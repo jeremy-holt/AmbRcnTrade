@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AmbRcnTradeServer.Models.InspectionModels;
@@ -28,5 +29,6 @@ namespace AmbRcnTradeServer.Models.StockModels
         public AnalysisResult AnalysisResult { get; set; } = new();
         public double WeightKgIn { get; set; }
         public double WeightKgOut { get; set; }
+        public List<StuffingRecord> StuffingRecords { get; set; } = new();
     }
 }

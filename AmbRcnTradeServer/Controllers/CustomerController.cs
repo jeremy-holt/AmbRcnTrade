@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -52,7 +51,7 @@ namespace AmbRcnTradeServer.Controllers
         {
             var appuserId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.PrimarySid)?.Value;
             var isAdmin = User.HasClaim(c => c.Type == ClaimTypes.Role && c.Value.Contains("admin"));
-            
+
             return await _customerService.LoadCustomerListForAppUser(companyId, appuserId, isAdmin);
         }
 

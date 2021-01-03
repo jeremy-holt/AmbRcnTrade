@@ -96,9 +96,35 @@ namespace Tests
             actual.Bags.Should().Be(container.IncomingStocks.Sum(c => c.Bags));
             actual.WeighbridgeWeightKg.Should().Be(container.WeighbridgeWeightKg);
         }
+
+
+        [Fact]
+        public async Task UnstuffContainer_ShouldThrowExceptionIfStatusIsNotEmptyOrStuffing()
+        {
+            // Arrange
+            using var store = GetDocumentStore();
+            using var session = store.OpenAsyncSession();
+            var sut = GetContainerService(session);
+            var fixture = new Fixture();
+
+            var stock = fixture.DefaultEntity<Stock>().Create();
+            await session.StoreAsync(stock);
+            
+            var container = fixture.DefaultEntity<Container>()
+                .With(c => c.Status, ContainerStatus.OnWayToPort)
+                .Create();
+            await session.StoreAsync(container);
+
+            // Act
+            Func<Task> act = async () => await sut.UnstuffContainer(container.Id, stock.Id);
+            
+            // Assert
+            await act.Should().ThrowAsync<InvalidOperationException>().WithMessage("Cannot remove stock from a container that is no longer in the warehouse");
+        }
+        
         
         [Fact]
-        public async Task DeleteStockOut_ShouldRemoveItFromTheContainer()
+        public async Task UnstuffContainer_ShouldRemoveItFromTheContainer()
         {
             // Arrange
             using var store = GetDocumentStore();
@@ -126,30 +152,50 @@ namespace Tests
                 .Create();
             await session.StoreAsync(container);
 
-            var stock = fixture.DefaultEntity<Stock>()
+            var stuffingRecords = new List<StuffingRecord>
+            {
+                new() {ContainerId = container.Id, ContainerNumber = container.ContainerNumber}
+            };
+            
+            var stockIn1 = fixture.DefaultEntity<Stock>()
                 .With(c => c.Id, stockId)
                 .With(c => c.Bags, 100)
                 .With(c => c.WeightKg, 8000)
                 .Without(c => c.InspectionId)
-                .With(c => c.IsStockIn, false)
-                .With(c => c.StuffingRecords, fixture.Build<StuffingRecord>().CreateMany().ToList)
+                .With(c => c.IsStockIn, true)
+                .With(c => c.StuffingRecords,stuffingRecords)
                 .Create();
-            await session.StoreAsync(stock);
+            await session.StoreAsync(stockIn1);
+            
+            var stockIn2 = fixture.DefaultEntity<Stock>()
+                .With(c => c.Id, stockId)
+                .With(c => c.Bags, 50)
+                .With(c => c.WeightKg, 1000)
+                .Without(c => c.InspectionId)
+                .With(c => c.IsStockIn, true)
+                .With(c => c.StuffingRecords,stuffingRecords)
+                .Create();
+            await session.StoreAsync(stockIn2);
 
             await session.SaveChangesAsync();
 
             // Act
-            ServerResponse response = await sut.RemoveStock(stockId);
+            ServerResponse response = await sut.UnstuffContainer(container.Id, stockId);
+            await session.SaveChangesAsync();
+            
             var actualStock = await session.LoadAsync<Stock>(stockId);
             var actualContainer = await session.LoadAsync<Container>(container.Id);
 
             // Assert
-            actualStock.Should().BeNull();
-
+            actualStock.Should().NotBeNull();
+            actualStock.StuffingRecords.Should().NotContain(c => c.ContainerId == container.Id);
+            
+            response.Message.Should().Be("Removed stock from container");
+            
             actualContainer.Bags.Should().Be(302 - 100);
-            actualContainer.StuffingWeightKg.Should().Be(container.StuffingWeightKg - stock.WeightKg);
+            actualContainer.StuffingWeightKg.Should().Be(24_000 - stockIn2.WeightKg);
             actualContainer.IncomingStocks[0].Bags.Should().Be(302 - 100);
-            actualContainer.IncomingStocks[0].WeightKg.Should().Be(container.StuffingWeightKg - stock.WeightKg);
+            actualContainer.IncomingStocks[0].WeightKg.Should().Be(24_000 - stockIn2.WeightKg);
             actualContainer.IncomingStocks[0].StockIds.Should().NotContain(stockId);
         }
     }

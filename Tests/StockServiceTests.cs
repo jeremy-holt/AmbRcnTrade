@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using AmberwoodCore.Extensions;
 using AmberwoodCore.Models;
 using AmbRcnTradeServer.Constants;
-using AmbRcnTradeServer.Models.ContainerModels;
 using AmbRcnTradeServer.Models.DictionaryModels;
 using AmbRcnTradeServer.Models.InspectionModels;
 using AmbRcnTradeServer.Models.StockModels;
@@ -72,6 +71,7 @@ namespace Tests
             await session.SaveChangesAsync();
 
             // Assert
+            response.Message.Should().Be("Deleted stock");
             using var session2 = store.OpenAsyncSession();
 
             var actualStock = await session2.LoadAsync<Stock>(stockId);
@@ -111,14 +111,14 @@ namespace Tests
         }
 
         [Fact]
-        public async Task Delete_StockOut_ShouldThrowExeption()
+        public async Task Delete_StockOut_ShouldThrowException()
         {
             // Arrange
             using var store = GetDocumentStore();
             using var session = store.OpenAsyncSession();
             var sut = GetStockService(session);
             var fixture = new Fixture();
-            
+
             const string inspectionId = "inspections/1-A";
             const string stockId = "stocks/1-A";
 
@@ -137,7 +137,6 @@ namespace Tests
 
             // Assert
             await act.Should().ThrowAsync<InvalidOperationException>().WithMessage("This stock has already been stuffed into a container. It cannot be deleted");
-            
         }
 
         [Fact]
@@ -298,14 +297,6 @@ namespace Tests
                 .With(c => c.AnalysisResult, analysisResult)
                 .CreateMany().ToList();
             await inspections.SaveList(session);
-
-            var incomingStocks = fixture.Build<IncomingStock>()
-                .With(c => c.StockIds, new List<string>() {"stocks/1-A", "stocks/2-A"})
-                .CreateMany().ToList();
-            var container = fixture.DefaultEntity<Container>()
-                .With(c => c.IncomingStocks,incomingStocks )
-                .Create();
-            await session.StoreAsync(container);
 
             var stockIn1 = fixture.DefaultEntity<Stock>()
                 .Without(c => c.StockOutDate)

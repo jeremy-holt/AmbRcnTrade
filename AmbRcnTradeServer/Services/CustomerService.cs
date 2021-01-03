@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using AmberwoodCore.Extensions;
 using AmberwoodCore.Models;
 using AmberwoodCore.Responses;
-using AmbRcnTradeServer.Models;
 using AmbRcnTradeServer.Models.AppUserModels;
 using AmbRcnTradeServer.Models.DictionaryModels;
 using AmbRcnTradeServer.RavenIndexes;
@@ -113,7 +112,7 @@ namespace AmbRcnTradeServer.Services
                 .Where(c => c.CompanyId == companyId && c.Users.Contains(appUserId))
                 .ProjectInto<Entities_ByAppUser.Result>()
                 .ToListAsync();
-            
+
             return query.Where(c => c.Id.IsNotNullOrEmpty())
                 .Select(c => new ListItem(c.CustomerId, c.CustomerName, c.CompanyId))
                 .DistinctBy(c => c.Id)
