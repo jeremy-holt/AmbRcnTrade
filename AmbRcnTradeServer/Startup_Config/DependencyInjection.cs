@@ -24,6 +24,7 @@ namespace AmbRcnTradeServer.Startup_Config
             services.AddScoped<IStockService, StockService>();
             services.AddScoped<IStockManagementService, StockManagementService>();
             services.AddScoped<IContainerService, ContainerService>();
+            services.AddScoped<IVesselService, VesselService>();
 
             Log.Logger.Information("Successfully ran DependencyInjection.Configure()");
         }

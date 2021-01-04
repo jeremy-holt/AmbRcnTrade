@@ -132,5 +132,10 @@ namespace Tests.Base
         {
             return new ContainerService(session);
         }
+
+        protected IVesselService GetVesselService(IAsyncDocumentSession session)
+        {
+            return new VesselService(session, Mapper);
+        }
     }
 }

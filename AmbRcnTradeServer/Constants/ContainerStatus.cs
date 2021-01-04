@@ -14,7 +14,6 @@ namespace AmbRcnTradeServer.Constants
         OnWayToPort,
         Gated,
         OnBoardVessel,
-        Shipped,
         Cancelled
     }
 }
