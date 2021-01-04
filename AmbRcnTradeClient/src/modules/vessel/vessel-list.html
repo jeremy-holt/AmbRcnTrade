@@ -1,0 +1,41 @@
+<template>
+  <toolbar type="menu" caption="Vessels">
+    <toolbar-item icon="fas fa-plus" click.call="addVessel()"></toolbar-item>
+  </toolbar>
+
+  <div class="card">
+    <div class="card-header">
+      <h4>Vessels</h4>
+    </div>
+
+    <div class="card-body">
+      <table class="table table-sm table-bordered small">
+        <thead>
+          <tr>
+            <th>Vessel</th>
+            <th>Eta</th>
+            <th>Containers on board</th>
+            <th>B/L date</th>
+            <th>B/L number</th>
+            <th>Forwarding agent</th>
+            <th>Shipping co</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr repeat.for="item of list">
+            <td>
+              <a route-href="vesselEdit; params.bind:{id: encode(item.id)}"
+                class="with-decoration">${item.vesselName}</a>
+            </td>
+            <td>${item.eta | dateFormat: "DD/MM/YYYY"}</td>
+            <td>${item.containersOnBoard}</td>
+            <td>${item.blDate | dateFormat: "DD/MM/YYYY"}</td>
+            <td>${item.blNumber}</td>
+            <td>${item.forwardingAgent}</td>
+            <td>${item.shippingCompany}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</template>

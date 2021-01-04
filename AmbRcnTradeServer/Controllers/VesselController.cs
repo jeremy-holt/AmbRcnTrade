@@ -64,6 +64,13 @@ namespace AmbRcnTradeServer.Controllers
         {
             return await _service.RemoveContainersFromVessel(request.VesselId, request.ContainerIds);
         }
+
+        [Authorize]
+        [HttpGet("[action]")]
+        public async Task<ActionResult<VesselDto>> Create(string companyId)
+        {
+            return await Task.FromResult(new VesselDto {CompanyId = companyId});
+        }
     }
 
     public class VesselContainersRequest

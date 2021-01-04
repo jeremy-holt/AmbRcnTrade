@@ -55,11 +55,12 @@ export class ContainerService extends FetchService {
 }
 
 export function containerEditAction(state: IState, container: IContainer) {
-  container.dispatchDate=fixAspNetCoreDate(container.dispatchDate,false);
-  container.incomingStocks.forEach(c=>{
-    c.stuffingDate=fixAspNetCoreDate(c.stuffingDate, false);
+  container.dispatchDate = fixAspNetCoreDate(container.dispatchDate, false);
+  container.stuffingDate = fixAspNetCoreDate(container.stuffingDate, false);
+  container.incomingStocks.forEach(c => {
+    c.stuffingDate = fixAspNetCoreDate(c.stuffingDate, false);
   });
-  
+
   const newState = _.cloneDeep(state);
   newState.container.current = container;
   return newState;

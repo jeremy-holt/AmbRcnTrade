@@ -1,3 +1,5 @@
+import { INotLoadedContainer } from "./../interfaces/shipping/INotLoadedContainer";
+import { IVesselListItem } from "./../interfaces/shipping/IVesselListItem";
 import { IAvailableContainer } from "./../interfaces/stockManagement/IAvailableContainerItem";
 import { IOutgoingStock } from "./../interfaces/stockManagement/IIncomingStock";
 import { IAppUser, IAppUserListItem } from "interfaces/IAppUser";
@@ -17,6 +19,7 @@ import { IPurchaseListItem } from "./../interfaces/purchases/IPurchaseListItem";
 import { IStockBalance } from "./../interfaces/stocks/IStockBalance";
 import { IStockListItem } from "./../interfaces/stocks/IStockListItem";
 import { IContainer } from "interfaces/shipping/IContainer";
+import { IVessel } from "interfaces/shipping/IVessel";
 
 export interface IState {
   userFilteredCustomers: IListItem[];
@@ -52,4 +55,5 @@ export interface IState {
   purchase: { current: IPurchase, list: IPurchaseListItem[], nonCommittedStocksList: IStockListItem[] };
   stockManagement: { stuffContainer: IOutgoingStock[], availableContainers: IAvailableContainer[] };
   container: { current: IContainer; list: IContainer[] };
+  vessel: { current: IVessel; list: IVesselListItem[]; notLoadedContainers: INotLoadedContainer[]; }
 }

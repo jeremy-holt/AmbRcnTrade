@@ -9,6 +9,8 @@ namespace AmbRcnTradeServer.Models.VesselModels
         [AutoMapper.IgnoreMap]
         public List<Container> Containers { get; set; } = new();
 
+  
+
         public void Validate() { }
     }
 }

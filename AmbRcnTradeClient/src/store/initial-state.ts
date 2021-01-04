@@ -142,5 +142,27 @@ export const initialState: IState = {
     stuffContainer: [],
     availableContainers: []
   },
-  container: { current: undefined!, list: [] }
+  container: { current: undefined!, list: [] },
+  vessel: {
+    current: {
+      id: undefined!,
+      companyId: undefined!,
+      name: undefined!,
+      containersOnBoard: undefined!,
+      containerIds: [],
+      containers: [],
+      blNumber: undefined!,
+      blDate: undefined!,
+      forwardingAgent: undefined!,
+      shippingCompany: undefined!,
+      etaHistory: [],
+      notifyParty1: undefined!,
+      notifyParty2: undefined!,
+      blBodyText: undefined!,
+      consignee: undefined!,
+      freightPrepaid: true
+    },
+    list: [],
+    notLoadedContainers: []
+  }
 };

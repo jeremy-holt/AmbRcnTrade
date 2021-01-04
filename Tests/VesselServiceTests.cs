@@ -226,7 +226,12 @@ namespace Tests
                 BlNumber = "MER 1231",
                 ContainerIds = containers.Select(x => x.Id).ToList(),
                 ContainersOnBoard = 0,
-                Containers = containers
+                Containers = containers,
+                NotifyParty1="notify 1",
+                NotifyParty2="notify 2",
+                Consignee="consignee",
+                BlBodyText="body text",
+                FreightPrepaid=true
             };
 
             // Act
@@ -242,6 +247,11 @@ namespace Tests
             actual.CompanyId.Should().Be(vesselDto.CompanyId);
             actual.ForwardingAgent.Should().Be(vesselDto.ForwardingAgent);
             actual.ShippingCompany.Should().Be(vesselDto.ShippingCompany);
+            actual.NotifyParty1.Should().Be("notify 1");
+            actual.NotifyParty2.Should().Be("notify 2");
+            actual.Consignee.Should().Be("consignee");
+            actual.BlBodyText.Should().Be("body text");
+            actual.FreightPrepaid.Should().BeTrue();
         }
     }
 }

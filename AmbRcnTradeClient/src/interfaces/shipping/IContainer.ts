@@ -16,4 +16,6 @@ export interface IContainer extends IEntityCompany {
   incomingStocks: IIncomingStock[];
   nettWeightKg: number;
   stuffingDate: string | null;
+
+  selected?:boolean;
 }

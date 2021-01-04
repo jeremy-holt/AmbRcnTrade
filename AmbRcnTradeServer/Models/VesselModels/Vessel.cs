@@ -16,5 +16,10 @@ namespace AmbRcnTradeServer.Models.VesselModels
         public string Id { get; set; }
         public string Name { get; set; }
         public string CompanyId { get; set; }
+        public string NotifyParty1 { get; set; }
+        public string NotifyParty2 { get; set; }
+        public string Consignee { get; set; }
+        public string BlBodyText { get; set; }
+        public bool FreightPrepaid { get; set; }
     }
 }

@@ -8,12 +8,15 @@ export interface IVessel {
   blDate: string | null;
   blNumber: string;
   containerIds: string[];
+  containers: IContainer[];
   containersOnBoard: number;
   id: string;
   name: string;
   companyId: string;
+  notifyParty1: string;
+  notifyParty2: string;
+  consignee: string;
+  blBodyText: string;
+  freightPrepaid: boolean;
 }
 
-export interface IVesselDto extends IVessel{
-  containers:IContainer[];
-}

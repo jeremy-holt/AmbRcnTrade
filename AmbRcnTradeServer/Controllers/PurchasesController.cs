@@ -46,9 +46,9 @@ namespace AmbRcnTradeServer.Controllers
 
         [Authorize]
         [HttpGet("[action]")]
-        public async Task<ActionResult<ServerResponse<Purchase>>> Create(string companyId)
+        public async Task<ActionResult<Purchase>> Create(string companyId)
         {
-            return await Task.FromResult(new ServerResponse<Purchase>(new Purchase {CompanyId = companyId, PurchaseDate = DateTime.Today}));
+            return await Task.FromResult(new Purchase {CompanyId = companyId, PurchaseDate = DateTime.Today});
         }
     }
 }

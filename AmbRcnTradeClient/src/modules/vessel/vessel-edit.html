@@ -1,0 +1,116 @@
+<template>
+  <require from="../container/container-status-formatter-valueconverter"></require>
+  <require from="quill/quill.snow.css"></require>
+
+  <toolbar type="menu" caption="Vessel" disabled-save.bind="!canSave" save.call="save()" list-route="vesselList">
+  </toolbar>
+
+  <div class="card">
+    <div class="card-header">
+      <h4>Vessel</h4>
+      <div class="mt-2">${model.containersOnBoard} containers on board vessel</div>
+    </div>
+
+    <div class="card-body">
+      <div class="row">
+        <div class="col">
+          <div class="form-label">History of vessel name and eta</div>
+          <ul class="list-group">
+            <li class="list-group-item" repeat.for="item of model.etaHistory">
+              <div class="row">
+                <div class="col-2">
+                  <div class="form-label mt-1">Last updated</div>
+                  ${item.dateUpdated | dateFormat:"DD/MM/YYYY"}
+                </div>
+                <div class="col-4">
+                  <text-input value.bind="item.vesselName" label="Vessel" class="w-100"></text-input>
+                </div>
+                <div class="col-6">
+                  <text-area-input value.bind="item.notes" rows="1" label="Notes" class="w-100"></text-area-input>
+                </div>
+              </div>
+            </li>
+          </ul>
+          <div class="my-2">
+            <button type="button" class="btn btn-primary" click.delegate="addEtaHistory()">Add vessel name</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-6">
+          <text-input value.bind="model.shippingCompany" label="Shipping company"></text-input>
+        </div>
+        <div class="col">
+          <text-input value.bind="model.forwardingAgent" label="Forwarding agent"></text-input>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col">
+          <text-area-input rows="2" value.bind="model.notifyParty1" label="Notify party 1"></text-area-input>
+        </div>
+        <div class="col">
+          <text-area-input rows="2" value.bind="model.notifyParty2" label="Notify party 2"></text-area-input>
+        </div>
+      </div>
+
+      <div class="row d-flex align-items-end">
+        <div class="col">
+          <text-area-input rows="2" value.bind="model.consignee" label="Consignee"></text-area-input>
+        </div>
+        <div class="col">
+          <div class="custom-control custom-checkbox">
+            <input type="checkbox" class="custom-control-input" id="chk1" checked.bind="model.freightPrepaid">
+            <label class="custom-control-label" for="chk1">Freight prepaid</label>
+          </div>
+        </div>
+      </div>
+
+
+      <div class="mt-2" style="min-height: 300px;">
+        <div class="form-label">Text for body of Bill of Lading</div>
+        <div id="toolbar"></div>
+        <quill-editor value.bind="model.blBodyText"></quill-editor>
+      </div>
+
+
+
+      <div class="row my-3">
+        <div class="col">
+          <button type="button" class="btn btn-primary" click.delegate="addContainersDialog()">Add containers</button>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col">
+          <ul class="list-group small">
+            <li class="list-group-item font-weight-bold">
+              <div class="row">
+                <div class="col">Container number</div>
+                <div class="col">Seal number</div>
+                <div class="col">Bags</div>
+                <div class="col">Weight kg (gross)</div>
+                <div class="col">Weight kg (nett)</div>
+                <div class="col">Booking number</div>
+                <div class="col">Status</div>
+              </div>
+            </li>
+            <li class="list-group-item" repeat.for="item of model.containers">
+              <div class="col">
+                <a route-href="containerEdit; params.bind:{id: encode(item.id)}"
+                  class="with-decoration">${item.containerNumber}</a>
+              </div>
+              <div class="col">${item.sealNumber} </div>
+              <div class="col">${item.bags | numberFormat: "0,0"} </div>
+              <div class="col">${item.weighbridgeWeightKg | numberFormat: "0,0"} </div>
+              <div class="col">${item.nettWeightKg | numberFormat: "0,0"} </div>
+              <div class="col">${item.bookingNumber} </div>
+              <div class="col">${item.status | containerStatusFormatter}</div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
