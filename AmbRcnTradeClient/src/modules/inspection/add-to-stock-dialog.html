@@ -56,7 +56,7 @@
   
         <div class="row mb-3">
           <div class="col">
-            <select-input source.bind="locations" value.bind="selectedLocation" label="Select the warehouse">
+            <select-input source.bind="locations | customerFilter:'warehouse' " value.bind="selectedLocation" label="Select the warehouse">
             </select-input>
           </div>
         </div>

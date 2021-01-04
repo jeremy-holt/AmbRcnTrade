@@ -14,6 +14,8 @@ namespace AmbRcnTradeServer.Models.DictionaryModels
             Name = name;
         }
 
+        public CustomerGroup() { }
+
         public string Id { get; set; }
 
         public string Name { get; set; }

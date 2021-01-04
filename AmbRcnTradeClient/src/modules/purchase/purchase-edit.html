@@ -16,7 +16,7 @@
           <date-input value.bind="model.purchaseDate" label="Purchase date"></date-input>
         </div>
         <div class="col">
-          <select-input source.bind="suppliers" value.bind="selectedSupplier" label="Supplier (${state.purchase.nonCommittedStocksList.length} stocks)">
+          <select-input source.bind="suppliers | customerFilter: 'Supplier'" value.bind="selectedSupplier" label="Supplier (${state.purchase.nonCommittedStocksList.length} stocks)">
           </select-input>          
         </div>
         <div class="col">

@@ -2,13 +2,11 @@ import { HttpClient } from "aurelia-fetch-client";
 import { autoinject } from "aurelia-framework";
 import { Router } from "aurelia-router";
 import { Store } from "aurelia-store";
-import { IListItem } from "interfaces/IEntity";
 import _ from "lodash";
-import { QueryId } from "models/QueryId";
 import { IState } from "store/state";
 import { ICustomer } from "./../interfaces/ICustomer";
+import { ICustomerListItem } from "./../interfaces/ICustomerListItem";
 import { FetchService } from "./fetch-service";
-import { isInRole } from "./role-service";
 
 @autoinject
 export class CustomerService extends FetchService {
@@ -41,7 +39,7 @@ export class CustomerService extends FetchService {
   }
 
   public async loadCustomersForAppUserList() {    
-    return super.getMany<IListItem>([
+    return super.getMany<ICustomerListItem>([
       super.currentCompanyIdQuery()
     ], "loadCustomerListForAppUser", customerAppUserListAction);
   }
@@ -59,7 +57,7 @@ export function customerListAction(state: IState, list: ICustomer[]) {
   return newsState;
 }
 
-export function customerAppUserListAction(state: IState, list: IListItem[]) {
+export function customerAppUserListAction(state: IState, list: ICustomerListItem[]) {
   const newState = _.cloneDeep(state);
   newState.userFilteredCustomers = list;
   return newState;

@@ -3,7 +3,6 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using AmberwoodCore.Controllers;
-using AmberwoodCore.Models;
 using AmberwoodCore.Responses;
 using AmbRcnTradeServer.Models.DictionaryModels;
 using AmbRcnTradeServer.Services;
@@ -47,7 +46,7 @@ namespace AmbRcnTradeServer.Controllers
 
         [Authorize]
         [HttpGet("[action]")]
-        public async Task<ActionResult<List<ListItem>>> LoadCustomerListForAppUser(string companyId)
+        public async Task<ActionResult<List<CustomerListItem>>> LoadCustomerListForAppUser(string companyId)
         {
             var appuserId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.PrimarySid)?.Value;
             var isAdmin = User.HasClaim(c => c.Type == ClaimTypes.Role && c.Value.Contains("admin"));

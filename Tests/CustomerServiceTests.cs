@@ -93,10 +93,11 @@ namespace Tests
             WaitForUserToContinueTheTest(store);
 
             // Act
-            var list = await sut.LoadCustomerListForAppUser(COMPANY_ID, appUser.Id, false);
+            List<CustomerListItem> list = await sut.LoadCustomerListForAppUser(COMPANY_ID, appUser.Id, false);
 
             // Assert
             list.Should().OnlyContain(c => c.Id == customerTerraNova.Id);
+            list[0].CustomerGroupId.Should().NotBeNull();
         }
 
         [Fact]

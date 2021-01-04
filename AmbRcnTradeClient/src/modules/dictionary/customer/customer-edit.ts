@@ -1,3 +1,5 @@
+import { ICustomerGroup } from "./../../../interfaces/ICustomerGroup";
+import { CustomerGroupService } from "./../../../services/customer-group-service";
 import { CustomerService } from "../../../services/customer-service";
 import { observable } from "aurelia-binding";
 import { autoinject } from "aurelia-framework";
@@ -23,12 +25,14 @@ export class CustomerEdit {
   public currenciesList = CURRENCIES_LIST;
   public appUsersList: IAppUserListItem[] = [];
   public selectedAppUser: IAppUserListItem = undefined!;
+  public customerGroupList: ICustomerGroup[] = [];
 
   @observable public selectedCustomer: ICustomer = undefined!;
 
   constructor(
     private adminService: AdminService,
     private customerService: CustomerService,
+    private customerGroupService: CustomerGroupService,
     private router: Router
   ) { }
 
@@ -42,9 +46,12 @@ export class CustomerEdit {
     this.selectedCustomer = this.list.find(c => c.id === this.model?.id) as ICustomer;
     this.appUsersList = _.cloneDeep(state.admin.user.list);
     this.appUsersList.unshift({ id: "", name: "[Select]" } as IAppUserListItem);
+    this.customerGroupList = _.cloneDeep(state.customerGroup.list);
+    this.customerGroupList.unshift({ id: null, name: "[Select]" } as ICustomerGroup);
   }
 
   protected async activate(params: IParamsId): Promise<void> {
+    await this.customerGroupService.loadList();
     await this.customerService.loadAllCustomers();
     await this.adminService.loadUsersList();
 

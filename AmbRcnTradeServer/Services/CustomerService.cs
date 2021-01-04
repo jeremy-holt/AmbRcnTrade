@@ -20,7 +20,7 @@ namespace AmbRcnTradeServer.Services
         Task<List<Customer>> LoadAllCustomers(string companyId);
         Task<ServerResponse<Customer>> AddUser(string customerId, AppUser appUser);
         Task<List<CustomerUserListItem>> ListCustomersAndUsers(string companyId);
-        Task<List<ListItem>> LoadCustomerListForAppUser(string companyId, string appUserId, bool isAdmin);
+        Task<List<CustomerListItem>> LoadCustomerListForAppUser(string companyId, string appUserId, bool isAdmin);
     }
 
     public class CustomerService : ICustomerService
@@ -97,14 +97,14 @@ namespace AmbRcnTradeServer.Services
             return list;
         }
 
-        public async Task<List<ListItem>> LoadCustomerListForAppUser(string companyId, string appUserId, bool isAdmin)
+        public async Task<List<CustomerListItem>> LoadCustomerListForAppUser(string companyId, string appUserId, bool isAdmin)
         {
             if (isAdmin)
             {
                 return await _session.Query<Customer>()
                     .Where(c => c.CompanyId == companyId)
                     .OrderBy(c => c.Name)
-                    .Select(c => new ListItem {Id = c.Id, Name = c.Name})
+                    .Select(c => new CustomerListItem {Id = c.Id, Name = c.Name,CustomerGroupId = c.CustomerGroupId})
                     .ToListAsync();
             }
 
@@ -114,7 +114,7 @@ namespace AmbRcnTradeServer.Services
                 .ToListAsync();
 
             return query.Where(c => c.Id.IsNotNullOrEmpty())
-                .Select(c => new ListItem(c.CustomerId, c.CustomerName, c.CompanyId))
+                .Select(c => new CustomerListItem(c.CustomerId, c.CustomerName, c.CompanyId,c.CustomerGroupId))
                 .DistinctBy(c => c.Id)
                 .OrderBy(c => c.Name)
                 .ToList();

@@ -164,5 +164,13 @@ export const initialState: IState = {
     },
     list: [],
     notLoadedContainers: []
+  },
+  customerGroup: {
+    current: {
+      id: undefined!,
+      name: undefined!,
+      companyId: undefined!
+    },
+    list: []
   }
 };

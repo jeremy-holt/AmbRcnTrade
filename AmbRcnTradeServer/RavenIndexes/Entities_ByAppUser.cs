@@ -62,6 +62,7 @@ namespace AmbRcnTradeServer.RavenIndexes
 
             public string CustomerName { get; set; }
             public string CustomerId { get; set; }
+            public string CustomerGroupId { get; set; }
         }
     }
 }

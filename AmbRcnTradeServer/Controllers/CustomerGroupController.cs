@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Formats.Asn1;
 using System.Linq;
 using System.Threading.Tasks;
 using AmberwoodCore.Controllers;
@@ -17,6 +16,7 @@ namespace AmbRcnTradeServer.Controllers
     public class CustomerGroupController : RavenController
     {
         private readonly ICustomerGroupService _service;
+
         public CustomerGroupController(IAsyncDocumentSession session, ICustomerGroupService service) : base(session)
         {
             _service = service;
@@ -42,6 +42,12 @@ namespace AmbRcnTradeServer.Controllers
         {
             return await _service.Load(id);
         }
-        
+
+        [Authorize]
+        [HttpGet("[action]")]
+        public async Task<ActionResult<CustomerGroup>> Create(string companyId)
+        {
+            return await Task.FromResult(new CustomerGroup {CompanyId = companyId});
+        }
     }
 }

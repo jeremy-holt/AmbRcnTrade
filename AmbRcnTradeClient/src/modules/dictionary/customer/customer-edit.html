@@ -7,6 +7,8 @@
     <toolbar-item icon="fa fa-plus" label="Add" click.call="addNewCustomer()"></toolbar-item>
   </toolbar>
 
+  <debug-console model.bind="model"></debug-console>
+
   <div class="card">
     <div class="card-header">
       <h4>Customer details</h4>
@@ -21,6 +23,12 @@
       
         <div class="col">
           <text-input value.bind="model.companyName" label="Company"></text-input>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-6">
+          <select-input source.bind="customerGroupList" value.bind="model.customerGroupId" use-model-id="true" label="Groups"></select-input>
         </div>
       </div>
     

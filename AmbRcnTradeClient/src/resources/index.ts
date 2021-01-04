@@ -29,6 +29,7 @@ export function configure(config: FrameworkConfiguration) {
     "./value-converters/pos-neg-color",
     "./value-converters/toJson",
     "./value-converters/number",
-    "./value-converters/currency-format"
+    "./value-converters/currency-format",
+    "./value-converters/customer-filter"
   ]);
 }

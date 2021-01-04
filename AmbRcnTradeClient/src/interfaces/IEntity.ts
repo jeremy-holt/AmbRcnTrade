@@ -21,6 +21,7 @@ export interface IIdentity {
 export interface IListItem {
   id: string | null;
   name: string;
+  filter?:string | null;
 }
 
 export interface IEntitySorted extends IEntity{

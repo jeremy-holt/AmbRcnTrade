@@ -1,3 +1,4 @@
+import { ICustomerGroup } from "./../interfaces/ICustomerGroup";
 import { INotLoadedContainer } from "./../interfaces/shipping/INotLoadedContainer";
 import { IVesselListItem } from "./../interfaces/shipping/IVesselListItem";
 import { IAvailableContainer } from "./../interfaces/stockManagement/IAvailableContainerItem";
@@ -20,9 +21,10 @@ import { IStockBalance } from "./../interfaces/stocks/IStockBalance";
 import { IStockListItem } from "./../interfaces/stocks/IStockListItem";
 import { IContainer } from "interfaces/shipping/IContainer";
 import { IVessel } from "interfaces/shipping/IVessel";
+import { ICustomerListItem } from "interfaces/ICustomerListItem";
 
 export interface IState {
-  userFilteredCustomers: IListItem[];
+  userFilteredCustomers: ICustomerListItem[];
   currentCompanyId: string;
   currentCompanyName: string;
   culture: string;
@@ -56,4 +58,5 @@ export interface IState {
   stockManagement: { stuffContainer: IOutgoingStock[], availableContainers: IAvailableContainer[] };
   container: { current: IContainer; list: IContainer[] };
   vessel: { current: IVessel; list: IVesselListItem[]; notLoadedContainers: INotLoadedContainer[]; }
+  customerGroup: { current: ICustomerGroup, list: ICustomerGroup[] }
 }

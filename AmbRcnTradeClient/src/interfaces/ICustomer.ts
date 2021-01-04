@@ -10,6 +10,7 @@ export interface ICustomer extends IEntityCompany {
   address: IAddress | null;
   notes?: string;  
   users: IUser[];
+  customerGroupId: string;
 }
 
 export interface IAddress {

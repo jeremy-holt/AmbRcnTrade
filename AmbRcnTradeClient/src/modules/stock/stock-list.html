@@ -15,7 +15,7 @@
     <div class="card-body">
       <div class="mb-4 d-flex justify-content-between align-items-end">
         <div class="mr-2 w-100">
-          <select-input source.bind="locations" value.bind="selectedLocation" label="Select warehouse location"
+          <select-input source.bind="locations | customerFilter:'warehouse' " value.bind="selectedLocation" label="Select warehouse location"
             warn-null="false">
           </select-input>
         </div>
