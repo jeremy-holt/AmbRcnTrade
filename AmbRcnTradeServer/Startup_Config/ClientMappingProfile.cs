@@ -13,6 +13,7 @@ namespace AmbRcnTradeServer.Startup_Config
         public ClientMappingProfile()
         {
             CreateMap<Vessel, VesselDto>().ReverseMap();
+            CreateMap<BillLading, BillLadingDto>().ReverseMap();
         }
     }
 }

@@ -3,8 +3,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using AmberwoodCore.Extensions;
 using AmberwoodCore.Responses;
-using AmbRcnTradeServer.Constants;
-using AmbRcnTradeServer.Models.ContainerModels;
 using AmbRcnTradeServer.Models.VesselModels;
 using AmbRcnTradeServer.RavenIndexes;
 using AutoMapper;
@@ -19,9 +17,8 @@ namespace AmbRcnTradeServer.Services
         Task<ServerResponse<VesselDto>> Save(VesselDto vesselDto);
         Task<VesselDto> Load(string id);
         Task<List<VesselListItem>> LoadList(string companyId);
-        Task<List<NotLoadedContainer>> GetNotLoadedContainers(string companyId);
-        Task<ServerResponse> AddContainerToVessel(string vesselId, IEnumerable<string> containerIds);
-        Task<ServerResponse<VesselDto>> RemoveContainersFromVessel(string vesselId, IEnumerable<string> containerIds);
+        Task<ServerResponse<VesselDto>> RemoveBillsLadingFromVessel(string vesselId, IEnumerable<string> billLadingIds);
+        Task<ServerResponse> AddBillLadingToVessel(string vesselId, IEnumerable<string> billLadingIds);
     }
 
     public class VesselService : IVesselService
@@ -40,7 +37,7 @@ namespace AmbRcnTradeServer.Services
             var vessel = vesselDto.Id.IsNullOrEmpty() ? new Vessel() : await _session.LoadAsync<Vessel>(vesselDto.Id);
 
             _mapper.Map(vesselDto, vessel);
-            vessel.ContainersOnBoard = vesselDto.ContainerIds.Count;
+            vessel.ContainersOnBoard = vesselDto.BillLadings.Sum(x => x.ContainerIds.Count);
 
             await _session.StoreAsync(vessel);
             vesselDto.Id = vessel.Id;
@@ -51,72 +48,59 @@ namespace AmbRcnTradeServer.Services
         public async Task<VesselDto> Load(string id)
         {
             var vessel = await _session
-                .Include<Vessel>(c => c.ContainerIds)
+                .Include<Vessel>(c => c.BillLadingIds)
                 .LoadAsync<Vessel>(id);
 
-            var containers = await _session.LoadListFromMultipleIdsAsync<Container>(vessel.ContainerIds);
-
+            var billLadings = await _session.LoadListFromMultipleIdsAsync<BillLading>(vessel.BillLadingIds);
 
             var vesselDto = new VesselDto();
             _mapper.Map(vessel, vesselDto);
 
-            vesselDto.Containers = containers;
+            vesselDto.BillLadings = billLadings;
 
             return vesselDto;
         }
 
         public async Task<List<VesselListItem>> LoadList(string companyId)
         {
-            var query = await _session.Query<Vessel>()
+            // var query = await _session.Query<Vessel>()
+            //     .Where(c => c.CompanyId == companyId)
+            //     .Select(c => new VesselListItem
+            //     {
+            //         Id = c.Id,
+            //         ForwardingAgentName = c.ForwardingAgentId,
+            //         ShippingCompanyName = c.ShippingCompanyId,
+            //         ContainersOnBoard = c.ContainersOnBoard,
+            //         Eta = c.EtaHistory.FirstOrDefault(hist => hist.DateUpdated == c.EtaHistory.Max(x => x.DateUpdated)).Eta,
+            //         VesselName = c.EtaHistory.FirstOrDefault(hist => hist.DateUpdated == c.EtaHistory.Max(x => x.DateUpdated)).VesselName
+            //     })
+            //     .ToListAsync();
+
+            return await _session.Query<VesselListItem, Vessels_ByCustomers>()
                 .Where(c => c.CompanyId == companyId)
-                .Select(c => new VesselListItem
-                {
-                    Id = c.Id,
-                    BlDate = c.BlDate,
-                    BlNumber = c.BlNumber,
-                    ForwardingAgent = c.ForwardingAgent,
-                    ShippingCompany = c.ShippingCompany,
-                    ContainersOnBoard = c.ContainersOnBoard,
-                    Eta = c.EtaHistory.FirstOrDefault(hist => hist.DateUpdated == c.EtaHistory.Max(x => x.DateUpdated)).Eta,
-                    VesselName = c.EtaHistory.FirstOrDefault(hist => hist.DateUpdated == c.EtaHistory.Max(x => x.DateUpdated)).VesselName
-                })
-                .OrderBy(c => c.BlDate)
-                .ToListAsync();
-
-            return query;
+                .ProjectInto<VesselListItem>()
+                .OrderBy(c => c.Eta).ToListAsync();
         }
 
-        public async Task<List<NotLoadedContainer>> GetNotLoadedContainers(string companyId)
-        {
-            var query = await _session.Query<NotLoadedContainer, Containers_ByVessel>()
-                .Where(c => c.CompanyId == companyId &&
-                            string.IsNullOrEmpty(c.VesselId) &&
-                            !c.Status.In(ContainerStatus.Cancelled, ContainerStatus.OnBoardVessel))
-                .ProjectInto<NotLoadedContainer>()
-                .ToListAsync();
-
-            return query;
-        }
-
-        public async Task<ServerResponse> AddContainerToVessel(string vesselId, IEnumerable<string> containerIds)
+        public async Task<ServerResponse<VesselDto>> RemoveBillsLadingFromVessel(string vesselId, IEnumerable<string> billLadingIds)
         {
             var vessel = await _session.LoadAsync<Vessel>(vesselId);
-            foreach (var containerId in containerIds)
-            {
-                if(!vessel.ContainerIds.Contains(containerId))
-                    vessel.ContainerIds.Add(containerId);
-            }
-
-            return new ServerResponse("Added containers");
-        }
-
-        public async Task<ServerResponse<VesselDto>> RemoveContainersFromVessel(string vesselId, IEnumerable<string> containerIds)
-        {
-            var vessel = await _session.LoadAsync<Vessel>(vesselId);
-            vessel.ContainerIds.RemoveAll(c => c.In(containerIds));
+            vessel.BillLadingIds.RemoveAll(c => c.In(billLadingIds));
 
             var dto = await Load(vesselId);
-            return new ServerResponse<VesselDto>(dto, "Removed containers");
+            return new ServerResponse<VesselDto>(dto, "Removed Bills of Lading from vessel");
+        }
+
+        public async Task<ServerResponse> AddBillLadingToVessel(string vesselId, IEnumerable<string> billLadingIds)
+        {
+            var vessel = await _session.LoadAsync<Vessel>(vesselId);
+            foreach (var blId in billLadingIds)
+            {
+                if (!vessel.BillLadingIds.Contains(blId))
+                    vessel.BillLadingIds.Add(blId);
+            }
+
+            return new ServerResponse("Added Bill of Lading to vessel");
         }
     }
 }

@@ -137,5 +137,10 @@ namespace Tests.Base
         {
             return new VesselService(session, Mapper);
         }
+
+        protected IBillLadingService GetBillLadingService(IAsyncDocumentSession session)
+        {
+            return new BillLadingService(session, Mapper);
+        }
     }
 }

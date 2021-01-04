@@ -9,9 +9,9 @@ using Raven.Client.Documents.Session;
 
 namespace AmbRcnTradeServer.RavenIndexes
 {
-    public class Containers_ByVessel : AbstractMultiMapIndexCreationTask<NotLoadedContainer>
+    public class Containers_ByBillLading : AbstractMultiMapIndexCreationTask<NotLoadedContainer>
     {
-        public Containers_ByVessel()
+        public Containers_ByBillLading()
         {
             AddMap<Container>(containers => from container in containers
                 let doc = LoadDocument<Container>(container.Id)
@@ -28,11 +28,14 @@ namespace AmbRcnTradeServer.RavenIndexes
             );
 
             AddMap<Vessel>(vessels => from vessel in vessels
-                from containerId in vessel.ContainerIds
-                let doc = LoadDocument<Container>(containerId)
+                from billLadingId in vessel.BillLadingIds
+                let billLading = LoadDocument<BillLading>(billLadingId)
+                let containers = LoadDocument<Container>(billLading.ContainerIds)
+                from container in containers
+                let doc = LoadDocument<Container>(container.Id)
                 select new NotLoadedContainer
                 {
-                    ContainerId = containerId,
+                    ContainerId = container.Id,
                     Status = default,
                     VesselId = vessel.Id,
                     Bags = doc.Bags,

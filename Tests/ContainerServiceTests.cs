@@ -86,6 +86,8 @@ namespace Tests
                 .With(c => c.DispatchDate, default(DateTime?))
                 .Without(c => c.Bags)
                 .Without(c => c.NettWeightKg)
+                .With(c=>c.VgmTicketNumber,"1234")
+                .With(c=>c.Teu,Teu.Teu40)
                 .Create();
 
             // Act
@@ -97,6 +99,7 @@ namespace Tests
             actual.StuffingWeightKg.Should().Be(container.IncomingStocks.Sum(c => c.WeightKg));
             actual.Bags.Should().Be(container.IncomingStocks.Sum(c => c.Bags));
             actual.WeighbridgeWeightKg.Should().Be(container.WeighbridgeWeightKg);
+            actual.Teu.Should().Be(Teu.Teu40);
         }
 
 

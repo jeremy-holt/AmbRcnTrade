@@ -39,7 +39,7 @@ export class VesselEdit {
   }
 
   protected get canSave() {
-    return this.model?.etaHistory.length > 0;
+    return this.model?.etaHistory.length > 0 && this.model?.etaHistory[0]?.vesselName?.length > 0;
   }
 
   protected async save() {
@@ -48,7 +48,7 @@ export class VesselEdit {
     }
   }
 
-  protected addEtaHistory(){
+  protected addEtaHistory() {
     this.model.etaHistory.push({ dateUpdated: moment().format(DATEFORMAT) } as IEtaHistory);
   }
 

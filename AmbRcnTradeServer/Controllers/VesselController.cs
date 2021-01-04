@@ -3,7 +3,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using AmberwoodCore.Controllers;
 using AmberwoodCore.Responses;
-using AmbRcnTradeServer.Models.ContainerModels;
 using AmbRcnTradeServer.Models.VesselModels;
 using AmbRcnTradeServer.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -44,25 +43,12 @@ namespace AmbRcnTradeServer.Controllers
             return await _service.LoadList(companyId);
         }
 
-        [Authorize]
-        [HttpGet("[action]")]
-        public async Task<ActionResult<List<NotLoadedContainer>>> GetNotLoadedContainers(string companyId)
-        {
-            return await _service.GetNotLoadedContainers(companyId);
-        }
 
         [Authorize]
         [HttpPost("[action]")]
-        public async Task<ActionResult<ServerResponse>> AddContainersToVessel(VesselContainersRequest request)
+        public async Task<ActionResult<ServerResponse>> RemoveBillsLadingFromVessel(VesselContainersRequest request)
         {
-            return await _service.AddContainerToVessel(request.VesselId, request.ContainerIds);
-        }
-
-        [Authorize]
-        [HttpPost("[action]")]
-        public async Task<ActionResult<ServerResponse>> RemoveContainersFromVessel(VesselContainersRequest request)
-        {
-            return await _service.RemoveContainersFromVessel(request.VesselId, request.ContainerIds);
+            return await _service.RemoveBillsLadingFromVessel(request.VesselId, request.BillLadingIds);
         }
 
         [Authorize]
@@ -75,7 +61,7 @@ namespace AmbRcnTradeServer.Controllers
 
     public class VesselContainersRequest
     {
-        public IEnumerable<string> ContainerIds { get; set; }
+        public IEnumerable<string> BillLadingIds { get; set; }
         public string VesselId { get; set; }
     }
 }

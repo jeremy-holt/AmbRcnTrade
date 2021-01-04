@@ -22,11 +22,14 @@
                   <div class="form-label mt-1">Last updated</div>
                   ${item.dateUpdated | dateFormat:"DD/MM/YYYY"}
                 </div>
-                <div class="col-4">
+                <div class="col-3">
                   <text-input value.bind="item.vesselName" label="Vessel" class="w-100"></text-input>
                 </div>
-                <div class="col-6">
-                  <text-area-input value.bind="item.notes" rows="1" label="Notes" class="w-100"></text-area-input>
+                <div class="col-2">
+                  <date-input value.bind="item.eta" label="ETA"></date-input>
+                </div>
+                <div class="col">
+                  <text-area-input value.bind="item.notes" rows="1" label="Notes"></text-area-input>
                 </div>
               </div>
             </li>

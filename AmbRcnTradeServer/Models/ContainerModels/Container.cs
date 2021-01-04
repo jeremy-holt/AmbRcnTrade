@@ -16,7 +16,7 @@ namespace AmbRcnTradeServer.Models.ContainerModels
         public string SealNumber { get; set; }
         public string BookingNumber { get; set; }
         public double Bags { get; set; }
-        public double WeighbridgeWeightKg { get; set; } 
+        public double WeighbridgeWeightKg { get; set; }
         public ContainerStatus Status { get; set; }
         public string Id { get; set; }
         public string Name { get; set; }
@@ -26,5 +26,7 @@ namespace AmbRcnTradeServer.Models.ContainerModels
         public List<IncomingStock> IncomingStocks { get; set; } = new();
         public double NettWeightKg { get; set; }
         public DateTime? StuffingDate { get; set; }
+        public string VgmTicketNumber { get; set; }
+        public Teu Teu { get; set; } = Teu.Teu40;
     }
 }
