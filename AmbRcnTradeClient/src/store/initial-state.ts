@@ -149,21 +149,34 @@ export const initialState: IState = {
       companyId: undefined!,
       name: undefined!,
       containersOnBoard: undefined!,
-      containerIds: [],
-      containers: [],
-      blNumber: undefined!,
-      blDate: undefined!,
-      forwardingAgent: undefined!,
-      shippingCompany: undefined!,
+      billLadingIds: [],
+      billLadings: [],
       etaHistory: [],
-      notifyParty1: undefined!,
-      notifyParty2: undefined!,
-      blBodyText: undefined!,
-      consignee: undefined!,
-      freightPrepaid: true
+      forwardingAgentId: undefined!,
+      shippingCompanyId: undefined!,
+      portOfDestinationId: undefined!,
     },
     list: [],
     notLoadedContainers: []
+  },
+  billLading: {
+    current: {
+      notifyParty1Id: undefined!,
+      notifyParty2Id: undefined!,
+      consigneeId: undefined!,
+      blBodyText: undefined!,
+      shipperId: undefined!,
+      freightPrepaid: true!,
+      containersOnBoard:undefined!,
+      blDate:undefined!,
+      blNumber:undefined!,
+      containerIds:[],
+      containers:[],      
+      companyId:undefined!,
+      id:undefined!,
+      name: undefined!
+    },
+    list: []
   },
   customerGroup: {
     current: {

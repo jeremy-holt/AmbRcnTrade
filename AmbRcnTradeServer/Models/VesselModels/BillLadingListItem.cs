@@ -31,7 +31,6 @@ namespace AmbRcnTradeServer.Models.VesselModels
         public string NotifyParty1Name { get; set; }
         public string NotifyParty2Name { get; set; }
         public string ShipperName { get; set; }
-        public string PortOfDestinationName { get; set; }
         public string CompanyId { get; set; }
     }
 }

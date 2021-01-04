@@ -1,4 +1,4 @@
 export interface IVesselContainersRequest {
-    containerIds: string[];
+    billLadingIds: string[];
     vesselId: string;
 }

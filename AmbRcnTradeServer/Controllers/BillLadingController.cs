@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using AmberwoodCore.Controllers;
 using AmberwoodCore.Responses;
+using AmbRcnTradeServer.Models.ContainerModels;
 using AmbRcnTradeServer.Models.VesselModels;
 using AmbRcnTradeServer.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -51,6 +52,13 @@ namespace AmbRcnTradeServer.Controllers
             return await _service.RemoveContainersFromBillLading(request.BillOfLadingId, request.ContainerIds);
         }
 
+        [Authorize]
+        [HttpGet("[action]")]
+        public async Task<ActionResult<List<NotLoadedContainer>>> GetNotLoadedContainers(string companyId)
+        {
+            return await _service.GetNotLoadedContainers(companyId);
+        }
+        
         [Authorize]
         [HttpGet("[action]")]
         public async Task<ActionResult<BillLadingDto>> Create(string companyId)

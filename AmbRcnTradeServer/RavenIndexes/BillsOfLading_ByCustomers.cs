@@ -14,7 +14,6 @@ namespace AmbRcnTradeServer.RavenIndexes
         public BillsOfLading_ByCustomers()
         {
             Map = billsOfLading => from c in billsOfLading
-                let port = LoadDocument<Port>(c.PortOfDestinationId)
                 let shipper = LoadDocument<Customer>(c.ShipperId)
                 let consignee = LoadDocument<Customer>(c.ConsigneeId)
                 let notifyParty1 = LoadDocument<Customer>(c.NotifyParty1Id)
@@ -29,7 +28,6 @@ namespace AmbRcnTradeServer.RavenIndexes
                     ContainersOnBoard = c.ContainersOnBoard,
                     NotifyParty1Name = notifyParty1.Name,
                     NotifyParty2Name = notifyParty2.Name,
-                    PortOfDestinationName = port.Name,
                     CompanyId = c.CompanyId
                 };
 

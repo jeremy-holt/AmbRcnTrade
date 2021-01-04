@@ -13,9 +13,6 @@ namespace AmbRcnTradeServer.Models.VesselModels
 {
     public class BillLading : IEntityCompany
     {
-        public string Id { get; set; }
-        public string Name { get; set; }
-        public string CompanyId { get; set; }
         public string NotifyParty1Id { get; set; }
         public string NotifyParty2Id { get; set; }
         public string ConsigneeId { get; set; }
@@ -26,14 +23,16 @@ namespace AmbRcnTradeServer.Models.VesselModels
         public DateTime? BlDate { get; set; }
         public string BlNumber { get; set; }
         public List<string> ContainerIds { get; set; } = new();
-public string PortOfDestinationId { get; set; }
+        public string Id { get; set; }
+        public string Name { get; set; }
+        public string CompanyId { get; set; }
     }
-    
+
     public class BillLadingDto : BillLading, IEntityDto
     {
         [IgnoreMap]
         public List<Container> Containers { get; set; } = new();
-        
+
 
         public void Validate() { }
     }

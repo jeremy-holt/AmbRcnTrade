@@ -63,19 +63,6 @@ namespace AmbRcnTradeServer.Services
 
         public async Task<List<VesselListItem>> LoadList(string companyId)
         {
-            // var query = await _session.Query<Vessel>()
-            //     .Where(c => c.CompanyId == companyId)
-            //     .Select(c => new VesselListItem
-            //     {
-            //         Id = c.Id,
-            //         ForwardingAgentName = c.ForwardingAgentId,
-            //         ShippingCompanyName = c.ShippingCompanyId,
-            //         ContainersOnBoard = c.ContainersOnBoard,
-            //         Eta = c.EtaHistory.FirstOrDefault(hist => hist.DateUpdated == c.EtaHistory.Max(x => x.DateUpdated)).Eta,
-            //         VesselName = c.EtaHistory.FirstOrDefault(hist => hist.DateUpdated == c.EtaHistory.Max(x => x.DateUpdated)).VesselName
-            //     })
-            //     .ToListAsync();
-
             return await _session.Query<VesselListItem, Vessels_ByCustomers>()
                 .Where(c => c.CompanyId == companyId)
                 .ProjectInto<VesselListItem>()

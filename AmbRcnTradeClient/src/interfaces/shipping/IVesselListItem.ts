@@ -2,9 +2,12 @@ export interface IVesselListItem {
   id: string;
   vesselName: string;
   eta: string | null;
+  shippingCompanyName: string;
+  forwardingAgentName: string;
   containersOnBoard: number;
-  blDate: string | null;
-  blNumber: string;
-  shippingCompany: string;
-  forwardingAgent: string;
+  portOfDestinationName: string;
+  companyId: string;
 }
+
+
+

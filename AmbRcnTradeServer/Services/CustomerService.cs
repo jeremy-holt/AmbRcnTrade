@@ -104,7 +104,7 @@ namespace AmbRcnTradeServer.Services
                 return await _session.Query<Customer>()
                     .Where(c => c.CompanyId == companyId)
                     .OrderBy(c => c.Name)
-                    .Select(c => new CustomerListItem {Id = c.Id, Name = c.Name,CustomerGroupId = c.CustomerGroupId})
+                    .Select(c => new CustomerListItem {Id = c.Id, Name = c.Name, CustomerGroupId = c.CustomerGroupId})
                     .ToListAsync();
             }
 
@@ -114,7 +114,7 @@ namespace AmbRcnTradeServer.Services
                 .ToListAsync();
 
             return query.Where(c => c.Id.IsNotNullOrEmpty())
-                .Select(c => new CustomerListItem(c.CustomerId, c.CustomerName, c.CompanyId,c.CustomerGroupId))
+                .Select(c => new CustomerListItem(c.CustomerId, c.CustomerName, c.CompanyId, c.CustomerGroupId))
                 .DistinctBy(c => c.Id)
                 .OrderBy(c => c.Name)
                 .ToList();
