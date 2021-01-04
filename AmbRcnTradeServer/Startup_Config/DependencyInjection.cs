@@ -18,6 +18,7 @@ namespace AmbRcnTradeServer.Startup_Config
             services.AddScoped<IAuditingService, AuditingService>();
             services.AddScoped<ICounterService, CounterService>();
             services.AddScoped<ICustomerService, CustomerService>();
+            services.AddScoped<ICustomerGroupService, CustomerGroupService>();
             services.AddScoped<IInspectionService, InspectionService>();
             services.AddScoped<IPortsService, PortsService>();
             services.AddScoped<IPurchaseService, PurchaseService>();

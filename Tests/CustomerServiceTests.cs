@@ -81,8 +81,6 @@ namespace Tests
                 .Without(c => c.Users)
                 .Create();
             await session.StoreAsync(customerGreenangle);
-                
-            
 
             var contract = fixture.DefaultEntity<Contract>()
                 .With(c => c.SellerId, customerTerraNova.Id)
@@ -110,7 +108,9 @@ namespace Tests
             var sut = GetCustomerService(session);
             var fixture = new Fixture();
 
-            var customer = fixture.DefaultEntity<Customer>().Create();
+            var customer = fixture.DefaultEntity<Customer>()
+                .With(c=>c.CustomerGroupId, "CustomerGroups/1-A")
+                .Create();
 
             // Act
             var response = await sut.SaveCustomer(customer);
@@ -118,6 +118,7 @@ namespace Tests
             // Assert
             var actual = await session.LoadAsync<Customer>(response.Id);
             actual.Should().NotBeNull();
+            actual.CustomerGroupId.Should().Be("CustomerGroups/1-A");
         }
     }
 }
