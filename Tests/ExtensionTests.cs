@@ -37,10 +37,10 @@ namespace Tests
             var stock3 = fixture.DefaultEntity<Stock>().With(c => c.AnalysisResult, analysisResults[2]).Create();
 
             IEnumerable<IAnalysisResult> stocks = new[] {stock1, stock2, stock3};
-            
+
             // Act
-            AnalysisResult actual = stocks.AverageAnalysisResults();
-            
+            var actual = stocks.AverageAnalysisResults();
+
             // Assert
             actual.Approved.Should().Be(Approval.Approved);
             actual.Count.Should().Be((analysisResults[0].Count + analysisResults[1].Count) / 2);

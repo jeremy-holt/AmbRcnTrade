@@ -24,10 +24,10 @@ namespace AmbRcnTradeServer.Models.VesselModels
         public DateTime? BlDate { get; set; }
         public string BlNumber { get; set; }
         public List<string> ContainerIds { get; set; } = new();
+        public string VesselId { get; set; }
         public string Id { get; set; }
         public string Name { get; set; }
         public string CompanyId { get; set; }
-        public string VesselId { get; set; }
     }
 
     public class BillLadingDto : BillLading, IEntityDto

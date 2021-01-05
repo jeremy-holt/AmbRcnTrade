@@ -1,6 +1,6 @@
 <template>
   <require from="./lotNo-filter-value-converter"></require>
-  
+
   <toolbar type="menu" caption="Stocks" list-route="stockBalanceList">
     <toolbar-item icon="fa fa-plus" click.call="addStock()"></toolbar-item>
   </toolbar>
@@ -17,12 +17,13 @@
     <div class="card-body">
       <div class="mb-4 d-flex justify-content-between align-items-end">
         <div class="mr-2 w-100">
-          <select-input source.bind="locations | customerFilter:'warehouse' " value.bind="selectedLocation" label="Select warehouse location"
-            warn-null="false">
+          <select-input source.bind="locations | customerFilter:'warehouse' " value.bind="selectedLocation"
+            label="Select warehouse location" warn-null="false">
           </select-input>
         </div>
 
-        <div class="mr-2 w-100">          
+        <div class="mr-2 w-100">
+          <div class="form-label">Filter by lot numbers</div>
           <select class="custom-select" value.bind="filterLotNo">
             <option>[All]</option>
             <option repeat.for="item of lotNoList">${item}</option>
@@ -47,16 +48,15 @@
             <th>Stock in</th>
             <th>Stock out</th>
             <th>Avg. quality</th>
-            <!-- <th>Inspected on</th> -->
             <th>Container details</th>
           </tr>
         </thead>
         <tbody>
-          <tr repeat.for="item of list | lotNoFilter: filterLotNo">
+          <tr repeat.for="item of list | lotNoFilter: filterLotNo" class="${!item.isStockIn ? 'bg-light' : ''}">
             <td>
               <a route-href="stockEdit; params.bind:{id: encode(item.stockId)}" class="with-decoration">Stock: Lot
                 ${item.lotNo}</a><br>
-                <a route-href="inspectionEdit; params.bind:{id: encode(item.inspectionId)}"
+              <a route-href="inspectionEdit; params.bind:{id: encode(item.inspectionId)}"
                 class="with-decoration">Inspection:
                 ${item.inspectionDate | dateFormat: "DD/MM/YYYY"}</a>
             </td>
@@ -65,11 +65,11 @@
             <td>${item.supplierName}</td>
             <td>${item.origin}</td>
             <td>
-              <div if.bind="item.bagsIn>0">${item.bagsIn | numberFormat: "0,0"} bags<br>${item.weightKgIn |
-                numberFormat:"0,0"} kg
+              <div if.bind="item.bagsIn>0">${item.bagsIn | numberFormat: "0,0"} bags<br>
+                <span class="font-italic small">${item.weightKgIn | numberFormat:"0,0"} kg</span>
               </div>
             </td>
-            <td>
+            <td class="text-success">
               <div if.bind="item.bagsOut > 0">
                 ${item.bagsOut | numberFormat: "0,0"} bags<br>${item.weightKgOut | numberFormat:"0,0"} kg
               </div>
@@ -79,17 +79,12 @@
               Count ${item.analysisResult.count | numberFormat: "0,0"}<br>
               Moisture ${item.analysisResult.moisture/100 | numberFormat: "0.00%"}
             </td>
-            <!-- <td>
-              <a route-href="inspectionEdit; params.bind:{id: encode(item.inspectionId)}"
-                class="with-decoration">Inspection:
-                ${item.inspectionDate | dateFormat: "DD/MM/YYYY"}</a>
-            </td> -->
             <td>
               <ul class="list-unstyled">
                 <li repeat.for="sr of item.stuffingRecords">
                   <a class="with-decoration" route-href="containerEdit; params.bind:{id: encode(sr.containerId)}">
-                    ${sr.containerNumber}<br>
-                    Stuffed: ${sr.stuffingDate | dateFormat: "DD/MM/YYYY"}
+                    ${sr.containerNumber}
+                    <!-- Stuffed: ${sr.stuffingDate | dateFormat: "DD/MM/YYYY"} -->
                   </a>
                 </li>
               </ul>
@@ -100,7 +95,7 @@
           <tr>
             <th>Stock balance</th>
             <th>${stockBalance.bags | numberFormat: "0,0"} bags</th>
-            <th>${stockBalance.weightKg | numberFormat: "0,0"} kg</th>
+            <th class="font-italic">Approx. ${stockBalance.weightKg/1000 | numberFormat: "0,0"} tons</th>
             <th colspan="7"></th>
           </tr>
         </tfoot>

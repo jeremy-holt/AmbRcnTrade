@@ -171,14 +171,13 @@ namespace Tests
 
             await session.SaveChangesAsync();
             WaitForIndexing(store);
-            
+
             // Act
-            var prms = new InspectionQueryParams() {CompanyId = COMPANY_ID};
+            var prms = new InspectionQueryParams {CompanyId = COMPANY_ID};
             var list = await sut.LoadList(prms);
-            
+
             // Assert
             list[0].UnallocatedBags.Should().Be(inspection.Bags - inspection.StockReferences.Sum(x => x.Bags));
-
         }
 
         [Fact]
@@ -216,7 +215,7 @@ namespace Tests
             // Act
             var response = await sut.Save(inspection);
             await session.SaveChangesAsync();
-            
+
 
             // Assert
             var actual = await session.LoadAsync<Inspection>(response.Id);

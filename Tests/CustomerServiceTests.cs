@@ -64,17 +64,17 @@ namespace Tests
             await InitializeIndexes(store);
             var fixture = new Fixture();
 
-            var appUser = fixture.DefaultIdentity<AppUser>().With(c=>c.Name,"Shalin").Create();
+            var appUser = fixture.DefaultIdentity<AppUser>().With(c => c.Name, "Shalin").Create();
             await session.StoreAsync(appUser);
 
             var users = new List<User>
             {
                 new(appUser.Id, appUser.Name)
             };
-            
+
             var customerTerraNova = fixture.DefaultEntity<Customer>()
                 .With(c => c.Users, users)
-                .With(c=>c.Name,"Terra Nova")
+                .With(c => c.Name, "Terra Nova")
                 .Create();
             await session.StoreAsync(customerTerraNova);
 
@@ -94,7 +94,7 @@ namespace Tests
             WaitForUserToContinueTheTest(store);
 
             // Act
-            List<CustomerListItem> list = await sut.LoadCustomerListForAppUser(COMPANY_ID, appUser.Id, false);
+            var list = await sut.LoadCustomerListForAppUser(COMPANY_ID, appUser.Id, false);
 
             // Assert
             list.Should().OnlyContain(c => c.Id == customerTerraNova.Id);
@@ -111,7 +111,7 @@ namespace Tests
             var fixture = new Fixture();
 
             var customer = fixture.DefaultEntity<Customer>()
-                .With(c=>c.Filter, CustomerGroup.Supplier)
+                .With(c => c.Filter, CustomerGroup.Supplier)
                 .Create();
 
             // Act

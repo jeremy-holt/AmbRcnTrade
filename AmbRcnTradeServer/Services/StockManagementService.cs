@@ -24,6 +24,7 @@ namespace AmbRcnTradeServer.Services
         Task<ServerResponse> RemoveInspectionFromStock(string inspectionId, string stockId);
         Task<List<StockListItem>> GetNonCommittedStocks(string companyId, string supplierId);
         Task<List<AvailableContainer>> GetAvailableContainers(string companyId);
+
         Task<ServerResponse<OutgoingStock>> StuffContainer(string containerId, ContainerStatus status, StockBalance stockBalance, double bags, double weightKg,
             DateTime stuffingDate);
     }
@@ -50,6 +51,7 @@ namespace AmbRcnTradeServer.Services
             var stock = new Stock();
             {
                 stock.Bags = bags;
+                stock.WeightKg = bags * 80;
                 stock.StockInDate = date;
                 stock.SupplierId = inspection.SupplierId;
                 stock.CompanyId = inspection.CompanyId;
@@ -131,7 +133,7 @@ namespace AmbRcnTradeServer.Services
                 list.Add(availableContainer);
             }
 
-            return list.OrderBy(c=>Enum.GetName(typeof(ContainerStatus),c.Status)).ToList();
+            return list.OrderBy(c => Enum.GetName(typeof(ContainerStatus), c.Status)).ToList();
         }
 
         public async Task<ServerResponse<OutgoingStock>> StuffContainer(string containerId, ContainerStatus status, StockBalance stockBalance, double bags, double weightKg,
@@ -145,7 +147,7 @@ namespace AmbRcnTradeServer.Services
                 LotNo = stockBalance.LotNo,
                 Bags = bags,
                 WeightKg = weightKg,
-                StockIds = stocks.Select(c => new IncomingStockItem(c.Id,true)).ToList(),
+                StockIds = stocks.Select(c => new IncomingStockItem(c.Id, true)).ToList(),
                 StuffingDate = stuffingDate
             };
 
@@ -188,7 +190,7 @@ namespace AmbRcnTradeServer.Services
             };
 
             await _session.StoreAsync(stockOut);
-            incomingStock.StockIds.Add(new IncomingStockItem(stockOut.Id,false));
+            incomingStock.StockIds.Add(new IncomingStockItem(stockOut.Id, false));
 
             return new ServerResponse<OutgoingStock>(new OutgoingStock {StockId = stockOut.Id}, "Stuffed container");
         }

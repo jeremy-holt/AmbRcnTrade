@@ -16,7 +16,7 @@
           </div>
           <div class="col">
             About ${model.balance * 80/1000 | numberFormat: "0,0"} tons available on stock
-          </div>          
+          </div>
         </div>
 
         <div class="row d-flex align-items-end">
@@ -39,43 +39,42 @@
         <ul class="list-group small" style="height:300px; overflow:auto">
           <li class="list-group-item font-weight-bold">
             <div class="row">
-              <div class="col">Status</div>
+              <div class="col-2">Status</div>
               <div class="col">Container number</div>
-              <div class="col">Booking number</div>
-              <div class="col">Bags already in container</div>
-              <div class="col">Incoming weight from stock</div>
+              <div class="col-2">Booking number</div>
+              <div class="col-2">Bags already in container</div>
+              <div class="col-2">Stuffed weight kg</div>
             </div>
           </li>
           <li class="list-group-item ${item.selected ? 'list-group-item-highlight' : ''}" repeat.for="item of list">
             <a href="#" click.delegate="selectRow($index)" class="text-decoration-none">
               <div class="row">
-                <div class="col">${item.status | containerStatusFormatter}
-  
-                </div>
+                <div class="col-2">${item.status | containerStatusFormatter}</div>
                 <div class="col">
-                  <button type="button" class="btn-link"
-                    click.delegate="navigateToContainer(item.id) & debounce:200">${item.containerNumber}</button>
+                  <a href="javascript:(0)" class="with-decoration"
+                    click.delegate="navigateToContainer(item.id) & debounce:200">${item.containerNumber}</a>
                 </div>
-                <div class="col">${item.bookingNumber}</div>
-                <div class="col">${item.bags | numberFormat: "0,0"}
+                <div class="col-2">${item.bookingNumber}</div>
+                <div class="col-2">${item.bags | numberFormat: "0,0"}
                   <span if.bind="item.isOverweight" class="ml-2">
                     <i class="fas fa-exclamation-triangle text-warning"
                       title="This container is possibly already at capacity"></i>
                   </span>
                 </div>
-                <div class="col">${item.stockWeightKg | numberFormat: "0,0"}</div>
+                <div class="col-2">${item.stockWeightKg | numberFormat: "0,0"}</div>
               </div>
             </a>
           </li>
         </ul>
-  
+
         <div if.bind="isOverweightContainer" class="alert alert-warning mt-2">
           <i class="fas fa-exclamation-triangle"></i>
-          ${loadingQuantity.bags | numberFormat: "0,0"} bags or ${loadingQuantity.stockWeightKg | numberFormat: "0,0"} kg
+          ${loadingQuantity.bags | numberFormat: "0,0"} bags or ${loadingQuantity.stockWeightKg | numberFormat: "0,0"}
+          kg
           may
           in excess of the capacity of the container
         </div>
-  
+
         <div class="row">
           <div class="col">
             <switch checked.bind="stuffingStatus" label.bind="stuffingStatusLabel"></switch>

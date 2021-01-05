@@ -20,6 +20,11 @@ namespace Tests
     {
         public VesselServiceTests(ITestOutputHelper output) : base(output) { }
 
+        private async Task InitializeIndexes(IDocumentStore store)
+        {
+            await new Vessels_ByCustomers().ExecuteAsync(store);
+        }
+
 
         [Fact]
         public async Task AddBillLadingToVessel_ShouldAddBillLadingToVessel()
@@ -69,8 +74,7 @@ namespace Tests
                 ShippingCompanyId = customers[0].Id,
                 ForwardingAgentId = customers[1].Id,
                 BillLadingIds = billLadings.Select(x => x.Id).ToList(),
-                ContainersOnBoard = 0,
-                
+                ContainersOnBoard = 0
             };
 
             await session.StoreAsync(vessel);
@@ -116,18 +120,13 @@ namespace Tests
             var expectedVessel = vessels.First(c => c.Id == list[0].Id);
             list.Should().BeInAscendingOrder(c => c.Eta);
             var actual = list[0];
-            
+
             actual.Eta.Should().Be(expectedVessel.Eta);
             actual.VesselName.Should().Be(expectedVessel.VesselName);
             actual.ContainersOnBoard.Should().Be(expectedVessel.ContainersOnBoard);
             actual.ShippingCompanyName.Should().Be(customers[0].Name);
             actual.ForwardingAgentName.Should().Be(customers[1].Name);
             actual.PortOfDestinationName.Should().Be(port.Name);
-        }
-
-        private async Task InitializeIndexes(IDocumentStore store)
-        {
-            await new Vessels_ByCustomers().ExecuteAsync(store);
         }
 
         [Fact]
@@ -177,9 +176,9 @@ namespace Tests
             var vesselDto = new VesselDto
             {
                 CompanyId = COMPANY_ID,
-                VesselName="Lollipop",
-                Eta=new DateTime(2013,1,1),
-                Notes="notes",
+                VesselName = "Lollipop",
+                Eta = new DateTime(2013, 1, 1),
+                Notes = "notes",
                 ShippingCompanyId = "customers/1-A",
                 ForwardingAgentId = "customers/2-A",
                 BillLadingIds = billLadings.Select(x => x.Id).ToList(),

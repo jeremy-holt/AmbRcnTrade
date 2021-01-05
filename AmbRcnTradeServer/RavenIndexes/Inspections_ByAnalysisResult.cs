@@ -46,8 +46,8 @@ namespace AmbRcnTradeServer.RavenIndexes
                     RejectsGm = grp.Average(c => c.RejectsGm),
                     SpottedGm = grp.Average(c => c.SpottedGm),
                     TotalRejects = totalRejects,
-                    SoundPct =  totalRejects == 0 ? 0 : grp.Sum(c => c.SoundGm) / totalRejects,
-                    RejectsPct =  totalRejects == 0 ? 0 : grp.Sum(c => c.RejectsGm) / totalRejects,
+                    SoundPct = totalRejects == 0 ? 0 : grp.Sum(c => c.SoundGm) / totalRejects,
+                    RejectsPct = totalRejects == 0 ? 0 : grp.Sum(c => c.RejectsGm) / totalRejects,
                     SpottedPct = totalRejects == 0 ? 0 : grp.Sum(c => c.SpottedGm) / totalRejects
                 };
 

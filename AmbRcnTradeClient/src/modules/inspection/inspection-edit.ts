@@ -22,7 +22,7 @@ import { AddToStockDialog } from "./add-to-stock-dialog";
 @connectTo()
 export class InspectionEdit {
   @observable protected state: IState;
-  public model: IInspection = undefined!;
+  public model: IInspection = undefined!; 
 
   @observable protected approvalChecked = false;
 
@@ -54,7 +54,6 @@ export class InspectionEdit {
     } else {
       await this.inspectionService.createInspection();
     }
-
   }
 
   protected async deactivate() {
@@ -111,7 +110,11 @@ export class InspectionEdit {
     if (!this.model) {
       return false;
     }
-    return this.inspectionService.canAddInspectionToStock(this.model);
+    return this.inspectionService.canAddInspectionToStock(this.model) && this.wasInspectionApproved;
+  }
+
+  protected get wasInspectionApproved(){
+    return this.inspectionService.inspectionApproved(this.model);
   }
 
   protected get showCanAddInspectionToStock() {

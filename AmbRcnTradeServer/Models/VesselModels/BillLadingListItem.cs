@@ -18,7 +18,7 @@ namespace AmbRcnTradeServer.Models.VesselModels
         public string PortOfDestinationName { get; set; }
         public string CompanyId { get; set; }
     }
-    
+
 
     public class BillLadingListItem
     {

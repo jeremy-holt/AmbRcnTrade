@@ -1,7 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using AmbRcnTradeServer.Constants;
 using AmbRcnTradeServer.Models.InspectionModels;
+using Raven.Client.Documents;
+using Raven.Client.Documents.Linq;
+using Raven.Client.Documents.Session;
 
 namespace AmbRcnTradeServer.Interfaces
 {
@@ -9,8 +13,10 @@ namespace AmbRcnTradeServer.Interfaces
     {
         public static AnalysisResult AverageAnalysisResults(this IEnumerable<IAnalysisResult> list)
         {
+            
             var analyses = list.ToList();
-            return new AnalysisResult()
+            
+            return new AnalysisResult
             {
                 Approved = Approval.Approved,
                 Count = analyses.Where(c => c.AnalysisResult.Approved == Approval.Approved).Average(x => x.AnalysisResult.Count),

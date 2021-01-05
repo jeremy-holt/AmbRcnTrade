@@ -56,7 +56,11 @@ export class InspectionService extends FetchService {
     return inspection.stockReferences.reduce((a, b) => a += b.bags, 0);
   }
 
-  public wouldExceedInspectionBags(inspection: IInspection, bagsToAdd: number):boolean{
+  public inspectionApproved(inspection: IInspection) {
+    return inspection.analysisResult.approved === Approval.Approved;
+  }
+
+  public wouldExceedInspectionBags(inspection: IInspection, bagsToAdd: number): boolean {
     return this.bagsAlreadyAllocated(inspection) + bagsToAdd > inspection.bags;
   }
 
@@ -77,7 +81,7 @@ export class InspectionService extends FetchService {
           rejectsPct: rejectsPct,
           spottedPct: spottedPct,
           approved,
-          inspectionId:undefined!
+          inspectionId: undefined!
         });
     });
 
@@ -89,7 +93,7 @@ export class InspectionService extends FetchService {
       rejectsPct: this.sumAnalysisResult(arrayAnalysisResult, c => c.rejectsPct),
       spottedPct: this.sumAnalysisResult(arrayAnalysisResult, c => c.spottedPct),
       approved,
-      inspectionId:undefined!
+      inspectionId: undefined!
     };
 
     return result;

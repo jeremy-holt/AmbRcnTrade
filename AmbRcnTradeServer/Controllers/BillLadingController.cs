@@ -58,12 +58,12 @@ namespace AmbRcnTradeServer.Controllers
         {
             return await _service.GetNotLoadedContainers(companyId);
         }
-        
+
         [Authorize]
         [HttpGet("[action]")]
         public async Task<ActionResult<BillLadingDto>> Create(string companyId, string vesselId)
         {
-            return await Task.FromResult(new BillLadingDto {CompanyId = companyId, VesselId=vesselId});
+            return await Task.FromResult(new BillLadingDto {CompanyId = companyId, VesselId = vesselId});
         }
     }
 

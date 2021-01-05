@@ -19,7 +19,7 @@ namespace AmbRcnTradeServer.Models.InspectionModels
 
         public string StockId { get; set; }
         public double Bags { get; set; }
-        
+
         public DateTime Date { get; set; }
         public long LotNo { get; set; }
     }

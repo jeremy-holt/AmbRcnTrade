@@ -15,10 +15,10 @@ namespace AmbRcnTradeServer.Models.PurchaseModels
         public long PurchaseNumber { get; set; }
         public string SupplierId { get; set; }
         public DateTime PurchaseDate { get; set; }
+        public double QuantityMt { get; set; }
+        public DateTime? DeliveryDate { get; set; }
         public string Id { get; set; }
         public string Name { get; set; }
         public string CompanyId { get; set; }
-        public double QuantityMt { get; set; }
-        public DateTime? DeliveryDate { get; set; }
     }
 }

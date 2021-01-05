@@ -157,7 +157,7 @@ namespace Tests
                 .With(c => c.NotifyParty1Id, customers[1].Id)
                 .With(c => c.NotifyParty2Id, customers[2].Id)
                 .With(c => c.ShipperId, customers[3].Id)
-                .With(c=>c.VesselId,"Vessels/1-A")
+                .With(c => c.VesselId, "Vessels/1-A")
                 .CreateMany().ToList();
             await billOfLadings.SaveList(session);
             await session.SaveChangesAsync();
@@ -237,7 +237,7 @@ namespace Tests
                 ShipperId = "shipper",
                 BlBodyText = "body text",
                 FreightPrepaid = true,
-                VesselId= "Vessels/1-A"
+                VesselId = "Vessels/1-A"
             };
 
             // Act

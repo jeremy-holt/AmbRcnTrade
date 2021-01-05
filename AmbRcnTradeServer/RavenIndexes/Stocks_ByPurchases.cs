@@ -39,7 +39,7 @@ namespace AmbRcnTradeServer.RavenIndexes
                     Origin = stock.Origin,
                     InspectionDate = inspection.InspectionDate,
                     InspectionId = stock.InspectionId,
-                    StockDate = stock.IsStockIn?stock.StockInDate: stock.StockOutDate
+                    StockDate = stock.IsStockIn ? stock.StockInDate : stock.StockOutDate
                 });
 
             AddMap<Stock>(stocks => from stock in stocks
@@ -63,7 +63,7 @@ namespace AmbRcnTradeServer.RavenIndexes
                     Origin = stock.Origin,
                     InspectionId = stock.InspectionId,
                     InspectionDate = inspection.InspectionDate,
-                    StockDate = stock.IsStockIn?stock.StockInDate: stock.StockOutDate
+                    StockDate = stock.IsStockIn ? stock.StockInDate : stock.StockOutDate
                 }
             );
 

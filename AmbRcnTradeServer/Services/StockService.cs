@@ -63,10 +63,8 @@ namespace AmbRcnTradeServer.Services
         {
             var stock = await _session.LoadAsync<Stock>(id);
 
-            if (stock.InspectionId.IsNotNullOrEmpty())
-            {
+            if (stock != null && stock.InspectionId.IsNotNullOrEmpty())
                 stock.AnalysisResult = await _inspectionService.GetAnalysisResult(stock.InspectionId);
-            }
 
             return stock;
         }

@@ -97,7 +97,9 @@ export class StockEdit {
   }
 
   protected calcWeightKg() {
-    this.model.weightKg = this.model.bags * 80;
+    if (this.model.weightKg === 0) {
+      this.model.weightKg = this.model.bags * 80;
+    }
   }
 
   protected listItemMatcher = (a: IListItem, b: IListItem) => a?.id === b?.id;

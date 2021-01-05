@@ -265,6 +265,7 @@ namespace Tests
             actualStock.StockInDate.Should().Be(new DateTime(2013, 1, 1));
             actualStock.SupplierId.Should().Be(supplier.Id);
             actualStock.Bags.Should().Be(400);
+            actualStock.WeightKg.Should().Be(400 * 80);
             actualStock.LocationId.Should().Be(location.Id);
             actualStock.LotNo.Should().Be(17);
             actualStock.InspectionId.Should().Be(inspection.Id);
@@ -379,8 +380,8 @@ namespace Tests
             // Act
             const double incomingBags = 2000;
             const double incomingWeightKg = 16_000;
-            const ContainerStatus containerStatus=ContainerStatus.StuffingComplete;
-            ServerResponse response = await sut.StuffContainer(container.Id,containerStatus, stockBalance, incomingBags, incomingWeightKg, new DateTime(2020, 1, 1));
+            const ContainerStatus containerStatus = ContainerStatus.StuffingComplete;
+            ServerResponse response = await sut.StuffContainer(container.Id, containerStatus, stockBalance, incomingBags, incomingWeightKg, new DateTime(2020, 1, 1));
 
             await session.SaveChangesAsync();
 
@@ -467,10 +468,12 @@ namespace Tests
             await sut.StuffContainer(container.Id, ContainerStatus.Empty, stockBalance, incomingBags, incomingWeightKg, stuffingDate);
 
             await session.SaveChangesAsync();
+            WaitForIndexing(store);
 
             // Assert
-            var stockOut = await session.Query<Stock>().Where(c => !c.IsStockIn).FirstOrDefaultAsync();
-            var actualContainer = await session.LoadAsync<Container>(container.Id);
+            using var session2 = store.OpenAsyncSession();
+            var stockOut = await session2.Query<Stock>().Where(c => !c.IsStockIn).FirstOrDefaultAsync();
+            var actualContainer = await session2.LoadAsync<Container>(container.Id);
 
             stockOut.Should().NotBeNull();
             stockOut.LotNo.Should().Be(1);
@@ -489,7 +492,7 @@ namespace Tests
             stockOut.StuffingRecords[0].ContainerNumber.Should().Be(container.ContainerNumber);
             stockOut.StuffingRecords[0].StuffingDate.Should().Be(stuffingDate);
 
-            var incomingStocksIds = actualContainer.IncomingStocks.SelectMany(c => c.StockIds).Select(x=>x.StockId).ToList();
+            var incomingStocksIds = actualContainer.IncomingStocks.SelectMany(c => c.StockIds).Select(x => x.StockId).ToList();
             incomingStocksIds.Should().Contain(new[] {stock1.Id, stock2.Id, stockOut.Id});
         }
     }

@@ -16,13 +16,13 @@ namespace AmbRcnTradeServer.Models.VesselModels
         public string ForwardingAgentId { get; set; }
         public string ShippingCompanyId { get; set; }
         public List<string> BillLadingIds { get; set; } = new();
-        public string CompanyId { get; set; }
-        public string Id { get; set; }
-        public string Name { get; set; }
         public string PortOfDestinationId { get; set; }
         public string VesselName { get; set; }
         public DateTime? Eta { get; set; }
         public string Notes { get; set; }
+        public string CompanyId { get; set; }
+        public string Id { get; set; }
+        public string Name { get; set; }
     }
 
     public class VesselDto : Vessel, IEntityDto

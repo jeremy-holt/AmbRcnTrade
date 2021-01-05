@@ -25,6 +25,13 @@ namespace Tests
     {
         public PurchaseServiceTests(ITestOutputHelper output) : base(output) { }
 
+        private static async Task InitializeIndexes(IDocumentStore store)
+        {
+            await new Inspections_ByAnalysisResult().ExecuteAsync(store);
+            await new Stocks_ById().ExecuteAsync(store);
+            // await new Purchases_ById().ExecuteAsync(store);
+        }
+
         [Fact]
         public async Task Load_ShouldLoadPurchase()
         {
@@ -48,7 +55,7 @@ namespace Tests
                 .Without(c => c.AnalysisResult)
                 .Create();
             await inspectionService.Save(inspection);
-            
+
 
             var stocks = fixture.DefaultEntity<Stock>()
                 .With(c => c.LocationId, location.Id)
@@ -84,13 +91,6 @@ namespace Tests
                 stock.LocationName.Should().Be(location.Name);
                 stock.SupplierName.Should().Be(supplier.Name);
             }
-        }
-
-        private static async Task InitializeIndexes(IDocumentStore store)
-        {
-            await new Inspections_ByAnalysisResult().ExecuteAsync(store);
-            await new Stocks_ById().ExecuteAsync(store);
-            // await new Purchases_ById().ExecuteAsync(store);
         }
 
         [Fact]
@@ -183,10 +183,13 @@ namespace Tests
                 CompanyId = COMPANY_ID,
                 SupplierId = supplier.Id,
                 QuantityMt = 200.0,
-                DeliveryDate=new DateTime(2013,1,1),
+                DeliveryDate = new DateTime(2013, 1, 1),
                 PurchaseDetails = new List<PurchaseDetail>
                 {
-                    new() {StockIds = stocks.Select(x => x.Id).ToList(), PricePerKg = 400.0, Currency = Currency.CFA, ExchangeRate = 555.0, PriceAgreedDate = new DateTime(2013, 1, 1)}
+                    new()
+                    {
+                        StockIds = stocks.Select(x => x.Id).ToList(), PricePerKg = 400.0, Currency = Currency.CFA, ExchangeRate = 555.0, PriceAgreedDate = new DateTime(2013, 1, 1)
+                    }
                 }
             };
 
