@@ -14,5 +14,6 @@ namespace AmbRcnTradeServer.Models.StockManagementModels
         public DateTime Date { get; set; }
         public string LocationId { get; set; }
         public long LotNo { get; set; }
+        public string Origin { get; set; }
     }
 }

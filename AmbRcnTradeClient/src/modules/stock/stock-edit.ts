@@ -20,8 +20,8 @@ export class StockEdit {
   protected locations: IListItem[] = [];
   protected suppliers: IListItem[] = [];
 
-  @observable protected selectedLocation: IListItem = undefined!;
-  @observable protected selectedSupplier: IListItem = undefined!;
+  protected locationName = "";
+  protected supplierName = "";
 
   constructor(
     private stockService: StockService,
@@ -39,8 +39,8 @@ export class StockEdit {
 
     this.model = _.cloneDeep(state.stock.current);
     if (this.model && this.locations?.length > 0) {
-      this.selectedLocation = this.locations.find(c => c.id === this.model.locationId);
-      this.selectedSupplier = this.suppliers.find(c => c.id === this.model.supplierId);
+      this.locationName = this.locations.find(c => c.id === this.model.locationId)?.name;
+      this.supplierName = this.suppliers.find(c => c.id === this.model.supplierId)?.name;
     }
   }
 
@@ -49,30 +49,6 @@ export class StockEdit {
 
     if (params?.id) {
       await this.stockService.load(params.id);
-    } else {
-      await this.stockService.createStock();
-    }
-  }
-
-  protected get canSave() {
-    return this.model?.locationId && this.model?.supplierId && this.model?.bags > 0;
-  }
-
-  protected async save() {
-    if (this.canSave) {
-      await this.stockService.save(this.model);
-    }
-  }
-
-  protected selectedLocationChanged() {
-    if (this.model) {
-      this.model.locationId = this.selectedLocation.id;
-    }
-  }
-
-  protected selectedSupplierChanged() {
-    if (this.model) {
-      this.model.supplierId = this.selectedSupplier.id;
     }
   }
 
@@ -95,12 +71,4 @@ export class StockEdit {
       }
     });
   }
-
-  protected calcWeightKg() {
-    if (this.model.weightKg === 0) {
-      this.model.weightKg = this.model.bags * 80;
-    }
-  }
-
-  protected listItemMatcher = (a: IListItem, b: IListItem) => a?.id === b?.id;
 }

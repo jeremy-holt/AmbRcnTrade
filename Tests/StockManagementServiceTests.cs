@@ -193,7 +193,7 @@ namespace Tests
             // Act
             const double bags = 400;
 
-            var response = await sut.MoveInspectionToStock(inspection.Id, bags, new DateTime(2013, 1, 1), 0, location.Id);
+            var response = await sut.MoveInspectionToStock(inspection.Id, bags, new DateTime(2013, 1, 1), 0, location.Id, "Firkei");
             await session.SaveChangesAsync();
 
             // Assert
@@ -207,6 +207,7 @@ namespace Tests
             actualStock.LocationId.Should().Be(location.Id);
             actualStock.LotNo.Should().Be(1);
             actualStock.InspectionId.Should().Be(inspection.Id);
+            actualStock.Origin.Should().Be("Firkei");
 
             var listStocks = await session.Query<Stock>().ToListAsync();
             listStocks.Should().HaveCount(1);
@@ -247,6 +248,7 @@ namespace Tests
                 .With(c => c.Bags, 500)
                 .With(c => c.AnalysisResult, analysisResult)
                 .Without(c => c.StockReferences)
+                .With(c=>c.Origin,"Bouake")
                 .Create();
             await session.StoreAsync(inspection);
             await session.SaveChangesAsync();
@@ -254,7 +256,7 @@ namespace Tests
             // Act
             const double bags = 400;
 
-            var response = await sut.MoveInspectionToStock(inspection.Id, bags, new DateTime(2013, 1, 1), 17, location.Id);
+            var response = await sut.MoveInspectionToStock(inspection.Id, bags, new DateTime(2013, 1, 1), 17, location.Id, "Siguella");
             await session.SaveChangesAsync();
 
             // Assert
@@ -269,6 +271,7 @@ namespace Tests
             actualStock.LocationId.Should().Be(location.Id);
             actualStock.LotNo.Should().Be(17);
             actualStock.InspectionId.Should().Be(inspection.Id);
+            actualStock.Origin.Should().Be("Siguella");
 
             var listStocks = await session.Query<Stock>().ToListAsync();
             listStocks.Should().HaveCount(1);

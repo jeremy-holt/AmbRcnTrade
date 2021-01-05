@@ -20,7 +20,7 @@ namespace AmbRcnTradeServer.Services
 {
     public interface IStockManagementService
     {
-        Task<ServerResponse<MovedInspectionResult>> MoveInspectionToStock(string inspectionId, double bags, DateTime date, long lotNo, string locationId);
+        Task<ServerResponse<MovedInspectionResult>> MoveInspectionToStock(string inspectionId, double bags, DateTime date, long lotNo, string locationId, string origin);
         Task<ServerResponse> RemoveInspectionFromStock(string inspectionId, string stockId);
         Task<List<StockListItem>> GetNonCommittedStocks(string companyId, string supplierId);
         Task<List<AvailableContainer>> GetAvailableContainers(string companyId);
@@ -42,7 +42,8 @@ namespace AmbRcnTradeServer.Services
             _inspectionService = inspectionService;
         }
 
-        public async Task<ServerResponse<MovedInspectionResult>> MoveInspectionToStock(string inspectionId, double bags, DateTime date, long lotNo, string locationId)
+        public async Task<ServerResponse<MovedInspectionResult>> MoveInspectionToStock(string inspectionId, double bags, DateTime date, long lotNo, string locationId,
+            string origin)
         {
             Debug.WriteLine(_session.Advanced.NumberOfRequests);
 
@@ -58,6 +59,7 @@ namespace AmbRcnTradeServer.Services
                 stock.InspectionId = inspectionId;
                 stock.LocationId = locationId;
                 stock.LotNo = lotNo;
+                stock.Origin = origin;
             }
 
 

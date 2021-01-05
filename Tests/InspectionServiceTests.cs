@@ -209,7 +209,8 @@ namespace Tests
                 TruckPlate = "AA BB CC",
                 Bags = 300,
                 Location = "Bouake warehouse",
-                Analyses = analyses
+                Analyses = analyses,
+                Origin="Firkei"
             };
 
             // Act
@@ -222,6 +223,7 @@ namespace Tests
             actual.Should().NotBeNull();
             actual.AnalysisResult.Count.Should().Be(180);
             actual.AnalysisResult.Moisture.Should().Be(10);
+            actual.Origin.Should().Be("Firkei");
         }
     }
 }

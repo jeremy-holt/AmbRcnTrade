@@ -1,78 +1,84 @@
 <template>
   <require from="./../analysis-result-custom-element/analysis-result-custom-element"></require>
 
-  <toolbar type="menu" caption="Stock" list-route="stockList" disabled-save.bind="!canSave" save.call="save()">
+  <toolbar type="menu" caption="Stock" list-route="stockList">
   </toolbar>
 
-  <div class="row mt-2">
-    <div class="col">
-      <h3 class="${model.isStockIn ? '' : 'text-blue'}">
+  <div class="card">
+    <div class="card-header">
+      <h4 class="${model.isStockIn ? '' : 'text-blue'}">
         Stock ${model.isStockIn ? "IN" : "OUT"} - Lot no ${model.lotNo}
-      </h3>
+      </h4>
     </div>
+
+    <div class="card-body">
+      <div class="row">
+        <div class="col">
+          <labelled-text class="mb-2" label.bind="model.stockInDate ? 'Date IN' : 'Date OUT'"
+            value.bind="model.stockInDate ? model.stockInDate : model.stockOutDate | dateFormat: 'DD/MM/YYYY'">
+          </labelled-text>
+        </div>
+        <div class="col">
+          <labelled-text class="mb-2" label="Origin of goods" value.bind="model.origin"></labelled-text>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col">
+          <labelled-text class="mb-2" label="Warehouse location" value.bind="locationName"></labelled-text>
+        </div>
+
+        <div class="col">
+          <labelled-text class="mb-2" label="Supplier" value.bind="supplierName"></labelled-text>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col">
+          <labelled-text class="mb-2" label="Number bags" value.bind="model.bags | numberFormat:'0,0'"></labelled-text>
+        </div>
+        <div class="col">
+          <labelled-text class="mb-2" label="Weight (kg)" value.bind="model.weightKg | numberFormat: '0,0'">
+          </labelled-text>
+        </div>
+      </div>
+
+      <div class="form-label mt-2">Container information</div>
+      <div if.bind="model.stuffingRecords.length" class="row">
+        <div class="col-6">
+          <ul class="list-group">
+            <li class="list-group-item" repeat.for="item of model.stuffingRecords">
+              <div class="row">
+                <div class="col">
+                  <a class="with-decoration"
+                    route-href="containerEdit; params.bind:{id:encode(item.containerId)}">Container
+                    no: ${item.containerNumber}</a>
+                </div>
+                <div class="col">
+                  Stuffed on: ${item.stuffingDate | dateFormat: "DD/MM/YYYY"}
+                </div>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div else>
+        <div class="alert alert-info mt-1">None of this stock has been stuffed into a container yet</div>
+      </div>
+    </div>
+
+    <analysis-result model.bind="model.analysisResult" inspection-id.bind="model.inspectionId" disabled="true"
+      caption="Go to the inspection"></analysis-result>
+
   </div>
-  <div class="row">
-    <div class="col" if.bind="model.stockInDate">
-      <date-input value.bind="model.stockInDate" label="Date IN"></date-input>
-    </div>
-    <div class="col" else>
-      <date-input value.bind="model.stockOutDate" label="Date OUT" fit-content="true"></date-input>
-    </div>
-
-    <div class="col">
-      <text-input value.bind="model.origin" label="Origin of goods"></text-input>
-    </div>    
-  </div>
 
 
-  <div class="row">
-    <div class="col">
-      <select-input source.bind="locations | customerFilter: 'warehouse'" value.bind="selectedLocation" label="Stock location"
-        matcher.bind="listItemMatcher"></select-input>
-    </div>
-    
-    <div class="col">
-      <select-input source.bind="suppliers | customerFilter: 'supplier'" value.bind="selectedSupplier" label="Supplier"
-        matcher.bind="listItemMatcher"></select-input>
-    </div>
-
-  </div>
-
-  <div class="row">
-    <div class="col">
-      <number-input value.bind="model.bags" label="Number bags" change.delegate="calcWeightKg()"></number-input>
-    </div>
-    <div class="col">
-      <number-input value.bind="model.weightKg" label="Weight (kg)"></number-input>
-    </div>
-  </div>
-
-  <div class="form-label mt-2">Container information</div>
-  <div if.bind="model.stuffingRecords.length" class="row">
-    <div class="col-6">
-      <ul class="list-group">
-        <li class="list-group-item" repeat.for="item of model.stuffingRecords">
-          <div class="row">
-            <div class="col">
-              <a class="with-decoration" route-href="containerEdit; params.bind:{id:encode(item.containerId)}">Container no: ${item.containerNumber}</a>
-            </div>
-            <div class="col">
-              Stuffed on: ${item.stuffingDate | dateFormat: "DD/MM/YYYY"}
-            </div>
-          </div>
-        </li>
-      </ul>
-    </div>
-  </div>
-  <div else>
-    <div class="alert alert-info mt-1">None of this stock has been stuffed into a container yet</div>
-  </div>
-
-  <analysis-result model.bind="model.analysisResult" inspection-id.bind="model.inspectionId" caption="Go to the inspection"></analysis-result>
 
   <div>
-    <button type="button" disabled.bind="!canDelete" class="btn btn-danger" click.delegate="deleteStock()">Delete this stock</button>
-    <div if.bind="!canDelete" class="text-warning">This stock cannot be deleted because it has already been stuffed into a container</div>
+    <button type="button" disabled.bind="!canDelete" class="btn btn-danger" click.delegate="deleteStock()">Delete this
+      stock</button>
+    <div if.bind="!canDelete" class="text-warning">This stock cannot be deleted because it has already been stuffed into
+      a container</div>
   </div>
 
 </template>

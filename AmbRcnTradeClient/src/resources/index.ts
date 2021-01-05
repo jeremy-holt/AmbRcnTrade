@@ -24,6 +24,7 @@ export function configure(config: FrameworkConfiguration) {
     "./elements/error-alert/error-alert",
     "./elements/help-toolbar-link/help-toolbaritem-link",
     "./elements/file-uploader/file-uploader",
+    "./elements/labelled-text/labelled-text",
     "./value-converters/date-format",
     "./value-converters/number-format",
     "./value-converters/pos-neg-color",

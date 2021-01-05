@@ -10,6 +10,7 @@ export class AnalysisResultCustomElement {
   @bindable public caption = "";
   @bindable public inspectionId = "";
   @bindable public index = 1;
+  @bindable public disabled = "";
 
   public approvalList = APPROVAL_LIST;
   @observable selectedApproval = APPROVAL_LIST[0];
@@ -23,7 +24,15 @@ export class AnalysisResultCustomElement {
 
   protected get approvalCss() {
     if (this.selectedApproval) {
-      return this.selectedApproval.id === Approval.Approved ? "text-white rounded px-2 bg-success" : "text-white rounded px-2 bg-danger";
+      let disabledColor = "";
+
+      if (this.disabled) {
+        disabledColor = " bg-secondary";
+      } else {
+        disabledColor = this.selectedApproval.id === Approval.Approved ? " bg-success " : " bg-danger";
+      }
+
+      return `text-white rounded px-2 ${disabledColor}`;
     }
   }
 

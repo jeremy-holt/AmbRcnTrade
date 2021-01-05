@@ -1,4 +1,5 @@
 import { Approval } from "constants/app-constants";
+import { unset } from "lodash";
 import { IState } from "./state";
 
 export const initialState: IState = {
@@ -88,6 +89,7 @@ export const initialState: IState = {
       analyses: [],
       supplierId: undefined!,
       stockReferences: [],
+      origin: undefined!,
       analysisResult: {
         count: 0,
         moisture: 0,

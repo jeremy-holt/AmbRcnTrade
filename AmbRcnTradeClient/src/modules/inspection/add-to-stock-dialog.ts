@@ -57,6 +57,7 @@ export class AddToStockDialog {
     this.model.bags = this.inspection.bags - this.inspection.stockReferences.reduce((a, b) => a += b.bags, 0);
     this.model.inspectionId = this.inspection.id;
     this.model.date = moment().format(DATEFORMAT);
+    this.model.origin = this.inspection.origin;
   }
 
   protected bind() {
@@ -67,7 +68,6 @@ export class AddToStockDialog {
     return this.model?.bags > 0 && this.model?.date && this.model?.locationId !== null &&
       (this.newStockItem || this.stockList.some(x => x.selected)) &&
       !this.inspectionService.wouldExceedInspectionBags(this.inspection, this.model?.bags);
-    // (this.inspectionService.bagsAlreadyAllocated(this.inspection) + this.model?.bags <=this.inspection.bags);
   }
 
   protected get warningMessage() {
@@ -88,8 +88,8 @@ export class AddToStockDialog {
     return this.stockList.every(c => !c.selected) && !this.newStockItem ? "Please select one or several stock rows or create a new stock" : "";
   }
 
-  protected get stockItemsSelectedCount(){
-    return this.stockList.filter(c=>c.selected).length;
+  protected get stockItemsSelectedCount() {
+    return this.stockList.filter(c => c.selected).length;
   }
 
   protected newStockItemChanged() {
@@ -104,7 +104,8 @@ export class AddToStockDialog {
       bags: this.model.bags,
       date: this.model.date,
       locationId: this.selectedLocation.id,
-      lotNo: this.newStockItem ? 0 : this.stockList.find(c => c.selected)?.lotNo
+      lotNo: this.newStockItem ? 0 : this.stockList.find(c => c.selected)?.lotNo,
+      origin: this.model.origin
     };
   }
 

@@ -16,4 +16,5 @@ export interface IInspection extends IEntityCompany {
   supplierId: string;
   analysisResult: IAnalysisResult;
   stockReferences: IStockReference[];
+  origin: string;
 }

@@ -59,16 +59,10 @@
             <select-input source.bind="locations | customerFilter:'warehouse' " value.bind="selectedLocation" label="Select the warehouse">
             </select-input>
           </div>
-        </div>
-  
-        <!-- <div class="row">
           <div class="col">
-            <div class="custom-control custom-checkbox">
-              <input type="checkbox" class="custom-control-input" checked.bind="newStockItem" id="chk1">
-              <label for="chk1" class="custom-control-label">Create new stock entry</label>
-            </div>
+            <text-input value.bind="model.origin" label="Origin of goods"></text-input>
           </div>
-        </div> -->
+        </div>
   
         <div if.bind="warningMessage" class="alert alert-danger">${warningMessage}</div>
       </section>

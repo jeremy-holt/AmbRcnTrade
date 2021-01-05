@@ -53,10 +53,16 @@
           <select-input source.bind="suppliers | customerFilter:'supplier' " value.bind="model.supplierId" use-model-id="true"
             label="Supplier" use-model-id="true"></select-input>
         </div>
-        <div class="col"></div>
+        <div class="col-sm-12 col-md-6">
+          <text-input value.bind="model.origin" label="Origin of goods"></text-input>
+        </div>
       </div>
 
-      <analysis-result model.bind="model.analysisResult" approval-checked.bind="approvalChecked"></analysis-result>
+      <div class="row">
+        <div class="col">
+          <analysis-result model.bind="model.analysisResult" approval-checked.bind="approvalChecked"></analysis-result>
+        </div>
+      </div>
 
       <div if.bind="model.stockReferences.length > 0" class="row my-2">
         <div class="col">
