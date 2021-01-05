@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using AmbRcnTradeServer.Constants;
 using AmbRcnTradeServer.Models.StockModels;
-using AmbRcnTradeServer.Services;
 using Raven.Client.Documents;
 using Raven.Client.Documents.Linq;
 using Raven.Client.Documents.Session;
@@ -17,7 +16,7 @@ namespace AmbRcnTradeServer.Models.ContainerModels
 
         public double WeightKg { get; set; }
         public long LotNo { get; set; }
-        public List<IncomingStockItem> StockIds { get; set; } = new List<IncomingStockItem>();
+        public List<IncomingStockItem> StockIds { get; set; } = new();
         public DateTime StuffingDate { get; set; }
     }
 

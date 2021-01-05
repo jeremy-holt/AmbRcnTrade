@@ -246,7 +246,7 @@ namespace Tests
             WaitForIndexing(store);
 
             // Act
-            var list = await sut.LoadStockBalanceList(COMPANY_ID, null, null);
+            var list = await sut.LoadStockBalanceList(COMPANY_ID, null);
 
             // Assert
             list.Should().HaveCount(3);
@@ -336,7 +336,7 @@ namespace Tests
             WaitForIndexing(store);
 
             // Act
-            var list = await sut.LoadStockList(COMPANY_ID, null, null);
+            var list = await sut.LoadStockList(COMPANY_ID, (string) null);
             list.Should().BeInAscendingOrder(c => c.LotNo);
 
             var actual = list.Single(c => c.StockId == stockIn2.Id);

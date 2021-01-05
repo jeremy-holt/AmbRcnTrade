@@ -50,7 +50,7 @@ export class AddToStockDialog {
 
   protected async activate(model: { inspection: IInspection, supplierName: string }) {
     await this.customerService.loadCustomersForAppUserList();
-    await this.stockService.loadStockList(null, null);
+    await this.stockService.loadStockList(null);
     this.inspection = model.inspection;
     this.supplierName = model.supplierName;
 

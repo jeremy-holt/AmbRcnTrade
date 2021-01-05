@@ -14,11 +14,13 @@ import { StockService } from "./../../services/stock-service";
 export class StockList {
   @observable state: IState = undefined!;
   public list: IStockListItem[] = [];
-  public selectedLotNo: number = undefined!;
   private prmLocationId = "";
 
   public locations: IListItem[] = [];
   @observable selectedLocation: IListItem = undefined!
+  protected lotNoList: string[] = [];
+
+  protected filterLotNo: number | null = null;
 
   constructor(
     private stockService: StockService,
@@ -31,11 +33,14 @@ export class StockList {
 
     this.locations = _.cloneDeep(state.userFilteredCustomers);
     this.locations.unshift({ id: null, name: "[All]" });
+
+    this.lotNoList = Array.from(new Set(this.list.map(item => `Lot no ${item.lotNo}`)));
+    this.lotNoList.sort();
+    this.lotNoList = this.lotNoList.filter(c => c);
   }
 
   protected async activate(prms: { lotNo?: number, locationId?: string }) {
     await this.customerService.loadCustomersForAppUserList();
-    this.selectedLotNo = +prms?.lotNo === -1 ? null : prms?.lotNo;
 
     if (prms?.locationId) {
       this.prmLocationId = decodeParams(prms?.locationId);
@@ -64,7 +69,7 @@ export class StockList {
   }
 
   protected async runQuery() {
-    this.stockService.loadStockList(this.selectedLotNo, this.selectedLocation.id);
+    this.stockService.loadStockList(this.selectedLocation.id);
   }
 
   protected encode(value: string) {

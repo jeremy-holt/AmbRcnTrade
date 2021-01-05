@@ -41,14 +41,14 @@ namespace AmbRcnTradeServer.Controllers
         [HttpGet("[action]")]
         public async Task<ActionResult<List<StockListItem>>> LoadStockList(string companyId, long? lotNo, string locationId)
         {
-            return await _service.LoadStockList(companyId, lotNo, locationId);
+            return await _service.LoadStockList(companyId, locationId);
         }
 
         [Authorize]
         [HttpGet("[action]")]
         public async Task<ActionResult<List<StockBalance>>> LoadStockBalanceList(string companyId, long? lotNo, string locationId)
         {
-            return await _service.LoadStockBalanceList(companyId, lotNo, locationId);
+            return await _service.LoadStockBalanceList(companyId, locationId);
         }
 
         [Authorize]

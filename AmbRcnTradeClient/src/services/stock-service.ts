@@ -34,21 +34,19 @@ export class StockService extends FetchService {
     return super.post<IStock>(stock, "save", stockEditAction);
   }
 
-  public async loadStockList(lotNo: number, locationId: string) {    
+  public async loadStockList(locationId: string) {    
     return super.getMany<IStockListItem[]>(
       [
         this.currentCompanyIdQuery(),
-        new QueryId("lotNo", lotNo),
         new QueryId("locationId", locationId)
       ], "loadStockList", stockListAction
     );
   }
 
-  public async loadStockBalanceList(lotNo: number, locationId: string) {
+  public async loadStockBalanceList(locationId: string) {
     return super.getMany<IStockListItem[]>(
       [
         this.currentCompanyIdQuery(),
-        new QueryId("lotNo", lotNo),
         new QueryId("locationId", locationId)
       ], "loadStockBalanceList", stockBalanceListAction
     );

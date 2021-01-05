@@ -17,8 +17,8 @@ namespace AmbRcnTradeServer.Services
     {
         Task<ServerResponse<Stock>> Save(Stock stock);
         Task<Stock> Load(string id);
-        Task<List<StockBalance>> LoadStockBalanceList(string companyId, long? lotNo, string locationId);
-        Task<List<StockListItem>> LoadStockList(string companyId, long? lotNo, string locationId);
+        Task<List<StockBalance>> LoadStockBalanceList(string companyId, string locationId);
+        Task<List<StockListItem>> LoadStockList(string companyId, string locationId);
         Task<List<StockListItem>> LoadStockList(string companyId, List<string> stockIds);
         Task<ServerResponse> DeleteStock(string stockId);
     }
@@ -71,14 +71,11 @@ namespace AmbRcnTradeServer.Services
             return stock;
         }
 
-        public async Task<List<StockBalance>> LoadStockBalanceList(string companyId, long? lotNo, string locationId)
+        public async Task<List<StockBalance>> LoadStockBalanceList(string companyId, string locationId)
         {
             var query = _session.Query<Stocks_ByBalances.Result, Stocks_ByBalances>()
                 .OrderBy(c => c.LotNo)
                 .Where(c => c.CompanyId == companyId);
-
-            if (lotNo != null)
-                query = query.Where(c => c.LotNo == lotNo);
 
             if (locationId.IsNotNullOrEmpty())
                 query = query.Where(c => c.LocationId == locationId);
@@ -101,14 +98,14 @@ namespace AmbRcnTradeServer.Services
             return list;
         }
 
-        public Task<List<StockListItem>> LoadStockList(string companyId, long? lotNo, string locationId)
+        public Task<List<StockListItem>> LoadStockList(string companyId, string locationId)
         {
-            return LoadStockList(companyId, lotNo, locationId, null);
+            return LoadStockList(companyId, locationId, null);
         }
 
         public async Task<List<StockListItem>> LoadStockList(string companyId, List<string> stockIds)
         {
-            return await LoadStockList(companyId, null, null, stockIds);
+            return await LoadStockList(companyId, null, stockIds);
         }
 
         public async Task<ServerResponse> DeleteStock(string stockId)
@@ -118,7 +115,7 @@ namespace AmbRcnTradeServer.Services
                 .LoadAsync<Stock>(stockId);
 
 
-            if ((stock.IsStockIn && stock.StuffingRecords.Any()) || !stock.IsStockIn)
+            if (stock.IsStockIn && stock.StuffingRecords.Any() || !stock.IsStockIn)
                 throw new InvalidOperationException("This stock has already been stuffed into a container. It cannot be deleted");
 
             var inspection = await _session.LoadAsync<Inspection>(stock.InspectionId);
@@ -129,21 +126,16 @@ namespace AmbRcnTradeServer.Services
             return new ServerResponse("Deleted stock");
         }
 
-        private async Task<List<StockListItem>> LoadStockList(string companyId, long? lotNo, string locationId, List<string> stockIds)
+        private async Task<List<StockListItem>> LoadStockList(string companyId, string locationId, List<string> stockIds)
         {
             var query = _session.Query<StockListItem, Stocks_ById>()
                 .Where(c => c.CompanyId == companyId);
-
-            if (lotNo != null)
-                query = query.Where(c => c.LotNo == lotNo);
 
             if (locationId.IsNotNullOrEmpty())
                 query = query.Where(c => c.LocationId == locationId);
 
             if (stockIds != null && stockIds.Any())
-            {
                 query = query.Where(c => c.StockId.In(stockIds));
-            }
 
             var stocks = await query
                 .OrderBy(c => c.LotNo)

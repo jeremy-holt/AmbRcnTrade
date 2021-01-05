@@ -27,7 +27,7 @@ export class StockBalanceList {
 
   public async activate(prms: { lotNo: number, locationId: string }) {
     await this.stockManagementService.getAvailableContainers();
-    await this.stockService.loadStockBalanceList(prms?.lotNo, prms?.locationId);
+    await this.stockService.loadStockBalanceList(prms?.locationId);
   }
 
   protected stateChanged(state: IState) {
@@ -50,7 +50,7 @@ export class StockBalanceList {
       if (!result.wasCancelled) {
         const { containerId, bags, stockWeightKg, status, stuffingDate } = result.output as { containerId: string; bags: number; stockWeightKg: number; status: ContainerStatus, stuffingDate: string };        
         await this.stockManagementService.stuffContainer(containerId, stuffingDate, stockBalance, bags, stockWeightKg, status);
-        await this.stockService.loadStockBalanceList(null, null);
+        await this.stockService.loadStockBalanceList(null);
       }
     });
   }
