@@ -1,5 +1,4 @@
 import { Approval } from "constants/app-constants";
-import { unset } from "lodash";
 import { IState } from "./state";
 
 export const initialState: IState = {

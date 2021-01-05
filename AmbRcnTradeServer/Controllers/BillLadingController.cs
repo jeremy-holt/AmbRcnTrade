@@ -54,7 +54,7 @@ namespace AmbRcnTradeServer.Controllers
 
         [Authorize]
         [HttpGet("[action]")]
-        public async Task<ActionResult<List<NotLoadedContainer>>> GetNotLoadedContainers(string companyId)
+        public async Task<ActionResult<List<Container>>> GetNotLoadedContainers(string companyId)
         {
             return await _service.GetNotLoadedContainers(companyId);
         }

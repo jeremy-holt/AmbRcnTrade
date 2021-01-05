@@ -1,17 +1,16 @@
-import { IContainer } from "./../../interfaces/shipping/IContainer";
-import { AddContainersDialog } from "./add-containers-dialog";
+import { encodeParams } from "./../../core/helpers";
 import { DialogService } from "aurelia-dialog";
-import { VesselService } from "./../../services/vessel-service";
 import { autoinject, observable } from "aurelia-framework";
 import { Router } from "aurelia-router";
 import { connectTo } from "aurelia-store";
+import _ from "lodash";
 import { IState } from "store/state";
 import { ICustomerListItem } from "./../../interfaces/ICustomerListItem";
 import { IBillLading } from "./../../interfaces/shipping/IBillLading";
+import { IContainer } from "./../../interfaces/shipping/IContainer";
 import { BillLadingService } from "./../../services/bill-lading-service";
 import { CustomerService } from "./../../services/customer-service";
-import _ from "lodash";
-import { INotLoadedContainer } from "interfaces/shipping/INotLoadedContainer";
+import { AddContainersDialog } from "./add-containers-dialog";
 
 @autoinject
 @connectTo()
@@ -63,19 +62,23 @@ export class BillLadingEdit {
     return this.state ? this.state.vessel.list.find(c => c.id === this.model.vesselId)?.vesselName : "";
   }
 
+  protected encode(value: string) {
+    return encodeParams(value);
+  }
+
   protected addContainersDialog() {
     this.dialogService.open({
       viewModel: AddContainersDialog,
-      model: {unloadedContainers: this.state.vessel.notLoadedContainers}
+      model: { unloadedContainers: this.state.vessel.notLoadedContainers }
     })
-      .whenClosed(result => {
+      .whenClosed(async result => {
         if (!result.wasCancelled) {
-          const selectedRows=result.output as IContainer[];
-          selectedRows.forEach(row=>{
-            this.model.containerIds.push(row.containerId);
-            this.model.containers.push(row>);
-          })
-          console.log(selectedRows);
+          const selectedRows = result.output as IContainer[];
+          selectedRows.forEach(row => {
+            this.model.containerIds.push(row.id);
+            this.model.containers.push(row);
+          });
+          await this.save();
         }
       });
   }

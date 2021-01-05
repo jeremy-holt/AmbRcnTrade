@@ -1,5 +1,6 @@
 <template>
   <require from="quill/quill.snow.css"></require>
+  <require from="../container/container-status-formatter-valueconverter"></require>
 
   <toolbar type="menu" caption="${vesselName} - Bill of Lading" disabled-save.bind="!canSave" save.call="save()">
   </toolbar>
@@ -75,17 +76,19 @@
               </div>
             </li>
             <li class="list-group-item" repeat.for="item of model.containers">
-              <div class="col">
-                <a route-href="containerEdit; params.bind:{id: encode(item.id)}"
-                  class="with-decoration">${item.containerNumber}</a>
+              <div class="row">
+                <div class="col">
+                  <a route-href="containerEdit; params.bind:{id: encode(item.id)}"
+                    class="with-decoration">${item.containerNumber}</a>
+                </div>
+                <div class="col">${item.sealNumber} </div>
+                <div class="col">${item.bags | numberFormat: "0,0"} </div>
+                <div class="col">${item.weighbridgeWeightKg | numberFormat: "0,0"} </div>
+                <div class="col">${item.nettWeightKg | numberFormat: "0,0"} </div>
+                <div class="col">${item.bookingNumber} </div>
+                <div class="col">${item.vgmTicketNumber}</div>
+                <div class="col">${item.status | containerStatusFormatter}</div>
               </div>
-              <div class="col">${item.sealNumber} </div>
-              <div class="col">${item.bags | numberFormat: "0,0"} </div>
-              <div class="col">${item.weighbridgeWeightKg | numberFormat: "0,0"} </div>
-              <div class="col">${item.nettWeightKg | numberFormat: "0,0"} </div>
-              <div class="col">${item.bookingNumber} </div>
-              <div class="col">${item.status | containerStatusFormatter}</div>
-              <div class="col">${item.vgmTicketNumber}</div>
             </li>
           </ul>
         </div>

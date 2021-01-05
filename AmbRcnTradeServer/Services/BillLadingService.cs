@@ -20,7 +20,7 @@ namespace AmbRcnTradeServer.Services
         Task<ServerResponse<BillLadingDto>> Save(BillLadingDto billLadingDto);
         Task<BillLadingDto> Load(string id);
         Task<List<BillLadingListItem>> LoadList(string companyId);
-        Task<List<NotLoadedContainer>> GetNotLoadedContainers(string companyId);
+        Task<List<Container>> GetNotLoadedContainers(string companyId);
         Task<ServerResponse<BillLadingDto>> RemoveContainersFromBillLading(string billLadingId, IEnumerable<string> containerIds);
     }
 
@@ -81,13 +81,13 @@ namespace AmbRcnTradeServer.Services
             return billLadingDto;
         }
 
-        public async Task<List<NotLoadedContainer>> GetNotLoadedContainers(string companyId)
+        public async Task<List<Container>> GetNotLoadedContainers(string companyId)
         {
-            var query = await _session.Query<NotLoadedContainer, Containers_ByBillLading>()
+            var query = await _session.Query<Containers_ByBillLading.Result, Containers_ByBillLading>()
                 .Where(c => c.CompanyId == companyId &&
                             string.IsNullOrEmpty(c.VesselId) &&
                             !c.Status.In(ContainerStatus.Cancelled, ContainerStatus.OnBoardVessel))
-                .ProjectInto<NotLoadedContainer>()
+                .ProjectInto<Container>()
                 .ToListAsync();
 
             return query;

@@ -8,7 +8,6 @@ using AmbRcnTradeServer.Models.DictionaryModels;
 using AmbRcnTradeServer.Models.VesselModels;
 using AmbRcnTradeServer.RavenIndexes;
 using AutoFixture;
-using AutoMapper.Configuration.Annotations;
 using FluentAssertions;
 using Raven.Client.Documents;
 using Raven.Client.Documents.Linq;
@@ -94,7 +93,7 @@ namespace Tests
             var list = await sut.GetNotLoadedContainers(COMPANY_ID);
 
             // Assert
-            list.Should().NotContain(c => c.ContainerId == containers[0].Id);
+            list.Should().NotContain(c => c.Id == containers[0].Id);
             list.Should().NotContain(c => c.Status == ContainerStatus.OnBoardVessel);
             list.Should().NotContain(c => c.Status == ContainerStatus.Cancelled);
             list.Should().Contain(c => c.Status == ContainerStatus.Empty || c.Status == ContainerStatus.Gated);
