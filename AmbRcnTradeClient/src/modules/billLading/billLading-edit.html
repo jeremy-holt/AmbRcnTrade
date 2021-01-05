@@ -1,10 +1,11 @@
 <template>
   <require from="quill/quill.snow.css"></require>
-  
-  <toolbar type="menu" caption="${vesselName} - Bill of Lading" disabled-save.bind="!canSave" save.call="save()"></toolbar>
+
+  <toolbar type="menu" caption="${vesselName} - Bill of Lading" disabled-save.bind="!canSave" save.call="save()">
+  </toolbar>
 
   <div class="card">
-    <div clsas="card-header">
+    <div class="card-header">
       <h4>${vesselName} - Bill of Lading ${model.blNumber}</h4>
       <div class="mt-2">${model.containersOnBoard} containers on board vessel</div>
     </div>
@@ -13,19 +14,23 @@
 
       <div class="row">
         <div class="col">
-          <select-input source.bind="customers | customerFilter: 'billLading'" value.bind="model.shipperId" label="Shipper" use-model-id="true"></select-input>
+          <select-input source.bind="customersList | customerFilter: 'billLading'" value.bind="model.shipperId"
+            label="Shipper" use-model-id="true"></select-input>
         </div>
         <div class="col">
-          <select-input source.bind="customers | customerFilter: 'billLading'" value.bind="model.consigneeId" label="Consignee" use-model-id="true"></select-input>
+          <select-input source.bind="customersList | customerFilter: 'billLading'" value.bind="model.consigneeId"
+            label="Consignee" use-model-id="true"></select-input>
         </div>
       </div>
 
       <div class="row">
-        <div class="col">          
-          <select-input source.bind="customers | customerFilter: 'billLading'" value.bind="model.NotifyParty1Id" label="Notify party 1" use-model-id="true"></select-input>
+        <div class="col">
+          <select-input source.bind="customersList | customerFilter: 'billLading'" value.bind="model.notifyParty1Id"
+            label="Notify party 1" use-model-id="true"></select-input>
         </div>
         <div class="col">
-              <select-input source.bind="customers | customerFilter: 'billLading'" value.bind="model.NotifyParty2Id" label="Notify party 2" use-model-id="true"></select-input>
+          <select-input source.bind="customersList | customerFilter: 'billLading'" value.bind="model.notifyParty2Id" warn-null="false"
+            label="Notify party 2" use-model-id="true"></select-input>
         </div>
       </div>
 
@@ -47,7 +52,7 @@
         <quill-editor value.bind="model.blBodyText"></quill-editor>
       </div>
 
-      
+
       <div class="row my-3">
         <div class="col">
           <button type="button" class="btn btn-primary" click.delegate="addContainersDialog()">Add containers</button>
@@ -86,4 +91,5 @@
         </div>
       </div>
     </div>
+  </div>
 </template>

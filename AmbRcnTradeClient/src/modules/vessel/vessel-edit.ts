@@ -32,7 +32,7 @@ export class VesselEdit {
   protected async activate(prms: IParamsId) {
     await this.portService.loadPortList();
     await this.customerService.loadCustomersForAppUserList();
-    
+
     if (prms?.id) {
       await this.vesselService.load(prms?.id);
     } else {
@@ -47,10 +47,17 @@ export class VesselEdit {
 
     this.portsList = _.cloneDeep(state.port.list);
     this.portsList.unshift({ id: null, name: "[Select]" } as IPort);
+
+    this.model.billLadings.forEach(c => {
+      c.shipperName = this.customerList.find(x => x.id === c.shipperId)?.name;
+      c.consigneeName = this.customerList.find(x => x.id === c.consigneeId)?.name;
+      c.notifyParty1Name = this.customerList.find(x => x.id === c.notifyParty1Id)?.name;
+    });
+    console.log(this.model.billLadings);
   }
 
   protected get canSave() {
-    return this.model.vesselName?.length>3;
+    return this.model.vesselName?.length > 3;
   }
 
   protected async save() {
@@ -61,6 +68,10 @@ export class VesselEdit {
 
   protected async addBillLading() {
     await this.save();
-    this.router.navigateToRoute("billLadingEdit",{vesselId: encodeParams(this.model.id), billLadingId: null});
+    this.router.navigateToRoute("billLadingEdit", { vesselId: encodeParams(this.model.id), billLadingId: null });
+  }
+
+  protected encode(value: string) {
+    return encodeParams(value);
   }
 }

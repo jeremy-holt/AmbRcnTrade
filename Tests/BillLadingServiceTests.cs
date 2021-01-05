@@ -8,6 +8,7 @@ using AmbRcnTradeServer.Models.DictionaryModels;
 using AmbRcnTradeServer.Models.VesselModels;
 using AmbRcnTradeServer.RavenIndexes;
 using AutoFixture;
+using AutoMapper.Configuration.Annotations;
 using FluentAssertions;
 using Raven.Client.Documents;
 using Raven.Client.Documents.Linq;
@@ -223,6 +224,11 @@ namespace Tests
             var containers = fixture.DefaultEntity<Container>().CreateMany().ToList();
             await containers.SaveList(session);
 
+            var vessel = fixture.DefaultEntity<Vessel>()
+                .Without(c => c.BillLadingIds)
+                .Create();
+            await session.StoreAsync(vessel);
+
             var billLadingDto = new BillLadingDto
             {
                 CompanyId = COMPANY_ID,
@@ -237,11 +243,12 @@ namespace Tests
                 ShipperId = "shipper",
                 BlBodyText = "body text",
                 FreightPrepaid = true,
-                VesselId = "Vessels/1-A"
+                VesselId = vessel.Id
             };
 
             // Act
             var response = await sut.Save(billLadingDto);
+            var actualVessel = await session.LoadAsync<Vessel>(vessel.Id);
 
             // Assert
             var actual = await session.LoadAsync<BillLading>(response.Id);
@@ -256,7 +263,10 @@ namespace Tests
             actual.ShipperId.Should().Be("shipper");
             actual.BlBodyText.Should().Be("body text");
             actual.FreightPrepaid.Should().BeTrue();
-            actual.VesselId.Should().Be("Vessels/1-A");
+            actual.VesselId.Should().Be(vessel.Id);
+
+
+            actualVessel.BillLadingIds.Should().Contain(response.Id);
         }
     }
 }

@@ -8,4 +8,6 @@ export interface INotLoadedContainer {
     status: ContainerStatus;
     bags: number;
     companyId: string;
+
+    selected?:boolean;
 }

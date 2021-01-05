@@ -61,9 +61,7 @@ namespace Tests
             using var session = store.OpenAsyncSession();
             var sut = GetVesselService(session);
             var fixture = new Fixture();
-
-            var billLadings = fixture.DefaultEntity<BillLading>().CreateMany().ToList();
-            await billLadings.SaveList(session);
+            
 
             var customers = fixture.DefaultEntity<Customer>().CreateMany(2).ToList();
             await customers.SaveList(session);
@@ -73,11 +71,18 @@ namespace Tests
                 CompanyId = COMPANY_ID,
                 ShippingCompanyId = customers[0].Id,
                 ForwardingAgentId = customers[1].Id,
-                BillLadingIds = billLadings.Select(x => x.Id).ToList(),
                 ContainersOnBoard = 0
             };
-
             await session.StoreAsync(vessel);
+            
+            var billLadings = fixture.DefaultEntity<BillLading>()
+                .With(c=>c.VesselId,vessel.Id)
+                .CreateMany().ToList();
+            await billLadings.SaveList(session);
+
+            vessel.BillLadingIds = billLadings.Select(x => x.Id).ToList();
+            await session.StoreAsync(vessel);
+            
 
             // Act
             var actual = await sut.Load(vessel.Id);
@@ -86,6 +91,7 @@ namespace Tests
             for (var i = 0; i < 3; i++)
             {
                 actual.BillLadings[i].Should().BeEquivalentTo(billLadings[i]);
+                actual.BillLadings[1].VesselId.Should().Be(vessel.Id);
             }
         }
 

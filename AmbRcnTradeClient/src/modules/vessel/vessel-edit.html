@@ -12,50 +12,29 @@
 
     <div class="card-body">
       <div class="row">
-        <div class="col">
-          <div class="form-label">History of vessel name and eta</div>
-          <ul class="list-group">
-            <li class="list-group-item" repeat.for="item of model.etaHistory">
-              <div class="row">
-                <div class="col-2">
-                  <div class="form-label mt-1">Last updated</div>
-                  ${item.dateUpdated | dateFormat:"DD/MM/YYYY"}
-                </div>
-                <div class="col-3">
-                  <text-input value.bind="item.vesselName" label="Vessel" class="w-100"></text-input>
-                </div>
-                <div class="col-2">
-                  <date-input value.bind="item.eta" label="ETA"></date-input>
-                </div>
-                <div class="col">
-                  <text-area-input value.bind="item.notes" rows="1" label="Notes"></text-area-input>
-                </div>
-              </div>
-            </li>
-          </ul>
-          <div class="my-2">
-            <button type="button" class="btn btn-primary" click.delegate="addEtaHistory()">Add vessel name</button>
-          </div>
+        <div class="col-4">
+          <text-input value.bind="model.vesselName" label="Vessel name"></text-input>
+        </div>
+        <div class="col-4">
+          <date-input value.bind="model.eta" label="ETA"></date-input>
         </div>
       </div>
 
       <div class="row">
-        <div class="col-6">
+        <div class="col-4">
           <select-input source.bind="customerList| customerFilter:'logisticsCompany'"
-            value.bind="model.shippingCompanyId" use-model-id="true" label="Shipping company" ></select-input>
+            value.bind="model.shippingCompanyId" use-model-id="true" label="Shipping company"></select-input>
         </div>
-        <div class="col">
+        <div class="col-4">
           <select-input source.bind="customerList| customerFilter:'logisticsCompany'"
             value.bind="model.forwardingAgentId" use-model-id="true" label="Forwarding agent"></select-input>
         </div>
-      </div>
-
-      <div class="row">
-        <div class="col">
+        <div class="col-4">
           <select-input source.bind="portsList" value.bind="model.portOfDestinationId" use-model-id="true"
             label="Port of destination"></select-input>
         </div>
       </div>
+
 
       <div class="row my-2">
         <div class="col">
@@ -68,26 +47,29 @@
           <ul class="list-group small">
             <li class="list-group font-weight-bold">
               <div class="row">
-                <div class="col"></div>
-                <div class="col">B/L number</div>
-                <div class="col">B/L date</div>
-                <div class="col">Destination</div>
-                <div class="col">Shipper</div>
-                <div class="col">Consignee</div>
-                <div class="col">Notify</div>
+                <div class="col-2"></div>
+                <div class="col-2">B/L number</div>
+                <div class="col-2">B/L date</div>
+                <div class="col-2">Shipper</div>
+                <div class="col-2">Consignee</div>
+                <div class="col-2">Notify</div>
               </div>
             </li>
-            <li class="list-group-item" repeat.for="item of billLadings">
+            <li class="list-group-item" repeat.for="item of model.billLadings">
               <div class="row">
-                <div class="col"><a
-                    route-href="billLadingEdit; params.bind:{billLadingId: encode(item.id), vesselId: encode(item.vesselId)}">Go
-                    to B/L</a></div>
-                <div class="col">${item.blNumber} (${item.containersOnBoard} containers on board)</div>
-                <div class="col">${item.blDate | dateFormat: "DD/MM/YYYY"}</div>
-                <div class="col">${item.portOfDestinationName}</div>
-                <div class="col">${item.shipperName}</div>
-                <div class="col">${item.ConsigneeName}</div>
-                <div class="col">${item.NotifyParty1Name}</div>
+                <div class="col-2">
+                  <a class="with-decoration"
+                    route-href="billLadingEdit; params.bind:{vesselId: encode(item.vesselId), billLadingId: encode(item.id)}">Go
+                    to B/L</a>
+                </div>
+                <div class="col-2" if.bind="item.containersOnBoard > 0">
+                  ${item.blNumber} (${item.containersOnBoard} containers on board)                  
+                </div>
+                <div else class="col-2 pl-0">No containers have been allocated to this B/L</div>
+                <div class="col-2">${item.blDate | dateFormat: "DD/MM/YYYY"}</div>
+                <div class="col-2">${item.shipperName}</div>
+                <div class="col-2">${item.consigneeName}</div>
+                <div class="col-2">${item.notifyParty1Name}</div>
               </div>
             </li>
           </ul>

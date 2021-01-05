@@ -14,11 +14,12 @@
           <tr>
             <th>Vessel</th>
             <th>Eta</th>
+            <th>Port of destination</th>
+            <th>Shipping co</th>
+            <th>Forwarding agent</th>            
             <th>Containers on board</th>
             <th>B/L date</th>
             <th>B/L number</th>
-            <th>Forwarding agent</th>
-            <th>Shipping co</th>
           </tr>
         </thead>
         <tbody>
@@ -28,11 +29,12 @@
                 class="with-decoration">${item.vesselName}</a>
             </td>
             <td>${item.eta | dateFormat: "DD/MM/YYYY"}</td>
+            <td>${item.portOfDestinationName}</td>
+            <td>${item.shippingCompanyName}</td>
+            <td>${item.forwardingAgentName}</td>
             <td>${item.containersOnBoard}</td>
             <td>${item.blDate | dateFormat: "DD/MM/YYYY"}</td>
-            <td>${item.blNumber}</td>
-            <td>${item.forwardingAgent}</td>
-            <td>${item.shippingCompany}</td>
+            <td>${item.blNumber}</td>            
           </tr>
         </tbody>
       </table>

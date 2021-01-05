@@ -50,7 +50,7 @@ export class BillLadingService extends FetchService {
   }
 }
 
-export function billLadingEditAction(state: IState, billLading: IBillLading) {
+export function billLadingEditAction(state: IState, billLading: IBillLading) {  
   const newState = _.cloneDeep(state);
   newState.billLading.current = billLading;
   return newState;

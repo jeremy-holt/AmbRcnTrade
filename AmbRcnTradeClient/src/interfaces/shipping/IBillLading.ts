@@ -10,12 +10,15 @@ export interface IBillLading {
   containersOnBoard: number;
   blDate: string | null;
   blNumber: string;
-  containerIds: string[];  
+  containerIds: string[];
   id: string;
   name: string;
   companyId: string;
   containers: IContainer[];
   vesselId: string;
 
+  shipperName?: string;
+  consigneeName?: string;
+  notifyParty1Name?: string;
   selected?: boolean;
 }

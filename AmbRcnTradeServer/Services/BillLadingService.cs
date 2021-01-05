@@ -47,13 +47,20 @@ namespace AmbRcnTradeServer.Services
 
         public async Task<ServerResponse<BillLadingDto>> Save(BillLadingDto billLadingDto)
         {
-            var billLading = billLadingDto.Id.IsNullOrEmpty() ? new BillLading() : await _session.LoadAsync<BillLading>(billLadingDto.Id);
+            var billLading = billLadingDto.Id.IsNullOrEmpty()
+                ? new BillLading(){VesselId = billLadingDto.VesselId,CompanyId = billLadingDto.CompanyId}
+                : await _session.Include<BillLading>(c => c.VesselId).LoadAsync<BillLading>(billLadingDto.Id);
+
+            var vessel = await _session.LoadAsync<Vessel>(billLading.VesselId);
 
             _mapper.Map(billLadingDto, billLading);
             billLading.ContainersOnBoard = billLadingDto.ContainerIds.Count;
 
             await _session.StoreAsync(billLading);
             billLadingDto.Id = billLading.Id;
+
+            if (!vessel.BillLadingIds.Contains(billLading.Id))
+                vessel.BillLadingIds.Add(billLading.Id);
 
             return new ServerResponse<BillLadingDto>(billLadingDto, "Saved");
         }

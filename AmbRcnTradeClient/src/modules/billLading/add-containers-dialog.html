@@ -1,0 +1,37 @@
+<template>
+  <require from="../container/container-status-formatter-valueconverter"></require>
+
+  <ux-dialog style="min-width: 800px;">
+    <ux-dialog-header>
+      <h4>Containers available for this Bill of Lading</h4>
+    </ux-dialog-header>
+
+    <ux-dialog-body>
+      <ul class="list-group small">
+        <li class="list-group-item font-weight-bold">
+          <div class="row">
+            <div class="col">Status</div>
+            <div class="col">Container number</div>
+            <div class="col">Booking number</div>
+            <div class="col text-right">Bags in container</div>
+          </div>
+        </li>
+        <li class="list-group-item ${item.selected ? 'list-group-item-highlight' : ''}" repeat.for="item of list">
+          <a href="javascript:(0)" class="text-decoration-none"  click.delegate="selectRow($index)">
+            <div class="row">
+              <div class="col">${item.status | containerStatusFormatter}</div>
+              <div class="col">${item.containerNumber}</div>
+              <div class="col">${item.bookingNumber}</div>
+              <div class="col text-right">${item.bags}</div>
+            </div>
+          </a>
+        </li>
+      </ul>
+    </ux-dialog-body>
+
+    <ux-dialog-footer>
+      <button type="button" class="btn btn-danger" click.delegate="okClicked()">Ok</button>
+      <button type="button" class="btn btn-secondary" click.delegate="cancelClicked()">Cancel</button>
+    </ux-dialog-footer>
+  </ux-dialog>
+</template>

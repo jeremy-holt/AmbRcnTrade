@@ -55,12 +55,6 @@ export function vesselEditFunction(state: IState, vessel: IVessel) {
 
   vessel.billLadings.forEach(c => {
     c.blDate = fixAspNetCoreDate(c.blDate, false);
-    c.containers.forEach(x => {
-      x.dispatchDate = fixAspNetCoreDate(x.dispatchDate, false),
-      x.incomingStocks.forEach(s => {
-        s.stuffingDate = fixAspNetCoreDate(s.stuffingDate, false);
-      });
-    });
   });
 
   const newState = _.cloneDeep(state);
