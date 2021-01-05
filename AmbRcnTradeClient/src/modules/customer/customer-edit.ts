@@ -1,6 +1,4 @@
-import { ICustomerGroup } from "./../../../interfaces/ICustomerGroup";
-import { CustomerGroupService } from "./../../../services/customer-group-service";
-import { CustomerService } from "../../../services/customer-service";
+import { CUSTOMER_GROUPS } from "./../../constants/app-constants";
 import { observable } from "aurelia-binding";
 import { autoinject } from "aurelia-framework";
 import { Router } from "aurelia-router";
@@ -13,6 +11,7 @@ import { IParamsId } from "interfaces/IParamsId";
 import _ from "lodash";
 import { AdminService } from "services/admin-service";
 import { IState } from "store/state";
+import { CustomerService } from "../../services/customer-service";
 
 @autoinject
 @connectTo()
@@ -25,14 +24,13 @@ export class CustomerEdit {
   public currenciesList = CURRENCIES_LIST;
   public appUsersList: IAppUserListItem[] = [];
   public selectedAppUser: IAppUserListItem = undefined!;
-  public customerGroupList: ICustomerGroup[] = [];
-
+  public customerGroups = CUSTOMER_GROUPS;
+  
   @observable public selectedCustomer: ICustomer = undefined!;
 
   constructor(
     private adminService: AdminService,
-    private customerService: CustomerService,
-    private customerGroupService: CustomerGroupService,
+    private customerService: CustomerService,    
     private router: Router
   ) { }
 
@@ -46,12 +44,12 @@ export class CustomerEdit {
     this.selectedCustomer = this.list.find(c => c.id === this.model?.id) as ICustomer;
     this.appUsersList = _.cloneDeep(state.admin.user.list);
     this.appUsersList.unshift({ id: "", name: "[Select]" } as IAppUserListItem);
-    this.customerGroupList = _.cloneDeep(state.customerGroup.list);
-    this.customerGroupList.unshift({ id: null, name: "[Select]" } as ICustomerGroup);
+
+    this.customerGroups=_.cloneDeep(CUSTOMER_GROUPS);
+    this.customerGroups.unshift({id:null, name:"[Select group]"});
   }
 
-  protected async activate(params: IParamsId): Promise<void> {
-    await this.customerGroupService.loadList();
+  protected async activate(params: IParamsId): Promise<void> {    
     await this.customerService.loadAllCustomers();
     await this.adminService.loadUsersList();
 

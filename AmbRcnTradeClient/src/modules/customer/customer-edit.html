@@ -1,6 +1,6 @@
 <template>
-  <require from="../../../custom-elements/countries/countries-list-custom-element"></require>
-  <require from="../../../custom-elements/currencies/currencies-list-custom-element"></require>
+  <require from="../../custom-elements/countries/countries-list-custom-element"></require>
+  <require from="../../custom-elements/currencies/currencies-list-custom-element"></require>
 
 
   <toolbar type="menu" caption="Customer" save.call="save()">
@@ -28,7 +28,7 @@
 
       <div class="row">
         <div class="col-6">
-          <select-input source.bind="customerGroupList" value.bind="model.customerGroupId" use-model-id="true" label="Groups"></select-input>
+          <select-input source.bind="customerGroups" value.bind="model.filter" use-model-id="true" label="Groups"></select-input>
         </div>
       </div>
     

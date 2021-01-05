@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AmbRcnTradeServer.Constants;
 using AmbRcnTradeServer.Models;
 using AmbRcnTradeServer.Models.DictionaryModels;
 using Raven.Client.Documents;
@@ -23,7 +24,7 @@ namespace AmbRcnTradeServer.RavenIndexes
                     CustomerId = customer.Id,
                     Users = customer.Users.Select(x => x.AppUserId),
                     CustomerName = customer.CompanyName,
-                    customer.CustomerGroupId
+                    Group = customer.Filter
                 }
             );
             AddMap<Contract>(contracts => from c in contracts
@@ -35,7 +36,7 @@ namespace AmbRcnTradeServer.RavenIndexes
                     CustomerId = customer.Id,
                     Users = customer.Users.Select(x => x.AppUserId),
                     CustomerName = customer.CompanyName,
-                    customer.CustomerGroupId
+                    Group = customer.Filter
                 }
             );
             AddMap<Contract>(contracts => from c in contracts
@@ -47,7 +48,7 @@ namespace AmbRcnTradeServer.RavenIndexes
                     CustomerId = customer.Id,
                     Users = customer.Users.Select(x => x.AppUserId),
                     CustomerName = customer.CompanyName,
-                    customer.CustomerGroupId
+                    Group = customer.Filter
                 }
             );
 
@@ -65,7 +66,7 @@ namespace AmbRcnTradeServer.RavenIndexes
 
             public string CustomerName { get; set; }
             public string CustomerId { get; set; }
-            public string CustomerGroupId { get; set; }
+            public CustomerGroup Filter { get; set; }
         }
     }
 }

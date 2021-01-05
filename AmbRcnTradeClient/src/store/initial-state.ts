@@ -178,13 +178,5 @@ export const initialState: IState = {
       vesselId: undefined!
     },
     list: []
-  },
-  customerGroup: {
-    current: {
-      id: undefined!,
-      name: undefined!,
-      companyId: undefined!
-    },
-    list: []
   }
 };

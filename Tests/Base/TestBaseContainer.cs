@@ -142,10 +142,5 @@ namespace Tests.Base
         {
             return new BillLadingService(session, Mapper);
         }
-
-        protected ICustomerGroupService GetCustomerGroupService(IAsyncDocumentSession session)
-        {
-            return new CustomerGroupService(session);
-        }
     }
 }

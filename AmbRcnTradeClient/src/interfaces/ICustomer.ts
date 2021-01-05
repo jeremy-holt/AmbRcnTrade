@@ -1,3 +1,4 @@
+import { CustomerGroup as CustomerGroup } from "./../constants/app-constants";
 import { IUser } from "interfaces/IUser";
 import { IEntityCompany } from "./IEntity";
 
@@ -10,7 +11,7 @@ export interface ICustomer extends IEntityCompany {
   address: IAddress | null;
   notes?: string;  
   users: IUser[];
-  customerGroupId: string;
+  filter: CustomerGroup;
 }
 
 export interface IAddress {

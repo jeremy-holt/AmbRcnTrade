@@ -82,8 +82,7 @@ export class App {
         {route: "vessel/billLading/edit/:vesselId/:billLadinId?", name: "billLadingEdit", title: "Bill of Lading", moduleId:"modules/billLading/billLading-edit", roles:["admin","user","warehouseMan"]},
 
         // Dictionary items       
-        { route: "dictionary/customer/edit", name: "customerEdit", title: "Customers", nav: true, moduleId: "modules/dictionary/customer/customer-edit", roles: ["admin", "user"] },
-        { route: "dictionary/customerGroup/edit/:id?", href: "dictionary/customerGroup/edit", name: "customerGroupEdit", title: "Customer groups", nav: true, moduleId: "modules/customerGroups/customer-group-edit", roles: ["admin"] },
+        { route: "dictionary/customer/edit", name: "customerEdit", title: "Customers", nav: true, moduleId: "modules/customer/customer-edit", roles: ["admin", "user"] },       
         { route: "dictionary/port/edit", name: "portEdit", title: "Ports", nav: true, moduleId: "modules/dictionary/port/port-edit", roles: ["admin"] },
 
         // Admin

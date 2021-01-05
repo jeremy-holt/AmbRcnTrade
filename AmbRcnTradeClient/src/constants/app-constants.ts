@@ -34,6 +34,24 @@ export enum ImageType {
   other = "other"
 }
 
+export enum CustomerGroup {
+  BillLading = "billLading",
+  Supplier = "supplier",
+  Buyer = "buyer",
+  LogisticsCompany = "logisticsCompany",
+  Warehouse = "warehouse"
+}
+
+export interface ICustomerGroup { id: CustomerGroup, name: string; }
+
+export const CUSTOMER_GROUPS = [
+  { id: CustomerGroup.BillLading, name: "Bill of lading" },
+  { id: CustomerGroup.Supplier, name: "Supplier" },
+  { id: CustomerGroup.Buyer, name: "Buyer" },
+  { id: CustomerGroup.LogisticsCompany, name: "Logistics company" },
+  { id: CustomerGroup.Warehouse, name: "Warehouse" }
+];
+
 export enum InspectionFilters {
   cargoReady,
   cargoReadyWithInspection,

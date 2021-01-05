@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using AmberwoodCore.Interfaces;
 using AmberwoodCore.Models;
+using AmbRcnTradeServer.Constants;
 using AmbRcnTradeServer.Models.AppUserModels;
 using Raven.Client.Documents;
 using Raven.Client.Documents.Linq;
@@ -21,6 +22,6 @@ namespace AmbRcnTradeServer.Models.DictionaryModels
         public string Id { get; set; }
         public string Name { get; set; }
         public string CompanyId { get; set; }
-        public string CustomerGroupId { get; set; }
+        public CustomerGroup Filter { get; set; }
     }
 }

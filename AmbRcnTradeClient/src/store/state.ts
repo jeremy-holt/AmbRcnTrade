@@ -1,5 +1,4 @@
 import { IBillLading } from "./../interfaces/shipping/IBillLading";
-import { ICustomerGroup } from "./../interfaces/ICustomerGroup";
 import { INotLoadedContainer } from "./../interfaces/shipping/INotLoadedContainer";
 import { IVesselListItem } from "./../interfaces/shipping/IVesselListItem";
 import { IAvailableContainer } from "./../interfaces/stockManagement/IAvailableContainerItem";
@@ -60,6 +59,5 @@ export interface IState {
   stockManagement: { stuffContainer: IOutgoingStock[], availableContainers: IAvailableContainer[] };
   container: { current: IContainer; list: IContainer[] };
   vessel: { current: IVessel; list: IVesselListItem[]; notLoadedContainers: INotLoadedContainer[]; }
-  billLading: {current: IBillLading; list: IBillLadingListItem[];}
-  customerGroup: { current: ICustomerGroup, list: ICustomerGroup[] }
+  billLading: {current: IBillLading; list: IBillLadingListItem[];}  
 }

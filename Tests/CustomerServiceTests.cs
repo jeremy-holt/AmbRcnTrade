@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using AmberwoodCore.Extensions;
 using AmberwoodCore.Models;
+using AmbRcnTradeServer.Constants;
 using AmbRcnTradeServer.Models;
 using AmbRcnTradeServer.Models.AppUserModels;
 using AmbRcnTradeServer.Models.DictionaryModels;
@@ -97,7 +98,7 @@ namespace Tests
 
             // Assert
             list.Should().OnlyContain(c => c.Id == customerTerraNova.Id);
-            list[0].CustomerGroupId.Should().NotBeNull();
+            list[0].Filter.Should().NotBeNull();
         }
 
         [Fact]
@@ -110,7 +111,7 @@ namespace Tests
             var fixture = new Fixture();
 
             var customer = fixture.DefaultEntity<Customer>()
-                .With(c=>c.CustomerGroupId, "CustomerGroups/1-A")
+                .With(c=>c.Filter, CustomerGroup.Supplier)
                 .Create();
 
             // Act
@@ -119,7 +120,7 @@ namespace Tests
             // Assert
             var actual = await session.LoadAsync<Customer>(response.Id);
             actual.Should().NotBeNull();
-            actual.CustomerGroupId.Should().Be("CustomerGroups/1-A");
+            actual.Filter.Should().Be(CustomerGroup.Supplier);
         }
     }
 }

@@ -1,9 +1,9 @@
-import { isInRole } from "./../../services/role-service";
 import { DialogService } from "aurelia-dialog";
 import { autoinject, observable } from "aurelia-framework";
 import { Router } from "aurelia-router";
 import { connectTo } from "aurelia-store";
 import { Approval } from "constants/app-constants";
+import { ICustomerListItem } from "interfaces/ICustomerListItem";
 import { IAnalysis } from "interfaces/inspections/IAnalysis";
 import _ from "lodash";
 import { IState } from "store/state";
@@ -14,6 +14,7 @@ import { IParamsId } from "./../../interfaces/IParamsId";
 import { IMoveInspectionToStockRequest } from "./../../interfaces/stockManagement/IMoveInspectionToStockRequest";
 import { CustomerService } from "./../../services/customer-service";
 import { InspectionService } from "./../../services/inspection-service";
+import { isInRole } from "./../../services/role-service";
 import { StockManagementService } from "./../../services/stock-management-service";
 import { AddToStockDialog } from "./add-to-stock-dialog";
 
@@ -26,8 +27,7 @@ export class InspectionEdit {
   @observable protected approvalChecked = false;
 
   protected suppliers: IListItem[] = [];
-  @observable protected selectedSupplier: IListItem = undefined!;
-
+  
   constructor(
     private inspectionService: InspectionService,
     private customerService: CustomerService,
@@ -39,11 +39,10 @@ export class InspectionEdit {
   protected stateChanged(state: IState) {
     this.model = _.cloneDeep(state.inspection.current);
     this.suppliers = _.cloneDeep(state.userFilteredCustomers);
-    this.suppliers.unshift({ id: null, name: "[Select]" } as IListItem);
+    this.suppliers.unshift({ id: null, name: "[Select]", filter: null } as ICustomerListItem);
 
     if (this.model) {
-      this.approvalChecked = this.model?.analysisResult.approved === Approval.Approved;
-      this.selectedSupplier = this.suppliers.find(c => c.id === this.model.supplierId);
+      this.approvalChecked = this.model?.analysisResult.approved === Approval.Approved;      
     }
   }
 
@@ -60,12 +59,6 @@ export class InspectionEdit {
 
   protected async deactivate() {
     await this.save();
-  }
-
-  protected selectedSupplierChanged() {
-    if (this.model) {
-      this.model.supplierId = this.selectedSupplier?.id;
-    }
   }
 
   protected get canSave() {
@@ -129,7 +122,7 @@ export class InspectionEdit {
     this.dialogService.open(
       {
         viewModel: AddToStockDialog,
-        model: { inspection: this.model, supplierName: this.selectedSupplier.name }
+        model: { inspection: this.model, supplierName: this.suppliers.find(c => c.id === this.model.supplierId)?.name }
       }
     ).whenClosed(async result => {
       if (!result.wasCancelled) {
@@ -154,7 +147,7 @@ export class InspectionEdit {
 
   protected listItemMatcher = (a: IListItem, b: IListItem) => a?.id === b?.id;
 
-  protected navigateToStockList(){
+  protected navigateToStockList() {
     this.router.navigateToRoute("stockList");
   }
 }

@@ -1,6 +1,7 @@
+import { CustomerGroup } from "./../constants/app-constants";
 export interface ICustomerListItem {    
     id: string;
     name: string;
     companyId: string;
-    customerGroupId: string;
+    filter: CustomerGroup | null;
 }
