@@ -28,7 +28,8 @@ namespace AmbRcnTradeServer.RavenIndexes
                     ContainersOnBoard = c.ContainersOnBoard,
                     NotifyParty1Name = notifyParty1.Name,
                     NotifyParty2Name = notifyParty2.Name,
-                    CompanyId = c.CompanyId
+                    CompanyId = c.CompanyId,
+                    VesselId = c.VesselId
                 };
 
             Index(x => x.BlDate, FieldIndexing.Default);

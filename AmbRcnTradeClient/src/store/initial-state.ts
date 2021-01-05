@@ -174,7 +174,8 @@ export const initialState: IState = {
       containers:[],      
       companyId:undefined!,
       id:undefined!,
-      name: undefined!
+      name: undefined!,
+      vesselId: undefined!
     },
     list: []
   },

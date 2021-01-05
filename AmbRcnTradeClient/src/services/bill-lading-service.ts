@@ -4,6 +4,7 @@ import { Router } from "aurelia-router";
 import { Store } from "aurelia-store";
 import { IBillLadingListItem } from "interfaces/shipping/IBillLadingListItem";
 import _ from "lodash";
+import { QueryId } from "models/QueryId";
 import { IState } from "store/state";
 import { IBillLading } from "./../interfaces/shipping/IBillLading";
 import { INotLoadedContainer } from "./../interfaces/shipping/INotLoadedContainer";
@@ -42,6 +43,10 @@ export class BillLadingService extends FetchService {
 
   public async getNotLoadedContainers(){
     return super.getMany<INotLoadedContainer[]>([super.currentCompanyIdQuery()],"getNotLoadedContainers",billLadingNotLoadedContainersAction);
+  }
+
+  public async createBillLading(vesselId: string){
+    return super.get<IBillLading>([this.currentCompanyIdQuery(),new QueryId("vesselId",vesselId)],"create",billLadingEditAction);
   }
 }
 

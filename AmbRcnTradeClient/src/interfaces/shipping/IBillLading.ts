@@ -15,6 +15,7 @@ export interface IBillLading {
   name: string;
   companyId: string;
   containers: IContainer[];
+  vesselId: string;
 
   selected?: boolean;
 }

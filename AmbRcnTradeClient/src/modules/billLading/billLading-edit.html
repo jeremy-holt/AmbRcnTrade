@@ -1,0 +1,89 @@
+<template>
+  <require from="quill/quill.snow.css"></require>
+  
+  <toolbar type="menu" caption="${vesselName} - Bill of Lading" disabled-save.bind="!canSave" save.call="save()"></toolbar>
+
+  <div class="card">
+    <div clsas="card-header">
+      <h4>${vesselName} - Bill of Lading ${model.blNumber}</h4>
+      <div class="mt-2">${model.containersOnBoard} containers on board vessel</div>
+    </div>
+
+    <div class="card-body">
+
+      <div class="row">
+        <div class="col">
+          <select-input source.bind="customers | customerFilter: 'bill of lading'" value.bind="model.shipperId" label="Shipper" use-model-id="true"></select-input>
+        </div>
+        <div class="col">
+          <select-input source.bind="customers | customerFilter: 'bill of lading'" value.bind="model.consigneeId" label="Consignee" use-model-id="true"></select-input>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col">          
+          <select-input source.bind="customers | customerFilter: 'Bill of Lading'" value.bind="model.NotifyParty1Id" label="Notify party 1" use-model-id="true"></select-input>
+        </div>
+        <div class="col">
+              <select-input source.bind="customers | customerFilter: 'Bill of Lading'" value.bind="model.NotifyParty2Id" label="Notify party 2" use-model-id="true"></select-input>
+        </div>
+      </div>
+
+      <div class="row d-flex align-items-end">
+        <div class="col">
+          <date-input value.bind="model.blDate" label="B/L date"></date-input>
+        </div>
+        <div class="col">
+          <div class="custom-control custom-checkbox">
+            <input type="checkbox" class="custom-control-input" id="chk1" checked.bind="model.freightPrepaid">
+            <label class="custom-control-label" for="chk1">Freight prepaid</label>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-2" style="min-height: 300px;">
+        <div class="form-label">Text for body of Bill of Lading</div>
+        <div id="toolbar"></div>
+        <quill-editor value.bind="model.blBodyText"></quill-editor>
+      </div>
+
+      
+      <div class="row my-3">
+        <div class="col">
+          <button type="button" class="btn btn-primary" click.delegate="addContainersDialog()">Add containers</button>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col">
+          <ul class="list-group small">
+            <li class="list-group-item font-weight-bold">
+              <div class="row">
+                <div class="col">Container number</div>
+                <div class="col">Seal number</div>
+                <div class="col">Bags</div>
+                <div class="col">Weight kg (gross)</div>
+                <div class="col">Weight kg (nett)</div>
+                <div class="col">Booking number</div>
+                <div class="col">VGM weight ticket</div>
+                <div class="col">Status</div>
+              </div>
+            </li>
+            <li class="list-group-item" repeat.for="item of model.containers">
+              <div class="col">
+                <a route-href="containerEdit; params.bind:{id: encode(item.id)}"
+                  class="with-decoration">${item.containerNumber}</a>
+              </div>
+              <div class="col">${item.sealNumber} </div>
+              <div class="col">${item.bags | numberFormat: "0,0"} </div>
+              <div class="col">${item.weighbridgeWeightKg | numberFormat: "0,0"} </div>
+              <div class="col">${item.nettWeightKg | numberFormat: "0,0"} </div>
+              <div class="col">${item.bookingNumber} </div>
+              <div class="col">${item.status | containerStatusFormatter}</div>
+              <div class="col">${item.vgmTicketNumber}</div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+</template>

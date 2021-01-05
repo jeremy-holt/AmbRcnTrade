@@ -61,9 +61,9 @@ namespace AmbRcnTradeServer.Controllers
         
         [Authorize]
         [HttpGet("[action]")]
-        public async Task<ActionResult<BillLadingDto>> Create(string companyId)
+        public async Task<ActionResult<BillLadingDto>> Create(string companyId, string vesselId)
         {
-            return await Task.FromResult(new BillLadingDto {CompanyId = companyId});
+            return await Task.FromResult(new BillLadingDto {CompanyId = companyId, VesselId=vesselId});
         }
     }
 

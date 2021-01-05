@@ -157,6 +157,7 @@ namespace Tests
                 .With(c => c.NotifyParty1Id, customers[1].Id)
                 .With(c => c.NotifyParty2Id, customers[2].Id)
                 .With(c => c.ShipperId, customers[3].Id)
+                .With(c=>c.VesselId,"Vessels/1-A")
                 .CreateMany().ToList();
             await billOfLadings.SaveList(session);
             await session.SaveChangesAsync();
@@ -175,6 +176,7 @@ namespace Tests
             actual.NotifyParty1Name.Should().Be(customers[1].Name);
             actual.NotifyParty2Name.Should().Be(customers[2].Name);
             actual.ShipperName.Should().Be(customers[3].Name);
+            actual.VesselId.Should().Be("Vessels/1-A");
         }
 
         [Fact]
@@ -235,6 +237,7 @@ namespace Tests
                 ShipperId = "shipper",
                 BlBodyText = "body text",
                 FreightPrepaid = true,
+                VesselId= "Vessels/1-A"
             };
 
             // Act
@@ -253,6 +256,7 @@ namespace Tests
             actual.ShipperId.Should().Be("shipper");
             actual.BlBodyText.Should().Be("body text");
             actual.FreightPrepaid.Should().BeTrue();
+            actual.VesselId.Should().Be("Vessels/1-A");
         }
     }
 }

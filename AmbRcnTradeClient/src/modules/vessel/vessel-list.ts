@@ -1,3 +1,4 @@
+import { encodeParams } from "./../../core/helpers";
 import { VesselService } from "./../../services/vessel-service";
 import { IVesselListItem } from "./../../interfaces/shipping/IVesselListItem";
 import { autoinject, observable } from "aurelia-framework";
@@ -27,5 +28,9 @@ export class VesselList {
 
   protected addVessel() {
     this.router.navigateToRoute("vesselEdit", { id: null });
+  }
+
+  protected encode(value: string){
+    return encodeParams(value);
   }
 }

@@ -1,6 +1,5 @@
 <template>
   <require from="../container/container-status-formatter-valueconverter"></require>
-  <require from="quill/quill.snow.css"></require>
 
   <toolbar type="menu" caption="Vessel" disabled-save.bind="!canSave" save.call="save()" list-route="vesselList">
   </toolbar>
@@ -42,74 +41,54 @@
 
       <div class="row">
         <div class="col-6">
-          <text-input value.bind="model.shippingCompany" label="Shipping company"></text-input>
+          <select-input source.bind="customerList| customerFilter:'logistics company'"
+            value.bind="model.shippingCompanyId" use-model-id="true" label="Shipping company" ></select-input>
         </div>
         <div class="col">
-          <text-input value.bind="model.forwardingAgent" label="Forwarding agent"></text-input>
+          <select-input source.bind="customerList| customerFilter:'logistics company'"
+            value.bind="model.forwardingAgentId" use-model-id="true" label="Forwarding agent"></select-input>
         </div>
       </div>
 
       <div class="row">
         <div class="col">
-          <text-area-input rows="2" value.bind="model.notifyParty1" label="Notify party 1"></text-area-input>
-        </div>
-        <div class="col">
-          <text-area-input rows="2" value.bind="model.notifyParty2" label="Notify party 2"></text-area-input>
+          <select-input source.bind="portsList" value.bind="model.portOfDestinationId" use-model-id="true"
+            label="Port of destination"></select-input>
         </div>
       </div>
 
-      <div class="row d-flex align-items-end">
+      <div class="row my-2">
         <div class="col">
-          <text-area-input rows="2" value.bind="model.consignee" label="Consignee"></text-area-input>
-        </div>
-        <div class="col">
-          <div class="custom-control custom-checkbox">
-            <input type="checkbox" class="custom-control-input" id="chk1" checked.bind="model.freightPrepaid">
-            <label class="custom-control-label" for="chk1">Freight prepaid</label>
-          </div>
-        </div>
-      </div>
-
-
-      <div class="mt-2" style="min-height: 300px;">
-        <div class="form-label">Text for body of Bill of Lading</div>
-        <div id="toolbar"></div>
-        <quill-editor value.bind="model.blBodyText"></quill-editor>
-      </div>
-
-
-
-      <div class="row my-3">
-        <div class="col">
-          <button type="button" class="btn btn-primary" click.delegate="addContainersDialog()">Add containers</button>
+          <button type="button" class="btn btn-primary" click.delegate="addBillLading()">Add B/L to vessel</button>
         </div>
       </div>
 
       <div class="row">
         <div class="col">
           <ul class="list-group small">
-            <li class="list-group-item font-weight-bold">
+            <li class="list-group font-weight-bold">
               <div class="row">
-                <div class="col">Container number</div>
-                <div class="col">Seal number</div>
-                <div class="col">Bags</div>
-                <div class="col">Weight kg (gross)</div>
-                <div class="col">Weight kg (nett)</div>
-                <div class="col">Booking number</div>
-                <div class="col">Status</div>
+                <div class="col"></div>
+                <div class="col">B/L number</div>
+                <div class="col">B/L date</div>
+                <div class="col">Destination</div>
+                <div class="col">Shipper</div>
+                <div class="col">Consignee</div>
+                <div class="col">Notify</div>
               </div>
             </li>
-            <li class="list-group-item" repeat.for="item of model.containers">
-              <div class="col">
-                <a route-href="containerEdit; params.bind:{id: encode(item.id)}"
-                  class="with-decoration">${item.containerNumber}</a>
+            <li class="list-group-item" repeat.for="item of billLadings">
+              <div class="row">
+                <div class="col"><a
+                    route-href="billLadingEdit; params.bind:{billLadingId: encode(item.id), vesselId: encode(item.vesselId)}">Go
+                    to B/L</a></div>
+                <div class="col">${item.blNumber} (${item.containersOnBoard} containers on board)</div>
+                <div class="col">${item.blDate | dateFormat: "DD/MM/YYYY"}</div>
+                <div class="col">${item.portOfDestinationName}</div>
+                <div class="col">${item.shipperName}</div>
+                <div class="col">${item.ConsigneeName}</div>
+                <div class="col">${item.NotifyParty1Name}</div>
               </div>
-              <div class="col">${item.sealNumber} </div>
-              <div class="col">${item.bags | numberFormat: "0,0"} </div>
-              <div class="col">${item.weighbridgeWeightKg | numberFormat: "0,0"} </div>
-              <div class="col">${item.nettWeightKg | numberFormat: "0,0"} </div>
-              <div class="col">${item.bookingNumber} </div>
-              <div class="col">${item.status | containerStatusFormatter}</div>
             </li>
           </ul>
         </div>

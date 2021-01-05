@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AmberwoodCore.Extensions;
 using AmberwoodCore.Interfaces;
 using AmbRcnTradeServer.Models.ContainerModels;
 using AutoMapper;
@@ -26,6 +27,7 @@ namespace AmbRcnTradeServer.Models.VesselModels
         public string Id { get; set; }
         public string Name { get; set; }
         public string CompanyId { get; set; }
+        public string VesselId { get; set; }
     }
 
     public class BillLadingDto : BillLading, IEntityDto
@@ -34,6 +36,10 @@ namespace AmbRcnTradeServer.Models.VesselModels
         public List<Container> Containers { get; set; } = new();
 
 
-        public void Validate() { }
+        public void Validate()
+        {
+            if (VesselId.IsNullOrEmpty())
+                throw new InvalidOperationException("Cannot create a Bill of Lading without the Vessel Id");
+        }
     }
 }

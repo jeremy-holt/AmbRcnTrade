@@ -16,7 +16,7 @@ export class CustomerFilterValueConverter {
       return list;
     }
 
-    if (this.state === undefined!) {
+    if (this.state === undefined! || !list) {
       return [];
     }
 

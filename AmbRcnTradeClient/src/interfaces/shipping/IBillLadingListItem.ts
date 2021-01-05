@@ -12,4 +12,5 @@ export interface IBillLadingListItem {
   shipperName: string;
   portOfDestinationName: string;
   companyId: string;
+  vesselId: string;
 }
