@@ -42,7 +42,7 @@ namespace AmbRcnTradeServer.Controllers
         [HttpPost("[action]")]
         public async Task<ActionResult<ServerResponse<OutgoingStock>>> StuffContainer(StuffingRequest request)
         {
-            return await _service.StuffContainer(request.ContainerId,request.StockBalance,request.Bags,request.WeightKg,request.StuffingDate);
+            return await _service.StuffContainer(request.ContainerId,request.Status,request.StockBalance,request.Bags,request.WeightKg,request.StuffingDate);
         }
 
         [Authorize]

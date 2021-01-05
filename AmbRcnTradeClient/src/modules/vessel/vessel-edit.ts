@@ -3,13 +3,10 @@ import { autoinject, observable } from "aurelia-framework";
 import { Router } from "aurelia-router";
 import { connectTo } from "aurelia-store";
 import { IPort } from "interfaces/IPort";
-import { IEtaHistory } from "interfaces/shipping/IEtaHistory";
 import { IVessel } from "interfaces/shipping/IVessel";
 import _ from "lodash";
-import moment from "moment";
 import { VesselService } from "services/vessel-service";
 import { IState } from "store/state";
-import { DATEFORMAT } from "./../../constants/app-constants";
 import { encodeParams } from "./../../core/helpers";
 import { ICustomerListItem } from "./../../interfaces/ICustomerListItem";
 import { IParamsId } from "./../../interfaces/IParamsId";
@@ -45,9 +42,6 @@ export class VesselEdit {
 
   protected stateChanged(state: IState): void {
     this.model = _.cloneDeep(state.vessel.current);
-    if (this.model?.etaHistory.length === 0) {
-      this.addEtaHistory();
-    }
     this.customerList = _.cloneDeep(state.userFilteredCustomers);
     this.customerList.unshift({ id: null, name: "[Select]" } as ICustomerListItem);
 
@@ -56,17 +50,13 @@ export class VesselEdit {
   }
 
   protected get canSave() {
-    return this.model?.etaHistory.length > 0 && this.model?.etaHistory[0]?.vesselName?.length > 0;
+    return this.model.vesselName?.length>3;
   }
 
   protected async save() {
     if (this.canSave) {
       await this.vesselService.save(this.model);
     }
-  }
-
-  protected addEtaHistory() {
-    this.model.etaHistory.push({ dateUpdated: moment().format(DATEFORMAT) } as IEtaHistory);
   }
 
   protected async addBillLading() {

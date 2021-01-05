@@ -1,23 +1,22 @@
-import { DATEFORMAT } from "constants/app-constants";
-import { IStockBalance } from "./../interfaces/stocks/IStockBalance";
-import { IAvailableContainer } from "./../interfaces/stockManagement/IAvailableContainerItem";
-import { IOutgoingStock } from "./../interfaces/stockManagement/IIncomingStock";
-import { IStockListItem } from "./../interfaces/stocks/IStockListItem";
 import { HttpClient } from "aurelia-fetch-client";
 import { autoinject } from "aurelia-framework";
 import { Router } from "aurelia-router";
 import { Store } from "aurelia-store";
+import { ContainerStatus } from "constants/app-constants";
+import { IStuffingRequest } from "interfaces/stockManagement/IStuffingRequest";
 import { IStock } from "interfaces/stocks/IStock";
 import _ from "lodash";
+import { QueryId } from "models/QueryId";
 import { IState } from "store/state";
+import { IAvailableContainer } from "./../interfaces/stockManagement/IAvailableContainerItem";
+import { IOutgoingStock } from "./../interfaces/stockManagement/IIncomingStock";
 import { IMovedInspectionResult } from "./../interfaces/stockManagement/IMovedInspectionResult";
 import { IMoveInspectionToStockRequest } from "./../interfaces/stockManagement/IMoveInspectionToStockRequest";
 import { IRemoveInspectionFromStockRequest } from "./../interfaces/stockManagement/IRemoveInspectionFromStockRequest";
+import { IStockBalance } from "./../interfaces/stocks/IStockBalance";
+import { IStockListItem } from "./../interfaces/stocks/IStockListItem";
 import { FetchService } from "./fetch-service";
 import { noOpAction } from "./no-op-action";
-import { QueryId } from "models/QueryId";
-import { IStuffingRequest } from "interfaces/stockManagement/IStuffingRequest";
-import moment from "moment";
 
 @autoinject
 export class StockManagementService extends FetchService {
@@ -49,22 +48,20 @@ export class StockManagementService extends FetchService {
     return super.getMany<IStock[]>([super.currentCompanyIdQuery(), new QueryId("supplierId", supplierId)], "getNonCommittedStocks", nonCommittedStocksListAction);
   }
 
-  public async stuffContainer(request: IStuffingRequest) {
+  public async stuffContainer(containerId: string, stuffingDate: string, stockBalance: IStockBalance, bags: number, weightKg: number, status: ContainerStatus) {
+    const request: IStuffingRequest = {
+      containerId,
+      stuffingDate,
+      stockBalance,
+      bags,
+      weightKg,
+      status
+    };
     return super.post(request, "stuffContainer", stuffContainerAction);
   }
 
   public async getAvailableContainers() {
     return super.get<IAvailableContainer[]>([super.currentCompanyIdQuery()], "getAvailableContainers", availableContainersAction);
-  }
-
-  public getStuffingRequest(containerId: string, stockBalance: IStockBalance, bags: number, weightKg: number): IStuffingRequest {
-    return {
-      containerId,
-      stuffingDate: moment().format(DATEFORMAT),      
-      stockBalance,
-      bags,
-      weightKg      
-    };
   }
 }
 

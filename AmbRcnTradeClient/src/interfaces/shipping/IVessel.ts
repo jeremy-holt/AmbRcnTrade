@@ -1,8 +1,6 @@
 import { IBillLading } from "./IBillLading";
-import { IEtaHistory } from "./IEtaHistory";
 
-export interface IVessel {
-  etaHistory: IEtaHistory[];
+export interface IVessel {  
   containersOnBoard: number;
   forwardingAgentId: string;
   shippingCompanyId: string;
@@ -12,5 +10,8 @@ export interface IVessel {
   name: string;
   portOfDestinationId: string;
   billLadings: IBillLading[];
+  eta: string|null;
+  vesselName: string;
+  notes: string;
 }
 

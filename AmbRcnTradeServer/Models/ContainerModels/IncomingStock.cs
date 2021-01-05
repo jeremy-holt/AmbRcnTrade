@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AmbRcnTradeServer.Constants;
 using AmbRcnTradeServer.Models.StockModels;
+using AmbRcnTradeServer.Services;
 using Raven.Client.Documents;
 using Raven.Client.Documents.Linq;
 using Raven.Client.Documents.Session;
@@ -26,6 +28,7 @@ namespace AmbRcnTradeServer.Models.ContainerModels
         public StockBalance StockBalance { get; set; }
         public double Bags { get; set; }
         public double WeightKg { get; set; }
+        public ContainerStatus Status { get; set; }
     }
 
     public class OutgoingStock

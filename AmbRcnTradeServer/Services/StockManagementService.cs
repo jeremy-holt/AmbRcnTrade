@@ -24,7 +24,8 @@ namespace AmbRcnTradeServer.Services
         Task<ServerResponse> RemoveInspectionFromStock(string inspectionId, string stockId);
         Task<List<StockListItem>> GetNonCommittedStocks(string companyId, string supplierId);
         Task<List<AvailableContainer>> GetAvailableContainers(string companyId);
-        Task<ServerResponse<OutgoingStock>> StuffContainer(string containerId, StockBalance stockBalance, double bags, double weightKg, DateTime stuffingDate);
+        Task<ServerResponse<OutgoingStock>> StuffContainer(string containerId, ContainerStatus status, StockBalance stockBalance, double bags, double weightKg,
+            DateTime stuffingDate);
     }
 
     public class StockManagementService : IStockManagementService
@@ -133,7 +134,8 @@ namespace AmbRcnTradeServer.Services
             return list.OrderBy(c=>Enum.GetName(typeof(ContainerStatus),c.Status)).ToList();
         }
 
-        public async Task<ServerResponse<OutgoingStock>> StuffContainer(string containerId, StockBalance stockBalance, double bags, double weightKg, DateTime stuffingDate)
+        public async Task<ServerResponse<OutgoingStock>> StuffContainer(string containerId, ContainerStatus status, StockBalance stockBalance, double bags, double weightKg,
+            DateTime stuffingDate)
         {
             var container = await _session.LoadAsync<Container>(containerId);
             var stocks = await _session.Query<Stock>().Where(c => c.LotNo == stockBalance.LotNo).ToListAsync();
@@ -151,6 +153,7 @@ namespace AmbRcnTradeServer.Services
 
             container.Bags = container.IncomingStocks.Sum(x => x.Bags);
             container.StuffingWeightKg = container.IncomingStocks.Sum(x => x.WeightKg);
+            container.Status = status;
 
             foreach (var stock in stocks)
             {

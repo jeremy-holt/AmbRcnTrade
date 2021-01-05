@@ -369,7 +369,8 @@ namespace Tests
 
             var container = new Container
             {
-                ContainerNumber = "TRIU 1234"
+                ContainerNumber = "TRIU 1234",
+                Status = ContainerStatus.Cancelled
             };
             await session.StoreAsync(container);
 
@@ -378,7 +379,8 @@ namespace Tests
             // Act
             const double incomingBags = 2000;
             const double incomingWeightKg = 16_000;
-            ServerResponse response = await sut.StuffContainer(container.Id, stockBalance, incomingBags, incomingWeightKg, new DateTime(2020, 1, 1));
+            const ContainerStatus containerStatus=ContainerStatus.StuffingComplete;
+            ServerResponse response = await sut.StuffContainer(container.Id,containerStatus, stockBalance, incomingBags, incomingWeightKg, new DateTime(2020, 1, 1));
 
             await session.SaveChangesAsync();
 
@@ -394,6 +396,7 @@ namespace Tests
             actualContainer.IncomingStocks[0].Bags.Should().Be(incomingBags);
             actualContainer.IncomingStocks[0].WeightKg.Should().Be(incomingWeightKg);
             actualContainer.IncomingStocks[0].StuffingDate.Should().Be(new DateTime(2020, 1, 1));
+            actualContainer.Status.Should().Be(containerStatus);
 
             var actualStock1 = await session.LoadAsync<Stock>(stock1.Id);
             actualStock1.StuffingRecords[0].ContainerId.Should().Be(container.Id);
@@ -461,7 +464,7 @@ namespace Tests
             const double incomingBags = 2000;
             const double incomingWeightKg = 16_000;
             var stuffingDate = new DateTime(2020, 1, 1);
-            await sut.StuffContainer(container.Id, stockBalance, incomingBags, incomingWeightKg, stuffingDate);
+            await sut.StuffContainer(container.Id, ContainerStatus.Empty, stockBalance, incomingBags, incomingWeightKg, stuffingDate);
 
             await session.SaveChangesAsync();
 

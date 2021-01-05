@@ -1,14 +1,17 @@
-import { encodeParams } from "./../../core/helpers";
-import { ContainerService } from "./../../services/container-service";
 import { DialogController } from "aurelia-dialog";
 import { autoinject, observable } from "aurelia-framework";
+import { Router } from "aurelia-router";
 import { connectTo } from "aurelia-store";
+import { ContainerStatus, DATEFORMAT } from "constants/app-constants";
+import { IStuffingRequest } from "interfaces/stockManagement/IStuffingRequest";
 import _ from "lodash";
+import moment from "moment";
 import { StockManagementService } from "services/stock-management-service";
 import { IState } from "store/state";
+import { encodeParams } from "./../../core/helpers";
 import { IAvailableContainer } from "./../../interfaces/stockManagement/IAvailableContainerItem";
 import { IStockBalance } from "./../../interfaces/stocks/IStockBalance";
-import { Router } from "aurelia-router";
+import { ContainerService } from "./../../services/container-service";
 
 @autoinject
 @connectTo()
@@ -18,6 +21,11 @@ export class StuffContainerDialog {
   public list: IAvailableContainer[] = [];
   @observable public bags: number;
   public stockWeightKg: number;
+  @observable public stuffingStatus = true;
+  public stuffingStatusLabel = "Completed stuffing";
+  public stuffingDate = moment().format(DATEFORMAT);
+
+  private containerStatus = ContainerStatus.StuffingComplete;
 
   constructor(
     private controller: DialogController,
@@ -43,7 +51,7 @@ export class StuffContainerDialog {
     this.list[index].selected = !this.list[index].selected;
   }
 
-  protected selectedContainer() {
+  protected selectedContainer(): IAvailableContainer {
     return this.list.find(c => c.selected);
   }
 
@@ -66,12 +74,26 @@ export class StuffContainerDialog {
     };
   }
 
+  protected stuffingStatusChanged(status: boolean) {
+    this.stuffingStatusLabel = status ? "Completed stuffing" : "Partially stuffed";
+    this.containerStatus = status ? ContainerStatus.StuffingComplete : ContainerStatus.Stuffing;
+  }
+
   protected okClicked() {
-    this.controller.ok({
-      container: this.selectedContainer(),
+    if (this.containerStatus === ContainerStatus.Cancelled) {
+      throw new Error("Cannot stuff into a cancelled container");
+    }
+
+    const request: IStuffingRequest = {
+      containerId: this.selectedContainer()?.id,
+      stuffingDate: this.stuffingDate,
+      stockBalance: this.model,
       bags: this.bags,
-      stockWeightKg: this.stockWeightKg
-    });
+      weightKg: this.stockWeightKg,
+      status: this.containerStatus,
+    };
+
+    this.controller.ok(request);
   }
 
   protected encode(value: string) {

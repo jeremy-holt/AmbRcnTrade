@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AmberwoodCore.Extensions;
@@ -67,14 +66,11 @@ namespace Tests
             var vessel = new Vessel
             {
                 CompanyId = COMPANY_ID,
-                EtaHistory = new List<EtaHistory>
-                {
-                    new("Lollipop", new DateTime(2013, 1, 1))
-                },
                 ShippingCompanyId = customers[0].Id,
                 ForwardingAgentId = customers[1].Id,
                 BillLadingIds = billLadings.Select(x => x.Id).ToList(),
-                ContainersOnBoard = 0
+                ContainersOnBoard = 0,
+                
             };
 
             await session.StoreAsync(vessel);
@@ -120,10 +116,9 @@ namespace Tests
             var expectedVessel = vessels.First(c => c.Id == list[0].Id);
             list.Should().BeInAscendingOrder(c => c.Eta);
             var actual = list[0];
-
-            var lastEta = expectedVessel.EtaHistory.FirstOrDefault(c => c.DateUpdated == expectedVessel.EtaHistory.Max(x => x.DateUpdated));
-            actual.Eta.Should().Be(lastEta?.Eta);
-            actual.VesselName.Should().Be(lastEta?.VesselName);
+            
+            actual.Eta.Should().Be(expectedVessel.Eta);
+            actual.VesselName.Should().Be(expectedVessel.VesselName);
             actual.ContainersOnBoard.Should().Be(expectedVessel.ContainersOnBoard);
             actual.ShippingCompanyName.Should().Be(customers[0].Name);
             actual.ForwardingAgentName.Should().Be(customers[1].Name);
@@ -182,10 +177,9 @@ namespace Tests
             var vesselDto = new VesselDto
             {
                 CompanyId = COMPANY_ID,
-                EtaHistory = new List<EtaHistory>
-                {
-                    new("Lollipop", new DateTime(2013, 1, 1))
-                },
+                VesselName="Lollipop",
+                Eta=new DateTime(2013,1,1),
+                Notes="notes",
                 ShippingCompanyId = "customers/1-A",
                 ForwardingAgentId = "customers/2-A",
                 BillLadingIds = billLadings.Select(x => x.Id).ToList(),
@@ -199,7 +193,6 @@ namespace Tests
             // Assert
             var actual = await session.LoadAsync<Vessel>(response.Id);
             actual.BillLadingIds.Should().BeEquivalentTo(billLadings.Select(x => x.Id));
-            actual.EtaHistory.Should().BeEquivalentTo(vesselDto.EtaHistory);
             actual.ContainersOnBoard.Should().Be(9);
             actual.CompanyId.Should().Be(vesselDto.CompanyId);
             actual.ForwardingAgentId.Should().Be(vesselDto.ForwardingAgentId);

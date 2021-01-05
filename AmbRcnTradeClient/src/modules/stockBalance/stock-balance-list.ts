@@ -48,9 +48,8 @@ export class StockBalanceList {
       }
     ).whenClosed(async result => {
       if (!result.wasCancelled) {
-        const { container, bags, stockWeightKg } = result.output as { container: IAvailableContainer; bags: number; stockWeightKg: number; };
-        const request = this.stockManagementService.getStuffingRequest(container.id, stockBalance, bags, stockWeightKg);
-        await this.stockManagementService.stuffContainer(request);
+        const { containerId, bags, stockWeightKg, status, stuffingDate } = result.output as { containerId: string; bags: number; stockWeightKg: number; status: ContainerStatus, stuffingDate: string };        
+        await this.stockManagementService.stuffContainer(containerId, stuffingDate, stockBalance, bags, stockWeightKg, status);
         await this.stockService.loadStockBalanceList(null, null);
       }
     });

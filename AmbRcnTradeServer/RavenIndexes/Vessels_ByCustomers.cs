@@ -9,21 +9,20 @@ namespace AmbRcnTradeServer.RavenIndexes
     {
         public Vessels_ByCustomers()
         {
-            Map = vessels => from c in vessels
-                let shippingCompany = LoadDocument<Customer>(c.ShippingCompanyId)
-                let forwardingAgent = LoadDocument<Customer>(c.ForwardingAgentId)
-                let port = LoadDocument<Port>(c.PortOfDestinationId)
-                let etaHistory = c.EtaHistory.FirstOrDefault(x => x.DateUpdated == c.EtaHistory.Max(v => v.DateUpdated))
+            Map = vessels => from vessel in vessels
+                let shippingCompany = LoadDocument<Customer>(vessel.ShippingCompanyId)
+                let forwardingAgent = LoadDocument<Customer>(vessel.ForwardingAgentId)
+                let port = LoadDocument<Port>(vessel.PortOfDestinationId)
                 select new VesselListItem()
                 {
-                    Id = c.Id,
-                    ContainersOnBoard = c.ContainersOnBoard,
+                    Id = vessel.Id,
+                    ContainersOnBoard = vessel.ContainersOnBoard,
                     ForwardingAgentName = forwardingAgent.Name,
                     ShippingCompanyName = shippingCompany.Name,
                     PortOfDestinationName = port.Name,
-                    Eta = etaHistory.Eta,
-                    CompanyId=c.CompanyId,
-                    VesselName = etaHistory.VesselName
+                    Eta = vessel.Eta,
+                    CompanyId=vessel.CompanyId,
+                    VesselName = vessel.VesselName
                 };
             
             Index(x=>x.Eta,FieldIndexing.Default);

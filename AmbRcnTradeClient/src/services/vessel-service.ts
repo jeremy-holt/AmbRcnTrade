@@ -51,10 +51,7 @@ export class VesselService extends FetchService {
 }
 
 export function vesselEditFunction(state: IState, vessel: IVessel) {
-  vessel.etaHistory.forEach(c => {
-    c.dateUpdated = fixAspNetCoreDate(c.dateUpdated, false);
-    c.eta = fixAspNetCoreDate(c.eta, false);
-  });
+  vessel.eta = fixAspNetCoreDate(vessel.eta, false);
 
   vessel.billLadings.forEach(c => {
     c.blDate = fixAspNetCoreDate(c.blDate, false);
