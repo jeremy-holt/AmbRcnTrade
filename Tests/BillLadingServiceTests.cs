@@ -24,7 +24,7 @@ namespace Tests
 
         private static async Task InitializeIndexes(IDocumentStore store)
         {
-            await new Containers_ByBillLading().ExecuteAsync(store);
+            await new Containers_Available_ForBillLading().ExecuteAsync(store);
             await new BillsOfLading_ByCustomers().ExecuteAsync(store);
         }
 
@@ -67,11 +67,11 @@ namespace Tests
                 .With(c => c.Status, ContainerStatus.Empty)
                 .CreateMany(10).ToList();
 
-            containers[0].Status = ContainerStatus.OnBoardVessel;
+            containers[0].Status = ContainerStatus.Gated;
             containers[1].Status = ContainerStatus.Gated;
             containers[2].Status = ContainerStatus.Gated;
             containers[3].Status = ContainerStatus.Stuffing;
-            containers[4].Status = ContainerStatus.OnBoardVessel;
+            containers[4].Status = ContainerStatus.Empty;
             containers[5].Status = ContainerStatus.OnBoardVessel;
 
             await containers.SaveList(session);
@@ -94,9 +94,11 @@ namespace Tests
 
             // Assert
             list.Should().NotContain(c => c.Id == containers[0].Id);
+            list.Should().NotContain(c => c.Id == containers[4].Id);
             list.Should().NotContain(c => c.Status == ContainerStatus.OnBoardVessel);
             list.Should().NotContain(c => c.Status == ContainerStatus.Cancelled);
-            list.Should().Contain(c => c.Status == ContainerStatus.Empty || c.Status == ContainerStatus.Gated);
+            list.Should().Contain(c => c.Status == ContainerStatus.Gated);
+            list.Should().NotContain(c => c.Status == ContainerStatus.Empty);
         }
 
         [Fact]

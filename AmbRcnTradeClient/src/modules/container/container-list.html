@@ -1,5 +1,6 @@
 <template>
   <require from="./container-status-formatter-valueconverter"></require>
+  <require from="./teu-formatter-valueconverter"></require>
 
   <toolbar type="menu" caption="Containers">
     <toolbar-item icon="fas fa-plus" click.call="addContainer()"></toolbar-item>
@@ -35,6 +36,7 @@
             <th class="text-right">Approx. weight</th>
             <th class="text-right">Weighbridge weight</th>
             <th class="text-right">Nett weight</th>
+            <th>TEU</th>
           </tr>
         </thead>
         <tbody>
@@ -52,6 +54,7 @@
             <td class="text-right">${item.stuffingWeightKg | numberFormat: "0,0"}</td>
             <td class="text-right">${item.weighbridgeWeightKg | numberFormat: "0,0"}</td>
             <td class="text-right">${item.nettWeightKg | numberFormat: "0,0"}</td>
+            <td>${item.teu | teuFormatter}</td>
           </tr>
         </tbody>
       </table>

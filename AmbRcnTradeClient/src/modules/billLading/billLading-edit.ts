@@ -1,3 +1,4 @@
+import { DeleteDialog } from "./../../dialogs/delete-dialog";
 import { encodeParams } from "./../../core/helpers";
 import { DialogService } from "aurelia-dialog";
 import { autoinject, observable } from "aurelia-framework";
@@ -35,8 +36,7 @@ export class BillLadingEdit {
 
   protected async activate(prms: { vesselId: string; billLadingId: string }) {
     await this.customerService.loadCustomersForAppUserList();
-    await this.billLadingService.getNotLoadedContainers();
-
+    
     if (prms && !prms.vesselId) {
       throw new Error("Cannot access the Bill of Lading without the vesselId");
     }
@@ -66,7 +66,21 @@ export class BillLadingEdit {
     return encodeParams(value);
   }
 
-  protected addContainersDialog() {
+  protected removeContainer(index: number){
+    this.dialogService.open({
+      viewModel:DeleteDialog,
+      model:{body:"This will remove the container from this Bill of Lading. It will not delete the container"}
+    }).whenClosed(async result=>{
+      if(!result.wasCancelled){
+        this.model.containerIds.splice(index,1);
+        this.model.containers.splice(index,1);
+        await this.save();
+      }
+    });
+  }
+
+  protected async addContainersDialog() {
+    await this.billLadingService.getNotLoadedContainers();
     this.dialogService.open({
       viewModel: AddContainersDialog,
       model: { unloadedContainers: this.state.vessel.notLoadedContainers }

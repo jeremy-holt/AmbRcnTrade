@@ -38,9 +38,11 @@
       </div>
 
       <div class="row">
-
         <div class="col-6">
           <date-input value.bind="model.dispatchDate" label="Dispatched from warehouse to port"></date-input>
+        </div>
+        <div class="col">
+          <select-input source.bind="teuList" value.bind="model.teu" label="TEU" use-model-id="true"></select-input>
         </div>
       </div>
 

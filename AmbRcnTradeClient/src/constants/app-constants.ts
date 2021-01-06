@@ -16,6 +16,20 @@ export enum PackingUnit {
   Mt = "mt"
 }
 
+export enum Teu {
+  Teu20 = "teu20",
+  Teu40 = "teu40"
+}
+
+export interface ITeu {
+  id: Teu, name: string
+}
+
+export const TEU_LIST: ITeu[] = [
+  { id: Teu.Teu40, name: "TC 40' dry" },
+  { id: Teu.Teu20, name: "TC 20' dry" }
+];
+
 export enum Approval {
   Approved = "approved",
   Rejected = "rejected",

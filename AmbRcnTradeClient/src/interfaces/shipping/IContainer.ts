@@ -1,5 +1,5 @@
 import { IIncomingStock } from "./../stockManagement/IIncomingStock";
-import { ContainerStatus } from "constants/app-constants";
+import { ContainerStatus, Teu } from "constants/app-constants";
 import { IEntityCompany } from "interfaces/IEntity";
 export interface IContainer extends IEntityCompany {
   containerNumber: string;
@@ -17,6 +17,7 @@ export interface IContainer extends IEntityCompany {
   nettWeightKg: number;
   stuffingDate: string | null;
   vgmTicketNumber: string;
+  teu: Teu;
 
   selected?:boolean;
 }

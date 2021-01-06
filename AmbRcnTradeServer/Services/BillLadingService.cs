@@ -48,7 +48,7 @@ namespace AmbRcnTradeServer.Services
         public async Task<ServerResponse<BillLadingDto>> Save(BillLadingDto billLadingDto)
         {
             var billLading = billLadingDto.Id.IsNullOrEmpty()
-                ? new BillLading(){VesselId = billLadingDto.VesselId,CompanyId = billLadingDto.CompanyId}
+                ? new BillLading {VesselId = billLadingDto.VesselId, CompanyId = billLadingDto.CompanyId}
                 : await _session.Include<BillLading>(c => c.VesselId).LoadAsync<BillLading>(billLadingDto.Id);
 
             var vessel = await _session.LoadAsync<Vessel>(billLading.VesselId);
@@ -59,7 +59,7 @@ namespace AmbRcnTradeServer.Services
             await _session.StoreAsync(billLading);
             billLadingDto.Id = billLading.Id;
 
-            if (!vessel.BillLadingIds.Contains(billLading.Id))
+            if (!vessel.BillLadingIds.Contains(billLading.Id) && billLading.Id.IsNotNullOrEmpty())
                 vessel.BillLadingIds.Add(billLading.Id);
 
             return new ServerResponse<BillLadingDto>(billLadingDto, "Saved");
@@ -83,11 +83,12 @@ namespace AmbRcnTradeServer.Services
 
         public async Task<List<Container>> GetNotLoadedContainers(string companyId)
         {
-            var query = await _session.Query<Containers_ByBillLading.Result, Containers_ByBillLading>()
-                .Where(c => c.CompanyId == companyId &&
-                            string.IsNullOrEmpty(c.VesselId) &&
-                            !c.Status.In(ContainerStatus.Cancelled, ContainerStatus.OnBoardVessel))
-                .ProjectInto<Container>()
+            var allowed = new[] {ContainerStatus.OnWayToPort, ContainerStatus.Gated, ContainerStatus.StuffingComplete};
+
+            var query = await _session.Query<Container, Containers_Available_ForBillLading>()
+                .Where(c => c.CompanyId == companyId && c.Status.In(allowed))
+                // .ProjectInto<Container>()
+
                 .ToListAsync();
 
             return query;

@@ -1,7 +1,7 @@
 import { UnstuffContainerDialog } from "./unstuff-container-dialog";
 import { DialogService } from "aurelia-dialog";
 import { Router } from "aurelia-router";
-import { CONTAINER_STATUS_LIST, IContainerStatus } from "./../../constants/app-constants";
+import { CONTAINER_STATUS_LIST, IContainerStatus, TEU_LIST } from "./../../constants/app-constants";
 import { IParamsId } from "interfaces/IParamsId";
 import { ContainerService } from "./../../services/container-service";
 import { autoinject, observable } from "aurelia-framework";
@@ -16,6 +16,7 @@ export class ContainerEdit {
   @observable protected state: IState = undefined!;
   protected model: IContainer = undefined!;
   protected containerStatusList = CONTAINER_STATUS_LIST;
+  protected teuList=TEU_LIST;
   @observable protected selectedContainerStatus: IContainerStatus = undefined;
 
   constructor(
@@ -34,6 +35,9 @@ export class ContainerEdit {
 
   protected stateChanged(state: IState) {
     this.model = _.cloneDeep(state.container.current);
+
+    this.teuList=_.cloneDeep(TEU_LIST);
+    this.teuList.unshift({id: null,name:"[Select]"});
   }
 
   protected bind() {

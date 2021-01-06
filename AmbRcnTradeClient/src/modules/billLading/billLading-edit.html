@@ -65,6 +65,7 @@
           <ul class="list-group small">
             <li class="list-group-item font-weight-bold">
               <div class="row">
+                <div class="col">Status</div>
                 <div class="col">Container number</div>
                 <div class="col">Seal number</div>
                 <div class="col">Bags</div>
@@ -72,11 +73,15 @@
                 <div class="col">Weight kg (nett)</div>
                 <div class="col">Booking number</div>
                 <div class="col">VGM weight ticket</div>
-                <div class="col">Status</div>
               </div>
             </li>
             <li class="list-group-item" repeat.for="item of model.containers">
               <div class="row">
+                <div class="col text-nowrap">
+                  <a href="#" click.delegate="removeContainer($index)">
+                    <i class="fas fa-trash text-danger"></i>
+                  </a>
+                  ${item.status | containerStatusFormatter}</div>
                 <div class="col">
                   <a route-href="containerEdit; params.bind:{id: encode(item.id)}"
                     class="with-decoration">${item.containerNumber}</a>
@@ -87,7 +92,6 @@
                 <div class="col">${item.nettWeightKg | numberFormat: "0,0"} </div>
                 <div class="col">${item.bookingNumber} </div>
                 <div class="col">${item.vgmTicketNumber}</div>
-                <div class="col">${item.status | containerStatusFormatter}</div>
               </div>
             </li>
           </ul>
