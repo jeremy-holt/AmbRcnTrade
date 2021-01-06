@@ -43,6 +43,19 @@ export class CustomerService extends FetchService {
       super.currentCompanyIdQuery()
     ], "loadCustomerListForAppUser", customerAppUserListAction);
   }
+
+  public static Address(customer: ICustomer){
+    const lines:string[]=[];
+    lines.push(customer.name);
+    lines.push(customer.address?.street1);
+    lines.push(customer.address?.street2);
+    lines.push(customer.address?.city);
+    lines.push(customer.address?.state);
+    lines.push(customer.address?.postCode);
+    lines.push(customer.address?.country);
+
+    return lines.filter(c=>c).join("<br>");
+  }
 }
 
 export function customerEditAction(state: IState, customer: ICustomer) {

@@ -80,6 +80,7 @@ export class App {
         { route: "vessel/list", name: "vesselList", title: "Vessels", nav: true, moduleId: "modules/vessel/vessel-list", roles: ["admin", "user", "warehouseMan"] },
         { route: "vessel/edit/:id?", name: "vesselEdit", title: "Vessel", moduleId: "modules/vessel/vessel-edit", roles: ["admin", "user", "warehouseMan"] },
         { route: "vessel/billLading/edit/:vesselId/:billLadingId?", name: "billLadingEdit", title: "Bill of Lading", moduleId: "modules/billLading/billLading-edit", roles: ["admin", "user", "warehouseMan"] },
+        { route: "vessel/billLading/packingList/:vesselId/:billLadingId", name: "packingList", title: "Packing list", moduleId: "modules/packing-list/packing-list", roles: ["admin", "user", "warehouseMan"] },
 
         // Dictionary items       
         { route: "dictionary/customer/edit", name: "customerEdit", title: "Customers", nav: true, moduleId: "modules/customer/customer-edit", roles: ["admin", "user"] },

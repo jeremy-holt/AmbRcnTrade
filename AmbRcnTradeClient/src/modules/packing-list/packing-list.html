@@ -1,0 +1,69 @@
+<template>
+  <require from="../container/container-status-formatter-valueconverter"></require>
+  <require from="../container/teu-formatter-valueconverter"></require>
+
+  <h1 class="my-5">Packing List</h1>
+
+  <div class="row mb-5">
+    <div class="col">
+      <labelled-text value.bind="vessel.vesselName" label="Vessel"></labelled-text>
+    </div>
+    <div class="col">
+      <labelled-text label="B/L date" value.bind="model.blDate | dateFormat:'DD/MM/YYYY'"></labelled-text>
+    </div>
+    <div class="col">
+      <labelled-text label="B/L number" value.bind="model.blNumber"></labelled-text>
+    </div>
+  </div>
+
+  <div class="row mb-5">
+    <div class="col">
+      <labelled-text label="Forwarding agent" value.bind="forwardingAgentAddress"></labelled-text>
+    </div>
+    <div class="col">
+      <labelled-text label="Booking number" value.bind="bookingNumber"></labelled-text>
+    </div>
+    <div class="col">
+      <labelled-text label="Port of discharge" value.bind="portOfDischarge"></labelled-text>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col">
+      <labelled-text value.bind="shipperAddress" label="Shipper" ></labelled-text>
+    </div>
+    <div class="col">
+      <labelled-text label="Consignee" value.bind="consigneeAddress"></labelled-text>
+    </div>
+    <div class="col">
+      <labelled-text label="Notify Party" value.bind="notifyParty1Address"></labelled-text>
+    </div>
+  </div>
+
+  <table class="table table-bordered mt-5">
+    <thead>
+      <tr>
+        <th>Container number</th>
+        <th>Seal number</th>
+        <th>Product</th>
+        <th>Bags</th>
+        <th>Gross weight</th>
+        <th>Nett weight</th>
+        <th>VGM weight ticket</th>
+        <th>TEU</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr repeat.for="item of model.containers">
+        <td>${item.containerNumber}</td>
+        <td>${item.sealNumber}</td>
+        <td>Raw cashew nuts in shell</td>
+        <td>${item.bags | numberFormat: "0,0"}</td>
+        <td>${item.weighbridgeWeightKg | numberFormat:"0,0"}</td>
+        <td>${item.nettWeightKg | numberFormat:"0,0"}</td>
+        <td>${item.vgmTicketNumber}</td>
+        <td>${item.teu | teuFormatter}</td>
+      </tr>
+    </tbody>
+  </table>
+</template>

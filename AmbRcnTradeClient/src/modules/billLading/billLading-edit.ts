@@ -19,6 +19,7 @@ export class BillLadingEdit {
   @observable protected state: IState = undefined!;
   protected model: IBillLading = undefined;
   protected customersList: ICustomerListItem[] = [];
+  protected vesselId = "";
 
   constructor(
     private billLadingService: BillLadingService,
@@ -36,7 +37,7 @@ export class BillLadingEdit {
 
   protected async activate(prms: { vesselId: string; billLadingId: string }) {
     await this.customerService.loadCustomersForAppUserList();
-    
+
     if (prms && !prms.vesselId) {
       throw new Error("Cannot access the Bill of Lading without the vesselId");
     }
@@ -46,6 +47,8 @@ export class BillLadingEdit {
     } else {
       await this.billLadingService.createBillLading(prms.vesselId);
     }
+
+    this.vesselId = prms?.vesselId;
   }
 
   protected get canSave() {
@@ -66,14 +69,14 @@ export class BillLadingEdit {
     return encodeParams(value);
   }
 
-  protected removeContainer(index: number){
+  protected removeContainer(index: number) {
     this.dialogService.open({
-      viewModel:DeleteDialog,
-      model:{body:"This will remove the container from this Bill of Lading. It will not delete the container"}
-    }).whenClosed(async result=>{
-      if(!result.wasCancelled){
-        this.model.containerIds.splice(index,1);
-        this.model.containers.splice(index,1);
+      viewModel: DeleteDialog,
+      model: { body: "This will remove the container from this Bill of Lading. It will not delete the container" }
+    }).whenClosed(async result => {
+      if (!result.wasCancelled) {
+        this.model.containerIds.splice(index, 1);
+        this.model.containers.splice(index, 1);
         await this.save();
       }
     });

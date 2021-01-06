@@ -14,6 +14,12 @@
     <div class="card-body">
 
       <div class="row">
+        <div class="col-3">
+          <a class="btn btn-primary" route-href="packingList; params.bind:{vesselId: encode(vesselId), billLadingId: encode(model.id)}" target="_blank">Print packing list</a>
+        </div>
+      </div>
+
+      <div class="row">
         <div class="col">
           <select-input source.bind="customersList | customerFilter: 'billLading'" value.bind="model.shipperId"
             label="Shipper" use-model-id="true"></select-input>
