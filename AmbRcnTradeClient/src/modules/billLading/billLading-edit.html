@@ -3,6 +3,8 @@
   <require from="../container/container-status-formatter-valueconverter"></require>
 
   <toolbar type="menu" caption="${vesselName} - Bill of Lading" disabled-save.bind="!canSave" save.call="save()">
+    <toolbar-item icon="fa fa-file-upload" label="Upload" click.call="uploadDocuments()"></toolbar-item>
+    <toolbar-item icon="fa fa-file-download" label="Download" click.call="downloadDocuments()"></toolbar-item>
   </toolbar>
 
   <div class="card">

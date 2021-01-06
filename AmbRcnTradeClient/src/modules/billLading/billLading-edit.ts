@@ -12,6 +12,8 @@ import { IContainer } from "./../../interfaces/shipping/IContainer";
 import { BillLadingService } from "./../../services/bill-lading-service";
 import { CustomerService } from "./../../services/customer-service";
 import { AddContainersDialog } from "./add-containers-dialog";
+import { DocumentsDownloadDialog } from "modules/documents-download-dialog/documents-download-dialog";
+import { BillLadingUploadDialog } from "modules/billLadingUploadDialog/billLading-upload-dialog";
 
 @autoinject
 @connectTo()
@@ -98,5 +100,21 @@ export class BillLadingEdit {
           await this.save();
         }
       });
+  }
+
+  protected async uploadDocuments() {
+    await this.dialogService.open({
+      viewModel: BillLadingUploadDialog,
+      model: { billLadingId: this.model.id }
+    })
+      .whenClosed(async () => await this.save()
+      );
+  }
+
+  protected async downloadDocuments() {
+    await this.dialogService.open({
+      viewModel: DocumentsDownloadDialog,
+      model: { billLadingId: this.model.id }
+    }).whenClosed();
   }
 }

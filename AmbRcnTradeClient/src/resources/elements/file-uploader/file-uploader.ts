@@ -1,17 +1,22 @@
-import { ImageType } from "./../../../constants/app-constants";
+import { DialogController } from "aurelia-dialog";
 import { autoinject, bindable, observable } from "aurelia-framework";
 import * as blobUtil from "blob-util";
 import { IFileImage } from "interfaces/IFileImage";
+import { ImageType } from "./../../../constants/app-constants";
 
 @autoinject
 export class FileUploader {
   @observable public selectedFiles: FileList = undefined!;
   @bindable public fileNameMapper: (fileName: string, prefix: string) => void = undefined!;
+
   public previewImages: IFileImage[] = [];
   protected hasUploaded = false;
   private selectAllFiles = true;
 
-  constructor(private el: Element) { }
+  constructor(
+    private el: Element,
+    protected controller: DialogController
+  ) { }
 
   protected async selectedFilesChanged(files: FileList) {
     this.previewImages = [];
@@ -53,7 +58,7 @@ export class FileUploader {
     return this.previewImages.length > 0;
   }
 
-  protected upload() {
+  public upload() {
     const formData = new FormData();
     this.previewImages.forEach(c => {
       if (c.selected) {

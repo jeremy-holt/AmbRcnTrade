@@ -1,0 +1,24 @@
+<template>
+  <file-uploader upload.delegate="upload($event)">
+    <div slot="slot-header">
+      <h4>Upload documents</h4>
+    </div>
+
+    <!-- <div slot="slot-body">
+      <div class="bg-light p-2 mb-2 small">
+
+        <strong>${model.header.contractNumber}</strong> Customer ref: <strong>${model.header.customerRef}</strong>
+        <br>
+        Customer: <strong> ${model.header.customerName} </strong>
+        Factory: <strong>${model.header.factoryName}</strong><br>
+        Inspection: <strong>${model.header.inspector}</strong> on <strong>${model.header.inspectionDate |
+          dateFormat:"DD/MM/YYYY"}</strong><br>
+        Grade: <strong>${model.header.gradeName}</strong><br>
+        Consignee: <strong>${model.header.consignee}</strong><br>
+        Vessel: <strong>${model.header.vessel} eta ${model.header.vesselEta | dateFormat:"DD/MM/YYYY"}
+          ${model.header.containerNumber}</strong><br>
+      </div>
+    </div> -->
+  </file-uploader>
+
+</template>

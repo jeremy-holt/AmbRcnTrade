@@ -142,5 +142,10 @@ namespace Tests.Base
         {
             return new BillLadingService(session, Mapper);
         }
+
+        protected IPaymentService GetPaymentService(IAsyncDocumentSession session)
+        {
+            return new PaymentService(session);
+        }
     }
 }

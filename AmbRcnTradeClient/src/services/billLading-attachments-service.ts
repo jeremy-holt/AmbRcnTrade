@@ -12,22 +12,22 @@ import { noOpAction } from "./no-op-action";
 
 
 @autoinject
-export class AttachmentsService extends FetchService {
+export class BillLadingAttachmentsService extends FetchService {
   constructor(
     http: HttpClient,
     store: Store<IState>,
     router: Router
   ) {
-    super("api/attachments", http, store, router);
+    super("api/billLadingAttachments", http, store, router);
     store.registerAction("attachmentRoutesAction", attachmentRoutesAction);
   }
 
   public async uploadImages(formData: FormData, headers: Headers) {
-    return await super.postImage(formData, headers, "uploadImages");
+    return await super.postImage(formData, headers, "uploadDocuments");
   }
 
-  public async getAttachmentRoutes(contractId: string) {
-    return await super.getMany([new QueryId("contractId", contractId)], "getAttachmentRoutes", attachmentRoutesAction);
+  public async getDocumentRoutes(contractId: string) {
+    return await super.getMany([new QueryId("contractId", contractId)], "getDocumentRoutes", attachmentRoutesAction);
   }
 
   public async getAttachment(contractId: string, fileName: string) {

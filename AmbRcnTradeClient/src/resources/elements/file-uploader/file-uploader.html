@@ -26,7 +26,8 @@
       margin-left: 5px;
     }
 
-    .select-button button, .select-button button:focus {
+    .select-button button,
+    .select-button button:focus {
       outline: none;
     }
 
@@ -48,41 +49,58 @@
   </style>
 
 
-  <div class="custom-file">
-    <input type="file" files.bind="selectedFiles" class="custom-file-input" id="customFile"
-      accept="image/png, image/jpeg, application/pdf" multiple="true">
-    <label class="custom-file-label" for="customFile">Choose file</label>
-  </div>
+  <ux-dialog class="w-60" style="min-width:800px;">
+    <ux-dialog-header>
+      <div>
+        <slot name="slot-header"></slot>
+      </div>
+    </ux-dialog-header>
 
-  <div class="my-2">
-    <button disabled.bind="!canUpload" type="button" class="btn btn-primary" click.delegate="upload()"><i
-        class="fas fa-fw fa-upload"></i>Upload</button>
-    <button if.bind="previewImages.length > 0" type="button" class="btn btn-success"
-      click.delegate="selectDeselect()">${selectAllFiles ? "Deselect" : "Select"} all files</button>
-  </div>
+    <ux-dialog-body>
+      <div>
+        <slot name="slot-body"></slot>
+      </div>
 
-  <div class="img-row">
-    <div class="img-column" repeat.for="item of previewImages">
-      <div class="position-relative" style="min-height:300px;">
-        <div class="select-button">
-          <a href="javascript:(0)" click.delegate="item.selected = !item.selected">
-            <i class="${item.selected ? 'fas fa-2x fa-check-circle text-success' : 'far fa-2x fa-circle'}"></i>
-          </a>
+      <div>
+        <div class="custom-file">
+          <input type="file" files.bind="selectedFiles" class="custom-file-input" id="customFile"
+            accept=".png, .jpg, .jpeg, .gif, application/pdf" multiple="true">
+          <label class="custom-file-label" for="customFile">Choose file</label>
         </div>
 
-        <div class="">
-          <img if.bind="item.imageType == 'image'" src.bind="item.objectUrl" class="img-fluid border">
-          <object if.bind="item.imageType == 'pdf'" data="${item.objectUrl}" type="application/pdf" class="border" height="300px"></object>
-          <div if.bind="item.imageType == 'other'">Cannot display image</div>
-  
-          <div class="small p-1">
-            ${item.name} (${item.size/1024 | numberFormat: "0,0.0"} kb)
-          </div>
-          <div>
-            <text-input value.bind="item.caption" class="w-100" placeholder="Caption"></text-input>
+        <div class="img-row">
+          <div class="img-column" repeat.for="item of previewImages">
+            <div class="position-relative" style="min-height:300px;">
+              <div class="select-button">
+                <a href="javascript:(0)" click.delegate="item.selected = !item.selected">
+                  <i class="${item.selected ? 'fas fa-2x fa-check-circle text-success' : 'far fa-2x fa-circle'}"></i>
+                </a>
+              </div>
+
+              <div class="">
+                <img if.bind="item.imageType == 'image'" src.bind="item.objectUrl" class="img-fluid border">
+                <object if.bind="item.imageType == 'pdf'" data="${item.objectUrl}" type="application/pdf" class="border"
+                  height="300px"></object>
+                <div if.bind="item.imageType == 'other'">Cannot display image</div>
+
+                <div class="small p-1">
+                  ${item.name} (${item.size/1024 | numberFormat: "0,0.0"} kb)
+                </div>
+                <div>
+                  <text-input value.bind="item.caption" class="w-100" placeholder="Caption"></text-input>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-  </div>
+    </ux-dialog-body>
+
+    <ux-dialog-footer>
+      <button disabled.bind="!canUpload" type="button" class="btn btn-primary" click.delegate="upload()"><i
+          class="fas fa-fw fa-upload"></i>Upload from File Loader</button>
+
+      <button type="button" class="btn btn-secondary" click.delegate="controller.cancel()">Cancel</button>
+    </ux-dialog-footer>
+  </ux-dialog>
 </template>

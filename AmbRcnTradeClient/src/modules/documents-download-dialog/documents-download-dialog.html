@@ -1,0 +1,74 @@
+<template>
+  <style>
+    .img-row {
+      display: flex;
+      flex-wrap: wrap;
+      padding: 0 4px;
+    }
+
+    /* Create four equal columns that sits next to each other */
+    .img-column {
+      flex: 33%;
+      max-width: 33%;
+      padding: 0 14px;
+    }
+
+    .img-column img {
+      margin-top: 8px;
+      vertical-align: middle;
+      width: 100%;
+    }
+
+    /* Responsive layout - makes a two column-layout instead of four columns */
+    @media screen and (max-width: 800px) {
+      .img-column {
+        flex: 50%;
+        max-width: 50%;
+      }
+    }
+
+    /* Responsive layout - makes the two columns stack on top of each other instead of next to each other */
+    @media screen and (max-width: 600px) {
+      .img-column {
+        flex: 100%;
+        max-width: 100%;
+      }
+    }
+  </style>
+  <ux-dialog class="w-60" style="min-width: 800px;">
+    <ux-dialog-header>
+      <h4>Documents for ${model.container.customerRef}</h4>
+    </ux-dialog-header>
+
+    <ux-dialog-body>
+      <div if.bind="state.attachmentRoutes.length > 0" class="img-row">
+        <div class="img-column" repeat.for="attachment of state.attachmentRoutes">
+          <a route-href="billLadingDocumentViewer; params.bind:{id:$index}" click.delegate="closeViewer() & debounce:200" class="with-decoration" target="_blank">
+            <img if.bind="attachment.imageType=='image'" src.bind=" attachment.route" class="img-fluid border">
+            <object if.bind="attachment.imageType == 'pdf'" data.bind="attachment.route" type="application/pdf" 
+              class="img-fluid border"></object>
+
+            <div if.bind="attachment.imageType == 'other'">Cannot display this document</div>
+
+            <p class="d-flex justify-content-between mt-2"><span class="small">${attachment.displayName}
+                <br>(${attachment.size/1024 | numberFormat:"0,0.0"} kb)</span>
+              <a href="#" click.delegate="deleteDocument(attachment.name)" class="text-danger"><i
+                  class="fas fa-trash"></i></a>
+            </p>
+          </a>
+        </div>
+      </div>
+      <div else class="row mx-2">
+        <div class="col">
+          <div class="alert alert-danger">
+            There are no documents for this Bill of Lading
+          </div>
+        </div>
+      </div>
+    </ux-dialog-body>
+
+    <ux-dialog-footer>
+      <button type="button" class="btn btn-primary" click.delegate="controller.cancel()">Close</button>
+    </ux-dialog-footer>
+  </ux-dialog>
+</template>

@@ -1,0 +1,6 @@
+<template>
+  <toolbar type="back" caption="${displayName}"></toolbar>
+  
+  <object if.bind="imageType == 'pdf'" type="application/pdf" data.bind="route" width="100%" height="100%"></object>
+  <img if.bind="imageType == 'image'" src.bind="route" width="100%" height="100%">
+</template>
