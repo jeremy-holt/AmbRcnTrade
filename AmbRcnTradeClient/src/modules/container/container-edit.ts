@@ -1,3 +1,4 @@
+import { DeleteDialog } from "./../../dialogs/delete-dialog";
 import { UnstuffContainerDialog } from "./unstuff-container-dialog";
 import { DialogService } from "aurelia-dialog";
 import { Router } from "aurelia-router";
@@ -16,7 +17,7 @@ export class ContainerEdit {
   @observable protected state: IState = undefined!;
   protected model: IContainer = undefined!;
   protected containerStatusList = CONTAINER_STATUS_LIST;
-  protected teuList=TEU_LIST;
+  protected teuList = TEU_LIST;
   @observable protected selectedContainerStatus: IContainerStatus = undefined;
 
   constructor(
@@ -36,8 +37,8 @@ export class ContainerEdit {
   protected stateChanged(state: IState) {
     this.model = _.cloneDeep(state.container.current);
 
-    this.teuList=_.cloneDeep(TEU_LIST);
-    this.teuList.unshift({id: null,name:"[Select]"});
+    this.teuList = _.cloneDeep(TEU_LIST);
+    this.teuList.unshift({ id: null, name: "[Select]" });
   }
 
   protected bind() {
@@ -73,5 +74,16 @@ export class ContainerEdit {
     return this.containerService.canUnstuffContainer(this.model);
   }
 
+  protected get canDeleteContainer() {
+    return this.model?.incomingStocks.length === 0;
+  }
 
+  protected deleteContainer() {
+    this.dialogService.open({ viewModel: DeleteDialog }).whenClosed(async result => {
+      if (!result.wasCancelled) {
+        await this.containerService.deleteContainer(this.model.id);
+        this.router.navigateToRoute("containerList");
+      }
+    });
+  }
 }

@@ -15,7 +15,8 @@
           <h4>${model.bags | numberFormat: "0,0"} bags</h4>
         </div>
         <div class="col">
-          <h4 class="${model.weighbridgeWeightKg == 0 ? 'text-danger' : ''}">${model.weighbridgeWeightKg | numberFormat: "0,0"} kg final weight</h4>
+          <h4 class="${model.weighbridgeWeightKg == 0 ? 'text-danger' : ''}">${model.weighbridgeWeightKg | numberFormat:
+            "0,0"} kg final weight</h4>
         </div>
       </div>
       <div class="row">
@@ -30,7 +31,7 @@
 
       <div class="row">
         <div class="col">
-          <text-input value.bind="model.containerNumber" label="Container number"></text-input>
+          <text-input value.bind="model.containerNumber" disabled.bind="model.id" label="Container number"></text-input>
         </div>
         <div class="col">
           <text-input value.bind="model.sealNumber" label="Seal number"></text-input>
@@ -61,8 +62,9 @@
           <ul class="list-group">
             <li class="list-group-item">
               <div repeat.for="item of model.incomingStocks" class="row">
-                <div class="col">${item.bags | numberFormat:"0,0"} bags 
-                  <span class="small font-italic">(approx. ${item.bags * 80 | numberFormat: "0,0"} kg)</span></div>
+                <div class="col">${item.bags | numberFormat:"0,0"} bags
+                  <span class="small font-italic">(approx. ${item.bags * 80 | numberFormat: "0,0"} kg)</span>
+                </div>
                 <div class="col">
                   <a class="with-decoration" route-href="stockBalanceList; params.bind:{lotNo:item.lotNo}">Lot no:
                     ${item.lotNo}</a>
@@ -76,14 +78,21 @@
 
       <div class="row mt-2">
         <div class="col">
-          <button type="button" class="btn btn-danger" disabled.bind="!canUnstuffContainer"
-            click.delegate="unstuffContainer()">Unstuff container</button>
-          <div class="mt-2 text-warning" if.bind="!canUnstuffContainer">
-            Cannot unstuff container that is no longer in the warehouse or has no contents
+          <div class="d-flex justify-content-between">
+            <button type="button" class="btn btn-danger" disabled.bind="!canUnstuffContainer"
+              click.delegate="unstuffContainer()">Unstuff container</button>
+            
+            <button type="button" class="btn btn-danger" disabled.bind="!canDeleteContainer"
+              click.delegate="deleteContainer()">Delete container</button>
           </div>
         </div>
       </div>
+    </div>
 
+    <div class="card-footer card-footer-info">
+      <div class="mt-2" if.bind="!canUnstuffContainer">
+        Cannot unstuff a container that is no longer in the warehouse or has no contents
+      </div>
     </div>
   </div>
 </template>

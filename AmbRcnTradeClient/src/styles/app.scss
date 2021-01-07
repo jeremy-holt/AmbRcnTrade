@@ -422,6 +422,12 @@ currencies-list select.custom-select {
   }
 }
 
+.card-footer.card-footer-info {
+    background-color: $info;
+    color: white;
+    min-height: 72px;
+}
+
 .form-label {
   color: rgb(68, 191, 231);
   font-size: small;

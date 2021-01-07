@@ -9,13 +9,13 @@
   <div class="card">
     <div class="card-header">
       <div class="d-flex justify-content-between">
-        <h4>Inspection</h4>
+        <h4 class="card-title">Inspection</h4>
         <div if.bind="showCanAddInspectionToStock">
           <button type="button" class="btn-primary" disabled.bind="!canAddInspectionToStock"
             click.delegate="openAddToStockDialog()">Add this inspection to stocks</button>
-          <div if.bind="!canAddInspectionToStock" class="text-warning">All the bags on this inspection have already been
+          <!-- <div if.bind="!canAddInspectionToStock" class="text-warning">All the bags on this inspection have already been
             added to stock</div>
-          <div if.bind="!wasInspectionApproved" class="text-warning">You cannot add goods that were not approved by the inspector to the stock</div>
+          <div if.bind="!wasInspectionApproved" class="text-warning">You cannot add goods that were not approved by the inspector to the stock</div> -->
         </div>
       </div>
     </div>
@@ -50,8 +50,8 @@
 
       <div class="row mb-2">
         <div class="col-sm-12 col-md-6">
-          <select-input source.bind="suppliers | customerFilter:'supplier' " value.bind="model.supplierId" use-model-id="true"
-            label="Supplier" use-model-id="true"></select-input>
+          <select-input source.bind="suppliers | customerFilter:'supplier' " value.bind="model.supplierId"
+            use-model-id="true" label="Supplier" use-model-id="true"></select-input>
         </div>
         <div class="col-sm-12 col-md-6">
           <text-input value.bind="model.origin" label="Origin of goods"></text-input>
@@ -120,6 +120,16 @@
 
       <div class="text-warning" if.bind="!canSaveAnalysis">
         You must fill in all the fields for all of the analyses
+      </div>
+    </div>
+
+    <div class="card-footer card-footer-info">
+      <div if.bind="!canAddInspectionToStock">All the bags on this inspection have already been
+        added to stock
+      </div>
+
+      <div if.bind="!wasInspectionApproved">You cannot add goods that were not approved by the
+        inspector to the stock
       </div>
     </div>
   </div>

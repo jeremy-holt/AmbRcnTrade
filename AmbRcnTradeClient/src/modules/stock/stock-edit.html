@@ -65,20 +65,25 @@
       <div else>
         <div class="alert alert-info mt-1">None of this stock has been stuffed into a container yet</div>
       </div>
+
+      <analysis-result model.bind="model.analysisResult" inspection-id.bind="model.inspectionId" disabled="true"
+        caption="Go to the inspection"></analysis-result>
+
+      <div>
+        <button type="button" disabled.bind="!canDelete" class="btn btn-danger" click.delegate="deleteStock()">Delete
+          this
+          stock</button>
+      </div>
+
     </div>
-
-    <analysis-result model.bind="model.analysisResult" inspection-id.bind="model.inspectionId" disabled="true"
-      caption="Go to the inspection"></analysis-result>
-
+    <div class="card-footer card-footer-info">
+      <div if.bind="!canDelete">This stock cannot be deleted because it has already been stuffed
+        into a container</div>
+    </div>
   </div>
 
 
 
-  <div>
-    <button type="button" disabled.bind="!canDelete" class="btn btn-danger" click.delegate="deleteStock()">Delete this
-      stock</button>
-    <div if.bind="!canDelete" class="text-warning">This stock cannot be deleted because it has already been stuffed into
-      a container</div>
-  </div>
+
 
 </template>

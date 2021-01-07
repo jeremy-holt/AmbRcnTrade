@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AmberwoodCore.Extensions;
+using AmberwoodCore.Responses;
 using AmbRcnTradeServer.Constants;
 using AmbRcnTradeServer.Models.ContainerModels;
 using AmbRcnTradeServer.Models.StockModels;
+using AmbRcnTradeServer.Models.VesselModels;
 using AutoFixture;
 using FluentAssertions;
 using Raven.Client.Documents;
@@ -224,6 +226,95 @@ namespace Tests
 
             // Assert
             await act.Should().ThrowAsync<InvalidOperationException>().WithMessage("Cannot remove stock from a container that is no longer in the warehouse");
+        }
+
+        [Fact]
+        public async Task DeleteContainer_ShouldDeleteAAContainer()
+        {
+            // Arrange
+            using var store = GetDocumentStore();
+            using var session = store.OpenAsyncSession();
+            var sut = GetContainerService(session);
+            var fixture = new Fixture();
+
+            var containers = fixture.DefaultEntity<Container>()
+                .Without(c=>c.IncomingStocks)
+                .CreateMany().ToList();
+            await containers.SaveList(session);
+            
+            var billLading = fixture.DefaultEntity<BillLading>()
+                .With(c => c.ContainerIds, containers.GetPropertyFromList(c=>c.Id))
+                .Create();
+            await session.StoreAsync(billLading);
+
+            await session.SaveChangesAsync();
+            WaitForIndexing(store);
+            
+            // Act
+            ServerResponse response = await sut.DeleteContainer(containers[1].Id);
+            
+            // Assert
+            var actualContainer = await session.LoadAsync<Container>(containers[1].Id);
+            actualContainer.Should().BeNull();
+
+            var actualBillLading = await session.LoadAsync<BillLading>(billLading.Id);
+            actualBillLading.ContainerIds.Should().NotContain(containers[1].Id);
+        }
+
+        [Fact]
+        public async Task DeleteContainer_ShouldDeleteANonBoardedContainer()
+        {
+            // Arrange
+            using var store = GetDocumentStore();
+            using var session = store.OpenAsyncSession();
+            var sut = GetContainerService(session);
+            var fixture = new Fixture();
+            
+            var containers = fixture.DefaultEntity<Container>()
+                .Without(c=>c.IncomingStocks)
+                .CreateMany().ToList();
+            await containers.SaveList(session);
+            
+            var billLading = fixture.DefaultEntity<BillLading>()
+                .With(c => c.ContainerIds, containers.GetPropertyFromList(c=>c.Id))
+                .Create();
+            billLading.ContainerIds.RemoveAll(c => c == containers[0].Id);
+            await session.StoreAsync(billLading);
+            
+            // Act
+            var response = await sut.DeleteContainer(containers[0].Id);
+            
+            // Assert
+            var actual = await session.LoadAsync<Container>(containers[0].Id);
+            actual.Should().BeNull();
+        }
+
+        [Fact]
+        public async Task DeleteContainer_ShouldThrowExceptionIfHasAlreadyBeenStuffed()
+        {
+            // Arrange
+            using var store = GetDocumentStore();
+            using var session = store.OpenAsyncSession();
+            var sut = GetContainerService(session);
+            var fixture = new Fixture();
+            
+            var containers = fixture.DefaultEntity<Container>()
+                .CreateMany().ToList();
+            await containers.SaveList(session);
+            
+            var billLading = fixture.DefaultEntity<BillLading>()
+                .With(c => c.ContainerIds, containers.GetPropertyFromList(c=>c.Id))
+                .Create();
+            await session.StoreAsync(billLading);
+
+            await session.SaveChangesAsync();
+            WaitForIndexing(store);
+            
+            // Act
+            Func<Task> action = async ()=> await sut.DeleteContainer(containers[1].Id);
+            
+            // Assert
+            await action.Should().ThrowAsync<InvalidOperationException>().WithMessage("Cannot delete a container that has already been stuffed");
         }
     }
 }

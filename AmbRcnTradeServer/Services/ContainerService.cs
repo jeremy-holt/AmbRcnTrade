@@ -7,6 +7,7 @@ using AmberwoodCore.Responses;
 using AmbRcnTradeServer.Constants;
 using AmbRcnTradeServer.Models.ContainerModels;
 using AmbRcnTradeServer.Models.StockModels;
+using AmbRcnTradeServer.Models.VesselModels;
 using Raven.Client.Documents;
 using Raven.Client.Documents.Linq;
 using Raven.Client.Documents.Session;
@@ -20,6 +21,7 @@ namespace AmbRcnTradeServer.Services
         Task<List<Container>> LoadList(string companyId, ContainerStatus? status);
 
         Task<ServerResponse> UnStuffContainer(string containerId);
+        Task<ServerResponse> DeleteContainer(string id);
     }
 
     public class ContainerService : IContainerService
@@ -91,6 +93,22 @@ namespace AmbRcnTradeServer.Services
             container.Status = ContainerStatus.Empty;
 
             return new ServerResponse("Unstuffed container");
+        }
+
+        public async Task<ServerResponse> DeleteContainer(string id)
+        {
+            var container = await _session.LoadAsync<Container>(id);
+
+            if (container.IncomingStocks.Any())
+                throw new InvalidOperationException("Cannot delete a container that has already been stuffed");
+
+            var billOfLading = await _session.Query<BillLading>().Where(c => c.ContainerIds.Contains(id)).FirstOrDefaultAsync();
+
+            billOfLading?.ContainerIds.Remove(id);
+
+            _session.Delete(container);
+
+            return new ServerResponse("Deleted container");
         }
     }
 }

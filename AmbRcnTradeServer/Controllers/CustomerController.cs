@@ -49,9 +49,9 @@ namespace AmbRcnTradeServer.Controllers
         public async Task<ActionResult<List<CustomerListItem>>> LoadCustomerListForAppUser(string companyId)
         {
             var appuserId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.PrimarySid)?.Value;
-            var isAdmin = User.HasClaim(c => c.Type == ClaimTypes.Role && c.Value.Contains("admin"));
+            // var isAdmin = User.HasClaim(c => c.Type == ClaimTypes.Role && c.Value.Contains("admin"));
 
-            return await _customerService.LoadCustomerListForAppUser(companyId, appuserId, isAdmin);
+            return await _customerService.LoadCustomerListForAppUser(companyId, appuserId, true);
         }
 
         [Authorize]
