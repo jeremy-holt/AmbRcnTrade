@@ -73,28 +73,30 @@
           <ul class="list-group small">
             <li class="list-group-item font-weight-bold">
               <div class="row">
-                <div class="col">Status</div>
-                <div class="col">Container number</div>
+                <div class="col-2">Status</div>
+                <div class="col-2">Container number</div>
                 <div class="col">Seal number</div>
+                <div class="col-1">KOR</div>
                 <div class="col">Bags</div>
-                <div class="col">Weight kg (gross)</div>
-                <div class="col">Weight kg (nett)</div>
+                <div class="col">Weight kg<br>(gross)</div>
+                <div class="col">Weight kg<br>(nett)</div>
                 <div class="col">Booking number</div>
                 <div class="col">VGM weight ticket</div>
               </div>
             </li>
             <li class="list-group-item" repeat.for="item of model.containers">
               <div class="row">
-                <div class="col text-nowrap">
+                <div class="col-2 text-nowrap">
                   <a href="#" click.delegate="removeContainer($index)">
                     <i class="fas fa-trash text-danger"></i>
                   </a>
                   ${item.status | containerStatusFormatter}</div>
-                <div class="col">
+                <div class="col-2">
                   <a route-href="containerEdit; params.bind:{id: encode(item.id)}"
                     class="with-decoration">${item.containerNumber}</a>
                 </div>
                 <div class="col">${item.sealNumber} </div>
+                <div class="col-1">${item.incomingStocks[0].kor | numberFormat: "0,0.00"}</div>
                 <div class="col">${item.bags | numberFormat: "0,0"} </div>
                 <div class="col">${item.weighbridgeWeightKg | numberFormat: "0,0"} </div>
                 <div class="col">${item.nettWeightKg | numberFormat: "0,0"} </div>

@@ -18,6 +18,7 @@ namespace AmbRcnTradeServer.Models.ContainerModels
         public long LotNo { get; set; }
         public List<IncomingStockItem> StockIds { get; set; } = new();
         public DateTime StuffingDate { get; set; }
+        public double Kor { get; set; }
     }
 
     public class StuffingRequest

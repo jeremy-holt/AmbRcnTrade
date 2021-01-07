@@ -26,8 +26,8 @@ export interface ITeu {
 }
 
 export const TEU_LIST: ITeu[] = [
-  { id: Teu.Teu40, name: "TC 40' dry" },
-  { id: Teu.Teu20, name: "TC 20' dry" }
+  { id: Teu.Teu40, name: "TC 40'" },
+  { id: Teu.Teu20, name: "TC 20'" }
 ];
 
 export enum Approval {

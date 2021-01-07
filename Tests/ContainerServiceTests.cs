@@ -70,6 +70,7 @@ namespace Tests
             list[0].BookingNumber.Should().Be(containers[1].BookingNumber);
             list[0].NettWeightKg.Should().Be(containers[1].NettWeightKg);
             list[0].StuffingDate.Should().Be(containers[1].IncomingStocks[0].StuffingDate);
+            list[0].IncomingStocks[0].Kor.Should().Be(containers[1].IncomingStocks[0].Kor);
         }
 
         [Fact]

@@ -27,21 +27,23 @@
         <thead>
           <tr>
             <th>Status</th>
+            <th>Kor</th>
             <th>Container number </th>
             <th>Seal number</th>
             <th>Booking number</th>
             <th>Stuffing date</th>
             <th>Dispatch date</th>
             <th class="text-right">Bags</th>
-            <th class="text-right">Approx. weight</th>
-            <th class="text-right">Weighbridge weight</th>
-            <th class="text-right">Nett weight</th>
+            <th class="text-right">Approx.<br>weight</th>
+            <th class="text-right">Weighbridge<br> weight</th>
+            <th class="text-right">Nett<br>weight</th>
             <th>TEU</th>
           </tr>
         </thead>
         <tbody>
           <tr repeat.for="item of list">
             <td>${item.status | containerStatusFormatter}</td>
+            <td>${item.incomingStocks[0].kor | numberFormat: "0,0.00"}</td>
             <td>
               <a route-href="containerEdit; params.bind:{id: encode(item.id)}"
                 class="with-decoration">${item.containerNumber}</a>

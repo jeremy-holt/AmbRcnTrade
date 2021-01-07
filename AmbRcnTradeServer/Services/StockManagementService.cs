@@ -150,7 +150,8 @@ namespace AmbRcnTradeServer.Services
                 Bags = bags,
                 WeightKg = weightKg,
                 StockIds = stocks.Select(c => new IncomingStockItem(c.Id, true)).ToList(),
-                StuffingDate = stuffingDate
+                StuffingDate = stuffingDate,
+                Kor = stockBalance.Kor
             };
 
             container.IncomingStocks.Add(incomingStock);

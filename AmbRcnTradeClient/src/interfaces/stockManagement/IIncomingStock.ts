@@ -4,6 +4,7 @@ export interface IIncomingStock {
     lotNo: number;
     stockIds: IIncomingStockItem[];
     stuffingDate: string;
+    kor: number;
 }
 
 export interface IIncomingStockItem{

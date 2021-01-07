@@ -368,7 +368,8 @@ namespace Tests
                 Balance = stock1.Bags + stock2.Bags,
                 BalanceWeightKg = stock1.WeightKg + stock2.WeightKg,
                 AnalysisResults = new List<AnalysisResult> {stock1.AnalysisResult, stock2.AnalysisResult},
-                LocationId = "locations/1-A"
+                LocationId = "locations/1-A",
+                Kor = 55
             };
 
             var container = new Container
@@ -400,6 +401,7 @@ namespace Tests
             actualContainer.IncomingStocks[0].Bags.Should().Be(incomingBags);
             actualContainer.IncomingStocks[0].WeightKg.Should().Be(incomingWeightKg);
             actualContainer.IncomingStocks[0].StuffingDate.Should().Be(new DateTime(2020, 1, 1));
+            actualContainer.IncomingStocks[0].Kor.Should().Be(55);
             actualContainer.Status.Should().Be(containerStatus);
 
             var actualStock1 = await session.LoadAsync<Stock>(stock1.Id);

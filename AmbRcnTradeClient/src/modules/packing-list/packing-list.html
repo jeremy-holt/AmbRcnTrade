@@ -2,6 +2,10 @@
   <require from="../container/container-status-formatter-valueconverter"></require>
   <require from="../container/teu-formatter-valueconverter"></require>
 
+  <div>
+    <img src="images/Mangro logo.png">
+  </div>
+
   <h1 class="my-5">Packing List</h1>
 
   <div class="row mb-5">
@@ -40,15 +44,21 @@
     </div>
   </div>
 
+  <div class="row">
+    <div class="col">
+      <labelled-text label="Commodity" value="Ivory Coast Origin - Raw Cashew Nuts"></labelled-text>
+    </div>
+  </div>
+
   <table class="table table-bordered mt-5">
     <thead>
       <tr>
         <th>Container number</th>
         <th>Seal number</th>
         <th>Product</th>
-        <th>Bags</th>
-        <th>Gross weight</th>
-        <th>Nett weight</th>
+        <th class="text-right">Bags</th>
+        <th class="text-right">Gross weight</th>
+        <th class="text-right">Nett weight</th>
         <th>VGM weight ticket</th>
         <th>TEU</th>
       </tr>
@@ -57,10 +67,10 @@
       <tr repeat.for="item of model.containers">
         <td>${item.containerNumber}</td>
         <td>${item.sealNumber}</td>
-        <td>Raw cashew nuts in shell</td>
-        <td>${item.bags | numberFormat: "0,0"}</td>
-        <td>${item.weighbridgeWeightKg | numberFormat:"0,0"}</td>
-        <td>${item.nettWeightKg | numberFormat:"0,0"}</td>
+        <td>Kor ${item.incomingStocks[0].kor | numberFormat:"0"}</td>
+        <td class="text-right">${item.bags | numberFormat: "0,0"}</td>
+        <td class="text-right">${item.weighbridgeWeightKg | numberFormat:"0,0"}</td>
+        <td class="text-right">${item.nettWeightKg | numberFormat:"0,0"}</td>
         <td>${item.vgmTicketNumber}</td>
         <td>${item.teu | teuFormatter}</td>
       </tr>
