@@ -145,7 +145,7 @@ namespace Tests.Base
 
         protected IPaymentService GetPaymentService(IAsyncDocumentSession session)
         {
-            return new PaymentService(session);
+            return new PaymentService(session, GetPurchaseService(session));
         }
     }
 }

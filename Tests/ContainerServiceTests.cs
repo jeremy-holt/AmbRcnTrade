@@ -254,6 +254,7 @@ namespace Tests
             ServerResponse response = await sut.DeleteContainer(containers[1].Id);
             
             // Assert
+            response.Message.Should().Be("Deleted container");
             var actualContainer = await session.LoadAsync<Container>(containers[1].Id);
             actualContainer.Should().BeNull();
 
@@ -282,7 +283,7 @@ namespace Tests
             await session.StoreAsync(billLading);
             
             // Act
-            var response = await sut.DeleteContainer(containers[0].Id);
+            await sut.DeleteContainer(containers[0].Id);
             
             // Assert
             var actual = await session.LoadAsync<Container>(containers[0].Id);

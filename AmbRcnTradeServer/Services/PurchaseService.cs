@@ -41,6 +41,18 @@ namespace AmbRcnTradeServer.Services
             if (purchase.Id.IsNullOrEmpty())
                 purchase.PurchaseNumber = await _counterService.GetNextPurchaseNumber(purchase.CompanyId);
 
+            var stocks = await _session.Query<Stock>().Where(c => c.Id.In(purchase.PurchaseDetails.SelectMany(x => x.StockIds))).ToListAsync();
+            
+            foreach (var detail in purchase.PurchaseDetails)
+            {
+                var weightKg = stocks.Where(c => c.Id.In(detail.StockIds)).Sum(x => x.WeightKg);
+                detail.Value = detail.PricePerKg * weightKg;
+                detail.ValueUsd = detail.Value / detail.ExchangeRate;
+            }
+
+            purchase.Value = purchase.PurchaseDetails.Sum(x => x.Value);
+            purchase.ValueUsd = purchase.PurchaseDetails.Sum(x => x.ValueUsd);
+            
             await _session.StoreAsync(purchase);
             return new ServerResponse<Purchase>(purchase, "Saved");
         }
@@ -50,33 +62,13 @@ namespace AmbRcnTradeServer.Services
             Debug.WriteLine(_session.Advanced.NumberOfRequests);
 
             var purchase = await _session
-                // .Include<Purchase>(c => c.PurchaseDetails.SelectMany(x => x.StockIds))
                 .LoadAsync<Purchase>(id);
 
             var stockIds = purchase.PurchaseDetails.SelectMany(x => x.StockIds).ToList();
             var stocks = await _stockService.LoadStockList(purchase.CompanyId, stockIds);
 
-            // var stocksDictionary = await _session
-            //     .Include<Stock>(c => c.LocationId)
-            //     .Include(c => c.SupplierId)
-            //     .LoadAsync<Stock>(purchase.PurchaseDetails.SelectMany(x => x.StockIds));
-            // var stocks = stocksDictionary.Where(c => c.Value != null).Select(c => c.Value).ToList();
-            //
-
-            // var analysisResults = await _inspectionService.GetAnalysisResult(stocks.Select(x => x.InspectionId));
-            // var locations = await _session.LoadListFromMultipleIdsAsync<Customer>(stocks.Select(x => x.LocationId));
-            // var suppliers = await _session.LoadListFromMultipleIdsAsync<Customer>(stocks.Select(c => c.SupplierId));
-
             foreach (var item in purchase.PurchaseDetails)
-            {
-                item.Stocks = stocks.Where(c => c.StockId.In(item.StockIds)).ToList();
-                // foreach (var stock in item.Stocks)
-                // {
-                //     stock.LocationName = locations.FirstOrDefault(c => c.Id == stock.LocationId)?.Name;
-                //     stock.SupplierName = suppliers.FirstOrDefault(c => c.Id == stock.SupplierId)?.Name;
-                //     stock.AnalysisResult = analysisResults.FirstOrDefault(c => c.InspectionId == stock.InspectionId);
-                // }
-            }
+                item.Stocks = stocks.Where(c => c.IsStockIn && c.StockId.In(item.StockIds)).ToList();
 
             return purchase;
         }
@@ -85,9 +77,11 @@ namespace AmbRcnTradeServer.Services
         {
             var query = _session.Query<Purchase>()
                 .Include(c => c.SupplierId)
-                .Include(c => c.PurchaseDetails.SelectMany(x => x.StockIds))
-                .Where(c => c.CompanyId == companyId);
+                .Include(c => c.PurchaseDetails.SelectMany(x => x.StockIds));
 
+            if (companyId.IsNotNullOrEmpty()) 
+                query = query.Where(c => c.CompanyId == companyId);
+            
             if (supplierId.IsNotNullOrEmpty())
                 query = query.Where(c => c.SupplierId == supplierId);
 
@@ -95,14 +89,13 @@ namespace AmbRcnTradeServer.Services
 
             var suppliers = await _session.LoadListFromMultipleIdsAsync<Customer>(purchases.Select(c => c.SupplierId));
 
-            var stockIds = purchases.SelectMany(c => c.PurchaseDetails.SelectMany(x => x.StockIds)).ToList();
+            var stockIds = purchases.SelectMany(c => c.PurchaseDetails.SelectMany(x => x.StockIds)).Distinct().ToList();
 
             var stocksDictionary = await _session
                 .Include<Stock>(c => c.InspectionId)
                 .LoadAsync<Stock>(stockIds);
-            var stocks = stocksDictionary.Where(c => c.Value != null).Select(c => c.Value).ToList();
-
-            // var inspections = await _session.LoadListFromMultipleIdsAsync<Inspection>(stocks.Select(x => x.InspectionId));
+            var stocks = stocksDictionary.Where(c => c.Value != null && c.Value.IsStockIn).Select(c => c.Value).ToList();
+            
             var analysisResults = await _inspectionService.GetAnalysisResult(stocks.Select(x => x.InspectionId));
 
             var purchaseList = new List<PurchaseListItem>();
@@ -116,7 +109,9 @@ namespace AmbRcnTradeServer.Services
                     PurchaseNumber = purchase.PurchaseNumber,
                     QuantityMt = purchase.QuantityMt,
                     SupplierId = purchase.SupplierId,
-                    SupplierName = suppliers.FirstOrDefault(c => c.Id == purchase.SupplierId)?.Name
+                    SupplierName = suppliers.FirstOrDefault(c => c.Id == purchase.SupplierId)?.Name,
+                    Value = purchase.Value,
+                    ValueUsd = purchase.ValueUsd
                 };
 
                 foreach (var detail in purchase.PurchaseDetails)
@@ -126,7 +121,9 @@ namespace AmbRcnTradeServer.Services
                         Currency = detail.Currency,
                         PriceAgreedDate = detail.PriceAgreedDate,
                         PricePerKg = detail.PricePerKg,
-                        StockIds = detail.StockIds
+                        StockIds = detail.StockIds,
+                        Value = detail.Value,
+                        ValueUsd = detail.ValueUsd
                     };
                     var foundStocks = stocks.Where(c => c.Id.In(detail.StockIds)).ToList();
 
@@ -147,15 +144,8 @@ namespace AmbRcnTradeServer.Services
                         Moisture = detailListItem.Stocks.Average(c => c.AnalysisResult.Moisture)
                     };
 
-
-                    // foreach (var item in detailListItem.Stocks)
-                    // {
-                    //     item.Balance = item.BagsIn - item.BagsOut;
-                    // }
-
                     detailListItem.BagsIn = detailListItem.Stocks.Sum(x => x.BagsIn);
                     detailListItem.BagsOut = detailListItem.Stocks.Sum(x => x.BagsOut);
-                    // detailListItem.Balance = detailListItem.BagsIn - detailListItem.BagsOut;
 
                     purchaseListItem.PurchaseDetails.Add(detailListItem);
                 }

@@ -22,6 +22,8 @@ import { IContainer } from "interfaces/shipping/IContainer";
 import { IVessel } from "interfaces/shipping/IVessel";
 import { ICustomerListItem } from "interfaces/ICustomerListItem";
 import { IBillLadingListItem } from "interfaces/shipping/IBillLadingListItem";
+import { IPaymentListItem } from "interfaces/payments/IPaymentListItem";
+import { IPaymentDto } from "interfaces/payments/IPaymentDto";
 
 export interface IState {
   userFilteredCustomers: ICustomerListItem[];
@@ -59,4 +61,5 @@ export interface IState {
   container: { current: IContainer; list: IContainer[] };
   vessel: { current: IVessel; list: IVesselListItem[]; notLoadedContainers: IContainer[]; }
   billLading: {current: IBillLading; list: IBillLadingListItem[];}  
+  paymentDto:{current: IPaymentDto, list: IPaymentListItem[];}
 }

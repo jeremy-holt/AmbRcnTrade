@@ -22,6 +22,9 @@ namespace AmbRcnTradeServer.Models.PurchaseModels
 
         [JsonIgnore]
         public List<StockListItem> Stocks { get; set; } = new();
+
+        public double Value { get; set; }
+        public double ValueUsd { get; set; }
     }
 
     public class PurchaseDetailListItem
@@ -35,6 +38,8 @@ namespace AmbRcnTradeServer.Models.PurchaseModels
         public double BagsIn { get; set; }
         public double BagsOut { get; set; }
         public double Balance => BagsIn - BagsOut;
+        public double Value { get; set; }
+        public double ValueUsd { get; set; }
     }
 
     public class PurchaseDetailStockListItem

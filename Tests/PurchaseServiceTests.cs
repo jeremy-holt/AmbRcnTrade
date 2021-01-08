@@ -61,8 +61,11 @@ namespace Tests
                 .With(c => c.LocationId, location.Id)
                 .With(c => c.SupplierId, supplier.Id)
                 .With(c => c.InspectionId, inspection.Id)
+                .With(c => c.IsStockIn, true)
                 .Without(c => c.AnalysisResult)
                 .CreateMany().ToList();
+            stocks[2].IsStockIn = false;
+
             await stocks.SaveList(session);
             await session.SaveChangesAsync();
 
@@ -85,11 +88,13 @@ namespace Tests
 
             // Assert
             actual.Should().NotBeNull();
+            actual.Value.Should().Be(purchase.Value);
 
             foreach (var stock in actual.PurchaseDetails[0].Stocks)
             {
                 stock.LocationName.Should().Be(location.Name);
                 stock.SupplierName.Should().Be(supplier.Name);
+                stock.IsStockIn.Should().BeTrue();
             }
         }
 
@@ -149,6 +154,8 @@ namespace Tests
             list.Should().Contain(c => c.Id == purchase1.Id);
             list.Should().Contain(c => c.PurchaseNumber == purchase1.PurchaseNumber);
             list.Should().Contain(c => c.PurchaseDate == purchase1.PurchaseDate);
+            list[0].Value.Should().Be(purchase1.Value);
+            list[0].ValueUsd.Should().Be(purchase1.ValueUsd);
 
             var details = list[0].PurchaseDetails;
             details.Should().HaveCount(3);
@@ -156,7 +163,8 @@ namespace Tests
             details[0].Currency.Should().Be(purchaseDetails[0].Currency);
             details[0].StockIds.Should().BeEquivalentTo(purchaseDetails[0].StockIds);
             details[0].Stocks[0].BagsIn.Should().Be(stocks[0].Bags);
-            // details[0].Stocks[0].WeightKgIn.Should().Be(stocks[0].WeightKg);
+            details[0].Value.Should().BeGreaterThan(0);
+            details[0].ValueUsd.Should().BeGreaterThan(0);
         }
 
         [Fact]
@@ -188,7 +196,11 @@ namespace Tests
                 {
                     new()
                     {
-                        StockIds = stocks.Select(x => x.Id).ToList(), PricePerKg = 400.0, Currency = Currency.CFA, ExchangeRate = 555.0, PriceAgreedDate = new DateTime(2013, 1, 1)
+                        StockIds = stocks.Select(x => x.Id).ToList(),
+                        PricePerKg = 400.0,
+                        Currency = Currency.CFA,
+                        ExchangeRate = 555.0,
+                        PriceAgreedDate = new DateTime(2013, 1, 1)
                     }
                 }
             };
@@ -202,6 +214,10 @@ namespace Tests
             actual.PurchaseNumber.Should().Be(1L);
             actual.QuantityMt.Should().Be(200);
             actual.DeliveryDate.Should().Be(new DateTime(2013, 1, 1));
+            actual.PurchaseDetails[0].Value.Should().Be(400.0 * stocks.Sum(x => x.WeightKg));
+            actual.PurchaseDetails[0].ValueUsd.Should().Be(400.0 * stocks.Sum(x => x.WeightKg) / 555);
+            actual.Value.Should().Be(actual.PurchaseDetails.Sum(x => x.Value));
+            actual.ValueUsd.Should().Be(actual.PurchaseDetails.Sum(x => x.ValueUsd));
         }
     }
 }

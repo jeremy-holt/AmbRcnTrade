@@ -43,6 +43,7 @@ namespace AmbRcnTradeServer.RavenIndexes
             Index(x => x.CompanyId, FieldIndexing.Default);
             Index(x => x.IsStockIn, FieldIndexing.Default);
             Index(x => x.LotNo, FieldIndexing.Default);
+            Index(x=>x.SupplierId,FieldIndexing.Default);
 
             StoreAllFields(FieldStorage.Yes);
         }

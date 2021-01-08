@@ -11,4 +11,6 @@ export interface IPurchase extends IEntityCompany {
     purchaseDate: string;
     quantityMt: number;
     deliveryDate: string | null;
+    value: number;
+    valueUsd: number;
 }

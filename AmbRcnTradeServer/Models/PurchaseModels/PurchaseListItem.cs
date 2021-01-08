@@ -21,5 +21,7 @@ namespace AmbRcnTradeServer.Models.PurchaseModels
         public double BagsOut { get; set; }
         public double Balance { get; set; }
         public string CompanyId { get; set; }
+        public double Value { get; set; }
+        public double ValueUsd { get; set; }
     }
 }

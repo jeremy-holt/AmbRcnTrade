@@ -12,6 +12,8 @@ export interface IPurchaseListItem {
   bagsIn: number;
   bagsOut: number;
   balance: number;
+  value: number;
+  valueUsd: number;
 }
 
 export interface IPurchaseDetailListItem {
@@ -24,6 +26,8 @@ export interface IPurchaseDetailListItem {
   bagsIn: number;
   bagsOut: number;
   balance: number;
+  value: number;
+  valueUsd: number;
 }
 
 export interface IPurchaseDetailStockListItem {

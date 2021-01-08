@@ -1,4 +1,4 @@
-import { Approval } from "constants/app-constants";
+import { Approval, Currency } from "constants/app-constants";
 import { IState } from "./state";
 
 export const initialState: IState = {
@@ -134,7 +134,9 @@ export const initialState: IState = {
       supplierId: undefined!,
       quantityMt: undefined!,
       purchaseDetails: [],
-      deliveryDate: undefined!
+      deliveryDate: undefined!,
+      value: undefined!,
+      valueUsd: undefined!
     },
     list: [],
     nonCommittedStocksList: []
@@ -179,6 +181,25 @@ export const initialState: IState = {
       id: undefined!,
       name: undefined!,
       vesselId: undefined!
+    },
+    list: []
+  },
+  paymentDto: {
+    current: {
+      payment: {
+        paymentDate: undefined!,
+        beneficiaryId: undefined!,
+        value: undefined!,
+        currency: Currency.CFA,
+        exchangeRate: undefined!,
+        supplierId: undefined!,
+        notes: undefined!,
+        id: undefined!,
+        name: undefined!,
+        companyId: undefined!
+      },
+      paymentList: [],
+      purchaseList: []
     },
     list: []
   }

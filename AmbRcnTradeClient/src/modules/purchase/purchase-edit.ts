@@ -70,7 +70,9 @@ export class PurchaseEdit {
       currency: CURRENCIES_LIST.find(c => c.id === Currency.CFA).id,
       pricePerKg: undefined!,
       exchangeRate: undefined!,
-      stocks: []
+      stocks: [],
+      value: undefined!,
+      valueUsd: undefined!
     });
   }
 

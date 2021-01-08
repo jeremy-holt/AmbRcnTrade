@@ -124,7 +124,7 @@ namespace AmbRcnTradeServer.Services
             return new ServerResponse("Deleted stock");
         }
 
-        private async Task<List<StockListItem>> LoadStockList(string companyId, string locationId, List<string> stockIds)
+        private async Task<List<StockListItem>> LoadStockList(string companyId, string locationId, IReadOnlyCollection<string> stockIds)
         {
             var query = _session.Query<StockListItem, Stocks_ById>()
                 .Where(c => c.CompanyId == companyId);
