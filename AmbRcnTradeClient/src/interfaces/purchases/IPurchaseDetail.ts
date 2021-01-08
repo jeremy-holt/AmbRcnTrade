@@ -11,5 +11,5 @@ export interface IPurchaseDetail {
   value: number;
   valueUsd: number;
 
-  values?: { bags: number; kor: number; count: number; moisture: number; };
+  values?: { bags: number; kor: number; count: number; moisture: number; weightKg: number; };
 }

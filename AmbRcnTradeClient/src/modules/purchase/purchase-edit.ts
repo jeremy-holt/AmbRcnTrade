@@ -32,8 +32,7 @@ export class PurchaseEdit {
     private purchaseService: PurchaseService,
     private customerService: CustomerService,
     private dialogService: DialogService,
-    private stockManagementService: StockManagementService,
-    private taskQueue: TaskQueue
+    private stockManagementService: StockManagementService
   ) {
   }
 
@@ -44,7 +43,7 @@ export class PurchaseEdit {
 
     if (this.model) {
       this.model.purchaseDetails.forEach(detail => {
-        detail.values = this.purchaseService.getStockAverages(detail.stocks);
+        detail.values = this.purchaseService.getStockAverages(detail.stocks);                
       });
     }
     this.uncommittedStocks = _.cloneDeep(state.purchase.nonCommittedStocksList);

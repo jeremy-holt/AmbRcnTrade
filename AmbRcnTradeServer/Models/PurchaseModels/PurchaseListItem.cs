@@ -23,5 +23,8 @@ namespace AmbRcnTradeServer.Models.PurchaseModels
         public string CompanyId { get; set; }
         public double Value { get; set; }
         public double ValueUsd { get; set; }
+        public double WeightKgIn { get; set; }
+        public double WeightKgOut { get; set; }
+        public double WeightKgBalance { get; set; }
     }
 }

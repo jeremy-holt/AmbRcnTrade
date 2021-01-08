@@ -11,6 +11,9 @@ export interface IPurchaseListItem {
   purchaseDetails: IPurchaseDetailListItem[];
   bagsIn: number;
   bagsOut: number;
+  weightKgIn: number;
+  weightKgOut: number;
+  weightKgBalance: number;
   balance: number;
   value: number;
   valueUsd: number;
@@ -38,4 +41,7 @@ export interface IPurchaseDetailStockListItem {
   bagsIn: number;
   bagsOut: number;
   balance: number;
+  weightKgIn: number;
+  weightKgOut: number;
+  weightKgBalance: number;
 }

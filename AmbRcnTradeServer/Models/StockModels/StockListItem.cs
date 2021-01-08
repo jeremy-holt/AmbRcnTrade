@@ -30,5 +30,10 @@ namespace AmbRcnTradeServer.Models.StockModels
         public double WeightKgIn { get; set; }
         public double WeightKgOut { get; set; }
         public List<StuffingRecord> StuffingRecords { get; set; } = new();
+
+        public override string ToString()
+        {
+            return $"BagsIn: {BagsIn}, BagsOut: {BagsOut}, LotNo: {LotNo}, StockId: {StockId}, IsStockIn: {IsStockIn}";
+        }
     }
 }

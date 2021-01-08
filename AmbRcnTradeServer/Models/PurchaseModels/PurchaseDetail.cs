@@ -53,5 +53,6 @@ namespace AmbRcnTradeServer.Models.PurchaseModels
         public double Balance => BagsIn - BagsOut;
         public double WeightKgIn { get; set; }
         public double WeightKgOut { get; set; }
+        public double WeightKgBalance { get; set; }
     }
 }

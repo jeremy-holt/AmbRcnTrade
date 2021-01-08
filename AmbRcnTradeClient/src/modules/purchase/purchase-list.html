@@ -10,8 +10,8 @@
 
     <div class="card-body">
       <div class="my-3 w-50">
-        <select-input source.bind="suppliers | customerFilter: 'supplier'" value.bind="selectedSupplier" label="Filter by suppliers"
-          warn-null="false">
+        <select-input source.bind="suppliers | customerFilter: 'supplier'" value.bind="selectedSupplier"
+          label="Filter by suppliers" warn-null="false">
         </select-input>
       </div>
 
@@ -24,8 +24,8 @@
               <div class="col">Quantity mt</div>
               <div class="col">Supplier</div>
               <div class="col text-right">Stock IN (bags)</div>
-              <div class="col text-right">Stock OUT (bags)</div>
               <div class="col text-right">Balance (bags)</div>
+              <div class="col text-right">Values</div>
             </div>
           </li>
           <li class="list-group-item list-group-item-light" repeat.for="purchase of list">
@@ -35,13 +35,16 @@
               <div class="col">${purchase.purchaseDate | dateFormat: "DD/MM/YYYY"}</div>
               <div class="col">${purchase.quantityMt | numberFormat: "0"} mt</div>
               <div class="col">${purchase.supplierName}</div>
-              <div class="col text-right">${purchase.bagsIn | numberFormat: "0,0"} (abt ${purchase.bagsIn/80 |
-                numberFormat
-                : "0,0"} mt)</div>
-              <div class="col text-right">${purchase.bagsOut | numberFormat: "0,0"} (abt ${purchase.bagsOut/80 |
-                numberFormat: "0,0"} mt)</div>
-              <div class="col text-right">${purchase.balance | numberFormat: "0,0"} (abt ${purchase.balance/80 |
-                numberFormat: "0,0"} mt)</div>
+              <div class="col text-right">${purchase.bagsIn | numberFormat: "0,0"} bags
+                <br>(abt ${purchase.weightKgIn/1000 | numberFormat: "0,0"} mt)
+              </div>
+              <div class="col text-right">${purchase.balance | numberFormat: "0,0"} bags<br>
+                (abt ${purchase.weightKgBalance/1000 | numberFormat: "0,0"} mt)
+              </div>
+              <div class="col text-right">
+                <span class="text-nowrap">${purchase.purchaseDetails[0].currency.toUpperCase()} ${purchase.value | numberFormat: "0,0"}</span><br>
+                USD ${purchase.valueUsd | numberFormat: "0,0"}
+              </div>
             </div>
 
             <ul class="list-group mt-2" if.bind="purchase.purchaseDetails.length > 0">
@@ -63,11 +66,12 @@
                     <div class="row">
                       <div class="col text-right">${detail.priceAgreedDate | dateFormat: "DD/MM/YYYY"}</div>
                       <div class="col text-right">${detail.currency.toUpperCase()} ${detail.pricePerKg}</div>
-                      <div class="col text-right">${detail.bagsIn | numberFormat: "0,0"} (abt ${detail.bagsIn/80 |
-                        numberFormat: "0,0"} mt)</div>
+                      <div class="col text-right">${detail.bagsIn | numberFormat: "0,0"} bags<br>
+                        (abt ${detail.bagsIn * 80/1000 | numberFormat: "0,0"} mt)</div>
                       <div class="col text-right">Kor: ${detail.analysisResult.kor | numberFormat: "0,0.00"}, Count:
                         ${detail.analysisResult.count | numberFormat: "0,0.0"}, Moisture:
-                        ${detail.analysisResult.moisture/100 | numberFormat: "0.00%"}</div>
+                        ${detail.analysisResult.moisture/100 | numberFormat: "0.00%"}
+                      </div>
                     </div>
                   </div>
                 </div>

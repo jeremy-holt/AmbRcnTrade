@@ -158,6 +158,71 @@ namespace Tests
             list2.Should().HaveCount(1);
             list2[0].SupplierName.Should().Be(supplier2.Name);
         }
+        [Fact]
+        public async Task GetNonCommittedStocks_ShouldOnlyIncludeStockIn()
+        {
+            // Arrange
+            using var store = GetDocumentStore();
+            using var session = store.OpenAsyncSession();
+            var sut = GetStockManagementService(session);
+            await InitializeIndexes(store);
+            var fixture = new Fixture();
+
+            var analysisResult = fixture.Build<AnalysisResult>().With(c => c.Approved, Approval.Approved).Create();
+
+            var inspection = fixture.DefaultEntity<Inspection>()
+                .With(c => c.AnalysisResult, analysisResult)
+                .Create();
+            await session.StoreAsync(inspection);
+
+            var supplier = await new Customer().CreateAndStore(session);
+
+            var location = fixture.DefaultEntity<Customer>().Create();
+            await session.StoreAsync(location);
+
+            var stocks = fixture.DefaultEntity<Stock>()
+                .With(c => c.IsStockIn, true)
+                .With(c => c.InspectionId, inspection.Id)
+                .With(c => c.LocationId, location.Id)
+                .With(c => c.SupplierId, supplier.Id)
+                .CreateMany(10).ToList();
+            
+            stocks[0].IsStockIn = false;
+            stocks[1].IsStockIn = false;
+            
+            await stocks.SaveList(session);
+
+            var stockIds = stocks.GetPropertyFromList(c => c.Id).Take(4).ToList();
+            var xStocks = stocks.Take(4).ToList();
+            xStocks[0].IsStockIn.Should().BeFalse();
+            xStocks[1].IsStockIn.Should().BeFalse();
+            xStocks[2].IsStockIn.Should().BeTrue();
+            xStocks[3].IsStockIn.Should().BeTrue();
+            
+            var purchaseDetail = fixture.Build<PurchaseDetail>()
+                .With(c => c.StockIds, stockIds)
+                .Without(c=>c.Stocks)
+                .Create();
+
+            var purchase = fixture.DefaultEntity<Purchase>()
+                .With(c => c.PurchaseDetails, new List<PurchaseDetail> {purchaseDetail})
+                .Create();
+
+            await session.StoreAsync(purchase);
+            await session.SaveChangesAsync();
+            WaitForIndexing(store);
+
+            // Act
+            var list = await sut.GetNonCommittedStocks(COMPANY_ID, supplier.Id);
+            
+            // Assert
+            list.Should().HaveCount(6);
+            list.Should().BeInAscendingOrder(c => c.LotNo);
+            list.Select(x => x.StockId).Should().NotContain(stockIds);
+            list.Should().OnlyContain(c => c.IsStockIn);
+            list[0].SupplierName.Should().Be(supplier.Name);
+            list[0].AnalysisResult.Approved.Should().Be(Approval.Approved);
+        }
 
         [Fact]
         public async Task MoveInspectionToStock_ShouldCreateANewStock()

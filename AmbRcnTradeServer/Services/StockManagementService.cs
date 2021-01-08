@@ -106,6 +106,7 @@ namespace AmbRcnTradeServer.Services
 
             var stocksUsedInPurchasesIds = stocks.Where(c => c.PurchaseId.IsNotNullOrEmpty() && c.IsStockIn).Distinct().Select(c => c.StockId).ToList();
             var allStocksUsedInSystemIds = stocks.Where(c => c.IsStockIn).Distinct().Select(x => x.StockId).ToList();
+            
             var unallocatedIds = allStocksUsedInSystemIds.Except(stocksUsedInPurchasesIds).ToList();
             var unallocatedStocks = stocks.Where(c => c.StockId.In(unallocatedIds)).ToList();
 

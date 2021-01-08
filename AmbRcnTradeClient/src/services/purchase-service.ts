@@ -1,3 +1,4 @@
+import { IPurchaseDetail } from "./../interfaces/purchases/IPurchaseDetail";
 import { HttpClient } from "aurelia-fetch-client";
 import { autoinject } from "aurelia-framework";
 import { Router } from "aurelia-router";
@@ -49,12 +50,14 @@ export class PurchaseService extends FetchService {
     const kor = bags > 0 ? stocks.reduce((a, b) => a += (b.bagsIn * b.analysisResult.kor), 0) / bags : 0;
     const count = bags > 0 ? stocks.reduce((a, b) => a += (b.bagsIn * b.analysisResult.count), 0) / bags : 0;
     const moisture = bags > 0 ? stocks.reduce((a, b) => a += (b.bagsIn * b.analysisResult.moisture), 0) / bags : 0;
+    const weightKg = stocks.reduce((a, b) => a += b.weightKgIn, 0);
 
     return {
       bags,
       kor,
       count,
-      moisture
+      moisture,
+      weightKg
     };
   }
 }
