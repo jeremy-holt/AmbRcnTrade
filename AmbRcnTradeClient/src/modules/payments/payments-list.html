@@ -16,32 +16,35 @@
         </div>
       </div>
 
-      <table if.bind="list.length > 0" class="table table-sm table-bordered">
+      <table if.bind="list.length > 0" class="table table-sm table-bordered small">
         <thead>
           <tr>
             <th>Payment No</th>
+            <th>Payee (supplier)</th>
             <th>Payment date</th>
-            <th>Supplier</th>
             <th>Beneficiary</th>
-            <th>Value</th>
-            <th>Exchange rate</th>
+            <th class="text-right">Value</th>
+            <th class="text-right">Exchange rate</th>
+            <th class="text-right">Value USD</th>
           </tr>
         </thead>
         <tbody>
           <tr repeat.for="item of list">
             <td>
-              <a route-href="paymentEdit; params.bind:{id: encode(item.id)}">PO No ${item.paymentNo}</a>
+              <a class="with-decoration" route-href="paymentEdit; params.bind:{id: encode(item.id)}">Payt no ${item.paymentNo | numberFormat: "00000"}</a>
             </td>
-            <td>${item.paymentDate | dateFormat: "DD/MM/YYYY"}</td>
             <td>${item.supplierName}</td>
+            <td>${item.paymentDate | dateFormat: "DD/MM/YYYY"}</td>
             <td>${item.beneficiaryName}</td>
-            <td>${${item.currency.toUpperCase()} ${item.value | numberFormat: "0,0"}</td>
+            <td class="text-right">${item.currency.toUpperCase()} ${item.value | numberFormat: "0,0"}</td>
+            <td class="text-right">${item.exchangeRate | numberFormat:"0.0000"}</td>
+            <td class="text-right">${item.valueUsd | numberFormat:"0,0"}</td>
           </tr>
         </tbody>
       </table>      
     </div>
-    <div class="card-footer card-footer-info">
-      <div if.bind="list.length == 0">There are no payments for ${selectedSupplier.name}</div>
+    <div if.bind="list.length == 0" class="card-footer card-footer-info">
+      <div>There are no payments for ${selectedSupplier.name}</div>
     </div>
   </div>
 </template>

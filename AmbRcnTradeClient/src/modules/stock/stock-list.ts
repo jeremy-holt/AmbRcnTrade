@@ -1,3 +1,4 @@
+import { isInRole } from "./../../services/role-service";
 import { autoinject, observable } from "aurelia-framework";
 import { Router } from "aurelia-router";
 import { connectTo } from "aurelia-store";
@@ -74,5 +75,13 @@ export class StockList {
 
   protected encode(value: string) {
     return encodeParams(value);
+  }
+
+  protected get canNavigateToStock(){
+    return isInRole(["admin","user","warehouseManager"],this.state);
+  }
+
+  protected get canNavigateToContainer(){
+    return isInRole(["admin","user","warehouseManager"],this.state);
   }
 }

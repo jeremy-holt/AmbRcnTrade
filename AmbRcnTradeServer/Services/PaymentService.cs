@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using AmberwoodCore.Extensions;
 using AmberwoodCore.Responses;
+using AmbRcnTradeServer.Constants;
 using AmbRcnTradeServer.Models.DictionaryModels;
 using AmbRcnTradeServer.Models.PaymentModels;
 using AmbRcnTradeServer.RavenIndexes;
@@ -80,6 +81,7 @@ namespace AmbRcnTradeServer.Services
             {
                 payment.SupplierName = customers.FirstOrDefault(c => c.Id == payment.SupplierId)?.Name;
                 payment.BeneficiaryName = customers.FirstOrDefault(c => c.Id == payment.BeneficiaryId)?.Name;
+                payment.ValueUsd = payment.ExchangeRate > 0 ? payment.Value / payment.ExchangeRate : payment.Value;
             }
 
             return payments;
@@ -95,12 +97,16 @@ namespace AmbRcnTradeServer.Services
         {
             var paymentsList = await LoadList(companyId, supplierId);
 
-            var purchases = await _purchaseService.LoadList(null, supplierId);
+            var purchaseList = await _purchaseService.LoadList(null, supplierId);
 
             return new PaymentDto
             {
-                PurchaseList = purchases,
-                PaymentList = paymentsList
+                PurchaseList = purchaseList,
+                PaymentList = paymentsList,
+                PaymentValue = paymentsList.Where(c => c.Currency != Currency.USD).Sum(x => x.Value),
+                PaymentValueUsd = paymentsList.Sum(x => x.ValueUsd),
+                PurchaseValue = purchaseList.Sum(c => c.Value),
+                PurchaseValueUsd = purchaseList.Sum(c => c.ValueUsd)
             };
         }
     }

@@ -163,6 +163,7 @@ namespace Tests
             list.Should().Contain(c => c.SupplierName == supplier.Name);
             list.Should().Contain(c => c.BeneficiaryName == beneficiary.Name);
             list.Should().Contain(c => c.PaymentNo > 0);
+            list.Should().Contain(c => Math.Abs(c.ValueUsd - c.Value / c.ExchangeRate) < .01);
             list.Should().HaveCount(3);
         }
 
@@ -222,6 +223,10 @@ namespace Tests
 
             actual.PaymentList.Should().HaveCount(1);
             actual.PaymentList[0].Id.Should().Be(payment.Id);
+            actual.PurchaseValue.Should().BeGreaterThan(0);
+            actual.PurchaseValueUsd.Should().BeGreaterThan(0);
+            // actual.PaymentValue.Should().BeGreaterThan(0);
+            // actual.PaymentValueUsd.Should().BeGreaterThan(0);
 
             actual.PurchaseList.Should().HaveCountGreaterThan(0);
         }

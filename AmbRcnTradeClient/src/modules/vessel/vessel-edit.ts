@@ -1,3 +1,4 @@
+import { isInRole } from "./../../services/role-service";
 import { DialogService } from "aurelia-dialog";
 import { autoinject, observable } from "aurelia-framework";
 import { Router } from "aurelia-router";
@@ -73,5 +74,9 @@ export class VesselEdit {
 
   protected encode(value: string) {
     return encodeParams(value);
+  }
+
+  protected get canAddBillLading(){
+    return isInRole(["admin","user"], this.state);
   }
 }

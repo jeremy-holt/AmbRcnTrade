@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using AmberwoodCore.Controllers;
 using AmberwoodCore.Responses;
@@ -22,7 +23,7 @@ namespace AmbRcnTradeServer.Controllers
         [HttpGet("[action]")]
         public async Task<ActionResult<Payment>> Create(string companyId)
         {
-            return await Task.FromResult(new Payment() {CompanyId = companyId});
+            return await Task.FromResult(new Payment() {CompanyId = companyId, PaymentDate = DateTime.Today});
         }
 
         [Authorize]

@@ -1,3 +1,4 @@
+import { isInRole } from "./../../services/role-service";
 import { DeleteDialog } from "./../../dialogs/delete-dialog";
 import { UnstuffContainerDialog } from "./unstuff-container-dialog";
 import { DialogService } from "aurelia-dialog";
@@ -71,11 +72,11 @@ export class ContainerEdit {
   }
 
   protected get canUnstuffContainer() {
-    return this.containerService.canUnstuffContainer(this.model);
+    return this.containerService.canUnstuffContainer(this.model) && isInRole(["admin","user","warehouseManager"],this.state);
   }
 
   protected get canDeleteContainer() {
-    return this.model?.incomingStocks.length === 0;
+    return this.model?.incomingStocks.length === 0 && isInRole(["admin","user","warehouseManager"],this.state);
   }
 
   protected deleteContainer() {

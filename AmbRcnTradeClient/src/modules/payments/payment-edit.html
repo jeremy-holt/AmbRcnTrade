@@ -1,8 +1,7 @@
 <template>
   <toolbar type="menu" caption="Payment" save.call="save()" disabled-save.bind="!canSave" list-route="paymentList">
+    <toolbar-item icon="fa fa-trash" click.call="deletePayment()"></toolbar-item>
   </toolbar>
-
-  <debug-console model.bind="model.payment"></debug-console>
 
   <div class="card">
     <div class="card-header">
@@ -10,44 +9,52 @@
     </div>
 
     <div class="card-body">
-      <div class="row">
+      <div class="row mb-2">
         <div class="col-4">
-          <date-input value.bind="model.payment.paymentDate" label="Payment date"></date-input>
+          <date-input value.bind="model.paymentDate" label="Payment date"></date-input>
         </div>
       </div>
 
-      <div class="row">
+      <div class="row mb-2">
         <div class="col">
-          <select-input source.bind="customerList | customerFilter: 'supplier'" use-model-id="true"
-            value.bind="model.payment.supplierId" label="Payee (Supplier)"></select-input>
+          <select-input source.bind="customerList | customerFilter: 'supplier'" value.bind="selectedSupplier"
+            label="Payee (Supplier)"></select-input>
         </div>
         <div class="col">
           <select-input source.bind="customerList | customerFilter: 'supplier'" use-model-id="true" warn-null="false"
-            value.bind="model.payment.beneficiaryId" label="Final beneficiary"></select-input>
+            value.bind="model.beneficiaryId" label="Final beneficiary"></select-input>
         </div>
       </div>
 
-      <div class="row">
+      <div class="row mb-2">
         <div class="col">
           <div class="d-flex">
-            <select-input source.bind="currencyList" use-model-id="true" value.bind="model.payment.currency"
-              label="Currency"></select-input>
-            <number-input value.bind="model.payment.value" label="Value"></number-input>
+            <select-input source.bind="currencyList" use-model-id="true" value.bind="model.currency" label="Currency">
+            </select-input>
+            <number-input value.bind="model.value" class="ml-2" change.delegate="calcValue()" label="Value">
+            </number-input>
           </div>
         </div>
         <div class="col">
-          <number-input value.bind="model.payment.exchangeRate" label="Ex rate"></number-input>
+          <number-input disabled.bind="!needExchangeRate" value.bind="model.exchangeRate" change.delegate="calcValue()"
+            label="Ex rate"></number-input>
+        </div>
+        <div class="col">
+          <div>
+            <labelled-text value.bind="valueUsd | numberFormat : '0,0'" label="Value USD"></labelled-text>
+          </div>
         </div>
       </div>
 
       <div class="row">
         <div class="col">
-          <text-area-input value.bind="model.payment.notes" label="Notes"></text-area-input>
+          <text-area-input value.bind="model.notes" label="Notes"></text-area-input>
         </div>
       </div>
 
-      <div class="card-footer card-footer-info">
-        <div if.bind="needExchangeRate">Since the payment is in ${model.payment.currency} please provide an exchange
+      <div class="card-footer card-footer-info" if.bind="showNeedExchangeRateMessage">
+        <div>Since the payment is in ${model.currency.toUpperCase()} please
+          provide an exchange
           rate</div>
       </div>
     </div>
@@ -58,56 +65,89 @@
       <section id="payments-purchases">
         <div class="row mt-2">
           <div class="col">
-            <h5>Payments</h5>
+            <h5>Payments to ${selectedSupplier.name}</h5>
             <table class="table table-sm table-bordered small">
               <thead>
                 <tr>
                   <th>Payment no.</th>
                   <th>Date</th>
-                  <th>Payee (Supplier)</th>
                   <th>Beneficiary</th>
-                  <th>Value</th>
+                  <th class="text-right">Value</th>
                 </tr>
               </thead>
               <tbody>
-                <tr repeat.for="item of model.paymentList">
-                  <td>${item.paymentNo}</td>
-                  <td>${item.date | dateFormat: "DD/MM/YYYY"}</td>
-                  <td>${item.supplierName}</td>
+                <tr repeat.for="item of paymentDto.paymentList">
+                  <td>
+                    <a route-href="paymentEdit; params.bind:{id: encode(item.id)}" class="with-decoration">
+                      ${item.paymentNo | numberFormat: "00000"}
+                    </a>
+                  </td>
+                  <td>${item.paymentDate | dateFormat: "DD/MM/YYYY"}</td>
                   <td>${item.beneficiaryName}</td>
-                  <td>${item.currency.toUpperCase()} ${item.value | numberFormat:"0,0"} @ ExRate ${item.exchangeRate |
-                    numberFormat: "0,0.0000"}</td>
+                  <td class="text-right">${item.currency.toUpperCase()} ${item.value | numberFormat:"0,0"} @ ExRate
+                    ${item.exchangeRate |
+                    numberFormat: "0,0"}<br>USD ${item.valueUsd | numberFormat: "0,0"}</td>
                 </tr>
               </tbody>
+              <tfoot>
+                <tr>
+                  <th colspan="3">Totals</th>
+                  <th class="text-right">
+                    CFA ${paymentDto.paymentValue | numberFormat: "0,0"} <br>
+                    USD ${paymentDto.paymentValueUsd | numberFormat: "0,0"}
+                  </th>
+                </tr>
+              </tfoot>
             </table>
           </div>
 
 
           <div class="col">
-            <h5>Purchases</h5>
+            <h5>Purchases from ${selectedSupplier.name}</h5>
             <table class="table table-sm table-bordered small">
               <thead>
                 <tr>
                   <th>Purchase no.</th>
                   <th>Purchase date</th>
-                  <th>Supplier</th>
                   <th>Bags IN</th>
-                  <th>Value</th>
-                  <th>Value USD</th>
+                  <th class="text-right">Value</th>
+                  <th class="text-right">Value USD</th>
                 </tr>
               </thead>
               <tbody>
-                <tr repeat.for="item of model.purchaseList">
-                  <td>${item.purchaseNumber}</td>
+                <tr repeat.for="item of paymentDto.purchaseList">
+                  <td>
+                    <a route-href="purchaseEdit; params.bind:{id:encode(item.id)}" class="with-decoration">
+                      ${item.purchaseNumber | numberFormat: "00000"}
+                    </a>
+                  </td>
                   <td>${item.purchaseDate | dateFormat: "DD/MM/YYYY"}</td>
-                  <td>${item.supplierName}</td>
                   <td>${item.bagsIn | numberFormat: "0,0"} bags (abt ${item.weightKg/1000 | numberFormat: "0,0"} mt)
                   </td>
-                  <td>${item.purchaseDetails[0].currency.toUpperCase()} ${item.value | numberFormat: "0,0"}</td>
-                  <td>USD ${item.valueUsd | numberFormat: "0,0"}</td>
+                  <td class="text-right">${item.purchaseDetails[0].currency.toUpperCase()} ${item.value | numberFormat:
+                    "0,0"}</td>
+                  <td class="text-right">USD ${item.valueUsd | numberFormat: "0,0"}</td>
                 </tr>
               </tbody>
+              <tfoot>
+                <tr>
+                  <th colspan="3">Totals</th>
+                  <th class="text-right text-nowrap">
+                    CFA ${paymentDto.purchaseValue | numberFormat: "0,0"}
+                  </th>
+                  <th class="text-right text-nowrap">
+                    USD ${paymentDto.purchaseValueUsd | numberFormat: "0,0"}
+                  </th>
+                </tr>
+              </tfoot>
             </table>
+          </div>
+        </div>
+        <div class="row small font-weight-bold">
+          <div class="col">
+            Owed to ${selectedSupplier.name}<br>
+            CFA ${paymentDto.paymentValue - paymentDto.purchaseValue | numberFormat : "0,0"}<br>USD
+            ${paymentDto.paymentValueUsd - paymentDto.purchaseValueUsd | numberFormat : "0,0"}
           </div>
         </div>
       </section>

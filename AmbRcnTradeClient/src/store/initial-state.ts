@@ -184,23 +184,27 @@ export const initialState: IState = {
     },
     list: []
   },
-  paymentDto: {
+  payment: {
     current: {
-      payment: {
-        paymentDate: undefined!,
-        beneficiaryId: undefined!,
-        value: undefined!,
-        currency: Currency.CFA,
-        exchangeRate: undefined!,
-        supplierId: undefined!,
-        notes: undefined!,
-        id: undefined!,
-        name: undefined!,
-        companyId: undefined!,
-        paymentNo: undefined!
-      },
+      paymentDate: undefined!,
+      beneficiaryId: undefined!,
+      value: undefined!,
+      currency: Currency.CFA,
+      exchangeRate: undefined!,
+      supplierId: undefined!,
+      notes: undefined!,
+      id: undefined!,
+      name: undefined!,
+      companyId: undefined!,
+      paymentNo: undefined!
+    },
+    paymentDto: {
       paymentList: [],
-      purchaseList: []
+      purchaseList: [],
+      purchaseValue: undefined!,
+      purchaseValueUsd: undefined!,
+      paymentValue: undefined!,
+      paymentValueUsd: undefined!
     },
     list: []
   }

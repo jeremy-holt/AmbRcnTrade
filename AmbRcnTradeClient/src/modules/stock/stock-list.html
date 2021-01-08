@@ -54,8 +54,10 @@
         <tbody>
           <tr repeat.for="item of list | lotNoFilter: filterLotNo" class="${!item.isStockIn ? 'bg-light' : ''}">
             <td>
-              <a route-href="stockEdit; params.bind:{id: encode(item.stockId)}" class="with-decoration">Stock: Lot
-                ${item.lotNo}</a><br>
+              <a if.bind="canNavigateToStock" route-href="stockEdit; params.bind:{id: encode(item.stockId)}" class="with-decoration">Stock: Lot
+                ${item.lotNo}</a>
+                <span else>${item.lotNo}</span>
+                <br>
               <a route-href="inspectionEdit; params.bind:{id: encode(item.inspectionId)}"
                 class="with-decoration">Inspection:
                 ${item.inspectionDate | dateFormat: "DD/MM/YYYY"}</a>
@@ -82,10 +84,10 @@
             <td>
               <ul class="list-unstyled">
                 <li repeat.for="sr of item.stuffingRecords">
-                  <a class="with-decoration" route-href="containerEdit; params.bind:{id: encode(sr.containerId)}">
-                    ${sr.containerNumber}
-                    <!-- Stuffed: ${sr.stuffingDate | dateFormat: "DD/MM/YYYY"} -->
+                  <a if.bind="canNavigateToContainer" class="with-decoration" route-href="containerEdit; params.bind:{id: encode(sr.containerId)}">
+                    ${sr.containerNumber}                    
                   </a>
+                  <span else>${sr.containerNumber}</span>
                 </li>
               </ul>
             </td>

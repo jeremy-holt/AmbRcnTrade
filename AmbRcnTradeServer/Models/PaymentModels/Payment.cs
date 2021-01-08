@@ -31,6 +31,10 @@ namespace AmbRcnTradeServer.Models.PaymentModels
         public List<PaymentListItem> PaymentList { get; set; } = new();
 
         public List<PurchaseListItem> PurchaseList { get; set; } = new();
+        public double PurchaseValue { get; set; }
+        public double PurchaseValueUsd { get; set; }
+        public double PaymentValue { get; set; }
+        public double PaymentValueUsd { get; set; }
     }
 
     public class PaymentListItem
@@ -46,5 +50,6 @@ namespace AmbRcnTradeServer.Models.PaymentModels
         public string SupplierName { get; set; }
         public string CompanyId { get; set; }
         public long PaymentNo { get; set; }
+        public double ValueUsd { get; set; }
     }
 }

@@ -38,7 +38,7 @@
 
       <div class="row my-2">
         <div class="col">
-          <button type="button" class="btn btn-primary" click.delegate="addBillLading()">Add B/L to vessel</button>
+          <button type="button" disabled.bind="!canAddBillLading" class="btn btn-primary" click.delegate="addBillLading()">Add B/L to vessel</button>
         </div>
       </div>
 

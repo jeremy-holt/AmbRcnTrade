@@ -32,13 +32,11 @@ export class PaymentsList {
   protected stateChanged(state: IState) {
     this.customersList = _.cloneDeep(state.userFilteredCustomers);
     this.customersList.unshift({ id: null, name: "[All]" } as ICustomerListItem);
-    this.list = state.paymentDto.list;
+    this.list = state.payment.list;
   }
 
-  protected async selectedSupplierChanged(value: ICustomerListItem) {
-    if (value?.id) {
-      await this.runQuery();
-    }
+  protected async selectedSupplierChanged() {
+    await this.runQuery();
   }
 
   protected encode(value: string) {

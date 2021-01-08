@@ -1,3 +1,4 @@
+import { isInRole } from "./../../services/role-service";
 import { CUSTOMER_GROUPS } from "./../../constants/app-constants";
 import { observable } from "aurelia-binding";
 import { autoinject } from "aurelia-framework";
@@ -88,6 +89,14 @@ export class CustomerEdit {
     if (newValue) {
       this.router.navigateToRoute("customerEdit", { id: encodeParams(newValue.id) }, { replace: true, trigger: false });
     }
+  }
+
+  protected get canAddUsers(){
+    return isInRole(["admin"],this.state);
+  }
+
+  protected get canAddAccountCodes(){
+    return isInRole(["admin"], this.state);
   }
 
 }

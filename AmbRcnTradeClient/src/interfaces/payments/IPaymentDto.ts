@@ -1,10 +1,12 @@
 import { IPurchaseListItem } from "interfaces/purchases/IPurchaseListItem";
 import { IPaymentListItem } from "./IPaymentListItem";
-import { IPayment } from "./IPayment";
 
 
-export interface IPaymentDto {
-  payment: IPayment;
+export interface IPaymentDto {  
   paymentList: IPaymentListItem[];
   purchaseList: IPurchaseListItem[];
+  purchaseValue: number;
+  purchaseValueUsd: number;
+  paymentValue: number;
+  paymentValueUsd: number;
 }

@@ -63,8 +63,8 @@ export class Sidenav {
   // }
 
   protected otherRoutes() {
-    if (isInRole(["admin", "user", "guest", "inspector"], this.state)) {
-      return this.router.navigation.filter(row => this.isNotInRoute(row, ["admin", "dictionary", "accounts"]));
+    if (isInRole(["admin", "user", "guest", "inspector", "warehouseManager"], this.state)) {
+      return this.router.navigation.filter(row => this.isNotInRoute(row, ["admin"]));
     }
   }
 

@@ -12,4 +12,5 @@ export interface IPaymentListItem {
   supplierName: string;
   companyId: string;
   paymentNo: number;
+  valueUsd: number;
 }

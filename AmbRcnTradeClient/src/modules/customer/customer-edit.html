@@ -71,7 +71,7 @@
     </div>
   </div>
 
-  <div class="card mt-2">
+  <div if.bind="canAddUsers" class="card mt-2">
     <div class="card-header">
       <h4>Users in company</h4>
     </div>
@@ -98,7 +98,7 @@
     </div>
   </div>
 
-  <div class="card">
+  <div if.bind="canAddAccountCodes" class="card">
     <div class="card-header">
       <h4>Account codes</h4>
     </div>

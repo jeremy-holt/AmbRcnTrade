@@ -110,7 +110,7 @@ export class InspectionEdit {
     if (!this.model) {
       return false;
     }
-    return this.inspectionService.canAddInspectionToStock(this.model) && this.wasInspectionApproved;
+    return this.inspectionService.canAddInspectionToStock(this.model) && this.wasInspectionApproved && isInRole(["admin","user", "warehouseManager"], this.state);
   }
 
   protected get wasInspectionApproved(){

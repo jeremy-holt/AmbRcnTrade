@@ -1,3 +1,4 @@
+import { isInRole } from "./../../services/role-service";
 import { DeleteDialog } from "./../../dialogs/delete-dialog";
 import { encodeParams } from "./../../core/helpers";
 import { DialogService } from "aurelia-dialog";
@@ -116,5 +117,13 @@ export class BillLadingEdit {
       viewModel: DocumentsDownloadDialog,
       model: { billLadingId: this.model.id }
     }).whenClosed();
+  }
+
+  protected get canAddContainer(){
+    return isInRole(["admin","user"],this.state);
+  }
+
+  protected get canPrintPackingList(){
+    return isInRole(["admin","user"],this.state);
   }
 }
