@@ -1,3 +1,5 @@
+import { Router } from "aurelia-router";
+import { encodeParams } from "./../../core/helpers";
 import { IPaymentListItem } from "interfaces/payments/IPaymentListItem";
 import { ICustomerListItem } from "./../../interfaces/ICustomerListItem";
 import { PaymentService } from "./../../services/payment-service";
@@ -18,11 +20,13 @@ export class PaymentsList {
 
   constructor(
     private customerService: CustomerService,
-    private paymentsService: PaymentService
+    private paymentsService: PaymentService,
+    private router: Router
   ) { }
 
   protected async activate() {
     await this.customerService.loadCustomersForAppUserList();
+    await this.paymentsService.loadList(null);
   }
 
   protected stateChanged(state: IState) {
@@ -37,6 +41,13 @@ export class PaymentsList {
     }
   }
 
+  protected encode(value: string) {
+    return encodeParams(value);
+  }
+
+  protected addPayment() {
+    this.router.navigateToRoute("paymentEdit", { id: null });
+  }
 
   private async runQuery() {
     await this.paymentsService.loadList(this.selectedSupplier.id);

@@ -11,13 +11,15 @@ namespace AmbRcnTradeServer.Services
         Task<long> GetNextContractNumber(string companyId);
         Task<long> GetNextLotNumber(string companyId);
         Task<long> GetNextPurchaseNumber(string companyId);
+        Task<long> GetNextPaymentNumber(string companyId);
     }
 
     public class CounterService : ICounterService
     {
         private const string CONTRACT_NUMBERS = "ContractNumbers";
         private const string LOT_NUMBERS = "LotNumbers";
-        private const string PURCHASE_NUMBER = "PurchaseNumbers";
+        private const string PURCHASE_NUMBERS = "PurchaseNumbers";
+        private const string PAYMENT_NUMBERS = "PaymentNumbers";
 
         private readonly IAsyncDocumentSession _session;
 
@@ -38,7 +40,12 @@ namespace AmbRcnTradeServer.Services
 
         public async Task<long> GetNextPurchaseNumber(string companyId)
         {
-            return await NextNumber(companyId, PURCHASE_NUMBER);
+            return await NextNumber(companyId, PURCHASE_NUMBERS);
+        }
+
+        public async Task<long> GetNextPaymentNumber(string companyId)
+        {
+            return await NextNumber(companyId, PAYMENT_NUMBERS);
         }
 
         private async Task<long> NextNumber(string companyId, string key)

@@ -196,7 +196,8 @@ export const initialState: IState = {
         notes: undefined!,
         id: undefined!,
         name: undefined!,
-        companyId: undefined!
+        companyId: undefined!,
+        paymentNo: undefined!
       },
       paymentList: [],
       purchaseList: []

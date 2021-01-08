@@ -11,4 +11,5 @@ export interface IPaymentListItem {
   beneficiaryName: string;
   supplierName: string;
   companyId: string;
+  paymentNo: number;
 }

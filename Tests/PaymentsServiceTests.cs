@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using AmberwoodCore.Extensions;
+using AmberwoodCore.Models;
 using AmberwoodCore.Responses;
 using AmbRcnTradeServer.Constants;
 using AmbRcnTradeServer.Models.DictionaryModels;
@@ -139,10 +140,11 @@ namespace Tests
 
             // Act
             var list = await sut.LoadList(COMPANY_ID,null);
+            
+            // Assert
             list.Should().Contain(c => c.SupplierName == supplier.Name);
             list.Should().Contain(c => c.BeneficiaryName == beneficiary.Name);
-
-            // Assert
+            list.Should().Contain(c => c.PaymentNo > 0);
             list.Should().HaveCount(3);
         }
 
@@ -156,6 +158,8 @@ namespace Tests
             var sut = GetPaymentService(session);
             var fixture = new Fixture();
 
+            await new Company().CreateIdAndStore(session);
+            
             var beneficiary = fixture.DefaultEntity<Customer>().Create();
             await session.StoreAsync(beneficiary);
 
@@ -170,6 +174,7 @@ namespace Tests
                 .With(c => c.Currency, Currency.CFA)
                 .With(c => c.PaymentDate, DateTime.Today)
                 .With(c => c.Notes, "notes")
+                .Without(c=>c.PaymentNo)
                 .Create();
 
             var paymentDto = new PaymentDto() {Payment = payment};
@@ -180,6 +185,7 @@ namespace Tests
             // Assert
             var actual = await session.LoadAsync<Payment>(response.Dto.Payment.Id);
             actual.Should().NotBeNull();
+            actual.PaymentNo.Should().Be(1);
         }
 
         [Fact]

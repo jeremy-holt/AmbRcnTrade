@@ -72,6 +72,10 @@ export class App {
         { route: "purchase/list", name: "purchaseList", title: "Purchases", nav: true, moduleId: "modules/purchase/purchase-list", roles: ["admin", "user", "inspector", "warehouseMan"] },
         { route: "purchase/edit/:id?", name: "purchaseEdit", title: "Purchase", moduleId: "modules/purchase/purchase-edit", roles: ["admin", "user", "inspector", "warehouseMan"] },
 
+        // Payments
+        { route: "payment/list", name: "paymentList", title: "Payments", nav: true, moduleId: "modules/payments/payments-list", roles: ["admin", "user"] },
+        { route: "payment/edit/:id?", name: "paymentEdit", title: "Payment", moduleId: "modules/payments/payment-edit", roles: ["admin", "user"] },
+
         // Container
         { route: "container/list", name: "containerList", title: "Containers", nav: true, moduleId: "modules/container/container-list", roles: ["admin", "user", "inspector", "warehouseMan"] },
         { route: "container/edit/:id?", name: "containerEdit", title: "Container", moduleId: "modules/container/container-edit", roles: ["admin", "user", "inspector", "warehouseMan"] },
@@ -81,7 +85,7 @@ export class App {
         { route: "vessel/edit/:id?", name: "vesselEdit", title: "Vessel", moduleId: "modules/vessel/vessel-edit", roles: ["admin", "user", "warehouseMan"] },
         { route: "vessel/billLading/edit/:vesselId/:billLadingId?", name: "billLadingEdit", title: "Bill of Lading", moduleId: "modules/billLading/billLading-edit", roles: ["admin", "user", "warehouseMan"] },
         { route: "vessel/billLading/packingList/:vesselId/:billLadingId", name: "packingList", title: "Packing list", moduleId: "modules/packing-list/packing-list", roles: ["admin", "user", "warehouseMan"] },
-        { route: "vessel/billLading/document-viewer/:id", name:"billLadingDocumentViewer", title: "Document viewer", moduleId: "modules/document-viewer/document-viewer", roles: ["admin", "user", "guest"] },
+        { route: "vessel/billLading/document-viewer/:id", name: "billLadingDocumentViewer", title: "Document viewer", moduleId: "modules/document-viewer/document-viewer", roles: ["admin", "user", "guest"] },
 
         // Dictionary items       
         { route: "dictionary/customer/edit", name: "customerEdit", title: "Customers", nav: true, moduleId: "modules/customer/customer-edit", roles: ["admin", "user"] },

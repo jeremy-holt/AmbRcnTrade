@@ -23,6 +23,7 @@ namespace AmbRcnTradeServer.Models.PaymentModels
         public string Id { get; set; }
         public string Name { get; set; }
         public string CompanyId { get; set; }
+        public long PaymentNo { get; set; }
     }
 
     public class PaymentDto
@@ -46,5 +47,6 @@ namespace AmbRcnTradeServer.Models.PaymentModels
         public string BeneficiaryName { get; set; }
         public string SupplierName { get; set; }
         public string CompanyId { get; set; }
+        public long PaymentNo { get; set; }
     }
 }

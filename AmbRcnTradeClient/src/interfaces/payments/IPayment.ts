@@ -1,7 +1,7 @@
 import { Currency } from "constants/app-constants";
 
 export interface IPayment {
-  paymentDate: Date | string | null;
+  paymentDate: string | null;
   beneficiaryId: string;
   value: number;
   currency: Currency;
@@ -11,5 +11,6 @@ export interface IPayment {
   id: string;
   name: string;
   companyId: string;
+  paymentNo: number;
 }
 

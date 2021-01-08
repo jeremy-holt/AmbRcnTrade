@@ -22,21 +22,29 @@ namespace AmbRcnTradeServer.Services
 
     public class PaymentService : IPaymentService
     {
+        private readonly ICounterService _counterService;
         private readonly IPurchaseService _purchaseService;
         private readonly IAsyncDocumentSession _session;
 
-        public PaymentService(IAsyncDocumentSession session, IPurchaseService purchaseService)
+        public PaymentService(IAsyncDocumentSession session, IPurchaseService purchaseService, ICounterService counterService)
         {
             _session = session;
             _purchaseService = purchaseService;
+            _counterService = counterService;
         }
 
         public async Task<ServerResponse<PaymentDto>> Save(PaymentDto paymentDto)
         {
+            if (paymentDto.Payment.Id.IsNullOrEmpty() && paymentDto.Payment.PaymentNo == 0)
+            {
+                var next = await _counterService.GetNextPaymentNumber(paymentDto.Payment.CompanyId);
+                paymentDto.Payment.PaymentNo = next;
+            }
+
             await _session.StoreAsync(paymentDto.Payment);
             await _session.SaveChangesAsync();
 
-            paymentDto.PaymentList = await LoadList(paymentDto.Payment.CompanyId,paymentDto.Payment.SupplierId);
+            paymentDto.PaymentList = await LoadList(paymentDto.Payment.CompanyId, paymentDto.Payment.SupplierId);
 
             paymentDto.PurchaseList = await _purchaseService.LoadList(null, paymentDto.Payment.SupplierId);
 
@@ -50,7 +58,7 @@ namespace AmbRcnTradeServer.Services
                 .Include(c => c.BeneficiaryId)
                 .LoadAsync<Payment>(id);
 
-            var paymentsList = await LoadList(payment.CompanyId,payment.SupplierId);
+            var paymentsList = await LoadList(payment.CompanyId, payment.SupplierId);
 
             var purchases = await _purchaseService.LoadList(null, payment.SupplierId);
 

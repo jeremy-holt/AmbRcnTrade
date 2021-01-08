@@ -22,10 +22,10 @@ namespace Tests.Base
 
         public TestBaseContainer(ITestOutputHelper output) : base(output, new ClientMappingProfile()) { }
 
-        // protected ICounterService GetCounterService(IAsyncDocumentSession session)
-        // {
-        //     return new CounterService(session);
-        // }
+        protected ICounterService GetCounterService(IAsyncDocumentSession session)
+        {
+            return new CounterService(session);
+        }
         //
         // protected IContractService GetContractService(IAsyncDocumentSession session)
         // {
@@ -145,7 +145,7 @@ namespace Tests.Base
 
         protected IPaymentService GetPaymentService(IAsyncDocumentSession session)
         {
-            return new PaymentService(session, GetPurchaseService(session));
+            return new PaymentService(session, GetPurchaseService(session), GetCounterService(session));
         }
     }
 }

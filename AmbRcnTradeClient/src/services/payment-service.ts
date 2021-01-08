@@ -1,3 +1,4 @@
+import { fixAspNetCoreDate } from "./../core/helpers";
 import { Router } from "aurelia-router";
 import { HttpClient } from "aurelia-fetch-client";
 import { IState } from "store/state";
@@ -50,6 +51,8 @@ export class PaymentService extends FetchService {
 }
 
 export function paymentEditAction(state: IState, dto: IPaymentDto) {
+  dto.payment.paymentDate=fixAspNetCoreDate(dto.payment.paymentDate,false);
+  
   const newState = _.cloneDeep(state);
   newState.paymentDto.current = dto;
   return newState;
