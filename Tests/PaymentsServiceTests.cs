@@ -89,6 +89,62 @@ namespace Tests
 
             // Assert
             actual.Payment.Should().BeEquivalentTo(payment);
+        }
+
+        [Fact]
+        public async Task LoadPaymentsPurchases_ShouldLoadListForSupplierId()
+        {
+            // Arrange
+            using var store = GetDocumentStore();
+            using var session = store.OpenAsyncSession();
+            await InitializeIndexes(store);
+            var sut = GetPaymentService(session);
+            var fixture = new Fixture();
+            
+            var supplier = await new Customer().CreateAndStore(session);
+            var beneficiary = await new Customer().CreateAndStore(session);
+
+            var inspection = await new Inspection().CreateAndStore(session);
+
+            var stocks = fixture.DefaultEntity<Stock>()
+                .With(c => c.SupplierId, supplier.Id)
+                .With(c => c.Bags, 1000)
+                .With(c => c.LotNo, 1)
+                .With(c => c.AnalysisResult, new AnalysisResult())
+                .With(c => c.WeightKg, 80000)
+                .With(c => c.IsStockIn, true)
+                .With(c=>c.InspectionId,inspection.Id)
+                .CreateMany()
+                .ToList();
+            await stocks.SaveList(session);
+
+            var purchaseDetails = fixture.Build<PurchaseDetail>()
+                .With(c => c.PricePerKg, 400)
+                .With(c => c.Currency, Currency.CFA)
+                .With(c => c.ExchangeRate, 535)
+                .With(c => c.StockIds, stocks.GetPropertyFromList(c => c.Id))
+                .CreateMany()
+                .ToList();
+
+            var purchase = fixture.DefaultEntity<Purchase>()
+                .With(c => c.PurchaseDetails, purchaseDetails)
+                .With(c => c.SupplierId, supplier.Id)
+                .Create();
+            await session.StoreAsync(purchase);
+            
+            var payment = fixture.DefaultEntity<Payment>()
+                .With(c => c.BeneficiaryId, beneficiary.Id)
+                .With(c => c.SupplierId, supplier.Id)
+                .Create();
+            await session.StoreAsync(payment);
+
+            await session.SaveChangesAsync();
+            WaitForIndexing(store);
+
+            PaymentDto actual = await sut.LoadPaymentsPurchasesList(COMPANY_ID, payment.SupplierId);
+            
+            // Assert
+            
             actual.PaymentList.Should().HaveCount(1);
             actual.PaymentList[0].Id.Should().Be(payment.Id);
             

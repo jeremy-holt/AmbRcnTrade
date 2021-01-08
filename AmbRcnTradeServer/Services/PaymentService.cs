@@ -18,6 +18,7 @@ namespace AmbRcnTradeServer.Services
         Task<PaymentDto> Load(string id);
         Task<List<PaymentListItem>> LoadList(string companyId, string supplierId);
         Task<ServerResponse> DeletePayment(string id);
+        Task<PaymentDto> LoadPaymentsPurchasesList(string companyId, string supplierId);
     }
 
     public class PaymentService : IPaymentService
@@ -101,6 +102,19 @@ namespace AmbRcnTradeServer.Services
         {
             _session.Delete(id);
             return await Task.FromResult(new ServerResponse("Deleted payment"));
+        }
+
+        public async Task<PaymentDto> LoadPaymentsPurchasesList(string companyId, string supplierId)
+        {
+            var paymentsList = await LoadList(companyId, supplierId);
+
+            var purchases = await _purchaseService.LoadList(null, supplierId);
+
+            return new PaymentDto
+            {
+                PurchaseList = purchases,
+                PaymentList = paymentsList
+            };
         }
     }
 }
