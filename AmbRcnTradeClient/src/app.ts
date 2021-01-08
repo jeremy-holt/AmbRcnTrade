@@ -58,26 +58,18 @@ export class App {
 
 
         // Inspections
-        { route: "inspections/list/:approval?", href: "inspections/list", name: "inspectionList", title: "Inspections", nav: true, moduleId: "modules/inspection/inspection-list", roles: ["admin", "user", "inspector" , "warehouseManager"] },
+        { route: "inspections/list/:approval?", href: "inspections/list", name: "inspectionList", title: "Inspections", nav: true, moduleId: "modules/inspection/inspection-list", roles: ["admin", "user", "inspector", "warehouseManager"] },
         { route: "inspections/edit/:id?", name: "inspectionEdit", title: "Inspection", moduleId: "modules/inspection/inspection-edit", roles: ["admin", "user", "inspector", "warehouseManager"] },
         // { route: "inspections/upload", name: "inspectionImageUpload", moduleId: "modules/inspection/file-manager/file-manager",roles: ["admin", "user", "inspector"] },
         // { route: "inspections/print/:id", name: "inspectionPrint", title: "Print", moduleId: "modules/inspection/inspection-print", roles: ["admin", "user", "inspector"] },
 
         // Stocks
-        { route: "stock/list/:lotNo?/:locationId?", href: "stock/list", name: "stockList", title: "Stocks", nav: true, moduleId: "modules/stock/stock-list", roles: ["admin", "user",  "warehouseManager"] },
+        { route: "stock/list/:lotNo?/:locationId?", href: "stock/list", name: "stockList", title: "Stocks", nav: true, moduleId: "modules/stock/stock-list", roles: ["admin", "user", "warehouseManager"] },
         { route: "stock/edit/:id?", name: "stockEdit", title: "Stock", moduleId: "modules/stock/stock-edit", roles: ["admin", "user", "warehouseManager"] },
         { route: "stock/stockbalance/:lotNo?/:locationId?", href: "stock/stockbalance", name: "stockBalanceList", title: "Stock balances", nav: true, moduleId: "modules/stockBalance/stock-balance-list", roles: ["admin", "user", "warehouseManager"] },
 
-        // Purchase
-        { route: "purchase/list", name: "purchaseList", title: "Purchases", nav: true, moduleId: "modules/purchase/purchase-list", roles: ["admin", "user", "warehouseManager"] },
-        { route: "purchase/edit/:id?", name: "purchaseEdit", title: "Purchase", moduleId: "modules/purchase/purchase-edit", roles: ["admin", "user", "warehouseManager"] },
-
-        // Payments
-        { route: "payment/list", name: "paymentList", title: "Payments", nav: true, moduleId: "modules/payments/payments-list", roles: ["admin", "user"] },
-        { route: "payment/edit/:id?", name: "paymentEdit", title: "Payment", moduleId: "modules/payments/payment-edit", roles: ["admin", "user"] },
-
         // Container
-        { route: "container/list", name: "containerList", title: "Containers", nav: true, moduleId: "modules/container/container-list", roles: ["admin", "user",  "warehouseManager"] },
+        { route: "container/list", name: "containerList", title: "Containers", nav: true, moduleId: "modules/container/container-list", roles: ["admin", "user", "warehouseManager"] },
         { route: "container/edit/:id?", name: "containerEdit", title: "Container", moduleId: "modules/container/container-edit", roles: ["admin", "user", "warehouseManager"] },
 
         // Vessel
@@ -87,8 +79,16 @@ export class App {
         { route: "vessel/billLading/packingList/:vesselId/:billLadingId", name: "packingList", title: "Packing list", moduleId: "modules/packing-list/packing-list", roles: ["admin", "user"] },
         { route: "vessel/billLading/document-viewer/:id", name: "billLadingDocumentViewer", title: "Document viewer", moduleId: "modules/document-viewer/document-viewer", roles: ["admin", "user"] },
 
+        // Purchase
+        { route: "purchase/list", name: "purchaseList", title: "Purchases", nav: true, moduleId: "modules/purchase/purchase-list", roles: ["admin", "user", "warehouseManager"] },
+        { route: "purchase/edit/:id?", name: "purchaseEdit", title: "Purchase", moduleId: "modules/purchase/purchase-edit", roles: ["admin", "user", "warehouseManager"] },
+
+        // Payments
+        { route: "payment/list", name: "paymentList", title: "Payments", nav: true, moduleId: "modules/payments/payments-list", roles: ["admin", "user"] },
+        { route: "payment/edit/:id?", name: "paymentEdit", title: "Payment", moduleId: "modules/payments/payment-edit", roles: ["admin", "user"] },
+
         // Dictionary items       
-        { route: "dictionary/customer/edit", name: "customerEdit", title: "Customers", nav: true, moduleId: "modules/customer/customer-edit", roles: ["admin", "user"] },
+        { route: "dictionary/customer/edit", name: "customerEdit", title: "Address book", nav: true, moduleId: "modules/customer/customer-edit", roles: ["admin", "user"] },
         { route: "dictionary/port/edit", name: "portEdit", title: "Ports", nav: true, moduleId: "modules/dictionary/port/port-edit", roles: ["admin", "user"] },
 
         // Admin

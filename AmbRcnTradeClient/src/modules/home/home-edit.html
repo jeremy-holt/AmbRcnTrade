@@ -11,26 +11,60 @@
     <p>
       Hello ${state.user.firstName}, you are now logged in to the system as a ${state.user.role}
     </p>
-    <p>To get going select Contracts from the menu</p>
+
   </div>
 
-  <div if.bind="isInspector">    
-    <p>
-      Bonjour ${state.user.firstName}, vous êtes maintenant connecté au système en tant que ${state.user.role}
-    </p>
-    <p>Veuillez sélectionner Inspections dans le menu pour commencer</p>
-  </div>
-
-  <!-- <a route-href="login" class="with-decoration">Login</a> -->
 
   <p class="mt-3" if.bind="state.loggedIn">
     <a href="#" class="with-decoration" click.delegate="logout()">Click here to log out of the system</a>
   </p>
 
-  <div if.bind="requireLogin" class="alert alert-info my-3">You are not logged in to the system.<br>Please <a  route-href="login" class="with-decoration">login</a> again</div>
+  <div if.bind="requireLogin" class="alert alert-info my-3">You are not logged in to the system.<br>Please <a
+      route-href="login" class="with-decoration">login</a> again</div>
 
 
   <section>
     <h1>Overview of using the system</h1>
+
+    <p>The system follows a sequential process</p>
+    <ol>
+      <li>The first we know of the goods is when they are inspected. This is done by an Inspector</li>
+      <li>When the goods have been approved, the Warehouse Manager will move them into stock. The Warehouse Manager has
+        the option to create a new stock entry, or to add it to an existing lot.
+        The system automatically generates the stock number and the lot number.</li>
+      <li>A lot can be made up of one or many indivudal stock items. The average quality of the stocks (as determined by
+        the Inspector) that make up the lot are calculated and are recorded together with the lot.</li>
+      <li>Controlling the stocks is done from the Stock Balances page. Here the user can see the stock balance in bags
+        and kg. If the weight of the incoming stock was unknown at the time the Warehouse Manager moved the Inspection
+        into the stocks, an approximate weight is given of the number of bags x 80 kg </li>
+      <li>From the Stock Balances page, the Warehouse Manager will move goods into containers using the Stuffing button.
+      </li>
+      <li>The Containers page is where new containers are created. Initially the only thing known about the container is
+        the Container Number and the Booking number. As more information is known about the container, i.e. the Seal
+        Number, the Weighbridge Gross and Nett Weight, the VGM ticket number etc, the user should update the container.
+      </li>
+      <li>Containers have different statuses, such as Empty, Stuffing Complete, On way to port, Gated, On board the
+        vessel etc. It is essential that the status of each container is adjusted to reflect its' physical state, since
+        the program uses the container status to provide additional information</li>
+      <li>Containers may also be unstuffed on the Containers page</li>
+      <li>The Vessels page shows the vessels and their Bills of Lading. From this page the user has access to the Bill
+        of Lading page.</li>
+      <li>On the Bill of Lading page, the user enters all the relevant information, and also provides the text for the
+        body of the B/L. It is from this page that you can add the containers where the container status shows that
+        stuffing has been completed.</li>
+      <li>The user may automatically print the Packing List, and by using the Upload and Download buttons in the
+        toolbar, may upload pdf images of the actual documents - such as draft B/L, Phyto cert etc.</li>
+      <li>The Purchase page is where the user records the actual purchases from the suppliers. The procedure is to
+        create the Purchase Order, and then allocate goods that are in stock to the Purchase. Stocks can only be added
+        from the same supplier that is recorded on the Purchase Order.</li>
+      <li>The Payments page is where a record of payments is made to the supplier. The page shows at a glance what has
+        been bought from the supplier, and what payments have been made. There is also an option to record payments to a
+        third party via the supplier.</li>
+      <li>The Address book is where the details of all suppliers, warehouses, consignees etc ar recorded. Each customer
+        is allocated a group, such as "Supplier" or "Bill of Lading" for names that will only appear as Shipper,
+        Consignee or Notify party. It is important to give each customer their correct group otherwise they will not
+        appear in their respective lists.</li>
+      <li>If a customer is both a Supplier and a Shipper a seperate Customer should be created for each group.</li>
+    </ol>
   </section>
 </template>
