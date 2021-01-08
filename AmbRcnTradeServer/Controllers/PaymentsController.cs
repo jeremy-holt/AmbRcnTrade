@@ -41,9 +41,9 @@ namespace AmbRcnTradeServer.Controllers
 
         [Authorize]
         [HttpGet("[action]")]
-        public async Task<ActionResult<List<PaymentListItem>>> LoadList(string companyId, string supplierId, string beneficiaryId)
+        public async Task<ActionResult<List<PaymentListItem>>> LoadList(string companyId, string supplierId)
         {
-            return await _service.LoadList(companyId,supplierId,beneficiaryId);
+            return await _service.LoadList(companyId,supplierId);
         }
 
         [Authorize]

@@ -138,7 +138,7 @@ namespace Tests
             await payments.SaveList(session);
 
             // Act
-            var list = await sut.LoadList(COMPANY_ID,null,null);
+            var list = await sut.LoadList(COMPANY_ID,null);
             list.Should().Contain(c => c.SupplierName == supplier.Name);
             list.Should().Contain(c => c.BeneficiaryName == beneficiary.Name);
 

@@ -1,0 +1,37 @@
+<template>
+  <toolbar type="menu" caption="Payments" >
+    <toolbar-item icon="fas fa-plus" click.call="addPayment()"></toolbar-item>
+  </toolbar>
+
+  <div class="card">
+    <div class="card-header">
+      <h4>Payments</h4>
+    </div>
+
+    <div class="class-body">
+      <div class="row d-flex justify-content-between my-4">
+        <select-input source.bind="customersList | customerFilter: 'suppliers'" label="Suppliers" value.bind="selectedSupplier"></select-input>        
+      </div>
+
+     <table class="table table-sm table-bordered">
+       <thead>
+         <tr>
+           <th>Payment date</th>
+           <th>Supplier</th>
+           <th>Beneficiary</th>
+           <th>Value</th>
+           <th>Exchange rate</th>
+         </tr>
+       </thead>
+       <tbody>
+        <tr repeat.for="item of list">
+          <td>${item.paymentDate | dateFormat: "DD/MM/YYYY"}</td>
+          <td>${item.supplierName}</td>
+          <td>${item.beneficiaryName}</td>
+          <td>${${item.currency.toUpperCase()}} ${item.value | numberFormat: "0,0"}</td>
+        </tr>
+       </tbody>  
+     </table>
+    </div>
+  </div>
+</template>

@@ -35,13 +35,12 @@ export class PaymentService extends FetchService {
     return super.post<IPaymentDto>(paymentDto, "save", paymentEditAction);
   }
 
-  public async loadList(supplierId: string, beneficiaryId: string) {
+  public async loadList(supplierId: string) {
 
     return super.getMany<IPaymentListItem[]>(
       [
         this.currentCompanyIdQuery(),
-        new QueryId("supplierId", supplierId),
-        new QueryId("beneficiaryId", beneficiaryId)
+        new QueryId("supplierId", supplierId)        
       ], "loadList", paymentListAction);
   }
 

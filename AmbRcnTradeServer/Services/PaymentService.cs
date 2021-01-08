@@ -16,7 +16,7 @@ namespace AmbRcnTradeServer.Services
     {
         Task<ServerResponse<PaymentDto>> Save(PaymentDto paymentDto);
         Task<PaymentDto> Load(string id);
-        Task<List<PaymentListItem>> LoadList(string companyId, string supplierId, string beneficiaryId);
+        Task<List<PaymentListItem>> LoadList(string companyId, string supplierId);
         Task<ServerResponse> DeletePayment(string id);
     }
 
@@ -36,7 +36,7 @@ namespace AmbRcnTradeServer.Services
             await _session.StoreAsync(paymentDto.Payment);
             await _session.SaveChangesAsync();
 
-            paymentDto.PaymentList = await LoadList(paymentDto.Payment.CompanyId,paymentDto.Payment.SupplierId, null);
+            paymentDto.PaymentList = await LoadList(paymentDto.Payment.CompanyId,paymentDto.Payment.SupplierId);
 
             paymentDto.PurchaseList = await _purchaseService.LoadList(null, paymentDto.Payment.SupplierId);
 
@@ -50,7 +50,7 @@ namespace AmbRcnTradeServer.Services
                 .Include(c => c.BeneficiaryId)
                 .LoadAsync<Payment>(id);
 
-            var paymentsList = await LoadList(payment.CompanyId,payment.SupplierId,null);
+            var paymentsList = await LoadList(payment.CompanyId,payment.SupplierId);
 
             var purchases = await _purchaseService.LoadList(null, payment.SupplierId);
 
@@ -62,7 +62,7 @@ namespace AmbRcnTradeServer.Services
             };
         }
 
-        public async Task<List<PaymentListItem>> LoadList(string companyId, string supplierId, string beneficiaryId)
+        public async Task<List<PaymentListItem>> LoadList(string companyId, string supplierId)
         {
             var query = _session.Query<PaymentListItem, Payments_ById>()
                 .Include(c => c.SupplierId)
@@ -70,9 +70,6 @@ namespace AmbRcnTradeServer.Services
 
             if (companyId.IsNotNullOrEmpty())
                 query = query.Where(c => c.CompanyId == companyId);
-
-            if (beneficiaryId.IsNotNullOrEmpty())
-                query = query.Where(c => c.BeneficiaryId == beneficiaryId);
 
             if (supplierId.IsNotNullOrEmpty())
                 query = query.Where(c => c.SupplierId == supplierId);

@@ -1,6 +1,5 @@
 import { Currency } from "constants/app-constants";
 
-
 export interface IPaymentListItem {
   id: string;
   paymentDate: string | null;
