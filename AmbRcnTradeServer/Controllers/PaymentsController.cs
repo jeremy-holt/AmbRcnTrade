@@ -20,23 +20,30 @@ namespace AmbRcnTradeServer.Controllers
 
         [Authorize]
         [HttpGet("[action]")]
-        public async Task<ActionResult<PaymentDto>> Create(string companyId)
+        public async Task<ActionResult<Payment>> Create(string companyId)
         {
-            return await Task.FromResult(new PaymentDto() {Payment = new Payment(){CompanyId = companyId}});
+            return await Task.FromResult(new Payment() {CompanyId = companyId});
         }
 
         [Authorize]
         [HttpGet("[action]")]
-        public async Task<ActionResult<PaymentDto>> Load(string id)
+        public async Task<ActionResult<Payment>> Load(string id)
         {
             return await _service.Load(id);
         }
 
         [Authorize]
         [HttpPost("[action]")]
-        public async Task<ActionResult<ServerResponse<PaymentDto>>> Save(PaymentDto payment)
+        public async Task<ActionResult<ServerResponse<Payment>>> Save(Payment payment)
         {
             return await _service.Save(payment);
+        }
+
+        [Authorize]
+        [HttpGet("[action]")]
+        public async Task<ActionResult<PaymentDto>> LoadPaymentsPurchasesList(string companyId, string supplierId)
+        {
+            return await _service.LoadPaymentsPurchasesList(companyId, supplierId);
         }
 
         [Authorize]

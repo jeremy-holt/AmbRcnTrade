@@ -20,18 +20,16 @@ namespace AmbRcnTradeServer.Models.PaymentModels
         public double ExchangeRate { get; set; }
         public string SupplierId { get; set; }
         public string Notes { get; set; }
+        public long PaymentNo { get; set; }
         public string Id { get; set; }
         public string Name { get; set; }
         public string CompanyId { get; set; }
-        public long PaymentNo { get; set; }
     }
 
     public class PaymentDto
     {
-        public Payment Payment { get; set; }
-
         public List<PaymentListItem> PaymentList { get; set; } = new();
-        
+
         public List<PurchaseListItem> PurchaseList { get; set; } = new();
     }
 

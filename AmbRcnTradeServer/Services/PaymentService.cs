@@ -14,8 +14,8 @@ namespace AmbRcnTradeServer.Services
 {
     public interface IPaymentService
     {
-        Task<ServerResponse<PaymentDto>> Save(PaymentDto paymentDto);
-        Task<PaymentDto> Load(string id);
+        Task<ServerResponse<Payment>> Save(Payment payment);
+        Task<Payment> Load(string id);
         Task<List<PaymentListItem>> LoadList(string companyId, string supplierId);
         Task<ServerResponse> DeletePayment(string id);
         Task<PaymentDto> LoadPaymentsPurchasesList(string companyId, string supplierId);
@@ -34,41 +34,28 @@ namespace AmbRcnTradeServer.Services
             _counterService = counterService;
         }
 
-        public async Task<ServerResponse<PaymentDto>> Save(PaymentDto paymentDto)
+        public async Task<ServerResponse<Payment>> Save(Payment payment)
         {
-            if (paymentDto.Payment.Id.IsNullOrEmpty() && paymentDto.Payment.PaymentNo == 0)
+            if (payment.Id.IsNullOrEmpty() && payment.PaymentNo == 0)
             {
-                var next = await _counterService.GetNextPaymentNumber(paymentDto.Payment.CompanyId);
-                paymentDto.Payment.PaymentNo = next;
+                var next = await _counterService.GetNextPaymentNumber(payment.CompanyId);
+                payment.PaymentNo = next;
             }
 
-            await _session.StoreAsync(paymentDto.Payment);
+            await _session.StoreAsync(payment);
             await _session.SaveChangesAsync();
 
-            paymentDto.PaymentList = await LoadList(paymentDto.Payment.CompanyId, paymentDto.Payment.SupplierId);
-
-            paymentDto.PurchaseList = await _purchaseService.LoadList(null, paymentDto.Payment.SupplierId);
-
-            return new ServerResponse<PaymentDto>(paymentDto, "Saved");
+            return new ServerResponse<Payment>(payment, "Saved");
         }
 
-        public async Task<PaymentDto> Load(string id)
+        public async Task<Payment> Load(string id)
         {
             var payment = await _session
                 .Include<Payment>(c => c.SupplierId)
                 .Include(c => c.BeneficiaryId)
                 .LoadAsync<Payment>(id);
 
-            var paymentsList = await LoadList(payment.CompanyId, payment.SupplierId);
-
-            var purchases = await _purchaseService.LoadList(null, payment.SupplierId);
-
-            return new PaymentDto
-            {
-                Payment = payment,
-                PurchaseList = purchases,
-                PaymentList = paymentsList
-            };
+            return payment;
         }
 
         public async Task<List<PaymentListItem>> LoadList(string companyId, string supplierId)

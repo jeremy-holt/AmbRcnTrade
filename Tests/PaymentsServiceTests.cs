@@ -3,7 +3,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using AmberwoodCore.Extensions;
 using AmberwoodCore.Models;
-using AmberwoodCore.Responses;
 using AmbRcnTradeServer.Constants;
 using AmbRcnTradeServer.Models.DictionaryModels;
 using AmbRcnTradeServer.Models.InspectionModels;
@@ -33,6 +32,29 @@ namespace Tests
             await new Inspections_ByAnalysisResult().ExecuteAsync(store);
         }
 
+        [Fact]
+        public async Task DeletePayment_ShouldDeletePayment()
+        {
+            // Arrange
+            using var store = GetDocumentStore();
+            using var session = store.OpenAsyncSession();
+            var sut = GetPaymentService(session);
+
+            var payment = await new Payment().CreateAndStore(session);
+            await session.SaveChangesAsync();
+
+            // Act
+            var response = await sut.DeletePayment(payment.Id);
+            await session.SaveChangesAsync();
+
+            // Assert
+            response.Message.Should().Be("Deleted payment");
+
+            using var session2 = store.OpenAsyncSession();
+            var actual = await session2.LoadAsync<Payment>(payment.Id);
+            actual.Should().BeNull();
+        }
+
 
         [Fact]
         public async Task Load_ShouldLoadPayment()
@@ -56,7 +78,7 @@ namespace Tests
                 .With(c => c.AnalysisResult, new AnalysisResult())
                 .With(c => c.WeightKg, 80000)
                 .With(c => c.IsStockIn, true)
-                .With(c=>c.InspectionId,inspection.Id)
+                .With(c => c.InspectionId, inspection.Id)
                 .CreateMany()
                 .ToList();
             await stocks.SaveList(session);
@@ -74,7 +96,7 @@ namespace Tests
                 .With(c => c.SupplierId, supplier.Id)
                 .Create();
             await session.StoreAsync(purchase);
-            
+
             var payment = fixture.DefaultEntity<Payment>()
                 .With(c => c.BeneficiaryId, beneficiary.Id)
                 .With(c => c.SupplierId, supplier.Id)
@@ -85,70 +107,10 @@ namespace Tests
             WaitForIndexing(store);
 
             // Act
-            PaymentDto actual = await sut.Load(payment.Id);
+            var actual = await sut.Load(payment.Id);
 
             // Assert
-            actual.Payment.Should().BeEquivalentTo(payment);
-        }
-
-        [Fact]
-        public async Task LoadPaymentsPurchases_ShouldLoadListForSupplierId()
-        {
-            // Arrange
-            using var store = GetDocumentStore();
-            using var session = store.OpenAsyncSession();
-            await InitializeIndexes(store);
-            var sut = GetPaymentService(session);
-            var fixture = new Fixture();
-            
-            var supplier = await new Customer().CreateAndStore(session);
-            var beneficiary = await new Customer().CreateAndStore(session);
-
-            var inspection = await new Inspection().CreateAndStore(session);
-
-            var stocks = fixture.DefaultEntity<Stock>()
-                .With(c => c.SupplierId, supplier.Id)
-                .With(c => c.Bags, 1000)
-                .With(c => c.LotNo, 1)
-                .With(c => c.AnalysisResult, new AnalysisResult())
-                .With(c => c.WeightKg, 80000)
-                .With(c => c.IsStockIn, true)
-                .With(c=>c.InspectionId,inspection.Id)
-                .CreateMany()
-                .ToList();
-            await stocks.SaveList(session);
-
-            var purchaseDetails = fixture.Build<PurchaseDetail>()
-                .With(c => c.PricePerKg, 400)
-                .With(c => c.Currency, Currency.CFA)
-                .With(c => c.ExchangeRate, 535)
-                .With(c => c.StockIds, stocks.GetPropertyFromList(c => c.Id))
-                .CreateMany()
-                .ToList();
-
-            var purchase = fixture.DefaultEntity<Purchase>()
-                .With(c => c.PurchaseDetails, purchaseDetails)
-                .With(c => c.SupplierId, supplier.Id)
-                .Create();
-            await session.StoreAsync(purchase);
-            
-            var payment = fixture.DefaultEntity<Payment>()
-                .With(c => c.BeneficiaryId, beneficiary.Id)
-                .With(c => c.SupplierId, supplier.Id)
-                .Create();
-            await session.StoreAsync(payment);
-
-            await session.SaveChangesAsync();
-            WaitForIndexing(store);
-
-            PaymentDto actual = await sut.LoadPaymentsPurchasesList(COMPANY_ID, payment.SupplierId);
-            
-            // Assert
-            
-            actual.PaymentList.Should().HaveCount(1);
-            actual.PaymentList[0].Id.Should().Be(payment.Id);
-            
-            actual.PurchaseList.Should().HaveCountGreaterThan(0);
+            actual.Should().BeEquivalentTo(payment);
         }
 
         [Fact]
@@ -195,13 +157,73 @@ namespace Tests
             await payments.SaveList(session);
 
             // Act
-            var list = await sut.LoadList(COMPANY_ID,null);
-            
+            var list = await sut.LoadList(COMPANY_ID, null);
+
             // Assert
             list.Should().Contain(c => c.SupplierName == supplier.Name);
             list.Should().Contain(c => c.BeneficiaryName == beneficiary.Name);
             list.Should().Contain(c => c.PaymentNo > 0);
             list.Should().HaveCount(3);
+        }
+
+        [Fact]
+        public async Task LoadPaymentsPurchases_ShouldLoadListForSupplierId()
+        {
+            // Arrange
+            using var store = GetDocumentStore();
+            using var session = store.OpenAsyncSession();
+            await InitializeIndexes(store);
+            var sut = GetPaymentService(session);
+            var fixture = new Fixture();
+
+            var supplier = await new Customer().CreateAndStore(session);
+            var beneficiary = await new Customer().CreateAndStore(session);
+
+            var inspection = await new Inspection().CreateAndStore(session);
+
+            var stocks = fixture.DefaultEntity<Stock>()
+                .With(c => c.SupplierId, supplier.Id)
+                .With(c => c.Bags, 1000)
+                .With(c => c.LotNo, 1)
+                .With(c => c.AnalysisResult, new AnalysisResult())
+                .With(c => c.WeightKg, 80000)
+                .With(c => c.IsStockIn, true)
+                .With(c => c.InspectionId, inspection.Id)
+                .CreateMany()
+                .ToList();
+            await stocks.SaveList(session);
+
+            var purchaseDetails = fixture.Build<PurchaseDetail>()
+                .With(c => c.PricePerKg, 400)
+                .With(c => c.Currency, Currency.CFA)
+                .With(c => c.ExchangeRate, 535)
+                .With(c => c.StockIds, stocks.GetPropertyFromList(c => c.Id))
+                .CreateMany()
+                .ToList();
+
+            var purchase = fixture.DefaultEntity<Purchase>()
+                .With(c => c.PurchaseDetails, purchaseDetails)
+                .With(c => c.SupplierId, supplier.Id)
+                .Create();
+            await session.StoreAsync(purchase);
+
+            var payment = fixture.DefaultEntity<Payment>()
+                .With(c => c.BeneficiaryId, beneficiary.Id)
+                .With(c => c.SupplierId, supplier.Id)
+                .Create();
+            await session.StoreAsync(payment);
+
+            await session.SaveChangesAsync();
+            WaitForIndexing(store);
+
+            var actual = await sut.LoadPaymentsPurchasesList(COMPANY_ID, payment.SupplierId);
+
+            // Assert
+
+            actual.PaymentList.Should().HaveCount(1);
+            actual.PaymentList[0].Id.Should().Be(payment.Id);
+
+            actual.PurchaseList.Should().HaveCountGreaterThan(0);
         }
 
         [Fact]
@@ -215,7 +237,7 @@ namespace Tests
             var fixture = new Fixture();
 
             await new Company().CreateIdAndStore(session);
-            
+
             var beneficiary = fixture.DefaultEntity<Customer>().Create();
             await session.StoreAsync(beneficiary);
 
@@ -230,42 +252,17 @@ namespace Tests
                 .With(c => c.Currency, Currency.CFA)
                 .With(c => c.PaymentDate, DateTime.Today)
                 .With(c => c.Notes, "notes")
-                .Without(c=>c.PaymentNo)
+                .Without(c => c.PaymentNo)
                 .Create();
 
-            var paymentDto = new PaymentDto() {Payment = payment};
             // Act
-            var response = await sut.Save(paymentDto);
+            var response = await sut.Save(payment);
             await session.SaveChangesAsync();
 
             // Assert
-            var actual = await session.LoadAsync<Payment>(response.Dto.Payment.Id);
+            var actual = await session.LoadAsync<Payment>(response.Dto.Id);
             actual.Should().NotBeNull();
             actual.PaymentNo.Should().Be(1);
-        }
-
-        [Fact]
-        public async Task DeletePayment_ShouldDeletePayment()
-        {
-            // Arrange
-            using var store = GetDocumentStore();
-            using var session = store.OpenAsyncSession();
-            var sut = GetPaymentService(session);
-            
-            var payment = await new Payment().CreateAndStore(session);
-            await session.SaveChangesAsync();
-            
-            // Act
-            ServerResponse response = await sut.DeletePayment(payment.Id);
-            await session.SaveChangesAsync();
-            
-            // Assert
-            response.Message.Should().Be("Deleted payment");
-
-            using var session2 = store.OpenAsyncSession();
-            var actual = await session2.LoadAsync<Payment>(payment.Id);
-            actual.Should().BeNull();
-
         }
     }
 }
