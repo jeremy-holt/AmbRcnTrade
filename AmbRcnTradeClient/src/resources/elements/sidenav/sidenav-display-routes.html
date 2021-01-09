@@ -1,0 +1,5 @@
+<template>
+  <li class="sidenav-link" repeat.for="row of routes">
+    <a href.bind="row.href" click.delegate="open=false & debounce:100">${row.title}</a>
+  </li>
+</template>

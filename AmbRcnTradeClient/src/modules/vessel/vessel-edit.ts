@@ -54,7 +54,6 @@ export class VesselEdit {
       c.consigneeName = this.customerList.find(x => x.id === c.consigneeId)?.name;
       c.notifyParty1Name = this.customerList.find(x => x.id === c.notifyParty1Id)?.name;
     });
-    console.log(this.model.billLadings);
   }
 
   protected get canSave() {

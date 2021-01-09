@@ -29,8 +29,7 @@ export interface IBillLading {
 
 
   shippingMarks: string;
-  freightChargesPayableAt: string;
-  bookingNumber: string;
+  freightChargesPayableAt: string;  
   forwarderReference: string;
 
   selected?: boolean;

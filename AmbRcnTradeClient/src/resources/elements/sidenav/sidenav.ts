@@ -52,25 +52,50 @@ export class Sidenav {
     }
   }
 
-  protected accountsRoutes() {
-    if (isInRole(["admin"], this.state)) {
-      return this.router.navigation.filter(row => this.isInRoute(row, "accounts"));
+  protected inspectionRoutes() {
+    if (isInRole(["admin", "user", "warehouseManager", "inspector"], this.state)) {
+      return this.router.navigation.filter(row => this.isInRoute(row, "inspections"));
     }
   }
 
-  // protected inspectionRoutes() {
-  //   return this.router.navigation.filter(row => this.isInRoute(row, "inspections"));
+  protected stockRoutes() {
+    if (isInRole(["admin", "user", "warehouseManager"], this.state)) {
+      return this.router.navigation.filter(row => this.isInRoute(row, "stock"));
+    }
+  }
+
+  protected containerRoutes() {
+    if (isInRole(["admin", "user", "warehouseManager"], this.state)) {
+      return this.router.navigation.filter(row => this.isInRoute(row, "container"));
+    }
+  }
+
+  protected vesselRoutes() {
+    if (isInRole(["admin", "user"], this.state)) {
+      return this.router.navigation.filter(row => this.isInRoute(row, "vessel"));
+    }
+  }
+
+  protected paymentRoutes() {
+    if (isInRole(["admin", "user"], this.state)) {
+      return this.router.navigation.filter(row => this.isInRoute(row, "payment"));
+    }
+  }
+
+  protected purchaseRoutes() {
+    if (isInRole(["admin", "user"], this.state)) {
+      return this.router.navigation.filter(row => this.isInRoute(row, "purchase"));
+    }
+  }
+
+  protected get isAdmin() {
+    return isInRole(["admin"], this.state);
+  }
+
+  // private isNotInRoute(row: NavModel, exclusions: string[]) {
+  //   return !exclusions.some(ex => row.config.route.toString().startsWith(ex));
   // }
 
-  protected otherRoutes() {
-    if (isInRole(["admin", "user", "guest", "inspector", "warehouseManager"], this.state)) {
-      return this.router.navigation.filter(row => this.isNotInRoute(row, ["admin"]));
-    }
-  }
-
-  private isNotInRoute(row: NavModel, exclusions: string[]) {
-    return !exclusions.some(ex => row.config.route.toString().startsWith(ex));
-  }
 
   private isInRoute(row: NavModel, route: string) {
     return row.config.route.toString().startsWith(route);

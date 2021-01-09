@@ -61,6 +61,7 @@ export class BillLadingEdit {
     return this.canEditBillLading;
   }
 
+
   protected async save() {
     if (this.canSave) {
       await this.billLadingService.save(this.model);
@@ -69,6 +70,10 @@ export class BillLadingEdit {
 
   protected get vesselName() {
     return this.state ? this.state.vessel.list.find(c => c.id === this.model.vesselId)?.vesselName : "";
+  }
+
+  protected get freightForwarderName() {
+    return this.state ? this.customersList.find(c => c.id === this.vessel.forwardingAgentId)?.name : "";
   }
 
   protected encode(value: string) {
@@ -130,7 +135,7 @@ export class BillLadingEdit {
     return isInRole(["admin", "user"], this.state);
   }
 
-  protected get canEditBillLading(){
-    return isInRole(["admin","user"],this.state);
+  protected get canEditBillLading() {
+    return isInRole(["admin", "user"], this.state);
   }
 }

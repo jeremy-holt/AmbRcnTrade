@@ -161,6 +161,7 @@ export const initialState: IState = {
       vesselName: undefined!,
       eta: undefined!,
       notes: undefined!,
+      bookingNumber: undefined!,
       serviceContract: undefined!,
       portOfLoadingId: undefined!,
     },
@@ -192,7 +193,6 @@ export const initialState: IState = {
       destinationAgentId: undefined!,
  
       shippingMarks: undefined!,
-      bookingNumber: undefined!,
       forwarderReference: undefined!
     },
     list: []

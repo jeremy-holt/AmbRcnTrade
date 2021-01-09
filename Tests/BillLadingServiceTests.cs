@@ -251,7 +251,6 @@ namespace Tests
                 DestinationAgentId="customers/2-A",
                 ShippingMarks="shipping marks",
                 FreightChargesPayableAt="Abidjan/Dubai",
-                BookingNumber="booking number",
                 ForwarderReference = "forwarder reference"
                 
             };

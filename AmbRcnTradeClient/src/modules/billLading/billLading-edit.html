@@ -15,7 +15,7 @@
 
     <div class="card-body">
 
-      <div class="row">
+      <div class="row mb-2">
         <div class="col-3">
           <a class="btn btn-primary" disabled.bind="!canPrintPackingList"
             route-href="packingList; params.bind:{vesselId: encode(vesselId), billLadingId: encode(model.id)}"
@@ -23,13 +23,13 @@
         </div>
       </div>
 
-      <div class="row">
+      <div class="row mb-2">
         <div class="col-6">
           <labelled-text value.bind="vessel.bookingNumber" label="Booking No"></labelled-text>
         </div>
       </div>
 
-      <div class="row">
+      <div class="row mb-2">
         <div class="col">
           <select-input source.bind="customersList | customerFilter: 'billLading'" value.bind="model.shipperId"
             disabled.bind="!canEditBillLading" label="Shipper" use-model-id="true"></select-input>
@@ -37,7 +37,8 @@
         <div class="col">
           <text-input value.bind="model.ownReferences" disabled.bind="!canEditBillLading" label="Own references">
           </text-input>
-          <text-input value.bind="model.shipperReference" vlabel="Shipper reference"></text-input>
+          <text-input value.bind="model.shipperReference" disabled.bind="!canEditBillLading" label="Shipper reference">
+          </text-input>
           <text-input value.bind="model.consigneeReference" disabled.bind="!canEditBillLading"
             label="Consignee reference"></text-input>
           <text-input value.bind="model.forwarderReference" disabled.bind="!canEditBillLading"
@@ -45,18 +46,18 @@
         </div>
       </div>
 
-      <div class="row">
+      <div class="row mb-2">
         <div class="col">
           <select-input source.bind="customersList | customerFilter: 'billLading'" value.bind="model.consigneeId"
             disabled.bind="!canEditBillLading" label="Consignee" use-model-id="true"></select-input>
         </div>
 
         <div class="col">
-          <labelled-text value.bind="vessel.freightForwarderName" label="Freight forwarder"></labelled-text>
+          <labelled-text value.bind="freightForwarderName" label="Freight forwarder"></labelled-text>
         </div>
       </div>
 
-      <div class="row">
+      <div class="row mb-2">
         <div class="col">
           <select-input source.bind="customersList | customerFilter: 'billLading'" value.bind="model.notifyParty1Id"
             disabled.bind="!canEditBillLading" label="Notify party 1" use-model-id="true"></select-input>
@@ -68,12 +69,11 @@
         </div>
       </div>
 
-      <div class="row d-flex align-items-end">
-        <div class="col">
+      <div class="row mb-2">
+        <div class="col-4">
           <date-input value.bind="model.blDate" label="B/L date" disabled.bind="!canEditBillLading"></date-input>
-        </div>
-        <div class="col">
-          <div class="d-flex justify-content-between align-items-md-center">
+
+          <div class="d-flex justify-content-between mt-4">
             <div class="custom-control custom-checkbox">
               <input type="checkbox" class="custom-control-input" id="chk1" checked.bind="model.freightPrepaid"
                 disabled.bind="!canEditBillLading">
@@ -81,10 +81,10 @@
             </div>
             <labelled-text value.bind="vessel.serviceContract" label="Service contract"></labelled-text>
           </div>
-          <div>
-            <text-area-input value.bind="model.freightChargesPayableAt" label="Freight components"
-              disabled.bind="!canEditBillLading"></text-area-input>
-          </div>
+        </div>
+        <div class="col">
+          <text-area-input value.bind="model.freightChargesPayableAt" label="Freight components"
+            disabled.bind="!canEditBillLading"></text-area-input>
         </div>
       </div>
 

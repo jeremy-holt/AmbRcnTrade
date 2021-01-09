@@ -15,6 +15,7 @@ export interface IVessel {
   vesselName: string;
   voyageNumber: string;
   serviceContract: string;
+  bookingNumber:string;
   notes: string;
 }
 

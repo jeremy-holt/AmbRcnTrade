@@ -36,7 +36,6 @@ namespace AmbRcnTradeServer.Models.VesselModels
         
         public string ShippingMarks { get; set; }
         public string FreightChargesPayableAt { get; set; }
-        public string BookingNumber { get; set; }
         public string ForwarderReference { get; set; }
     }
 

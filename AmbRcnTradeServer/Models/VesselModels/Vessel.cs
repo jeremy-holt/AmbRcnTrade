@@ -26,6 +26,8 @@ namespace AmbRcnTradeServer.Models.VesselModels
         public string Id { get; set; }
         public string Name { get; set; }
         public string ServiceContract { get; set; }
+        
+        public string BookingNumber { get; set; }
     }
 
     public class VesselDto : Vessel, IEntityDto

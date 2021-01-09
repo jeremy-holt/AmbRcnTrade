@@ -192,7 +192,8 @@ namespace Tests
                 BillLadings = billLadings,
                 ServiceContract="serviceContract",
                 VoyageNumber="voyage number",
-                PortOfLoadingId="ports/1-A"
+                PortOfLoadingId="ports/1-A",
+                BookingNumber="booking number"
             };
 
             // Act
