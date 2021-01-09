@@ -12,6 +12,8 @@ export interface ICustomer extends IEntityCompany {
   notes?: string;  
   users: IUser[];
   filter: CustomerGroup;
+  email: string;
+  reference: string;
 }
 
 export interface IAddress {
