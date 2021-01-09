@@ -1,3 +1,4 @@
+import { isInRole } from "./../../services/role-service";
 import { Router } from "aurelia-router";
 import { encodeParams } from "core/helpers";
 import { autoinject, observable } from "aurelia-framework";
@@ -39,5 +40,9 @@ export class ContainerList {
 
   protected addContainer() {
     this.router.navigateToRoute("containerEdit");
+  }
+
+  protected get canAddContainer() {
+    return isInRole(["admin", "user", "warehouseManager"], this.state);
   }
 }

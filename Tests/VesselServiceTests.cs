@@ -189,7 +189,10 @@ namespace Tests
                 ForwardingAgentId = "customers/2-A",
                 BillLadingIds = billLadings.Select(x => x.Id).ToList(),
                 ContainersOnBoard = 0,
-                BillLadings = billLadings
+                BillLadings = billLadings,
+                ServiceContract="serviceContract",
+                VoyageNumber="voyage number",
+                PortOfLoadingId="ports/1-A"
             };
 
             // Act

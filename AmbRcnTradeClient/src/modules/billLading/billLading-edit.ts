@@ -1,3 +1,4 @@
+import { IVessel } from "interfaces/shipping/IVessel";
 import { isInRole } from "./../../services/role-service";
 import { DeleteDialog } from "./../../dialogs/delete-dialog";
 import { encodeParams } from "./../../core/helpers";
@@ -21,6 +22,7 @@ import { BillLadingUploadDialog } from "modules/billLadingUploadDialog/billLadin
 export class BillLadingEdit {
   @observable protected state: IState = undefined!;
   protected model: IBillLading = undefined;
+  protected vessel: IVessel = undefined;
   protected customersList: ICustomerListItem[] = [];
   protected vesselId = "";
 
@@ -36,6 +38,7 @@ export class BillLadingEdit {
     this.customersList.unshift({ id: null, name: "[Select]" } as ICustomerListItem);
 
     this.model = state.billLading.current;
+    this.vessel = state.vessel.current;
   }
 
   protected async activate(prms: { vesselId: string; billLadingId: string }) {
@@ -55,7 +58,7 @@ export class BillLadingEdit {
   }
 
   protected get canSave() {
-    return true;
+    return this.canEditBillLading;
   }
 
   protected async save() {
@@ -119,11 +122,15 @@ export class BillLadingEdit {
     }).whenClosed();
   }
 
-  protected get canAddContainer(){
-    return isInRole(["admin","user"],this.state);
+  protected get canAddContainer() {
+    return isInRole(["admin", "user"], this.state);
   }
 
-  protected get canPrintPackingList(){
+  protected get canPrintPackingList() {
+    return isInRole(["admin", "user"], this.state);
+  }
+
+  protected get canEditBillLading(){
     return isInRole(["admin","user"],this.state);
   }
 }

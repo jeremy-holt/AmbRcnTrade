@@ -18,16 +18,19 @@ namespace AmbRcnTradeServer.Controllers
     public class InspectionController : RavenController
     {
         private readonly IInspectionService _service;
+        private readonly IAuditingService _auditingService;
 
-        public InspectionController(IAsyncDocumentSession session, IInspectionService service) : base(session)
+        public InspectionController(IAsyncDocumentSession session, IInspectionService service, IAuditingService auditingService) : base(session)
         {
             _service = service;
+            _auditingService = auditingService;
         }
 
         [Authorize]
         [HttpPost("[action]")]
         public async Task<ActionResult<ServerResponse<Inspection>>> Save(Inspection inspection)
         {
+            await _auditingService.Log(Request);
             return await _service.Save(inspection);
         }
 
@@ -42,6 +45,7 @@ namespace AmbRcnTradeServer.Controllers
         [HttpGet("[action]")]
         public async Task<ActionResult<List<InspectionListItem>>> LoadList(string companyId, Approval? approval)
         {
+            await _auditingService.Log(Request);
             var prms = new InspectionQueryParams {CompanyId = companyId, Approved = approval};
             return await _service.LoadList(prms);
         }

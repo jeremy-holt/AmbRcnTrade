@@ -79,4 +79,5 @@ export class VesselEdit {
   protected get canAddBillLading(){
     return isInRole(["admin","user"], this.state);
   }
+
 }

@@ -21,11 +21,13 @@
       </div>
       <div class="row">
         <div class="col-6">
-          <select-input source.bind="containerStatusList" value.bind="selectedContainerStatus" label="Status">
+          <select-input source.bind="containerStatusList" value.bind="selectedContainerStatus" label="Status"
+            disabled.bind="!canEditContainer">
           </select-input>
         </div>
         <div class="col">
-          <text-input value.bind="model.bookingNumber" label="Booking number"></text-input>
+          <text-input value.bind="model.bookingNumber" disabled.bind="!canEditContainer" label="Booking number">
+          </text-input>
         </div>
       </div>
 
@@ -34,25 +36,29 @@
           <text-input value.bind="model.containerNumber" disabled.bind="model.id" label="Container number"></text-input>
         </div>
         <div class="col">
-          <text-input value.bind="model.sealNumber" label="Seal number"></text-input>
+          <text-input value.bind="model.sealNumber" disabled.bind="!canEditContainer" label="Seal number"></text-input>
         </div>
       </div>
 
       <div class="row">
         <div class="col-6">
-          <date-input value.bind="model.dispatchDate" label="Dispatched from warehouse to port"></date-input>
+          <date-input value.bind="model.dispatchDate" disabled.bind="!canEditContainer"
+            label="Dispatched from warehouse to port"></date-input>
         </div>
         <div class="col">
-          <select-input source.bind="teuList" value.bind="model.teu" label="TEU" use-model-id="true"></select-input>
+          <select-input source.bind="teuList" value.bind="model.teu" disabled.bind="!canEditContainer" label="TEU"
+            use-model-id="true"></select-input>
         </div>
       </div>
 
       <div class="row">
         <div class="col">
-          <number-input value.bind="model.weighbridgeWeightKg" label="Weighbridge weight kg"></number-input>
+          <number-input value.bind="model.weighbridgeWeightKg" disabled.bind="!canEditContainer"
+            label="Weighbridge weight kg"></number-input>
         </div>
         <div class="col">
-          <number-input value.bind="model.netWeightKg" label="Container nett weight"></number-input>
+          <number-input value.bind="model.netWeightKg" disabled.bind="!canEditContainer" label="Container nett weight">
+          </number-input>
         </div>
       </div>
 
@@ -81,7 +87,7 @@
           <div class="d-flex justify-content-between">
             <button type="button" class="btn btn-danger" disabled.bind="!canUnstuffContainer"
               click.delegate="unstuffContainer()">Unstuff container</button>
-            
+
             <button type="button" class="btn btn-danger" disabled.bind="!canDeleteContainer"
               click.delegate="deleteContainer()">Delete container</button>
           </div>

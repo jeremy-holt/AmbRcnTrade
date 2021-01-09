@@ -157,9 +157,12 @@ export const initialState: IState = {
       forwardingAgentId: undefined!,
       shippingCompanyId: undefined!,
       portOfDestinationId: undefined!,
+      voyageNumber: undefined!,
       vesselName: undefined!,
       eta: undefined!,
-      notes: undefined!
+      notes: undefined!,
+      serviceContract: undefined!,
+      portOfLoadingId: undefined!,
     },
     list: [],
     notLoadedContainers: []
@@ -180,7 +183,17 @@ export const initialState: IState = {
       companyId: undefined!,
       id: undefined!,
       name: undefined!,
-      vesselId: undefined!
+      vesselId: undefined!,
+      ownReferences: undefined!,
+      shipperReference: undefined!,
+      consigneeReference: undefined!,
+      freightChargesPayableAt: undefined!,
+
+      destinationAgentId: undefined!,
+ 
+      shippingMarks: undefined!,
+      bookingNumber: undefined!,
+      forwarderReference: undefined!
     },
     list: []
   },

@@ -17,16 +17,19 @@ namespace AmbRcnTradeServer.Controllers
     public class BillLadingController : RavenController
     {
         private readonly IBillLadingService _service;
+        private readonly IAuditingService _auditingService;
 
-        public BillLadingController(IAsyncDocumentSession session, IBillLadingService service) : base(session)
+        public BillLadingController(IAsyncDocumentSession session, IBillLadingService service, IAuditingService auditingService) : base(session)
         {
             _service = service;
+            _auditingService = auditingService;
         }
 
         [Authorize]
         [HttpPost("[action]")]
         public async Task<ActionResult<ServerResponse<BillLadingDto>>> Save(BillLadingDto billLading)
         {
+            await _auditingService.Log(Request);
             return await _service.Save(billLading);
         }
 
@@ -41,6 +44,7 @@ namespace AmbRcnTradeServer.Controllers
         [HttpGet("[action]")]
         public async Task<ActionResult<List<BillLadingListItem>>> LoadList(string companyId)
         {
+            await _auditingService.Log(Request);
             return await _service.LoadList(companyId);
         }
 
@@ -49,6 +53,7 @@ namespace AmbRcnTradeServer.Controllers
         [HttpPost("[action]")]
         public async Task<ActionResult<ServerResponse>> RemoveContainersFromBillLading(BillLadingContainersRequest request)
         {
+            await _auditingService.Log(Request);
             return await _service.RemoveContainersFromBillLading(request.BillOfLadingId, request.ContainerIds);
         }
 

@@ -20,5 +20,18 @@ export interface IBillLading {
   shipperName?: string;
   consigneeName?: string;
   notifyParty1Name?: string;
+
+  ownReferences: string;
+  shipperReference: string;
+  consigneeReference: string;
+  
+  destinationAgentId: string;
+
+
+  shippingMarks: string;
+  freightChargesPayableAt: string;
+  bookingNumber: string;
+  forwarderReference: string;
+
   selected?: boolean;
 }

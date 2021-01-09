@@ -38,23 +38,32 @@ export class CustomerService extends FetchService {
     return super.get([], "create", customerEditAction);
   }
 
-  public async loadCustomersForAppUserList() {    
+  public async loadCustomersForAppUserList() {
     return super.getMany<ICustomerListItem>([
       super.currentCompanyIdQuery()
     ], "loadCustomerListForAppUser", customerAppUserListAction);
   }
 
-  public static Address(customer: ICustomer){
-    const lines:string[]=[];
-    lines.push(customer.name);
-    lines.push(customer.address?.street1);
-    lines.push(customer.address?.street2);
-    lines.push(customer.address?.city);
-    lines.push(customer.address?.state);
-    lines.push(customer.address?.postCode);
-    lines.push(customer.address?.country);
+  public static Address(customer: ICustomer) {
+    const lines: string[] = [];
+    this.addToAddress(lines, customer?.companyName);
+    this.addToAddress(lines, customer.address?.street1);
+    this.addToAddress(lines, customer.address?.street2);
+    this.addToAddress(lines, customer.address?.city);
+    this.addToAddress(lines, customer.address?.state);
+    if (customer.name.toLowerCase() !== "to order") {
+      this.addToAddress(lines, `${customer.address?.country} ${customer.address?.postCode || ""}`);
+    }
+    this.addToAddress(lines, customer?.reference);
+    this.addToAddress(lines, customer?.email);
 
-    return lines.filter(c=>c).join("<br>");
+    return lines.join("<br>");
+  }
+
+  private static addToAddress(lines: string[], value: string) {
+    if (value && value.trim().length > 0) {
+      lines.push(value);
+    }
   }
 }
 

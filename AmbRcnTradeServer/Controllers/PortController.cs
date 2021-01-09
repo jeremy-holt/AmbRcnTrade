@@ -16,16 +16,19 @@ namespace AmbRcnTradeServer.Controllers
     public class PortController : RavenController
     {
         private readonly IPortsService _portsService;
+        private readonly IAuditingService _auditingService;
 
-        public PortController(IAsyncDocumentSession session, IPortsService portsService) : base(session)
+        public PortController(IAsyncDocumentSession session, IPortsService portsService, IAuditingService auditingService) : base(session)
         {
             _portsService = portsService;
+            _auditingService = auditingService;
         }
 
         [Authorize]
         [HttpPost("[action]")]
         public async Task<ActionResult<ServerResponse<Port>>> Save(Port port)
         {
+            await _auditingService.Log(Request);
             return await _portsService.SavePort(port);
         }
 

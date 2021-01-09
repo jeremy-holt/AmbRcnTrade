@@ -18,16 +18,19 @@ namespace AmbRcnTradeServer.Controllers
     public class StockManagementController : RavenController
     {
         private readonly IStockManagementService _service;
+        private readonly IAuditingService _auditingService;
 
-        public StockManagementController(IAsyncDocumentSession session, IStockManagementService service) : base(session)
+        public StockManagementController(IAsyncDocumentSession session, IStockManagementService service, IAuditingService auditingService) : base(session)
         {
             _service = service;
+            _auditingService = auditingService;
         }
 
         [Authorize]
         [HttpPost("[action]")]
         public async Task<ActionResult<ServerResponse<MovedInspectionResult>>> MoveInspectionToStock(MoveInspectionToStockRequest request)
         {
+            await _auditingService.Log(Request);
             return await _service.MoveInspectionToStock(request.InspectionId, request.Bags, request.Date, request.LotNo, request.LocationId, request.Origin);
         }
 
@@ -35,6 +38,7 @@ namespace AmbRcnTradeServer.Controllers
         [HttpPost("[action]")]
         public async Task<ActionResult<ServerResponse>> RemoveInspectionFromStock(RemoveInspectionFromStockRequest request)
         {
+            await _auditingService.Log(Request);
             return await _service.RemoveInspectionFromStock(request.InspectionId, request.StockId);
         }
 
@@ -42,6 +46,7 @@ namespace AmbRcnTradeServer.Controllers
         [HttpPost("[action]")]
         public async Task<ActionResult<ServerResponse<OutgoingStock>>> StuffContainer(StuffingRequest request)
         {
+            await _auditingService.Log(Request);
             return await _service.StuffContainer(request.ContainerId, request.Status, request.StockBalance, request.Bags, request.WeightKg, request.StuffingDate);
         }
 

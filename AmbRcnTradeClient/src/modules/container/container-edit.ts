@@ -47,7 +47,7 @@ export class ContainerEdit {
   }
 
   protected get canSave() {
-    return this.model?.containerNumber !== null;
+    return this.model?.containerNumber !== null && this.canEditContainer;
   }
 
   protected async save() {
@@ -86,5 +86,9 @@ export class ContainerEdit {
         this.router.navigateToRoute("containerList");
       }
     });
+  }
+
+  protected get canEditContainer(){
+    return isInRole(["admin","user","warehouseManager"],this.state);
   }
 }

@@ -28,12 +28,23 @@ namespace AmbRcnTradeServer.Models.VesselModels
         public string Id { get; set; }
         public string Name { get; set; }
         public string CompanyId { get; set; }
+        
+        public string OwnReferences { get; set; }
+        public string ShipperReference { get; set; }
+        public string ConsigneeReference { get; set; }
+        public string DestinationAgentId { get; set; }
+        
+        public string ShippingMarks { get; set; }
+        public string FreightChargesPayableAt { get; set; }
+        public string BookingNumber { get; set; }
+        public string ForwarderReference { get; set; }
     }
 
     public class BillLadingDto : BillLading, IEntityDto
     {
         [IgnoreMap]
         public List<Container> Containers { get; set; } = new();
+        
 
 
         public void Validate()

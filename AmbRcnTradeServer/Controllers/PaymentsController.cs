@@ -14,9 +14,12 @@ namespace AmbRcnTradeServer.Controllers
     public class PaymentsController: RavenController
     {
         private readonly IPaymentService _service;
-        public PaymentsController(IAsyncDocumentSession session, IPaymentService service) : base(session)
+        private readonly IAuditingService _auditingService;
+
+        public PaymentsController(IAsyncDocumentSession session, IPaymentService service, IAuditingService auditingService) : base(session)
         {
             _service = service;
+            _auditingService = auditingService;
         }
 
         [Authorize]
@@ -37,6 +40,7 @@ namespace AmbRcnTradeServer.Controllers
         [HttpPost("[action]")]
         public async Task<ActionResult<ServerResponse<Payment>>> Save(Payment payment)
         {
+            await _auditingService.Log(Request);
             return await _service.Save(payment);
         }
 
@@ -58,6 +62,7 @@ namespace AmbRcnTradeServer.Controllers
         [HttpDelete("[action]")]
         public async Task<ActionResult<ServerResponse>> DeletePayment(string id)
         {
+            await _auditingService.Log(Request);
             return await _service.DeletePayment(id);
         }
     }

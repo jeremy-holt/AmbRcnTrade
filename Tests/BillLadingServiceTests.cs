@@ -244,7 +244,16 @@ namespace Tests
                 ShipperId = "shipper",
                 BlBodyText = "body text",
                 FreightPrepaid = true,
-                VesselId = vessel.Id
+                VesselId = vessel.Id,
+                OwnReferences="own references",
+                ShipperReference="shipper reference",
+                ConsigneeReference="consignee reference",
+                DestinationAgentId="customers/2-A",
+                ShippingMarks="shipping marks",
+                FreightChargesPayableAt="Abidjan/Dubai",
+                BookingNumber="booking number",
+                ForwarderReference = "forwarder reference"
+                
             };
 
             // Act

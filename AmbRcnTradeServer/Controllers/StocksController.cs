@@ -17,16 +17,19 @@ namespace AmbRcnTradeServer.Controllers
     public class StocksController : RavenController
     {
         private readonly IStockService _service;
+        private readonly IAuditingService _auditingService;
 
-        public StocksController(IAsyncDocumentSession session, IStockService service) : base(session)
+        public StocksController(IAsyncDocumentSession session, IStockService service, IAuditingService auditingService) : base(session)
         {
             _service = service;
+            _auditingService = auditingService;
         }
 
         [Authorize]
         [HttpPost("[action]")]
         public async Task<ActionResult<ServerResponse<Stock>>> Save(Stock stock)
         {
+            await _auditingService.Log(Request);
             return await _service.Save(stock);
         }
 
@@ -48,6 +51,7 @@ namespace AmbRcnTradeServer.Controllers
         [HttpGet("[action]")]
         public async Task<ActionResult<List<StockBalance>>> LoadStockBalanceList(string companyId, long? lotNo, string locationId)
         {
+            await _auditingService.Log(Request);
             return await _service.LoadStockBalanceList(companyId, locationId);
         }
 
@@ -65,6 +69,7 @@ namespace AmbRcnTradeServer.Controllers
         [HttpDelete("[action]")]
         public async Task<ActionResult<ServerResponse>> Delete(string id)
         {
+            await _auditingService.Log(Request);
             return await _service.DeleteStock(id);
         }
     }

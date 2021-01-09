@@ -17,16 +17,19 @@ namespace AmbRcnTradeServer.Controllers
     public class PurchasesController : RavenController
     {
         private readonly IPurchaseService _service;
+        private readonly IAuditingService _auditingService;
 
-        public PurchasesController(IAsyncDocumentSession session, IPurchaseService service) : base(session)
+        public PurchasesController(IAsyncDocumentSession session, IPurchaseService service, IAuditingService auditingService) : base(session)
         {
             _service = service;
+            _auditingService = auditingService;
         }
 
         [Authorize]
         [HttpPost("[action]")]
         public async Task<ActionResult<ServerResponse<Purchase>>> Save(Purchase purchase)
         {
+            await _auditingService.Log(Request);
             return await _service.Save(purchase);
         }
 
@@ -41,6 +44,7 @@ namespace AmbRcnTradeServer.Controllers
         [HttpGet("[action]")]
         public async Task<ActionResult<List<PurchaseListItem>>> LoadList(string companyId, string supplierId)
         {
+            await _auditingService.Log(Request);
             return await _service.LoadList(companyId, supplierId);
         }
 

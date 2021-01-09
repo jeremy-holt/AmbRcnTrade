@@ -17,10 +17,12 @@ namespace AmbRcnTradeServer.Controllers
     public class ContainerController : RavenController
     {
         private readonly IContainerService _service;
+        private readonly IAuditingService _auditingService;
 
-        public ContainerController(IAsyncDocumentSession session, IContainerService service) : base(session)
+        public ContainerController(IAsyncDocumentSession session, IContainerService service, IAuditingService auditingService) : base(session)
         {
             _service = service;
+            _auditingService = auditingService;
         }
 
         [Authorize]
@@ -34,6 +36,7 @@ namespace AmbRcnTradeServer.Controllers
         [HttpGet("[action]")]
         public async Task<ActionResult<List<Container>>> LoadList(string companyId, ContainerStatus? status)
         {
+            await _auditingService.Log(Request);
             return await _service.LoadList(companyId, status);
         }
 
@@ -41,6 +44,7 @@ namespace AmbRcnTradeServer.Controllers
         [HttpPost("[action]")]
         public async Task<ServerResponse<Container>> Save(Container container)
         {
+            await _auditingService.Log(Request);
             return await _service.Save(container);
         }
 
@@ -55,6 +59,7 @@ namespace AmbRcnTradeServer.Controllers
         [HttpPost("[action]")]
         public async Task<ActionResult<ServerResponse>> UnstuffContainer(UnstuffContainerRequest request)
         {
+            await _auditingService.Log(Request);
             return await _service.UnStuffContainer(request.ContainerId);
         }
 
@@ -62,6 +67,7 @@ namespace AmbRcnTradeServer.Controllers
         [HttpDelete("[action]")]
         public async Task<ActionResult<ServerResponse>> DeleteContainer(string id)
         {
+            await _auditingService.Log(Request);
             return await _service.DeleteContainer(id);
         }
 

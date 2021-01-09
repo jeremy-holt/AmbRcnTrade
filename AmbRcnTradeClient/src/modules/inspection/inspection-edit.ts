@@ -22,12 +22,12 @@ import { AddToStockDialog } from "./add-to-stock-dialog";
 @connectTo()
 export class InspectionEdit {
   @observable protected state: IState;
-  public model: IInspection = undefined!; 
+  public model: IInspection = undefined!;
 
   @observable protected approvalChecked = false;
 
   protected suppliers: IListItem[] = [];
-  
+
   constructor(
     private inspectionService: InspectionService,
     private customerService: CustomerService,
@@ -42,7 +42,7 @@ export class InspectionEdit {
     this.suppliers.unshift({ id: null, name: "[Select]", filter: null } as ICustomerListItem);
 
     if (this.model) {
-      this.approvalChecked = this.model?.analysisResult.approved === Approval.Approved;      
+      this.approvalChecked = this.model?.analysisResult.approved === Approval.Approved;
     }
   }
 
@@ -110,15 +110,15 @@ export class InspectionEdit {
     if (!this.model) {
       return false;
     }
-    return this.inspectionService.canAddInspectionToStock(this.model) && this.wasInspectionApproved && isInRole(["admin","user", "warehouseManager"], this.state);
+    return this.inspectionService.canAddInspectionToStock(this.model) && this.wasInspectionApproved && isInRole(["admin", "user", "warehouseManager"], this.state);
   }
 
-  protected get wasInspectionApproved(){
+  protected get wasInspectionApproved() {
     return this.inspectionService.inspectionApproved(this.model);
   }
 
   protected get showCanAddInspectionToStock() {
-    return isInRole(["warehouseManager"], this.state);
+    return isInRole(["admin", "user", "warehouseManager"], this.state);
   }
 
   protected async openAddToStockDialog() {

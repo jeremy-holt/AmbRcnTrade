@@ -10,8 +10,8 @@
     <div class="card-header">
       <h4>Containers list</h4>
       <div class="my-4">Go to the <a route-href="stockBalanceList" class="with-decoration">Stock balances</a> page to
-        select the stock to stuff into a container or <a href="#" click.delegate="addContainer()" class="with-decoration">
-          <i class="fas fa-fw fa-plus"></i> add a new Container
+        select the stock to stuff into a container <a href="#" if.bind="canAddContainer" click.delegate="addContainer()" class="with-decoration">
+          <i class="fas fa-fw fa-plus"></i> or add a new Container
         </a></div>
     </div>
 

@@ -1,3 +1,4 @@
+import { isInRole } from "./../../services/role-service";
 import { DialogService } from "aurelia-dialog";
 import { autoinject, observable } from "aurelia-framework";
 import { connectTo } from "aurelia-store";
@@ -48,10 +49,14 @@ export class StockBalanceList {
       }
     ).whenClosed(async result => {
       if (!result.wasCancelled) {
-        const { containerId, bags, stockWeightKg, status, stuffingDate } = result.output as { containerId: string; bags: number; stockWeightKg: number; status: ContainerStatus, stuffingDate: string };        
+        const { containerId, bags, stockWeightKg, status, stuffingDate } = result.output as { containerId: string; bags: number; stockWeightKg: number; status: ContainerStatus, stuffingDate: string };
         await this.stockManagementService.stuffContainer(containerId, stuffingDate, stockBalance, bags, stockWeightKg, status);
         await this.stockService.loadStockBalanceList(null);
       }
     });
+  }
+
+  protected get canAddContainer() {
+    return isInRole(["admin", "user", "warehouseManager"], this.state);
   }
 }
