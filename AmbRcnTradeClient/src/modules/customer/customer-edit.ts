@@ -26,12 +26,12 @@ export class CustomerEdit {
   public appUsersList: IAppUserListItem[] = [];
   public selectedAppUser: IAppUserListItem = undefined!;
   public customerGroups = CUSTOMER_GROUPS;
-  
+
   @observable public selectedCustomer: ICustomer = undefined!;
 
   constructor(
     private adminService: AdminService,
-    private customerService: CustomerService,    
+    private customerService: CustomerService,
     private router: Router
   ) { }
 
@@ -41,22 +41,26 @@ export class CustomerEdit {
     const nullField: Partial<ICustomer> = { id: null, name: "[Select]" };
     this.list.unshift(nullField as ICustomer);
 
-    this.model = state.customer.current;
-    this.selectedCustomer = this.list.find(c => c.id === this.model?.id) as ICustomer;
+    this.model = _.cloneDeep(state.customer.current);
+
     this.appUsersList = _.cloneDeep(state.admin.user.list);
     this.appUsersList.unshift({ id: "", name: "[Select]" } as IAppUserListItem);
 
-    this.customerGroups=_.cloneDeep(CUSTOMER_GROUPS);
-    this.customerGroups.unshift({id:null, name:"[Select group]"});
+    this.customerGroups = _.cloneDeep(CUSTOMER_GROUPS);
+    this.customerGroups.unshift({ id: null, name: "[Select group]" });
   }
 
-  protected async activate(params: IParamsId): Promise<void> {    
+  protected async activate(params: IParamsId): Promise<void> {
     await this.customerService.loadAllCustomers();
     await this.adminService.loadUsersList();
 
     if (params.id) {
       await this.customerService.loadCustomer(decodeParams(params.id) as string);
     }
+  }
+
+  protected get caption(){
+    return !this.model?.id ? "Address book - New Customer" : "Address book";
   }
 
   protected addAppUser() {
@@ -74,8 +78,8 @@ export class CustomerEdit {
 
   protected async save(): Promise<void> {
     await this.customerService.saveCustomer(this.model);
+    this.router.navigateToRoute("customerEdit", { id: encodeParams(this.model.id) }, { replace: true, trigger: false });
     await this.customerService.loadAllCustomers();
-    this.selectedCustomer = this.list.find(c => c.name === this.model.name) as ICustomer;
   }
 
   protected async addNewCustomer(): Promise<void> {
@@ -84,19 +88,30 @@ export class CustomerEdit {
   }
 
   protected selectedCustomerChanged(newValue: ICustomer): void {
-    this.model = newValue;
+    this.model = _.cloneDeep(newValue);
 
+    if (newValue?.id === null) {
+      this.model.name = null;
+    }
     if (newValue) {
       this.router.navigateToRoute("customerEdit", { id: encodeParams(newValue.id) }, { replace: true, trigger: false });
     }
   }
 
-  protected get canAddUsers(){
-    return isInRole(["admin"],this.state);
+  protected bind(){
+    this.selectedCustomer = this.list.find(c => c.id === this.model?.id) as ICustomer;
   }
 
-  protected get canAddAccountCodes(){
+  protected get canAddUsers() {
     return isInRole(["admin"], this.state);
+  }
+
+  protected get canAddAccountCodes() {
+    return isInRole(["admin"], this.state);
+  }
+
+  protected get canSave() {
+    return this.model?.name?.length > 3 && this.model?.companyName?.length > 3;
   }
 
 }

@@ -3,7 +3,7 @@
   <require from="../../custom-elements/currencies/currencies-list-custom-element"></require>
 
 
-  <toolbar type="menu" caption="Address book" save.call="save()">
+  <toolbar type="menu" caption.bind="caption" disabled-save.bind="!canSave" save.call="save()">
     <toolbar-item icon="fa fa-plus" label="Add" click.call="addNewCustomer()"></toolbar-item>
   </toolbar>
 
