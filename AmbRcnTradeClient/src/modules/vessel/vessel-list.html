@@ -14,7 +14,6 @@
           <tr>
             <th>Vessel</th>
             <th>Eta</th>
-            <th>Port of destination</th>
             <th>Shipping co</th>
             <th>Forwarding agent</th>            
             <th>Containers on board</th>
@@ -26,10 +25,9 @@
           <tr repeat.for="item of list">
             <td>
               <a route-href="vesselEdit; params.bind:{id: encode(item.id)}"
-                class="with-decoration">${item.vesselName}</a>
+                class="with-decoration">${item.vesselName} ${item.voyageNumber}</a>
             </td>
             <td>${item.eta | dateFormat: "DD/MM/YYYY"}</td>
-            <td>${item.portOfDestinationName}</td>
             <td>${item.shippingCompanyName}</td>
             <td>${item.forwardingAgentName}</td>
             <td>${item.containersOnBoard}</td>

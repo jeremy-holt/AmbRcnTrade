@@ -1,24 +1,25 @@
-import { VesselService } from "./../../services/vessel-service";
-import { MoveBillLadingDialog } from "./move-billLading-dialog";
-import { IVessel } from "interfaces/shipping/IVessel";
-import { isInRole } from "./../../services/role-service";
-import { DeleteDialog } from "./../../dialogs/delete-dialog";
-import { encodeParams } from "./../../core/helpers";
+import { IPort } from "./../../interfaces/IPort";
+import { PortService } from "./../../services/port-service";
 import { DialogService } from "aurelia-dialog";
 import { autoinject, observable } from "aurelia-framework";
 import { Router } from "aurelia-router";
 import { connectTo } from "aurelia-store";
+import { IVessel } from "interfaces/shipping/IVessel";
 import _ from "lodash";
+import { BillLadingUploadDialog } from "modules/billLadingUploadDialog/billLading-upload-dialog";
+import { DocumentsDownloadDialog } from "modules/documents-download-dialog/documents-download-dialog";
 import { IState } from "store/state";
+import { encodeParams } from "./../../core/helpers";
+import { DeleteDialog } from "./../../dialogs/delete-dialog";
 import { ICustomerListItem } from "./../../interfaces/ICustomerListItem";
 import { IBillLading } from "./../../interfaces/shipping/IBillLading";
 import { IContainer } from "./../../interfaces/shipping/IContainer";
 import { BillLadingService } from "./../../services/bill-lading-service";
 import { CustomerService } from "./../../services/customer-service";
+import { isInRole } from "./../../services/role-service";
+import { VesselService } from "./../../services/vessel-service";
 import { AddContainersDialog } from "./add-containers-dialog";
-import { DocumentsDownloadDialog } from "modules/documents-download-dialog/documents-download-dialog";
-import { BillLadingUploadDialog } from "modules/billLadingUploadDialog/billLading-upload-dialog";
-import { from } from "rxjs";
+import { MoveBillLadingDialog } from "./move-billLading-dialog";
 
 @autoinject
 @connectTo()
@@ -27,18 +28,23 @@ export class BillLadingEdit {
   protected model: IBillLading = undefined;
   protected vessel: IVessel = undefined;
   protected customersList: ICustomerListItem[] = [];
+  protected portsList:IPort[]=[];
   
   constructor(
     private billLadingService: BillLadingService,
     private vesselService: VesselService,
     private customerService: CustomerService,
     private dialogService: DialogService,
+    private portService: PortService,
     private router: Router
   ) { }
 
   protected stateChanged(state: IState) {
     this.customersList = _.cloneDeep(state.userFilteredCustomers);
     this.customersList.unshift({ id: null, name: "[Select]" } as ICustomerListItem);
+    
+    this.portsList=_.cloneDeep(state.port.list);
+    this.portsList.unshift({id: null, name:"[Select]"} as IPort);
 
     this.model = _.cloneDeep(state.billLading.current);
     this.vessel = _.cloneDeep(state.vessel.current);
@@ -46,6 +52,7 @@ export class BillLadingEdit {
 
   protected async activate(prms: { vesselId: string; billLadingId: string }) {
     await this.customerService.loadCustomersForAppUserList();
+    await this.portService.loadPortList();
 
     if (prms && !prms.vesselId) {
       throw new Error("Cannot access the Bill of Lading without the vesselId");
@@ -67,16 +74,11 @@ export class BillLadingEdit {
     return this.canEditBillLading;
   }
 
-
   protected async save() {
     if (this.canSave) {
       await this.billLadingService.save(this.model);
     }
   }
-
-  // protected get vesselName() {
-  //   return this.state ? this.state.vessel.list.find(c => c.id === this.model.vesselId)?.vesselName : "";
-  // }
 
   protected get freightForwarderName() {
     return this.state ? this.customersList.find(c => c.id === this.vessel.forwardingAgentId)?.name : "";

@@ -68,6 +68,9 @@ namespace Tests
             var customers = fixture.DefaultEntity<Customer>().CreateMany(2).ToList();
             await customers.SaveList(session);
 
+            var ports = fixture.DefaultEntity<Port>().CreateMany().ToList();
+            await ports.SaveList(session);
+
             var vessel = new Vessel
             {
                 CompanyId = COMPANY_ID,
@@ -79,6 +82,7 @@ namespace Tests
 
             var billLadings = fixture.DefaultEntity<BillLading>()
                 .With(c => c.VesselId, vessel.Id)
+                .With(c=>c.PortOfDestinationId,ports[0].Id)
                 .CreateMany().ToList();
             await billLadings.SaveList(session);
 
@@ -93,7 +97,8 @@ namespace Tests
             for (var i = 0; i < 3; i++)
             {
                 actual.BillLadings[i].Should().BeEquivalentTo(billLadings[i]);
-                actual.BillLadings[1].VesselId.Should().Be(vessel.Id);
+                actual.BillLadings[i].VesselId.Should().Be(vessel.Id);
+                actual.BillLadings[i].PortOfDestinationName.Should().Be(ports[0].Name);
             }
         }
 
@@ -123,7 +128,6 @@ namespace Tests
             await bills.SaveList(session);
 
             var vessels = fixture.DefaultEntity<Vessel>()
-                .With(c => c.PortOfDestinationId, port.Id)
                 .With(c => c.ShippingCompanyId, customers[0].Id)
                 .With(c => c.ForwardingAgentId, customers[1].Id)
                 .With(c => c.BillLadingIds, bills.GetPropertyFromList(c => c.Id))
@@ -134,8 +138,6 @@ namespace Tests
             WaitForIndexing(store);
 
             // Act
-            // var x = await sut.Load(vessels[0].Id);
-
             var list = await sut.LoadList(COMPANY_ID);
 
             // Assert
@@ -148,7 +150,6 @@ namespace Tests
             actual.ContainersOnBoard.Should().Be(3);
             actual.ShippingCompanyName.Should().Be(customers[0].Name);
             actual.ForwardingAgentName.Should().Be(customers[1].Name);
-            actual.PortOfDestinationName.Should().Be(port.Name);
             actual.VoyageNumber.Should().Be("235N");
         }
 
@@ -209,7 +210,6 @@ namespace Tests
                 BillLadings = billLadings,
                 ServiceContract = "serviceContract",
                 VoyageNumber = "voyage number",
-                PortOfLoadingId = "ports/1-A",
                 BookingNumber = "booking number"
             };
 

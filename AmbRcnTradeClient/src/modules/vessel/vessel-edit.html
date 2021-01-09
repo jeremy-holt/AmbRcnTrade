@@ -32,23 +32,16 @@
           <select-input source.bind="customerList| customerFilter:'logisticsCompany'" disabled.bind="!canAddBillLading"
             value.bind="model.forwardingAgentId" use-model-id="true" label="Forwarding agent"></select-input>
         </div>
-        <div class="col-4">
-          <text-input value.bind="model.serviceContract" disabled.bind="!canAddBillLading" label="Service contract">
-          </text-input>
-        </div>
+
       </div>
 
       <div class="row">
         <div class="col-4">
-          <select-input source.bind="portsList" value.bind="model.portOfLoadingId" use-model-id="true"
-            disabled.bind="!canAddBillLading" label="Port of loading"></select-input>
+          <text-input value.bind="model.bookingNumber" label="Booking number"></text-input>
         </div>
         <div class="col-4">
-          <select-input source.bind="portsList" value.bind="model.portOfDestinationId" use-model-id="true"
-            disabled.bind="!canAddBillLading" label="Port of destination"></select-input>
-        </div>
-        <div class="col">
-          <text-input value.bind="model.bookingNumber" label="Booking number"></text-input>
+          <text-input value.bind="model.serviceContract" disabled.bind="!canAddBillLading" label="Service contract">
+          </text-input>
         </div>
       </div>
 
@@ -62,35 +55,40 @@
 
       <div if.bind="model.billLadings.length > 0" class="row">
         <div class="col">
-          <ul class="list-group small">
-            <li class="list-group font-weight-bold">
-              <div class="row">
-                <div class="col-2"></div>
-                <div class="col-2">B/L number</div>
-                <div class="col-2">B/L date</div>
-                <div class="col-2">Shipper</div>
-                <div class="col-2">Consignee</div>
-                <div class="col-2">Notify</div>
-              </div>
-            </li>
-            <li class="list-group-item" repeat.for="item of model.billLadings">
-              <div class="row">
-                <div class="col-2">
+          <table class="table table-sm table-bordered small">
+            <thead>
+              <tr>
+                <th></th>
+                <th>B/L no</th>
+                <th>B/L date</th>
+                <th>Destination</th>
+                <th>Shipper</th>
+                <th>Consignee</th>
+                <th>Notify</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr repeat.for="item of model.billLadings">
+                <td>
                   <a class="with-decoration"
-                    route-href="billLadingEdit; params.bind:{vesselId: encode(model.id), billLadingId: encode(item.id)}">Go
-                    to B/L</a>
-                </div>
-                <div class="col-2" if.bind="item.containersOnBoard > 0">
-                  ${item.blNumber} (${item.containersOnBoard} containers on board)
-                </div>
-                <div else class="col-2 pl-0">No containers have been allocated to this B/L</div>
-                <div class="col-2">${item.blDate | dateFormat: "DD/MM/YYYY"}</div>
-                <div class="col-2">${item.shipperName}</div>
-                <div class="col-2">${item.consigneeName}</div>
-                <div class="col-2">${item.notifyParty1Name}</div>
-              </div>
-            </li>
-          </ul>
+                  route-href="billLadingEdit; params.bind:{vesselId: encode(model.id), billLadingId: encode(item.id)}">Go
+                  to B/L</a>
+                  <div if.bind="item.containersOnBoard > 0">
+                    ${item.containersOnBoard} containers on board
+                  </div>
+                  <div else>
+                    No containers on board
+                  </div>
+                </td>
+                <td>${item.blNumber}</td>
+                <td>${item.blDate | dateFormat: "DD/MM/YYYY"}</td>
+                <td>${item.portOfDestinationName}</td>
+                <td>${item.shipperName}</td>
+                <td>${item.consigneeName}</td>
+                <td>${item.notifyParty1Name}</td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </div>
 

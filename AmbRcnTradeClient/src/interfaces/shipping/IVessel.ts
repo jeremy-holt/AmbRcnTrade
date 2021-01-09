@@ -8,8 +8,6 @@ export interface IVessel {
   companyId: string;
   id: string;
   name: string;
-  portOfDestinationId: string;
-  portOfLoadingId: string;
   billLadings: IBillLading[];
   eta: string|null;
   vesselName: string;

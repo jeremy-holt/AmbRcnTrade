@@ -19,7 +19,7 @@
       <div class="row mb-2">
         <div class="col-3">
           <a class="btn btn-primary" disabled.bind="!canPrintPackingList"
-            route-href="packingList; params.bind:{vesselId: encode(vesselId), billLadingId: encode(model.id)}"
+            route-href="packingList; params.bind:{vesselId: encode(vessel.id), billLadingId: encode(model.id)}"
             target="_blank">Print packing list</a>
         </div>
         <div class="col-4">
@@ -89,6 +89,17 @@
         <div class="col">
           <text-area-input value.bind="model.freightChargesPayableAt" label="Freight components"
             disabled.bind="!canEditBillLading"></text-area-input>
+        </div>
+      </div>
+
+      <div class="row mb-2">
+        <div class="col">
+          <select-input source.bind="portsList" value.bind="model.portOfLoadingId" use-model-id="true"
+            disabled.bind="!canEditBillLading" label="Port of loading"></select-input>
+        </div>
+        <div class="col">
+          <select-input source.bind="portsList" value.bind="model.portOfDestinationId" use-model-id="true"
+            disabled.bind="!canEditBillLading" label="Port of destination"></select-input>
         </div>
       </div>
 

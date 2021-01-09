@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using AmberwoodCore.Extensions;
 using AmberwoodCore.Responses;
+using AmbRcnTradeServer.Models.DictionaryModels;
 using AmbRcnTradeServer.Models.VesselModels;
 using AmbRcnTradeServer.RavenIndexes;
 using AutoMapper;
@@ -57,8 +58,13 @@ namespace AmbRcnTradeServer.Services
                 .LoadAsync<Vessel>(id);
 
             var billLadings = await _session.LoadListFromMultipleIdsAsync<BillLading>(vessel.BillLadingIds);
+            var ports = await _session.LoadListFromMultipleIdsAsync<Port>(billLadings.GetPropertyFromList(c => c.PortOfDestinationId));
+
             foreach (var bl in billLadings)
-                bl.ContainersOnBoard = bl.ContainerIds.Count();
+            {
+                bl.ContainersOnBoard = bl.ContainerIds.Count;
+                bl.PortOfDestinationName = ports.FirstOrDefault(c => c.Id == bl.PortOfDestinationId)?.Name;
+            }
 
             var vesselDto = new VesselDto();
             _mapper.Map(vessel, vesselDto);

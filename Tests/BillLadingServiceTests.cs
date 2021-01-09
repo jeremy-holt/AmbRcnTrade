@@ -252,7 +252,9 @@ namespace Tests
                 DestinationAgentId="customers/2-A",
                 ShippingMarks="shipping marks",
                 FreightChargesPayableAt="Abidjan/Dubai",
-                ForwarderReference = "forwarder reference"
+                ForwarderReference = "forwarder reference",
+                PortOfDestinationId="ports/1-A",
+                PortOfLoadingId = "ports/2-A"
                 
             };
 
@@ -274,6 +276,8 @@ namespace Tests
             actual.BlBodyText.Should().Be("body text");
             actual.FreightPrepaid.Should().BeTrue();
             actual.VesselId.Should().Be(vessel.Id);
+            actual.PortOfLoadingId.Should().Be("ports/2-A");
+            actual.PortOfDestinationId.Should().Be("ports/1-A");
 
 
             actualVessel.BillLadingIds.Should().Contain(response.Id);

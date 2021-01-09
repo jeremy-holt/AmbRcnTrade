@@ -37,12 +37,16 @@ namespace AmbRcnTradeServer.Models.VesselModels
         public string ShippingMarks { get; set; }
         public string FreightChargesPayableAt { get; set; }
         public string ForwarderReference { get; set; }
+        public string PortOfDestinationId { get; set; }
+        public string PortOfLoadingId { get; set; }
+        public string PortOfDestinationName { get; set; }
     }
 
     public class BillLadingDto : BillLading, IEntityDto
     {
         [IgnoreMap]
         public List<Container> Containers { get; set; } = new();
+
         
 
 

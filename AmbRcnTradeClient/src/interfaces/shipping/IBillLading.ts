@@ -26,7 +26,9 @@ export interface IBillLading {
   consigneeReference: string;
   
   destinationAgentId: string;
-
+  portOfDestinationId: string;
+  portOfDestinationName:string;
+  portOfLoadingId: string;
 
   shippingMarks: string;
   freightChargesPayableAt: string;  

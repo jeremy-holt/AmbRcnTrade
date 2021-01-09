@@ -4,8 +4,7 @@ export interface IVesselListItem {
   eta: string | null;
   shippingCompanyName: string;
   forwardingAgentName: string;
-  containersOnBoard: number;
-  portOfDestinationName: string;
+  containersOnBoard: number;  
   companyId: string;
 
   selected?:boolean

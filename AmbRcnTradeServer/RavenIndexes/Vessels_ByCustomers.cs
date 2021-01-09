@@ -16,7 +16,6 @@ namespace AmbRcnTradeServer.RavenIndexes
             Map = vessels => from vessel in vessels
                 let shippingCompany = LoadDocument<Customer>(vessel.ShippingCompanyId)
                 let forwardingAgent = LoadDocument<Customer>(vessel.ForwardingAgentId)
-                let port = LoadDocument<Port>(vessel.PortOfDestinationId)
                 let containersOnBoard = LoadDocument<BillLading>(vessel.BillLadingIds).Sum(c=> c.ContainerIds.Count)
                 select new VesselListItem
                 {
@@ -24,7 +23,6 @@ namespace AmbRcnTradeServer.RavenIndexes
                     ContainersOnBoard = containersOnBoard,
                     ForwardingAgentName = forwardingAgent.Name,
                     ShippingCompanyName = shippingCompany.Name,
-                    PortOfDestinationName = port.Name,
                     Eta = vessel.Eta,
                     CompanyId = vessel.CompanyId,
                     VesselName = vessel.VesselName

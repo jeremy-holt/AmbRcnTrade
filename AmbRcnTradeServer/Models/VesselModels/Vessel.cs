@@ -16,8 +16,8 @@ namespace AmbRcnTradeServer.Models.VesselModels
         public string ForwardingAgentId { get; set; }
         public string ShippingCompanyId { get; set; }
         public List<string> BillLadingIds { get; set; } = new();
-        public string PortOfDestinationId { get; set; }
-        public string PortOfLoadingId { get; set; }
+        
+  
         public string VesselName { get; set; }
         public string VoyageNumber { get; set; }
         public DateTime? Eta { get; set; }

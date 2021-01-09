@@ -8,7 +8,6 @@ using AmbRcnTradeServer.Models.ContainerModels;
 using AmbRcnTradeServer.Models.VesselModels;
 using AmbRcnTradeServer.RavenIndexes;
 using AutoMapper;
-using AutoMapper.Configuration.Annotations;
 using Raven.Client.Documents;
 using Raven.Client.Documents.Linq;
 using Raven.Client.Documents.Session;
@@ -30,13 +29,11 @@ namespace AmbRcnTradeServer.Services
     {
         private readonly IMapper _mapper;
         private readonly IAsyncDocumentSession _session;
-        private readonly IVesselService _vesselService;
-
-        public BillLadingService(IAsyncDocumentSession session, IMapper mapper, IVesselService vesselService)
+        
+        public BillLadingService(IAsyncDocumentSession session, IMapper mapper)
         {
             _session = session;
             _mapper = mapper;
-            _vesselService = vesselService;
         }
 
         public async Task<List<BillLadingListItem>> LoadList(string companyId)

@@ -15,7 +15,6 @@ namespace AmbRcnTradeServer.Models.VesselModels
         public string ShippingCompanyName { get; set; }
         public string ForwardingAgentName { get; set; }
         public int ContainersOnBoard { get; set; }
-        public string PortOfDestinationName { get; set; }
         public string CompanyId { get; set; }
         public string VoyageNumber { get; set; }
     }
