@@ -99,8 +99,7 @@
     ],
     "copyFiles": {
       "src/locales/en/*": "wwwroot/locales/en",
-      "src/locales/fr/*": "wwwroot/locales/fr",
-      "node_modules/@fortawesome/fontawesome-pro/webfonts/*": "wwwroot/@fortawesome/fontawesome-pro/webfonts"
+      "src/locales/fr/*": "wwwroot/locales/fr"      
     },
     "__COMMENT": {
       "node_modules/@fortawesome/fontawesome-pro/webfonts/*": "wwwroot/@fortawesome/fontawesome-pro/webfonts"
