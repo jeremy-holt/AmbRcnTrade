@@ -59,6 +59,10 @@ export class AdminService extends FetchService {
     return super.delete<IAppUser>(id, "deleteUser", adminUserAction);
   }
 
+  public async createAdminUser(){
+    return super.post({companyId: null},"createAdminUser",noOpAction);
+  }
+
   public async saveUser(model: IAppUser) {
     if (model.id) {
       return super.post<IAppUser>(model, "saveUser", adminUserAction);

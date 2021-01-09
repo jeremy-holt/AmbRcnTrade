@@ -120,7 +120,7 @@ export class PurchaseEdit {
     }
 
     const header = this.selectedSupplier?.id && this.model.purchaseDate && this.model.quantityMt > 0;
-    const details = this.model?.purchaseDetails?.length > 0 && this.model.purchaseDetails.every(detail => detail.pricePerKg > 0 && detail?.stockIds?.length > 0);
+    const details = this.model?.purchaseDetails?.length > 0 && this.model.purchaseDetails.every(detail => detail.pricePerKg > 0);
 
     if (this.model?.purchaseDetails.length === 0 && header) {
       return true;

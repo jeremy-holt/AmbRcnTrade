@@ -307,6 +307,47 @@ namespace Tests
             list[0].WeightKgBalance.Should().Be(list[0].WeightKgIn - list[0].WeightKgOut);
         }
 
+        
+        [Fact]
+        public async Task LoadList_ShouldNotThrowExceptionIfThereAreNoStockIds()
+        {
+            // Arrange
+            using var store = GetDocumentStore();
+            using var session = store.OpenAsyncSession();
+            var sut = GetPurchaseService(session);
+            await InitializeIndexes(store);
+            var fixture = new Fixture();
+
+            var supplier = fixture.DefaultEntity<Customer>().Create();
+            await session.StoreAsync(supplier);
+
+            var purchaseDetails = fixture.Build<PurchaseDetail>()
+                .Without(c=>c.StockIds)
+                .Without(c=>c.Stocks)
+                .CreateMany()
+                .ToList();
+
+            var purchase = fixture.DefaultEntity<Purchase>()
+                .With(c => c.PurchaseDetails, purchaseDetails)
+                .With(c => c.SupplierId, supplier.Id)
+                .With(c => c.PurchaseNumber, 7)
+                .Create();
+            await session.StoreAsync(purchase);
+
+            await session.SaveChangesAsync();
+
+            // Act
+            var list = await sut.LoadList(COMPANY_ID, supplier.Id);
+
+            // Assert
+            var details = list[0].PurchaseDetails;
+            details[0].Stocks.Should().HaveCount(0);
+
+            list[0].WeightKgIn.Should().Be(details.SelectMany(c => c.Stocks.Select(x => x.WeightKgIn)).Sum());
+            list[0].WeightKgOut.Should().Be(details.SelectMany(c => c.Stocks.Select(x => x.WeightKgOut)).Sum());
+            list[0].WeightKgBalance.Should().Be(list[0].WeightKgIn - list[0].WeightKgOut);
+        }
+
         [Fact]
         public async Task Save_ShouldSaveAPurchase()
         {

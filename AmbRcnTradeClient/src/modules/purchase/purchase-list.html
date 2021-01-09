@@ -60,7 +60,7 @@
                   </div>
                 </div>
               </li>
-              <li class="list-group-item" repeat.for="detail of purchase.purchaseDetails">
+              <li class="list-group-item ${!detail.bagsIn ? 'list-group-item-danger' : ''}" repeat.for="detail of purchase.purchaseDetails">
                 <div class="row">
                   <div class="col-6 offset-6">
                     <div class="row">

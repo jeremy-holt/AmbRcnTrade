@@ -1,9 +1,9 @@
-import { isInRole } from "./../../services/role-service";
 import { autoinject } from "aurelia-dependency-injection";
 import { Router } from "aurelia-router";
 import { connectTo } from "aurelia-store";
 import { IState } from "store/state";
 import { AuthenticationService } from "./../../services/authentication-service";
+import { isInRole } from "./../../services/role-service";
 @autoinject
 @connectTo()
 export class HomeEdit {

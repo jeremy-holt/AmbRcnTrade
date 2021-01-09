@@ -6,6 +6,7 @@ import { connectTo } from "aurelia-store";
 import { IState } from "store/state";
 import { Router } from "aurelia-router";
 import _ from "lodash";
+import { CustomerService } from "services/customer-service";
 
 @autoinject
 @connectTo()
@@ -15,11 +16,13 @@ export class VesselList {
 
   constructor(
     private vesselService: VesselService,
+    private customerService: CustomerService,
     private router: Router
   ) { }
 
   protected async activate() {
     await this.vesselService.loadList();
+    await this.customerService.loadCustomersForAppUserList();
   }
 
   protected stateChanged(state: IState): void {

@@ -32,7 +32,6 @@ export class PurchaseList {
 
   protected async activate() {
     await this.customerService.loadCustomersForAppUserList();    
-    // await this.purchaseService.loadList(null);
   }
 
   protected async selectedSupplierChanged(){

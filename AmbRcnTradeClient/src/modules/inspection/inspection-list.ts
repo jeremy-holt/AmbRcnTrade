@@ -1,3 +1,4 @@
+import { CustomerService } from "./../../services/customer-service";
 import { StockNavigationDialog } from "./stock-navigation-dialog";
 import { DialogService } from "aurelia-dialog";
 import { autoinject, observable } from "aurelia-framework";
@@ -21,9 +22,14 @@ export class InspectionList {
   constructor(
     private inspectionService: InspectionService,
     private router: Router,
-    private dialogService: DialogService
+    private dialogService: DialogService,
+    private customerService: CustomerService
   ) {
 
+  }
+
+  protected async activate(){
+    await this.customerService.loadCustomersForAppUserList();
   }
 
   protected stateChanged(state: IState) {

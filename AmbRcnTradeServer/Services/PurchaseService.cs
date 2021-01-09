@@ -162,12 +162,15 @@ namespace AmbRcnTradeServer.Services
                         dStock.WeightKgBalance = dStock.WeightKgIn - dStock.WeightKgOut;
                     }
 
-                    detailListItem.AnalysisResult = new AnalysisResult
+                    if (detailListItem.Stocks.Any())
                     {
-                        Kor = detailListItem.Stocks.Average(c => c.AnalysisResult.Kor),
-                        Count = detailListItem.Stocks.Average(c => c.AnalysisResult.Count),
-                        Moisture = detailListItem.Stocks.Average(c => c.AnalysisResult.Moisture)
-                    };
+                        detailListItem.AnalysisResult = new AnalysisResult
+                        {
+                            Kor = detailListItem.Stocks.Average(c => c.AnalysisResult.Kor),
+                            Count = detailListItem.Stocks.Average(c => c.AnalysisResult.Count),
+                            Moisture = detailListItem.Stocks.Average(c => c.AnalysisResult.Moisture)
+                        };
+                    }
 
                     detailListItem.BagsIn = detailListItem.Stocks.Sum(x => x.BagsIn);
                     detailListItem.BagsOut = detailListItem.Stocks.Sum(x => x.BagsOut);
