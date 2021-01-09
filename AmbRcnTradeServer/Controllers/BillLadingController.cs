@@ -70,6 +70,20 @@ namespace AmbRcnTradeServer.Controllers
         {
             return await Task.FromResult(new BillLadingDto {CompanyId = companyId, VesselId = vesselId});
         }
+
+        [Authorize]
+        [HttpPost("[action]")]
+        public async Task<ActionResult<ServerResponse>> MoveBillLadingToVessel(MoveBillLadingRequest request)
+        {
+            return await _service.MoveBillLadingToVessel(request.BillLadingId, request.FromVesselId, request.ToVesselId);
+        }
+    }
+
+    public class MoveBillLadingRequest
+    {
+        public string BillLadingId { get; set; }
+        public string FromVesselId { get; set; }
+        public string ToVesselId { get; set; }
     }
 
     public class BillLadingContainersRequest

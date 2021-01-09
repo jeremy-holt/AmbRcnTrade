@@ -1,3 +1,4 @@
+import { IMoveBillLadingRequest } from "./../interfaces/shipping/IMoveBillLadingRequest";
 import { IContainer } from "./../interfaces/shipping/IContainer";
 import { HttpClient } from "aurelia-fetch-client";
 import { autoinject } from "aurelia-framework";
@@ -47,6 +48,11 @@ export class BillLadingService extends FetchService {
 
   public async createBillLading(vesselId: string) {
     return super.get<IBillLading>([this.currentCompanyIdQuery(), new QueryId("vesselId", vesselId)], "create", billLadingEditAction);
+  }
+
+  public async moveBillLadingToVessel(billLadingId: string, fromVesselId: string, toVesselId: string){
+    const request: IMoveBillLadingRequest={billLadingId,fromVesselId,toVesselId};
+    return super.post<IMoveBillLadingRequest>(request,"moveBillLadingToVessel", noOpAction);
   }
 }
 

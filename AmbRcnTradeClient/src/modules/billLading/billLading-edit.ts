@@ -1,3 +1,5 @@
+import { VesselService } from "./../../services/vessel-service";
+import { MoveBillLadingDialog } from "./move-billLading-dialog";
 import { IVessel } from "interfaces/shipping/IVessel";
 import { isInRole } from "./../../services/role-service";
 import { DeleteDialog } from "./../../dialogs/delete-dialog";
@@ -16,6 +18,7 @@ import { CustomerService } from "./../../services/customer-service";
 import { AddContainersDialog } from "./add-containers-dialog";
 import { DocumentsDownloadDialog } from "modules/documents-download-dialog/documents-download-dialog";
 import { BillLadingUploadDialog } from "modules/billLadingUploadDialog/billLading-upload-dialog";
+import { from } from "rxjs";
 
 @autoinject
 @connectTo()
@@ -24,10 +27,10 @@ export class BillLadingEdit {
   protected model: IBillLading = undefined;
   protected vessel: IVessel = undefined;
   protected customersList: ICustomerListItem[] = [];
-  protected vesselId = "";
-
+  
   constructor(
     private billLadingService: BillLadingService,
+    private vesselService: VesselService,
     private customerService: CustomerService,
     private dialogService: DialogService,
     private router: Router
@@ -37,8 +40,8 @@ export class BillLadingEdit {
     this.customersList = _.cloneDeep(state.userFilteredCustomers);
     this.customersList.unshift({ id: null, name: "[Select]" } as ICustomerListItem);
 
-    this.model = state.billLading.current;
-    this.vessel = state.vessel.current;
+    this.model = _.cloneDeep(state.billLading.current);
+    this.vessel = _.cloneDeep(state.vessel.current);
   }
 
   protected async activate(prms: { vesselId: string; billLadingId: string }) {
@@ -48,13 +51,16 @@ export class BillLadingEdit {
       throw new Error("Cannot access the Bill of Lading without the vesselId");
     }
 
+    if (prms?.vesselId) {
+      await this.vesselService.load(prms?.vesselId);
+    }
+
     if (prms.billLadingId) {
       await this.billLadingService.load(prms.billLadingId);
     } else {
       await this.billLadingService.createBillLading(prms.vesselId);
     }
 
-    this.vesselId = prms?.vesselId;
   }
 
   protected get canSave() {
@@ -68,9 +74,9 @@ export class BillLadingEdit {
     }
   }
 
-  protected get vesselName() {
-    return this.state ? this.state.vessel.list.find(c => c.id === this.model.vesselId)?.vesselName : "";
-  }
+  // protected get vesselName() {
+  //   return this.state ? this.state.vessel.list.find(c => c.id === this.model.vesselId)?.vesselName : "";
+  // }
 
   protected get freightForwarderName() {
     return this.state ? this.customersList.find(c => c.id === this.vessel.forwardingAgentId)?.name : "";
@@ -137,5 +143,26 @@ export class BillLadingEdit {
 
   protected get canEditBillLading() {
     return isInRole(["admin", "user"], this.state);
+  }
+
+  protected navigateToVessel() {
+    this.router.navigateToRoute("vesselEdit", { id: encodeParams(this.vessel.id) });
+  }
+
+  protected moveBillLadingToVessel() {
+    this.dialogService.open({
+      viewModel: MoveBillLadingDialog,
+      model: {
+        state: this.state,
+        billLadingId: this.model.id,
+        fromVesselId: this.vessel.id
+      }
+    }).whenClosed(async result => {
+      if (!result.wasCancelled) {
+        const { billLadingId, fromVesselId, toVesselId } = result.output;
+        await this.billLadingService.moveBillLadingToVessel(billLadingId, fromVesselId, toVesselId);
+        this.router.navigateToRoute("vesselEdit", { id: encodeParams(toVesselId) });
+      }
+    });
   }
 }

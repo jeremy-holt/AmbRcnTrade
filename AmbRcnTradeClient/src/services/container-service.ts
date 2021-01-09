@@ -50,7 +50,7 @@ export class ContainerService extends FetchService {
   }
 
   public static isOverweightContainer(quantities: { bags: number, weightKg: number }) {
-    return quantities.weightKg > 26_000 || quantities.bags > 325;
+    return quantities.weightKg > 27_000 || quantities.bags > 350;
   }
 
   public async deleteContainer(id: string){

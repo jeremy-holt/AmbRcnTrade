@@ -8,6 +8,7 @@ using AmbRcnTradeServer.Models.ContainerModels;
 using AmbRcnTradeServer.Models.VesselModels;
 using AmbRcnTradeServer.RavenIndexes;
 using AutoMapper;
+using AutoMapper.Configuration.Annotations;
 using Raven.Client.Documents;
 using Raven.Client.Documents.Linq;
 using Raven.Client.Documents.Session;
@@ -22,17 +23,20 @@ namespace AmbRcnTradeServer.Services
         Task<List<BillLadingListItem>> LoadList(string companyId);
         Task<List<Container>> GetNotLoadedContainers(string companyId);
         Task<ServerResponse<BillLadingDto>> RemoveContainersFromBillLading(string billLadingId, IEnumerable<string> containerIds);
+        Task<ServerResponse> MoveBillLadingToVessel(string billLadingId, string fromVesselId, string toVesselId);
     }
 
     public class BillLadingService : IBillLadingService
     {
         private readonly IMapper _mapper;
         private readonly IAsyncDocumentSession _session;
+        private readonly IVesselService _vesselService;
 
-        public BillLadingService(IAsyncDocumentSession session, IMapper mapper)
+        public BillLadingService(IAsyncDocumentSession session, IMapper mapper, IVesselService vesselService)
         {
             _session = session;
             _mapper = mapper;
+            _vesselService = vesselService;
         }
 
         public async Task<List<BillLadingListItem>> LoadList(string companyId)
@@ -88,7 +92,6 @@ namespace AmbRcnTradeServer.Services
             var query = await _session.Query<Container, Containers_Available_ForBillLading>()
                 .Where(c => c.CompanyId == companyId && c.Status.In(allowed))
                 // .ProjectInto<Container>()
-
                 .ToListAsync();
 
             return query;
@@ -113,6 +116,46 @@ namespace AmbRcnTradeServer.Services
 
             var dto = await Load(billLadingId);
             return new ServerResponse<BillLadingDto>(dto, "Removed containers from Bill of Lading");
+        }
+
+        public async Task<ServerResponse> MoveBillLadingToVessel(string billLadingId, string fromVesselId, string toVesselId)
+        {
+            // var fromVessel = await _vesselService.Load(fromVesselId);
+            // var toVessel = await _vesselService.Load(toVesselId);
+
+            var fromVessel = await _session.Include<Vessel>(c => c.BillLadingIds)
+                .LoadAsync<Vessel>(fromVesselId);
+
+
+            var toVessel = await _session.Include<Vessel>(c => c.BillLadingIds)
+                .LoadAsync<Vessel>(toVesselId);
+
+            var billLadingIds = fromVessel.BillLadingIds.Concat(toVessel.BillLadingIds);
+            var billLadings = await _session.LoadListFromMultipleIdsAsync<BillLading>(billLadingIds);
+
+            foreach (var bl in billLadings)
+            {
+                bl.ContainersOnBoard = bl.ContainerIds.Count();
+                await _session.StoreAsync(bl);
+            }
+
+            fromVessel.BillLadingIds.Remove(billLadingId);
+
+            if (!toVessel.BillLadingIds.Contains(billLadingId))
+                toVessel.BillLadingIds.Add(billLadingId);
+
+            var fromVesselContainersOnBoard = billLadings.Where(c => c.Id.In(fromVessel.BillLadingIds)).Sum(x => x.ContainersOnBoard);
+            var toVesselContainersOnBoard = billLadings.Where(c => c.Id.In(toVessel.BillLadingIds)).Sum(x => x.ContainersOnBoard);
+
+            fromVessel.ContainersOnBoard = fromVesselContainersOnBoard;
+            toVessel.ContainersOnBoard = toVesselContainersOnBoard;
+
+            await _session.StoreAsync(fromVessel);
+            await _session.StoreAsync(toVessel);
+            // await _vesselService.Save(fromVessel);
+            // await _vesselService.Save(toVessel);
+            await _session.SaveChangesAsync();
+            return new ServerResponse("Moved Bill of Lading");
         }
     }
 }

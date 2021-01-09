@@ -6,7 +6,7 @@
 
   <div class="card">
     <div class="card-header">
-      <h4>Vessel</h4>
+      <h4>Vessel - ${model.vesselName} ${model.voyageNumber}</h4>
       <div class="mt-2">${model.containersOnBoard} containers on board vessel</div>
     </div>
 
@@ -60,7 +60,7 @@
         </div>
       </div>
 
-      <div class="row">
+      <div if.bind="model.billLadings.length > 0" class="row">
         <div class="col">
           <ul class="list-group small">
             <li class="list-group font-weight-bold">
@@ -77,7 +77,7 @@
               <div class="row">
                 <div class="col-2">
                   <a class="with-decoration"
-                    route-href="billLadingEdit; params.bind:{vesselId: encode(item.vesselId), billLadingId: encode(item.id)}">Go
+                    route-href="billLadingEdit; params.bind:{vesselId: encode(model.id), billLadingId: encode(item.id)}">Go
                     to B/L</a>
                 </div>
                 <div class="col-2" if.bind="item.containersOnBoard > 0">
@@ -91,6 +91,14 @@
               </div>
             </li>
           </ul>
+        </div>
+      </div>
+
+      <div else class="row mt-2">
+        <div class="col">
+          <div class="alert alert-info">
+            There are no Bills of Lading for this vessel
+          </div>
         </div>
       </div>
     </div>

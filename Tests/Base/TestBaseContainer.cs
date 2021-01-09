@@ -140,7 +140,7 @@ namespace Tests.Base
 
         protected IBillLadingService GetBillLadingService(IAsyncDocumentSession session)
         {
-            return new BillLadingService(session, Mapper);
+            return new BillLadingService(session, Mapper,GetVesselService(session));
         }
 
         protected IPaymentService GetPaymentService(IAsyncDocumentSession session)

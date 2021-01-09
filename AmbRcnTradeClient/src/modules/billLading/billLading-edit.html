@@ -2,14 +2,15 @@
   <require from="quill/quill.snow.css"></require>
   <require from="../container/container-status-formatter-valueconverter"></require>
 
-  <toolbar type="menu" caption="${vesselName} - Bill of Lading" disabled-save.bind="!canSave" save.call="save()">
+  <toolbar type="menu" caption="Bill of Lading - ${vessel.vesselName}" disabled-save.bind="!canSave" save.call="save()">
     <toolbar-item icon="fa fa-file-upload" label="Upload" click.call="uploadDocuments()"></toolbar-item>
     <toolbar-item icon="fa fa-file-download" label="Download" click.call="downloadDocuments()"></toolbar-item>
+    <toolbar-item icon="fa fa-ship" label="Vessel" click.call="navigateToVessel()"></toolbar-item>
   </toolbar>
 
   <div class="card">
     <div class="card-header">
-      <h4>${vesselName} - Bill of Lading ${model.blNumber}</h4>
+      <h4>Bill of Lading ${model.blNumber} for vessel ${vessel.vesselName} ${vessel.voyageNumber}</h4>
       <div class="mt-2">${model.containersOnBoard} containers on board vessel</div>
     </div>
 
@@ -20,6 +21,9 @@
           <a class="btn btn-primary" disabled.bind="!canPrintPackingList"
             route-href="packingList; params.bind:{vesselId: encode(vesselId), billLadingId: encode(model.id)}"
             target="_blank">Print packing list</a>
+        </div>
+        <div class="col-4">
+          <button type="button" class="btn btn-primary" click.delegate="moveBillLadingToVessel()">Move this B/L to another vessel</button>
         </div>
       </div>
 

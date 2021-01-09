@@ -35,7 +35,12 @@ namespace AmbRcnTradeServer.Services
         public async Task<ServerResponse<VesselDto>> Save(VesselDto vesselDto)
         {
             var vessel = vesselDto.Id.IsNullOrEmpty() ? new Vessel() : await _session.LoadAsync<Vessel>(vesselDto.Id);
-
+            // var bills = await _session.LoadListFromMultipleIdsAsync<BillLading>(vessel.BillLadingIds);
+            // foreach (var bl in bills)
+            // {
+            //     bl.ContainersOnBoard = bl.ContainerIds.Count();
+            // }
+            //
             _mapper.Map(vesselDto, vessel);
             vessel.ContainersOnBoard = vesselDto.BillLadings.Sum(x => x.ContainerIds.Count);
 
@@ -52,11 +57,14 @@ namespace AmbRcnTradeServer.Services
                 .LoadAsync<Vessel>(id);
 
             var billLadings = await _session.LoadListFromMultipleIdsAsync<BillLading>(vessel.BillLadingIds);
+            foreach (var bl in billLadings)
+                bl.ContainersOnBoard = bl.ContainerIds.Count();
 
             var vesselDto = new VesselDto();
             _mapper.Map(vessel, vesselDto);
 
             vesselDto.BillLadings = billLadings;
+            vessel.ContainersOnBoard = billLadings.Sum(c => c.ContainersOnBoard);
 
             return vesselDto;
         }

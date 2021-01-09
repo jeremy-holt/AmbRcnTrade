@@ -68,8 +68,8 @@ namespace Tests
 
             var container4 = fixture.DefaultEntity<Container>()
                 .With(c => c.Status, ContainerStatus.Stuffing)
-                .With(c => c.Bags, 350)
-                .With(c => c.StuffingWeightKg, 25_000)
+                .With(c => c.Bags, 351)
+                .With(c => c.StuffingWeightKg, 27_001)
                 .With(c => c.IncomingStocks, new List<IncomingStock>
                 {
                     new() {Bags = 350, WeightKg = 25_000}

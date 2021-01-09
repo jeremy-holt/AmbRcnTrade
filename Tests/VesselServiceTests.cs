@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AmberwoodCore.Extensions;
+using AmbRcnTradeServer.Models.ContainerModels;
 using AmbRcnTradeServer.Models.DictionaryModels;
 using AmbRcnTradeServer.Models.VesselModels;
 using AmbRcnTradeServer.RavenIndexes;
@@ -61,7 +63,7 @@ namespace Tests
             using var session = store.OpenAsyncSession();
             var sut = GetVesselService(session);
             var fixture = new Fixture();
-            
+
 
             var customers = fixture.DefaultEntity<Customer>().CreateMany(2).ToList();
             await customers.SaveList(session);
@@ -74,15 +76,15 @@ namespace Tests
                 ContainersOnBoard = 0
             };
             await session.StoreAsync(vessel);
-            
+
             var billLadings = fixture.DefaultEntity<BillLading>()
-                .With(c=>c.VesselId,vessel.Id)
+                .With(c => c.VesselId, vessel.Id)
                 .CreateMany().ToList();
             await billLadings.SaveList(session);
 
             vessel.BillLadingIds = billLadings.Select(x => x.Id).ToList();
             await session.StoreAsync(vessel);
-            
+
 
             // Act
             var actual = await sut.Load(vessel.Id);
@@ -111,15 +113,29 @@ namespace Tests
             var customers = fixture.DefaultEntity<Customer>().CreateMany(2).ToList();
             await customers.SaveList(session);
 
+            var container = await new Container().CreateAndStore(session);
+            var containersIds = new List<string>() {container.Id};
+
+            var bills = fixture.DefaultEntity<BillLading>()
+                .With(c => c.ContainerIds, containersIds)
+                .Without(c=>c.ContainersOnBoard)
+                .CreateMany().ToList();
+            await bills.SaveList(session);
+
             var vessels = fixture.DefaultEntity<Vessel>()
                 .With(c => c.PortOfDestinationId, port.Id)
                 .With(c => c.ShippingCompanyId, customers[0].Id)
                 .With(c => c.ForwardingAgentId, customers[1].Id)
+                .With(c => c.BillLadingIds, bills.GetPropertyFromList(c => c.Id))
+                .Without(c=>c.ContainersOnBoard)
+                .With(c => c.VoyageNumber, "235N")
                 .CreateMany().ToList();
             await vessels.SaveList(session);
             WaitForIndexing(store);
 
             // Act
+            // var x = await sut.Load(vessels[0].Id);
+
             var list = await sut.LoadList(COMPANY_ID);
 
             // Assert
@@ -129,10 +145,11 @@ namespace Tests
 
             actual.Eta.Should().Be(expectedVessel.Eta);
             actual.VesselName.Should().Be(expectedVessel.VesselName);
-            actual.ContainersOnBoard.Should().Be(expectedVessel.ContainersOnBoard);
+            actual.ContainersOnBoard.Should().Be(3);
             actual.ShippingCompanyName.Should().Be(customers[0].Name);
             actual.ForwardingAgentName.Should().Be(customers[1].Name);
             actual.PortOfDestinationName.Should().Be(port.Name);
+            actual.VoyageNumber.Should().Be("235N");
         }
 
         [Fact]
@@ -190,10 +207,10 @@ namespace Tests
                 BillLadingIds = billLadings.Select(x => x.Id).ToList(),
                 ContainersOnBoard = 0,
                 BillLadings = billLadings,
-                ServiceContract="serviceContract",
-                VoyageNumber="voyage number",
-                PortOfLoadingId="ports/1-A",
-                BookingNumber="booking number"
+                ServiceContract = "serviceContract",
+                VoyageNumber = "voyage number",
+                PortOfLoadingId = "ports/1-A",
+                BookingNumber = "booking number"
             };
 
             // Act

@@ -16,6 +16,6 @@ export interface IVessel {
   voyageNumber: string;
   serviceContract: string;
   bookingNumber:string;
-  notes: string;
+  notes: string;  
 }
 

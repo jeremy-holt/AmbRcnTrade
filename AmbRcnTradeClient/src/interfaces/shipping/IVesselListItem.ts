@@ -7,6 +7,8 @@ export interface IVesselListItem {
   containersOnBoard: number;
   portOfDestinationName: string;
   companyId: string;
+
+  selected?:boolean
 }
 
 

@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using AmberwoodCore.Extensions;
+using AmberwoodCore.Responses;
 using AmbRcnTradeServer.Constants;
 using AmbRcnTradeServer.Models.ContainerModels;
 using AmbRcnTradeServer.Models.DictionaryModels;
@@ -276,6 +277,46 @@ namespace Tests
 
 
             actualVessel.BillLadingIds.Should().Contain(response.Id);
+        }
+
+        [Fact]
+        public async Task MoveBillLadingToVessel_ShouldMoveTheBillOfLadingToAnotherVessel()
+        {
+            // Arrange
+            using var store = GetDocumentStore();
+            using var session = store.OpenAsyncSession();
+            var sut = GetBillLadingService(session);
+            var fixture = new Fixture();
+
+            var billLading = await new BillLading().CreateAndStore(session);
+            billLading.ContainersOnBoard = 0;
+            billLading.ContainerIds = new List<string>(){"containers/1-A","containers/2-A"};
+            await session.StoreAsync(billLading);
+            
+            var vessels = fixture.DefaultEntity<Vessel>()
+                .Without(c => c.BillLadingIds)
+                .Without(c=>c.ContainersOnBoard)
+                .CreateMany()
+                .ToList();
+            vessels[0].BillLadingIds.Add(billLading.Id);
+            
+            await vessels.SaveList(session);
+
+            // Act
+            ServerResponse response = await sut.MoveBillLadingToVessel(billLading.Id, vessels[0].Id, vessels[1].Id);
+            await session.SaveChangesAsync();
+            
+            // Assert
+            response.Message.Should().Be("Moved Bill of Lading");
+            
+            var actualFirstVessel = await session.LoadAsync<Vessel>(vessels[0].Id);
+            actualFirstVessel.BillLadingIds.Should().NotContain(billLading.Id);
+            actualFirstVessel.ContainersOnBoard.Should().Be(0);
+            
+            var actualMovedToVessel = await session.LoadAsync<Vessel>(vessels[1].Id);
+            actualMovedToVessel.BillLadingIds.Should().Contain(billLading.Id);
+            actualMovedToVessel.ContainersOnBoard.Should().Be(2);
+
         }
     }
 }

@@ -13,4 +13,5 @@ Purchases:
   ✔ Soemthing wrong with add stocks to detail @high @done (08/01/2021, 15:50:15)
   ✔ Check out Purchses_ById - indexing errors @critical @done (08/01/2021, 08:22:19)
 
-
+BillLading:
+  ☐ Move B/L to another vessel

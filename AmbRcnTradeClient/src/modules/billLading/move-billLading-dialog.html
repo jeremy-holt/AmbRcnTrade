@@ -1,0 +1,35 @@
+<template>
+  <ux-dialog style="min-width: 800px;">
+    <ux-dialog-header>
+      <h4>Move Bill of Lading to another vessel</h4>
+    </ux-dialog-header>
+
+    <ux-dialog-body>
+      <ul class="list-group small" if.bind="vesselList.length > 0">
+        <li class="list-group-item font-weight-bold">
+          <div class="row">
+            <div class="col">Vessel</div>
+            <div class="col">Eta</div>
+            <div class="col">Shipping company</div>
+            <div class="col">Containers on board</div>
+          </div>
+        </li>
+        <li class="list-group-item ${item.selected ? 'list-group-item-highlight' : ''}" repeat.for="item of vesselList">
+          <a href="#" click.delegate="selectRow(item)" class="stretched-link text-decoration-none">
+            <div class="row">
+              <div class="col">${item.vesselName} ${item.voyageNumber}</div>
+              <div class="col">${item.eta | dateFormat: "DD/MM/YYYY"}</div>
+              <div class="col">${item.shippingCompanyName}</div>
+              <div class="col">${item.containersOnBoard}</div>
+            </div>
+          </a>
+        </li>
+      </ul>
+    </ux-dialog-body>
+
+    <ux-dialog-footer>
+      <button type="button" class="btn btn-danger" click.delegate="okClicked()">Ok</button>
+      <button type="button" class="btn btn-secondary" click.delegate="controller.cancel()">Cancel</button>
+    </ux-dialog-footer>
+  </ux-dialog>
+</template>
