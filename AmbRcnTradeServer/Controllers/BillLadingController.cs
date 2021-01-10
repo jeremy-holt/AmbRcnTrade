@@ -18,11 +18,15 @@ namespace AmbRcnTradeServer.Controllers
     {
         private readonly IBillLadingService _service;
         private readonly IAuditingService _auditingService;
+        private readonly IDraftBillLadingService _draftBillLadingService;
+        
+        private const string MAERSK_DRAFT_BL_TEMPLATE_BL_XLSX = "Maersk Draft BL Template BL.xlsx";
 
-        public BillLadingController(IAsyncDocumentSession session, IBillLadingService service, IAuditingService auditingService) : base(session)
+        public BillLadingController(IAsyncDocumentSession session, IBillLadingService service, IAuditingService auditingService, IDraftBillLadingService draftBillLadingService) : base(session)
         {
             _service = service;
             _auditingService = auditingService;
+            _draftBillLadingService = draftBillLadingService;
         }
 
         [Authorize]
@@ -76,6 +80,14 @@ namespace AmbRcnTradeServer.Controllers
         public async Task<ActionResult<ServerResponse>> MoveBillLadingToVessel(MoveBillLadingRequest request)
         {
             return await _service.MoveBillLadingToVessel(request.BillLadingId, request.FromVesselId, request.ToVesselId);
+        }
+
+        [Authorize]
+        [HttpGet("[action]")]
+        public async Task<ActionResult> SaveDraftBillOfLading(string vesselId, string billLadingId)
+        {
+            await _draftBillLadingService.SaveWorkbook(MAERSK_DRAFT_BL_TEMPLATE_BL_XLSX, Response, vesselId, billLadingId);
+            return Ok();
         }
     }
 

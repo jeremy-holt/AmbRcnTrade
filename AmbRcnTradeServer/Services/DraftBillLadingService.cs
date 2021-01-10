@@ -6,10 +6,12 @@ using System.Reflection;
 using System.Threading.Tasks;
 using AmberwoodCore.Exceptions;
 using AmberwoodCore.Extensions;
+using AmberwoodCore.Responses;
 using AmbRcnTradeServer.Models.DictionaryModels;
 using AmbRcnTradeServer.Models.DraftBillLadingModels;
 using AmbRcnTradeServer.Models.VesselModels;
 using GemBox.Spreadsheet;
+using Microsoft.AspNetCore.Http;
 using Raven.Client.Documents;
 using Raven.Client.Documents.Linq;
 using Raven.Client.Documents.Session;
@@ -20,13 +22,15 @@ namespace AmbRcnTradeServer.Services
     {
         ExcelFile LoadTemplate(string templateFileName);
         Task<DraftBillLadingDataResponse> LoadData(string vesselId, string billLadingId);
-        ExcelCell SetCell(ExcelWorksheet worksheet, string key, string value);
-        Task<ExcelWorksheet> FillTemplate(ExcelWorksheet worksheet, string vesselId, string billLadingId);
         BillLadingCustomers GetBillLadingCustomers(DraftBillLadingDataResponse data);
+
+        Task<ServerResponse> SaveWorkbook(string templateFileName, HttpResponse httpResponse, string vesselId, string billLadingId);
+        ExcelFile FillTemplate(string templateFileName, DraftBillLadingDataResponse data);
     }
 
     public class DraftBillLadingService : IDraftBillLadingService
     {
+        // private const string MaerskDraftBlTemplateBlXlsx = "Maersk Draft BL Template BL.xlsx";
         private readonly IBillLadingService _billLadingService;
         private readonly IAsyncDocumentSession _session;
 
@@ -69,19 +73,12 @@ namespace AmbRcnTradeServer.Services
             return new DraftBillLadingDataResponse {BillLadingDto = billOfLading, Vessel = vessel, Customers = customers, Ports = ports};
         }
 
-        public ExcelCell SetCell(ExcelWorksheet worksheet, string key, string value)
+        public ExcelFile FillTemplate(string templateFileName, DraftBillLadingDataResponse data)
         {
-            if (!worksheet.Cells.FindText(key, true, false, out var row, out var column))
-                throw new NotFoundException($"Cannot find key {key} in template worksheet");
+            var workbook = LoadTemplate(templateFileName);
+            var worksheet = workbook.Worksheets[0];
 
-            var cell = worksheet.Cells[row, column];
-            cell.Value = value;
-            return cell;
-        }
-
-        public async Task<ExcelWorksheet> FillTemplate(ExcelWorksheet worksheet, string vesselId, string billLadingId)
-        {
-            var data = await LoadData(vesselId, billLadingId);
+            // var data = await LoadData(vesselId, billLadingId);
             var customers = GetBillLadingCustomers(data);
 
             SetCell(worksheet, customers.Shipper, c => c.CompanyName);
@@ -134,7 +131,7 @@ namespace AmbRcnTradeServer.Services
             SetCell(worksheet, "BillLading.FreightDestinationCharge", "");
             SetCell(worksheet, "BillLading.FreightDestinationChargePaidBy", "");
 
-            return worksheet;
+            return workbook;
         }
 
         public BillLadingCustomers GetBillLadingCustomers(DraftBillLadingDataResponse data)
@@ -160,7 +157,29 @@ namespace AmbRcnTradeServer.Services
             return billLadingCustomers;
         }
 
-        private void SetCell(ExcelWorksheet worksheet, BlCustomer customers, Func<BlCustomer, ExcelCellData> field)
+        public async Task<ServerResponse> SaveWorkbook(string templateFileName, HttpResponse httpResponse, string vesselId, string billLadingId)
+        {
+            var data = await LoadData(vesselId, billLadingId);
+
+            var fileName = $"{data.Vessel.VesselName}-{data.Vessel.BookingNumber}.xlsx";
+
+            var workbook = FillTemplate(templateFileName, data);
+
+            workbook.Save(httpResponse, fileName);
+
+            return await Task.FromResult(new ServerResponse($"Saved {fileName}"));
+        }
+
+        private static void SetCell(ExcelWorksheet worksheet, string key, string value)
+        {
+            if (!worksheet.Cells.FindText(key, true, false, out var row, out var column))
+                throw new NotFoundException($"Cannot find key {key} in template worksheet");
+
+            var cell = worksheet.Cells[row, column];
+            cell.Value = value;
+        }
+
+        private static void SetCell(ExcelWorksheet worksheet, BlCustomer customers, Func<BlCustomer, ExcelCellData> field)
         {
             SetCell(worksheet, field(customers).Key, field(customers).Value);
         }
