@@ -6,12 +6,11 @@ using System.Reflection;
 using System.Threading.Tasks;
 using AmberwoodCore.Exceptions;
 using AmberwoodCore.Extensions;
-using AmberwoodCore.Responses;
+using AmbRcnTradeServer.Constants;
 using AmbRcnTradeServer.Models.DictionaryModels;
 using AmbRcnTradeServer.Models.DraftBillLadingModels;
 using AmbRcnTradeServer.Models.VesselModels;
 using GemBox.Spreadsheet;
-using Microsoft.AspNetCore.Http;
 using Raven.Client.Documents;
 using Raven.Client.Documents.Linq;
 using Raven.Client.Documents.Session;
@@ -24,7 +23,7 @@ namespace AmbRcnTradeServer.Services
         Task<DraftBillLadingDataResponse> LoadData(string vesselId, string billLadingId);
         BillLadingCustomers GetBillLadingCustomers(DraftBillLadingDataResponse data);
 
-        Task<ServerResponse> SaveWorkbook(string templateFileName, HttpResponse httpResponse, string vesselId, string billLadingId);
+        Task<ExcelBillLadingResponse> GetWorkbook(string templateFileName, string vesselId, string billLadingId);
         ExcelFile FillTemplate(string templateFileName, DraftBillLadingDataResponse data);
     }
 
@@ -78,7 +77,6 @@ namespace AmbRcnTradeServer.Services
             var workbook = LoadTemplate(templateFileName);
             var worksheet = workbook.Worksheets[0];
 
-            // var data = await LoadData(vesselId, billLadingId);
             var customers = GetBillLadingCustomers(data);
 
             SetCell(worksheet, customers.Shipper, c => c.CompanyName);
@@ -148,6 +146,7 @@ namespace AmbRcnTradeServer.Services
             SetCell(worksheet, "BillLading.FreightDestinationCharge", data.BillLadingDto.FreightDestinationCharge);
             SetCell(worksheet, "BillLading.FreightDestinationChargePaidBy", data.BillLadingDto.FreightDestinationChargePaidBy);
 
+            FillContainerRows(worksheet, data);
 
             return workbook;
         }
@@ -177,7 +176,7 @@ namespace AmbRcnTradeServer.Services
             return billLadingCustomers;
         }
 
-        public async Task<ServerResponse> SaveWorkbook(string templateFileName, HttpResponse httpResponse, string vesselId, string billLadingId)
+        public async Task<ExcelBillLadingResponse> GetWorkbook(string templateFileName, string vesselId, string billLadingId)
         {
             var data = await LoadData(vesselId, billLadingId);
 
@@ -185,9 +184,39 @@ namespace AmbRcnTradeServer.Services
 
             var workbook = FillTemplate(templateFileName, data);
 
-            workbook.Save(httpResponse, fileName);
+            var options = SaveOptions.XlsxDefault;
+            await using var ms = new MemoryStream();
+            workbook.Save(ms, options);
 
-            return await Task.FromResult(new ServerResponse($"Saved {fileName}"));
+            return new ExcelBillLadingResponse(ms.ToArray(), options.ContentType, fileName);
+        }
+
+        private static void FillContainerRows(ExcelWorksheet worksheet, DraftBillLadingDataResponse data)
+        {
+            if (!worksheet.Cells.FindText("Container.Rows", true, false, out var row, out _))
+                return;
+
+            worksheet.Rows.InsertCopy(row + 1, data.BillLadingDto.Containers.Count - 1, worksheet.Rows[row]);
+
+            for (var i = 0; i < data.BillLadingDto.Containers.Count; i++)
+            {
+                var container = data.BillLadingDto.Containers[i];
+                var currentRow = worksheet.Rows[row + i];
+
+                var teuText = container.Teu switch
+                {
+                    Teu.Teu20 => "20HC",
+                    Teu.Teu40 => "40HC",
+                    _ => ""
+                };
+
+                currentRow.Cells[1].SetValue(container.ContainerNumber);
+                currentRow.Cells[2].SetValue(container.SealNumber);
+                currentRow.Cells[5].SetValue($"{container.Bags} PACKAGES");
+                currentRow.Cells[8].SetValue($"{container.WeighbridgeWeightKg:F3}KGS");
+                currentRow.Cells[9].SetValue($"{container.WeighbridgeWeightKg:F3}KGS");
+                currentRow.Cells[10].SetValue(teuText);
+            }
         }
 
         private static void SetCell(ExcelWorksheet worksheet, string key, string value)
@@ -197,41 +226,59 @@ namespace AmbRcnTradeServer.Services
 
             var cell = worksheet.Cells[row, column];
 
-            if (value == null)
-                throw new InvalidOperationException($"Key {key} value is null");
+            // if (value == null)
+            //     throw new InvalidOperationException($"Key {key} value is null");
 
-            cell.Value = value.ToUpper();
+            cell.Value = value?.ToUpper();
         }
 
         private static void SetCell(ExcelWorksheet worksheet, BlCustomer customers, Func<BlCustomer, ExcelCellData> field)
         {
-            if (customers == null)
+            if (customers == null || field(customers) == null)
                 return;
 
-            SetCell(worksheet, field(customers).Key, field(customers).Value.ToUpper());
+            SetCell(worksheet, field(customers).Key, field(customers)?.Value.ToUpper());
         }
 
         private static BlCustomer CreateCustomer(string root, string customerType, Customer customer)
         {
             if (customer == null) return null;
-            
+
             var prefix = $"{root}.{customerType}";
 
-            ExcelCellData GetAddressLine(List<string> addresses, int index)
+            ExcelCellData GetAddressLine(IReadOnlyList<string> addresses, int index)
             {
                 return index < addresses.Count ? new ExcelCellData($"{prefix}Address{index + 1}", addresses[index].ToUpper()) : null;
             }
 
-            var spcCity = customer.Address.City.IsNotNullOrEmpty() ? " " : "";
-            var spcState = customer.Address.State.IsNotNullOrEmpty() ? " " : "";
+            string spcCity;
+            string spcState;
+
+            try
+            {
+                if (customer.Address == null)
+                {
+                    spcCity = "";
+                    spcState = "";
+                }
+                else
+                {
+                    spcCity = customer.Address.City.IsNotNullOrEmpty() ? " " : "";
+                    spcState = customer.Address.State.IsNotNullOrEmpty() ? " " : "";
+                }
+            }
+            catch (Exception)
+            {
+                throw new NullReferenceException(customer.CompanyName);
+            }
 
             var list = new List<string>
             {
-                customer.Address.Street1.Trim(),
-                customer.Address.Street2.Trim(),
-                $"{customer.Address.City?.Trim()}{spcCity}{customer.Address.State?.Trim()}{spcState}{customer.Address.Country?.Trim()}".Trim(),
-                customer.Reference.Trim(),
-                customer.Email.Trim()
+                customer.Address?.Street1?.Trim(),
+                customer.Address?.Street2?.Trim(),
+                $"{customer.Address?.City?.Trim()}{spcCity}{customer.Address?.State?.Trim()}{spcState}{customer.Address?.Country?.Trim()}".Trim(),
+                customer.Reference?.Trim(),
+                customer.Email?.Trim()
             };
 
             var addressList = list.Where(c => c.IsNotNullOrEmpty()).ToList();
@@ -246,7 +293,22 @@ namespace AmbRcnTradeServer.Services
                 Address5 = GetAddressLine(addressList, 4)
             };
 
+
             return blCustomer;
         }
+    }
+
+    public class ExcelBillLadingResponse
+    {
+        public ExcelBillLadingResponse(byte[] fileContents, string contentType, string fileName)
+        {
+            FileContents = fileContents;
+            ContentType = contentType;
+            FileName = fileName;
+        }
+
+        public byte[] FileContents { get; }
+        public string ContentType { get; }
+        public string FileName { get; }
     }
 }

@@ -101,6 +101,11 @@ export class FetchService {
     return this.handleResponse<T>(response, reducer);
   }
 
+  protected url(id: string | null | QueryId[],action :string){
+    const params = typeof (id) === "string" ? [new QueryId("id", id)] : id;
+    return this.getUrlService.getUrl(new FetchRoute(params,action));
+  }
+
   protected async getData<T>(id: QueryId[], action: string) {
     const url = this.getUrlService.getUrl(new FetchRoute(id, action));
     const response = await this.http.fetch(url);

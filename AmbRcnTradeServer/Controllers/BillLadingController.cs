@@ -19,10 +19,11 @@ namespace AmbRcnTradeServer.Controllers
         private readonly IBillLadingService _service;
         private readonly IAuditingService _auditingService;
         private readonly IDraftBillLadingService _draftBillLadingService;
-        
+
         private const string MAERSK_DRAFT_BL_TEMPLATE_BL_XLSX = "Maersk Draft BL Template BL.xlsx";
 
-        public BillLadingController(IAsyncDocumentSession session, IBillLadingService service, IAuditingService auditingService, IDraftBillLadingService draftBillLadingService) : base(session)
+        public BillLadingController(IAsyncDocumentSession session, IBillLadingService service, IAuditingService auditingService,
+            IDraftBillLadingService draftBillLadingService) : base(session)
         {
             _service = service;
             _auditingService = auditingService;
@@ -81,13 +82,13 @@ namespace AmbRcnTradeServer.Controllers
         {
             return await _service.MoveBillLadingToVessel(request.BillLadingId, request.FromVesselId, request.ToVesselId);
         }
-
+        
         [Authorize]
         [HttpGet("[action]")]
-        public async Task<ActionResult> SaveDraftBillOfLading(string vesselId, string billLadingId)
+        public async Task<ActionResult> GetDraftBillOfLading(string vesselId, string billLadingId)
         {
-            await _draftBillLadingService.SaveWorkbook(MAERSK_DRAFT_BL_TEMPLATE_BL_XLSX, Response, vesselId, billLadingId);
-            return Ok();
+            var response =  await _draftBillLadingService.GetWorkbook( MAERSK_DRAFT_BL_TEMPLATE_BL_XLSX, vesselId, billLadingId);
+            return File(response.FileContents, response.ContentType, response.FileName);
         }
     }
 
@@ -102,5 +103,11 @@ namespace AmbRcnTradeServer.Controllers
     {
         public IEnumerable<string> ContainerIds { get; set; }
         public string BillOfLadingId { get; set; }
+    }
+
+    public class SaveBillLadingRequest
+    {
+        public string VesselId { get; set; }
+        public string BillLadingId { get; set; }
     }
 }

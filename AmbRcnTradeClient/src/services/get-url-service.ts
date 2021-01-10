@@ -1,4 +1,5 @@
 import { autoinject } from "aurelia-framework";
+import { encodeParams } from "core/helpers";
 import { QueryId } from "../models/QueryId";
 import { FetchRoute } from "./../requests/FetchRoute";
 import { LanguageService } from "./language-service";
@@ -38,7 +39,7 @@ export class GetUrlService {
     }
 
     if (route.params) {
-      const parseValue = (value: any) => value === undefined || value === null ? "" : value.toString();
+      const parseValue = (value: any) => value === undefined || value === null ? "" :  value.toString();
       const reducer = (current: string, next: QueryId) => current + (next.value ? `${next.name}=${parseValue(next.value)}&` : "");
 
       params = "?" + route.params.reduce(reducer, "");

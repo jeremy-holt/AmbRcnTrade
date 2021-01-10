@@ -21,6 +21,7 @@ import { isInRole } from "./../../services/role-service";
 import { VesselService } from "./../../services/vessel-service";
 import { AddContainersDialog } from "./add-containers-dialog";
 import { MoveBillLadingDialog } from "./move-billLading-dialog";
+import { base64StringToBlob, blobToDataURL } from "blob-util";
 
 @autoinject
 @connectTo()
@@ -29,9 +30,9 @@ export class BillLadingEdit {
   protected model: IBillLading = undefined;
   protected vessel: IVessel = undefined;
   protected customersList: ICustomerListItem[] = [];
-  protected portsList:IPort[]=[];
-  protected teuList:ITeu[]=[];
-  
+  protected portsList: IPort[] = [];
+  protected teuList: ITeu[] = [];
+
   constructor(
     private billLadingService: BillLadingService,
     private vesselService: VesselService,
@@ -44,15 +45,15 @@ export class BillLadingEdit {
   protected stateChanged(state: IState) {
     this.customersList = _.cloneDeep(state.userFilteredCustomers);
     this.customersList.unshift({ id: null, name: "[Select]" } as ICustomerListItem);
-    
-    this.portsList=_.cloneDeep(state.port.list);
-    this.portsList.unshift({id: null, name:"[Select]"} as IPort);
+
+    this.portsList = _.cloneDeep(state.port.list);
+    this.portsList.unshift({ id: null, name: "[Select]" } as IPort);
 
     this.model = _.cloneDeep(state.billLading.current);
     this.vessel = _.cloneDeep(state.vessel.current);
 
-    this.teuList=_.cloneDeep(TEU_LIST);
-    this.teuList.unshift({id: null,name:"[Select]"});
+    this.teuList = _.cloneDeep(TEU_LIST);
+    this.teuList.unshift({ id: null, name: "[Select]" });
   }
 
   protected async activate(prms: { vesselId: string; billLadingId: string }) {
@@ -155,6 +156,11 @@ export class BillLadingEdit {
 
   protected navigateToVessel() {
     this.router.navigateToRoute("vesselEdit", { id: encodeParams(this.vessel.id) });
+  }
+
+  protected async printBillLading() {
+    const objectUrl = await this.billLadingService.getDraftBillOfLading(this.vessel.id, this.model.id);
+    window.location.href = objectUrl;
   }
 
   protected moveBillLadingToVessel() {
