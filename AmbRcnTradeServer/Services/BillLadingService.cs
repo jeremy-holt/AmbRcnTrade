@@ -62,8 +62,8 @@ namespace AmbRcnTradeServer.Services
             billLading.NettWeightKg = billLadingDto.Containers.Sum(x => x.NettWeightKg);
             billLading.GrossWeightKg = billLadingDto.Containers.Sum(x => x.WeighbridgeWeightKg);
             billLading.NumberPackagesText = billLading.NumberBags == null ? "" : $"{billLading.NumberBags} PACKAGES";
-            billLading.NettWeightKgText = billLading.NettWeightKg == null ? "" : $"{billLading.NettWeightKg:F4} KGS";
-            billLading.GrossWeightKgText = billLading.GrossWeightKg == null ? "" : $"{billLading.GrossWeightKg:F4} KGS";
+            billLading.NettWeightKgText = billLading.NettWeightKg == null ? "" : $"{billLading.NettWeightKg:N0} KGS";
+            billLading.GrossWeightKgText = billLading.GrossWeightKg == null ? "" : $"{billLading.GrossWeightKg:N0} KGS";
             billLading.VgmWeightKgText = billLading.GrossWeightKgText;
             billLading.PreCargoDescription = GetPreCargoDescription(billLading.NumberBags, billLading.ContainersOnBoard, billLading.GrossWeightKg, billLading.ProductDescription,
                 billLading.Teu);
@@ -182,9 +182,9 @@ namespace AmbRcnTradeServer.Services
                            "HS CODE: 08013100";
             
             var weightsText = $"IN {numberBags} JUTE BAGS OF {productDescription}\n" +
-                                      $"GROSS WEIGHT: {grossWeightKg:F0} KGS\n" +
+                                      $"GROSS WEIGHT: {grossWeightKg:N0} KGS\n" +
                                       $"LESS WEIGHT OF EMPTY BAGS: {numberBags} KGS\n" +
-                                      $"NET WEIGHT: {grossWeightKg - numberBags:F0} KGS";
+                                      $"NET WEIGHT: {grossWeightKg - numberBags:N0} KGS";
             return new CargoDescription() {Header = bodyText, Footer = weightsText};
         }
     }

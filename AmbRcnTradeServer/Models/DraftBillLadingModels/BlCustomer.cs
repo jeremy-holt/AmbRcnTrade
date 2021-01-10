@@ -8,7 +8,7 @@ namespace AmbRcnTradeServer.Models.DraftBillLadingModels
 {
     public class BlCustomer
     {
-        public ExcelCellData CompanyName { get; set; }
+        public ExcelCellData CompanyName { get; set; } 
         public ExcelCellData Address1 { get; set; }
         public ExcelCellData Address2 { get; set; }
         public ExcelCellData Address3 { get; set; }
@@ -24,7 +24,7 @@ namespace AmbRcnTradeServer.Models.DraftBillLadingModels
             Value = value;
         }
         public string Key { get; set;}
-        public string Value { get; set; }
+        public string Value { get; set; } 
 
         public override string ToString()
         {

@@ -29,7 +29,6 @@ namespace AmbRcnTradeServer.Services
 
     public class DraftBillLadingService : IDraftBillLadingService
     {
-        // private const string MaerskDraftBlTemplateBlXlsx = "Maersk Draft BL Template BL.xlsx";
         private readonly IBillLadingService _billLadingService;
         private readonly IAsyncDocumentSession _session;
 
@@ -213,8 +212,8 @@ namespace AmbRcnTradeServer.Services
                 currentRow.Cells[1].SetValue(container.ContainerNumber);
                 currentRow.Cells[2].SetValue(container.SealNumber);
                 currentRow.Cells[5].SetValue($"{container.Bags} PACKAGES");
-                currentRow.Cells[8].SetValue($"{container.WeighbridgeWeightKg:F3}KGS");
-                currentRow.Cells[9].SetValue($"{container.WeighbridgeWeightKg:F3}KGS");
+                currentRow.Cells[8].SetValue($"{container.WeighbridgeWeightKg:N0} KGS");
+                currentRow.Cells[9].SetValue($"{container.WeighbridgeWeightKg:N0} KGS");
                 currentRow.Cells[10].SetValue(teuText);
             }
         }
@@ -242,13 +241,17 @@ namespace AmbRcnTradeServer.Services
 
         private static BlCustomer CreateCustomer(string root, string customerType, Customer customer)
         {
-            if (customer == null) return null;
+            // if (customer == null)
+            // {
+            //     return new BlCustomer();
+            // }
 
             var prefix = $"{root}.{customerType}";
 
             ExcelCellData GetAddressLine(IReadOnlyList<string> addresses, int index)
             {
-                return index < addresses.Count ? new ExcelCellData($"{prefix}Address{index + 1}", addresses[index].ToUpper()) : null;
+                var value = addresses[index] != null ? addresses[index].ToUpper() : "";
+                return new ExcelCellData($"{prefix}Address{index + 1}", value);
             }
 
             string spcCity;
@@ -256,7 +259,7 @@ namespace AmbRcnTradeServer.Services
 
             try
             {
-                if (customer.Address == null)
+                if (customer?.Address == null)
                 {
                     spcCity = "";
                     spcState = "";
@@ -269,23 +272,29 @@ namespace AmbRcnTradeServer.Services
             }
             catch (Exception)
             {
-                throw new NullReferenceException(customer.CompanyName);
+                throw new NullReferenceException(customer?.CompanyName);
             }
 
             var list = new List<string>
             {
-                customer.Address?.Street1?.Trim(),
-                customer.Address?.Street2?.Trim(),
-                $"{customer.Address?.City?.Trim()}{spcCity}{customer.Address?.State?.Trim()}{spcState}{customer.Address?.Country?.Trim()}".Trim(),
-                customer.Reference?.Trim(),
-                customer.Email?.Trim()
+                customer?.Address?.Street1?.Trim() ?? "",
+                customer?.Address?.Street2?.Trim() ?? "",
+                $"{customer?.Address?.City?.Trim()}{spcCity}{customer?.Address?.State?.Trim()}{spcState}{customer?.Address?.Country?.Trim()}".Trim() ?? "",
+                customer?.Reference?.Trim() ?? "",
+                customer?.Email?.Trim() ?? ""
             };
 
             var addressList = list.Where(c => c.IsNotNullOrEmpty()).ToList();
+            var addressListLength = addressList.Count;
+
+            for (var i = addressListLength; i < 5; i++)
+            {
+                addressList.Add("");
+            }
 
             var blCustomer = new BlCustomer
             {
-                CompanyName = new ExcelCellData($"{prefix}CompanyName", customer.CompanyName.ToUpper()),
+                CompanyName = new ExcelCellData($"{prefix}CompanyName", customer?.CompanyName.ToUpper() ?? ""),
                 Address1 = GetAddressLine(addressList, 0),
                 Address2 = GetAddressLine(addressList, 1),
                 Address3 = GetAddressLine(addressList, 2),

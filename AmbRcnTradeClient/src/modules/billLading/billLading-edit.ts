@@ -159,6 +159,7 @@ export class BillLadingEdit {
   }
 
   protected async printBillLading() {
+    await this.save();
     const objectUrl = await this.billLadingService.getDraftBillOfLading(this.vessel.id, this.model.id);
     window.location.href = objectUrl;
   }

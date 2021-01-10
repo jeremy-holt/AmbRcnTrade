@@ -71,7 +71,7 @@ namespace Tests
             var savePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "Test Draft Bl.xlsx");
             filledWorkbook.Save(savePath);
         }
-        
+
         [Fact]
         public async Task GetBillLadingCustomers_ShouldReturnBillLadingFormatCustomer()
         {
@@ -126,6 +126,101 @@ namespace Tests
         }
 
         [Fact]
+        public async Task GetBillLadingCustomers_ShouldReturn_EmptyLinesForMissingAddress()
+        {
+            // Arrange
+            using var store = GetDocumentStore();
+            using var session = store.OpenAsyncSession();
+            var sut = GetDraftBillLadingService(session);
+            var fixture = new Fixture();
+
+            var shipper = await new Customer().CreateAndStore(session);
+            shipper.Address.Street1 = null;
+            shipper.Address.Street2 = null;
+            shipper.Address.City = null;
+            shipper.Address.State = null;
+            shipper.Address.Country = "UK";
+            shipper.Reference = null;
+            shipper.Email = null;
+
+            var billLading = await new BillLading().CreateAndStore(session);
+            billLading.ShipperId = shipper.Id;
+            billLading.DestinationAgentId = null;
+
+            var vessel = fixture.DefaultEntity<Vessel>()
+                .With(c => c.BillLadingIds, new List<string> {billLading.Id})
+                .Without(c => c.ForwardingAgentId)
+                .Create();
+            await session.StoreAsync(vessel);
+            await session.SaveChangesAsync();
+
+            // Act
+            var data = await sut.LoadData(vessel.Id, billLading.Id);
+            var actual = sut.GetBillLadingCustomers(data);
+
+            // Assert
+            actual.Shipper.CompanyName.Value.Should().Be(shipper.CompanyName.ToUpper());
+            actual.Shipper.Address1.Value.Should().Be(shipper.Address.Country.ToUpper());
+            actual.Shipper.Address2.Value.Should().Be("");
+            actual.Shipper.Address3.Value.Should().Be("");
+            actual.Shipper.Address4.Value.Should().Be("");
+            actual.Shipper.Address5.Value.Should().Be("");
+
+            actual.Shipper.CompanyName.Key.Should().Be("BillLading.ShipperCompanyName");
+            actual.Shipper.Address1.Key.Should().Be("BillLading.ShipperAddress1");
+
+            actual.DestinationAgent.Should().BeNull();
+        }
+
+        [Fact]
+        public async Task GetBillLadingCustomers_ShouldReturn_EmptyLinesForNullCustomer()
+        {
+            // Arrange
+            using var store = GetDocumentStore();
+            using var session = store.OpenAsyncSession();
+            var sut = GetDraftBillLadingService(session);
+            var fixture = new Fixture();
+
+            var shipper = await new Customer().CreateAndStore(session);
+            // shipper.Address.Street1 = null;
+            // shipper.Address.Street2 = null;
+            // shipper.Address.City = null;
+            // shipper.Address.State = null;
+            // shipper.Address.Country = "UK";
+            // shipper.Reference = null;
+            // shipper.Email = null;
+
+            var billLading = await new BillLading().CreateAndStore(session);
+            billLading.ShipperId = null;
+            // billLading.DestinationAgentId = null;
+
+            var vessel = fixture.DefaultEntity<Vessel>()
+                .With(c => c.BillLadingIds, new List<string> {billLading.Id})
+                .Without(c => c.ForwardingAgentId)
+                .Create();
+            await session.StoreAsync(vessel);
+            await session.SaveChangesAsync();
+
+            // Act
+            var data = await sut.LoadData(vessel.Id, billLading.Id);
+            var actual = sut.GetBillLadingCustomers(data);
+
+            // Assert
+            actual.Shipper.CompanyName.Value.Should().Be("");
+            actual.Shipper.Address1.Value.Should().Be("");
+            actual.Shipper.Address2.Value.Should().Be("");
+            actual.Shipper.Address3.Value.Should().Be("");
+            actual.Shipper.Address4.Value.Should().Be("");
+            actual.Shipper.Address5.Value.Should().Be("");
+
+            actual.Shipper.CompanyName.Key.Should().Be("BillLading.ShipperCompanyName");
+            actual.Shipper.Address1.Key.Should().Be("BillLading.ShipperAddress1");
+
+            actual.DestinationAgent.CompanyName.Key.Should().Be("BillLading.DestinationAgentCompanyName");
+            actual.DestinationAgent.CompanyName.Value.Should().Be("");
+        }
+
+        [Fact]
         public async Task LoadData_ShouldLoadTheVesselAndBillOfLadingAndCustomers()
         {
             // Arrange
@@ -172,56 +267,5 @@ namespace Tests
             // Assert
             workbook.Should().NotBeNull();
         }
-
-        // [Fact]
-        // public async Task SaveDraftBillLading_ShouldReturnAFileStream()
-        // {
-        //     // Arrange
-        //     using var store = GetDocumentStore();
-        //     using var session = store.OpenAsyncSession();
-        //     var sut = GetDraftBillLadingService(session);
-        //     var fixture = new Fixture();
-        //
-        //     var containers = fixture.DefaultEntity<Container>().CreateMany().ToList();
-        //     await containers.SaveList(session);
-        //
-        //     var shipper = await new Customer().CreateAndStore(session);
-        //     shipper.Address.City = "London";
-        //     shipper.Address.State = null;
-        //     shipper.Address.Country = "UK";
-        //     var consignee = await new Customer().CreateAndStore(session);
-        //     var notifyParty1 = await new Customer().CreateAndStore(session);
-        //     var notifyParty2 = await new Customer().CreateAndStore(session);
-        //     var forwardingAgent = await new Customer().CreateAndStore(session);
-        //     var portDestination = await new Port().CreateAndStore(session);
-        //
-        //     var billLading = await new BillLading().CreateAndStore(session);
-        //     billLading.ContainerIds = containers.GetPropertyFromList(c => c.Id);
-        //     billLading.ShipperId = shipper.Id;
-        //     billLading.ConsigneeId = consignee.Id;
-        //     billLading.NotifyParty1Id = notifyParty1.Id;
-        //     billLading.NotifyParty2Id = notifyParty2.Id;
-        //     billLading.PortOfDestinationId = portDestination.Id;
-        //
-        //     var vessel = fixture.DefaultEntity<Vessel>()
-        //         .With(c => c.BillLadingIds, new List<string> {billLading.Id})
-        //         .With(c => c.ForwardingAgentId, forwardingAgent.Id)
-        //         .Create();
-        //     await session.StoreAsync(vessel);
-        //     await session.SaveChangesAsync();
-        //
-        //     // var workbook = sut.LoadTemplate(MaerskDraftBlTemplateBlXlsx);
-        //     // var worksheet = workbook.Worksheets[0];
-        //     var response = await sut.LoadData(vessel.Id, billLading.Id);
-        //     // var saveWorkbook = sut.FillTemplate(MaerskDraftBlTemplateBlXlsx, response);
-        //
-        //     // Act
-        //     var httpResponse = new Fake<HttpResponse>();
-        //
-        //     await sut.SaveWorkbook(MaerskDraftBlTemplateBlXlsx, httpResponse.FakedObject, response.Vessel.Id, response.BillLadingDto.Id);
-        //
-        //     // Assert
-        //     // actual.Name.Should().Be($"{vessel.VesselName}-{vessel.BookingNumber}.xlsx");
-        // }
     }
 }

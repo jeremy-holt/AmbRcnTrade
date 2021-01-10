@@ -292,8 +292,8 @@ namespace Tests
             actual.GrossWeightKg.Should().Be(billLadingDto.Containers.Sum(x => x.WeighbridgeWeightKg));
 
             actual.NumberPackagesText.Should().Be($"{actual.NumberBags} PACKAGES");
-            actual.NettWeightKgText.Should().Be($"{actual.NettWeightKg:F4} KGS");
-            actual.GrossWeightKgText.Should().Be($"{actual.GrossWeightKg:F4} KGS");
+            actual.NettWeightKgText.Should().Be($"{actual.NettWeightKg:N0} KGS");
+            actual.GrossWeightKgText.Should().Be($"{actual.GrossWeightKg:N0} KGS");
             actual.VgmWeightKgText.Should().Be(actual.GrossWeightKgText);
             actual.PreCargoDescription.Header.Should().NotBeNullOrEmpty();
             actual.PreCargoDescription.Footer.Should().NotBeNullOrEmpty();
@@ -323,9 +323,9 @@ namespace Tests
                                    "HS CODE: 08013100";
 
             var expectedWeightsText = $"IN {numberBags} JUTE BAGS OF {productDescription}\n" +
-                                      $"GROSS WEIGHT: {grossWeightKg:F0} KGS\n" +
+                                      $"GROSS WEIGHT: {grossWeightKg:N0} KGS\n" +
                                       $"LESS WEIGHT OF EMPTY BAGS: {numberBags} KGS\n" +
-                                      $"NET WEIGHT: {grossWeightKg - numberBags:F0} KGS";
+                                      $"NET WEIGHT: {grossWeightKg - numberBags:N0} KGS";
 
             // Assert
             actual.Header.Should().Be(expectedBodyText);
