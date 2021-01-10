@@ -29,7 +29,7 @@ namespace AmbRcnTradeServer.Services
     {
         private readonly IMapper _mapper;
         private readonly IAsyncDocumentSession _session;
-        
+
         public BillLadingService(IAsyncDocumentSession session, IMapper mapper)
         {
             _session = session;
@@ -70,6 +70,12 @@ namespace AmbRcnTradeServer.Services
         {
             var billLading = await _session
                 .Include<BillLading>(c => c.ContainerIds)
+                .Include(c => c.ConsigneeId)
+                .Include(c => c.ShipperId)
+                .Include(c => c.DestinationAgentId)
+                .Include(c => c.NotifyParty1Id)
+                .Include(c => c.NotifyParty2Id)
+                .Include(c => c.PortOfDestinationId)
                 .LoadAsync<BillLading>(id);
 
             var containers = await _session.LoadListFromMultipleIdsAsync<Container>(billLading.ContainerIds);

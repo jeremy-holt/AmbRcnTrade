@@ -147,5 +147,10 @@ namespace Tests.Base
         {
             return new PaymentService(session, GetPurchaseService(session), GetCounterService(session));
         }
+
+        protected IDraftBillLadingService GetDraftBillLadingService(IAsyncDocumentSession session)
+        {
+            return new DraftBillLadingService(session, GetBillLadingService(session));
+        }
     }
 }

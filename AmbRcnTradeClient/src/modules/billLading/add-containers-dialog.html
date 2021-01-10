@@ -7,7 +7,7 @@
     </ux-dialog-header>
 
     <ux-dialog-body>
-      <ul class="list-group small">
+      <ul if.bind="list.length > 0" class="list-group small">
         <li class="list-group-item font-weight-bold">
           <div class="row">
             <div class="col">Status</div>
@@ -27,6 +27,9 @@
           </a>
         </li>
       </ul>
+      <div else class="alert alert-info my-2">
+        There are no containers available to add to this Bill of Lading
+      </div>
     </ux-dialog-body>
 
     <ux-dialog-footer>
