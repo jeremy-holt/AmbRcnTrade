@@ -6,6 +6,7 @@ using AmberwoodCore.Responses;
 using AmbRcnTradeServer.Constants;
 using AmbRcnTradeServer.Models.ContainerModels;
 using AmbRcnTradeServer.Models.DictionaryModels;
+using AmbRcnTradeServer.Models.DraftBillLadingModels;
 using AmbRcnTradeServer.Models.VesselModels;
 using AmbRcnTradeServer.RavenIndexes;
 using AutoFixture;
@@ -246,16 +247,23 @@ namespace Tests
                 BlBodyText = "body text",
                 FreightPrepaid = true,
                 VesselId = vessel.Id,
-                OwnReferences="own references",
-                ShipperReference="shipper reference",
-                ConsigneeReference="consignee reference",
-                DestinationAgentId="customers/2-A",
-                ShippingMarks="shipping marks",
-                FreightChargesPayableAt="Abidjan/Dubai",
+                OwnReferences = "own references",
+                ShipperReference = "shipper reference",
+                ConsigneeReference = "consignee reference",
+                DestinationAgentId = "customers/2-A",
+                ShippingMarks = "shipping marks",
                 ForwarderReference = "forwarder reference",
-                PortOfDestinationId="ports/1-A",
-                PortOfLoadingId = "ports/2-A"
-                
+                PortOfDestinationId = "ports/1-A",
+                PortOfLoadingId = "ports/2-A",
+                OceanFreight = "570",
+                FreightOriginCharges = "100",
+                FreightOriginChargesPaidBy = "Shipper",
+                FreightDestinationCharge = "Consignee",
+                FreightDestinationChargePaidBy = "Abidjan/Dubai",
+                OceanFreightPaidBy = "Notify",
+                PortOfDestinationName = "HCM",
+                ProductDescription = "IVC RCN",
+                PreCargoDescription = new CargoDescription()
             };
 
             // Act
@@ -279,8 +287,49 @@ namespace Tests
             actual.PortOfLoadingId.Should().Be("ports/2-A");
             actual.PortOfDestinationId.Should().Be("ports/1-A");
 
+            actual.NumberBags.Should().Be(billLadingDto.Containers.Sum(x => x.Bags));
+            actual.NettWeightKg.Should().Be(billLadingDto.Containers.Sum(x => x.NettWeightKg));
+            actual.GrossWeightKg.Should().Be(billLadingDto.Containers.Sum(x => x.WeighbridgeWeightKg));
+
+            actual.NumberPackagesText.Should().Be($"{actual.NumberBags} PACKAGES");
+            actual.NettWeightKgText.Should().Be($"{actual.NettWeightKg:F4} KGS");
+            actual.GrossWeightKgText.Should().Be($"{actual.GrossWeightKg:F4} KGS");
+            actual.VgmWeightKgText.Should().Be(actual.GrossWeightKgText);
+            actual.PreCargoDescription.Header.Should().NotBeNullOrEmpty();
+            actual.PreCargoDescription.Footer.Should().NotBeNullOrEmpty();
 
             actualVessel.BillLadingIds.Should().Contain(response.Id);
+        }
+
+        [Fact]
+        public void GetPreCargoDescription_ShouldReturnTextToInsertInCargoDescription()
+        {
+            // Arrange
+            using var store = GetDocumentStore();
+            using var session = store.OpenAsyncSession();
+            var sut = GetBillLadingService(session);
+
+            const double numberBags = 1280;
+            const double numberContainers = 4;
+            const double grossWeightKg = 101_790;
+            const string productDescription = "Ivory Coast Origin 2020 season";
+            const Teu teu = Teu.Teu40;
+            // Act
+            CargoDescription actual = sut.GetPreCargoDescription(numberBags, numberContainers, grossWeightKg, productDescription, teu);
+
+            var expectedBodyText = $"{numberBags} PACKAGES IN TOTAL\n" +
+                                   $"{numberContainers}X40HC CONTAINER(S) SAID TO CONTAIN:\n" +
+                                   "DRIED RAW CASHEW NUTS\n" +
+                                   "HS CODE: 08013100";
+
+            var expectedWeightsText = $"IN {numberBags} JUTE BAGS OF {productDescription}\n" +
+                                      $"GROSS WEIGHT: {grossWeightKg:F0} KGS\n" +
+                                      $"LESS WEIGHT OF EMPTY BAGS: {numberBags} KGS\n" +
+                                      $"NET WEIGHT: {grossWeightKg - numberBags:F0} KGS";
+
+            // Assert
+            actual.Header.Should().Be(expectedBodyText);
+            actual.Footer.Should().Be(expectedWeightsText);
         }
 
         [Fact]
@@ -294,33 +343,32 @@ namespace Tests
 
             var billLading = await new BillLading().CreateAndStore(session);
             billLading.ContainersOnBoard = 0;
-            billLading.ContainerIds = new List<string>(){"containers/1-A","containers/2-A"};
+            billLading.ContainerIds = new List<string>() {"containers/1-A", "containers/2-A"};
             await session.StoreAsync(billLading);
-            
+
             var vessels = fixture.DefaultEntity<Vessel>()
                 .Without(c => c.BillLadingIds)
-                .Without(c=>c.ContainersOnBoard)
+                .Without(c => c.ContainersOnBoard)
                 .CreateMany()
                 .ToList();
             vessels[0].BillLadingIds.Add(billLading.Id);
-            
+
             await vessels.SaveList(session);
 
             // Act
             ServerResponse response = await sut.MoveBillLadingToVessel(billLading.Id, vessels[0].Id, vessels[1].Id);
             await session.SaveChangesAsync();
-            
+
             // Assert
             response.Message.Should().Be("Moved Bill of Lading");
-            
+
             var actualFirstVessel = await session.LoadAsync<Vessel>(vessels[0].Id);
             actualFirstVessel.BillLadingIds.Should().NotContain(billLading.Id);
             actualFirstVessel.ContainersOnBoard.Should().Be(0);
-            
+
             var actualMovedToVessel = await session.LoadAsync<Vessel>(vessels[1].Id);
             actualMovedToVessel.BillLadingIds.Should().Contain(billLading.Id);
             actualMovedToVessel.ContainersOnBoard.Should().Be(2);
-
         }
     }
 }

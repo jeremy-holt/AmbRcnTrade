@@ -116,20 +116,38 @@ namespace AmbRcnTradeServer.Services
             SetCell(worksheet, customers.ForwardingAgent, c => c.Address4);
             SetCell(worksheet, customers.ForwardingAgent, c => c.Address5);
 
+            SetCell(worksheet, customers.DestinationAgent, c => c.CompanyName);
+            // SetCell(worksheet, customers.DestinationAgent, c => c.Address1);
+            // SetCell(worksheet, customers.DestinationAgent, c => c.Address2);
+            // SetCell(worksheet, customers.DestinationAgent, c => c.Address3);
+            // SetCell(worksheet, customers.DestinationAgent, c => c.Address4);
+            // SetCell(worksheet, customers.DestinationAgent, c => c.Address5);
+
+
+            SetCell(worksheet, "Vessel.BookingNumber", data.Vessel.BookingNumber);
             SetCell(worksheet, "BillLading.ShipperReference", data.BillLadingDto.ShipperReference);
             SetCell(worksheet, "BillLading.ConsigneeReference", data.BillLadingDto.ConsigneeReference);
             SetCell(worksheet, "BillLading.ForwarderReference", data.BillLadingDto.ForwarderReference);
             SetCell(worksheet, "Vessel.ServiceContract", data.Vessel.ServiceContract);
-            SetCell(worksheet, "BillLading.DestinationAgentAddress", data.Customers.FirstOrDefault(c => c.Id == data.BillLadingDto.DestinationAgentId)?.CompanyName);
             SetCell(worksheet, "Vessel.VesselName", data.Vessel.VesselName);
             SetCell(worksheet, "Vessel.VoyageNumber", data.Vessel.VoyageNumber);
             SetCell(worksheet, "BillLading.PortOfDestinationName", data.BillLadingDto.PortOfDestinationName);
-            SetCell(worksheet, "BillLading.OceanFreight", "");
-            SetCell(worksheet, "BillLading.OceanFreightPaidBy", "");
-            SetCell(worksheet, "BillLading.FreightOriginCharges", "");
-            SetCell(worksheet, "BillLading.FreightOriginChargesPaidBy", "");
-            SetCell(worksheet, "BillLading.FreightDestinationCharge", "");
-            SetCell(worksheet, "BillLading.FreightDestinationChargePaidBy", "");
+
+            SetCell(worksheet, "BillLading.PreCargoDescription.Header", data.BillLadingDto.PreCargoDescription.Header);
+            SetCell(worksheet, "BillLading.CargoDescription", data.BillLadingDto.BlBodyText);
+            SetCell(worksheet, "BillLading.PreCargoDescription.Footer", data.BillLadingDto.PreCargoDescription.Footer);
+
+            SetCell(worksheet, "BillLading.ShippingMarks", data.BillLadingDto.ShippingMarks);
+            SetCell(worksheet, "BillLading.NumberPackagesText", data.BillLadingDto.NumberPackagesText);
+            SetCell(worksheet, "BillLading.GrossWeightKgText", data.BillLadingDto.GrossWeightKgText);
+            SetCell(worksheet, "BillLading.VgmWeightKgText", data.BillLadingDto.VgmWeightKgText);
+            SetCell(worksheet, "BillLading.OceanFreight", data.BillLadingDto.OceanFreight);
+            SetCell(worksheet, "BillLading.OceanFreightPaidBy", data.BillLadingDto.OceanFreightPaidBy);
+            SetCell(worksheet, "BillLading.FreightOriginCharges", data.BillLadingDto.FreightOriginCharges);
+            SetCell(worksheet, "BillLading.FreightOriginChargesPaidBy", data.BillLadingDto.FreightOriginChargesPaidBy);
+            SetCell(worksheet, "BillLading.FreightDestinationCharge", data.BillLadingDto.FreightDestinationCharge);
+            SetCell(worksheet, "BillLading.FreightDestinationChargePaidBy", data.BillLadingDto.FreightDestinationChargePaidBy);
+
 
             return workbook;
         }
@@ -141,6 +159,7 @@ namespace AmbRcnTradeServer.Services
             var notifyParty1 = data.Customers.FirstOrDefault(c => c.Id == data.BillLadingDto.NotifyParty1Id);
             var notifyParty2 = data.Customers.FirstOrDefault(c => c.Id == data.BillLadingDto.NotifyParty2Id);
             var freightForwarder = data.Customers.FirstOrDefault(c => c.Id == data.Vessel.ForwardingAgentId);
+            var destinationAgent = data.Customers.FirstOrDefault(c => c.Id == data.BillLadingDto.DestinationAgentId);
 
             const string BILL_LADING = "BillLading";
             const string VESSEL = "Vessel";
@@ -151,7 +170,8 @@ namespace AmbRcnTradeServer.Services
                 Consignee = CreateCustomer(BILL_LADING, "Consignee", consignee),
                 NotifyParty1 = CreateCustomer(BILL_LADING, "NotifyParty1", notifyParty1),
                 NotifyParty2 = CreateCustomer(BILL_LADING, "NotifyParty2", notifyParty2),
-                ForwardingAgent = CreateCustomer(VESSEL, "ForwardingAgent", freightForwarder)
+                ForwardingAgent = CreateCustomer(VESSEL, "ForwardingAgent", freightForwarder),
+                DestinationAgent = CreateCustomer(BILL_LADING, "DestinationAgent", destinationAgent)
             };
 
             return billLadingCustomers;
@@ -176,21 +196,30 @@ namespace AmbRcnTradeServer.Services
                 throw new NotFoundException($"Cannot find key {key} in template worksheet");
 
             var cell = worksheet.Cells[row, column];
-            cell.Value = value;
+
+            if (value == null)
+                throw new InvalidOperationException($"Key {key} value is null");
+
+            cell.Value = value.ToUpper();
         }
 
         private static void SetCell(ExcelWorksheet worksheet, BlCustomer customers, Func<BlCustomer, ExcelCellData> field)
         {
-            SetCell(worksheet, field(customers).Key, field(customers).Value);
+            if (customers == null)
+                return;
+
+            SetCell(worksheet, field(customers).Key, field(customers).Value.ToUpper());
         }
 
         private static BlCustomer CreateCustomer(string root, string customerType, Customer customer)
         {
+            if (customer == null) return null;
+            
             var prefix = $"{root}.{customerType}";
 
             ExcelCellData GetAddressLine(List<string> addresses, int index)
             {
-                return index < addresses.Count ? new ExcelCellData($"{prefix}Address{index + 1}", addresses[index]) : null;
+                return index < addresses.Count ? new ExcelCellData($"{prefix}Address{index + 1}", addresses[index].ToUpper()) : null;
             }
 
             var spcCity = customer.Address.City.IsNotNullOrEmpty() ? " " : "";
@@ -209,7 +238,7 @@ namespace AmbRcnTradeServer.Services
 
             var blCustomer = new BlCustomer
             {
-                CompanyName = new ExcelCellData($"{prefix}CompanyName", customer.CompanyName),
+                CompanyName = new ExcelCellData($"{prefix}CompanyName", customer.CompanyName.ToUpper()),
                 Address1 = GetAddressLine(addressList, 0),
                 Address2 = GetAddressLine(addressList, 1),
                 Address3 = GetAddressLine(addressList, 2),

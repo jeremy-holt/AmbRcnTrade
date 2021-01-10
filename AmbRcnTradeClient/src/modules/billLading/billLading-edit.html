@@ -1,5 +1,4 @@
 <template>
-  <require from="quill/quill.snow.css"></require>
   <require from="../container/container-status-formatter-valueconverter"></require>
 
   <toolbar type="menu" caption="Bill of Lading - ${vessel.vesselName}" disabled-save.bind="!canSave" save.call="save()">
@@ -23,7 +22,8 @@
             target="_blank">Print packing list</a>
         </div>
         <div class="col-4">
-          <button type="button" class="btn btn-primary" click.delegate="moveBillLadingToVessel()">Move this B/L to another vessel</button>
+          <button type="button" class="btn btn-primary" click.delegate="moveBillLadingToVessel()">Move this B/L to
+            another vessel</button>
         </div>
       </div>
 
@@ -71,6 +71,10 @@
             disabled.bind="!canEditBillLading" warn-null="false" label="Notify party 2" use-model-id="true">
           </select-input>
         </div>
+        <div class="col">
+          <select-input source.bind="customersList | customerFilter: 'billLading'" value.bind="model.destinationAgentId"
+          disabled.bind="!canEditBillLading" warn-null="false" label="Destination agent" use-model-id="true"></select-input>
+        </div>
       </div>
 
       <div class="row mb-2">
@@ -87,8 +91,19 @@
           </div>
         </div>
         <div class="col">
-          <text-area-input value.bind="model.freightChargesPayableAt" label="Freight components"
-            disabled.bind="!canEditBillLading"></text-area-input>
+          <div class="row">
+            <div class="col">
+              <text-input value.bind="model.oceanFreight" label="Ocean freight"></text-input>
+              <text-input value.bind="model.freightOriginCharges" label="Origin charges"></text-input>
+              <text-input value.bind="model.freightDestinationCharge" label="Destination charges"></text-input>
+            </div>
+
+            <div class="col">
+              <text-input value.bind="model.oceanFreightPaidBy" label="Ocean freight paid by"></text-input>
+              <text-input value.bind="model.freightOriginChargesPaidBy" label="Origin charges paid by"></text-input>
+              <text-input value.bind="model.freightDestinationChargePaidBy" label="Destination charges paid by"></text-input>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -101,23 +116,47 @@
           <select-input source.bind="portsList" value.bind="model.portOfDestinationId" use-model-id="true"
             disabled.bind="!canEditBillLading" label="Port of destination"></select-input>
         </div>
+        <div class="col">
+          <select-input source.bind="teuList" value.bind="model.teu" use-model-id="true" label="TEU"></select-input>
+        </div>
       </div>
 
-      <div if.bind="canEditBillLading" class="mt-2" style="min-height: 300px;">
-        <div class="form-label">Text for body of Bill of Lading</div>
-        <div id="toolbar"></div>
-        <quill-editor value.bind="model.blBodyText" disabled.bind="!canEditBillLading"></quill-editor>
+      <div class="row mt-2">
+        <div class="col">
+          <text-input value.bind="model.productDescription" label="Product description"></text-input>
+        </div>
       </div>
-      <div else class="mt-2" style="min-height: 300px;">
-        <div class="form-label">Text for body of Bill of Lading</div>
-        <div innerhtml.bind="model.blBodyText"></div>
+      
+      <div class="row mt-2">
+        <div class="col">
+          <labelled-text value.bind="model.preCargoDescription.header" label="Cargo description header"></labelled-text>
+          <labelled-text value.bind="model.preCargoDescription.footer" label="Cargo description footer"></labelled-text>
+        </div>
+
+        <div class="col">
+          <text-area-input value.bind="model.blBodyText" disabled.bind="!canEditBillLading" label="Cargo description">
+          </text-area-input>
+        </div>
       </div>
 
+      <div class="mt-2">
+        <text-area-input value.bind="model.shippingMarks" rows="2" disabled.bind="!canEditBillLading" label="Shipping marks">
+        </text-area-input>
+      </div>
 
       <div class="row my-3">
         <div class="col">
           <button type="button" class="btn btn-primary" disabled.bind="!canAddContainer"
             click.delegate="addContainersDialog()">Add containers</button>
+        </div>
+        <div class="col">
+          <labelled-text value.bind="model.numberPackagesText" label="Number packages"></labelled-text>
+        </div>
+        <div class="col">
+          <labelled-text value.bind="model.grossWeightKgText" label="Gross weight"></labelled-text>
+        </div>
+        <div class="col">
+          <labelled-text value.bind="model.nettWeightKgText" label="Nett weight"></labelled-text>
         </div>
       </div>
 

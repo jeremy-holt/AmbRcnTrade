@@ -1,3 +1,4 @@
+import { ITeu, TEU_LIST } from "./../../constants/app-constants";
 import { IPort } from "./../../interfaces/IPort";
 import { PortService } from "./../../services/port-service";
 import { DialogService } from "aurelia-dialog";
@@ -29,6 +30,7 @@ export class BillLadingEdit {
   protected vessel: IVessel = undefined;
   protected customersList: ICustomerListItem[] = [];
   protected portsList:IPort[]=[];
+  protected teuList:ITeu[]=[];
   
   constructor(
     private billLadingService: BillLadingService,
@@ -48,6 +50,9 @@ export class BillLadingEdit {
 
     this.model = _.cloneDeep(state.billLading.current);
     this.vessel = _.cloneDeep(state.vessel.current);
+
+    this.teuList=_.cloneDeep(TEU_LIST);
+    this.teuList.unshift({id: null,name:"[Select]"});
   }
 
   protected async activate(prms: { vesselId: string; billLadingId: string }) {
@@ -77,6 +82,7 @@ export class BillLadingEdit {
   protected async save() {
     if (this.canSave) {
       await this.billLadingService.save(this.model);
+      await this.billLadingService.load(this.model.id);
     }
   }
 

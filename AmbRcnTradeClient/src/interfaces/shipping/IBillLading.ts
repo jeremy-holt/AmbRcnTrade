@@ -1,3 +1,4 @@
+import { Teu } from "constants/app-constants";
 import { IContainer } from "./IContainer";
 
 export interface IBillLading {
@@ -24,15 +25,39 @@ export interface IBillLading {
   ownReferences: string;
   shipperReference: string;
   consigneeReference: string;
-  
+
   destinationAgentId: string;
   portOfDestinationId: string;
-  portOfDestinationName:string;
+  portOfDestinationName: string;
   portOfLoadingId: string;
 
   shippingMarks: string;
-  freightChargesPayableAt: string;  
   forwarderReference: string;
+  productDescription: string;
+  preCargoDescription: ICargoDescription;
+
+  numberPackagesText: string;
+  nettWeightkgText: string;
+  grossWeightKgText: string;
+  vgmWeightKgText: string;
+
+  numberBags: number | null;
+  nettWeightKg: number | null;
+  grossWeightKg: number | null;
+
+  oceanFreight: string;
+  oceanFreightPaidBy: string;
+  freightOriginCharges: string;
+  freightOriginChargesPaidBy: string;
+  freightDestinationCharge: string;
+  freightDestinationChargePaidBy: string;
+
+  teu: Teu;
 
   selected?: boolean;
+}
+
+export interface ICargoDescription {
+  header: string;
+  footer: string;
 }

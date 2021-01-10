@@ -85,6 +85,7 @@ namespace Tests
             billLading.NotifyParty1Id = notifyParty1.Id;
             billLading.NotifyParty2Id = notifyParty2.Id;
             billLading.PortOfDestinationId = portDestination.Id;
+            billLading.DestinationAgentId = null;
 
             var vessel = fixture.DefaultEntity<Vessel>()
                 .With(c => c.BillLadingIds, new List<string> {billLading.Id})
@@ -93,18 +94,17 @@ namespace Tests
             await session.StoreAsync(vessel);
             await session.SaveChangesAsync();
 
-            var workbook = sut.LoadTemplate(MaerskDraftBlTemplateBlXlsx);
+            // sut.LoadTemplate(MaerskDraftBlTemplateBlXlsx);
             // var worksheet = workbook.Worksheets[0];
             var response = await sut.LoadData(vessel.Id, billLading.Id);
 
             // Act
-            Action action = () => sut.FillTemplate(MaerskDraftBlTemplateBlXlsx, response);
+            var filledWorkbook =sut.FillTemplate(MaerskDraftBlTemplateBlXlsx, response);
 
             // Assert
-            action.Should().NotThrow<NotFoundException>();
-
+          
             var savePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "Test Draft Bl.xlsx");
-            workbook.Save(savePath);
+            filledWorkbook.Save(savePath);
         }
 
         [Fact]
@@ -133,6 +133,7 @@ namespace Tests
             billLading.NotifyParty1Id = notifyParty1.Id;
             billLading.NotifyParty2Id = notifyParty2.Id;
             billLading.PortOfDestinationId = portDestination.Id;
+            billLading.DestinationAgentId = null;
 
             var vessel = fixture.DefaultEntity<Vessel>()
                 .With(c => c.BillLadingIds, new List<string> {billLading.Id})
@@ -146,16 +147,17 @@ namespace Tests
             var actual = sut.GetBillLadingCustomers(data);
 
             // Assert
-            actual.Shipper.CompanyName.Value.Should().Be(shipper.CompanyName);
-            actual.Shipper.Address1.Value.Should().Be(shipper.Address.Street1);
-            actual.Shipper.Address2.Value.Should().Be(shipper.Address.Street2);
-            actual.Shipper.Address3.Value.Should().Be("London UK");
-            actual.Shipper.Address4.Value.Should().Be(shipper.Reference);
-            actual.Shipper.Address5.Value.Should().Be(shipper.Email);
-
-
+            actual.Shipper.CompanyName.Value.Should().Be(shipper.CompanyName.ToUpper());
+            actual.Shipper.Address1.Value.Should().Be(shipper.Address.Street1.ToUpper());
+            actual.Shipper.Address2.Value.Should().Be(shipper.Address.Street2.ToUpper());
+            actual.Shipper.Address3.Value.Should().Be("London UK".ToUpper());
+            actual.Shipper.Address4.Value.Should().Be(shipper.Reference.ToUpper());
+            actual.Shipper.Address5.Value.Should().Be(shipper.Email.ToUpper());
+            
             actual.Shipper.CompanyName.Key.Should().Be("BillLading.ShipperCompanyName");
             actual.Shipper.Address1.Key.Should().Be("BillLading.ShipperAddress1");
+
+            actual.DestinationAgent.Should().BeNull();
         }
 
         [Fact]

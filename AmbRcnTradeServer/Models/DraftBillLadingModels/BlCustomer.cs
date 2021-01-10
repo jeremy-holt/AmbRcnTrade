@@ -39,5 +39,7 @@ namespace AmbRcnTradeServer.Models.DraftBillLadingModels
         public BlCustomer Consignee { get; set; }
         public BlCustomer NotifyParty1 { get; set; }
         public BlCustomer NotifyParty2 { get; set; }
+        
+        public BlCustomer DestinationAgent { get; set; }
     }
 }

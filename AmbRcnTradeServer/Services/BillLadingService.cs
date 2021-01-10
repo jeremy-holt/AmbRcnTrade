@@ -5,6 +5,7 @@ using AmberwoodCore.Extensions;
 using AmberwoodCore.Responses;
 using AmbRcnTradeServer.Constants;
 using AmbRcnTradeServer.Models.ContainerModels;
+using AmbRcnTradeServer.Models.DraftBillLadingModels;
 using AmbRcnTradeServer.Models.VesselModels;
 using AmbRcnTradeServer.RavenIndexes;
 using AutoMapper;
@@ -23,6 +24,7 @@ namespace AmbRcnTradeServer.Services
         Task<List<Container>> GetNotLoadedContainers(string companyId);
         Task<ServerResponse<BillLadingDto>> RemoveContainersFromBillLading(string billLadingId, IEnumerable<string> containerIds);
         Task<ServerResponse> MoveBillLadingToVessel(string billLadingId, string fromVesselId, string toVesselId);
+        CargoDescription GetPreCargoDescription(double? numberBags, double numberContainers, double? grossWeightKg, string productDescription, Teu teu);
     }
 
     public class BillLadingService : IBillLadingService
@@ -56,6 +58,15 @@ namespace AmbRcnTradeServer.Services
 
             _mapper.Map(billLadingDto, billLading);
             billLading.ContainersOnBoard = billLadingDto.ContainerIds.Count;
+            billLading.NumberBags = billLadingDto.Containers.Sum(x => x.Bags);
+            billLading.NettWeightKg = billLadingDto.Containers.Sum(x => x.NettWeightKg);
+            billLading.GrossWeightKg = billLadingDto.Containers.Sum(x => x.WeighbridgeWeightKg);
+            billLading.NumberPackagesText = billLading.NumberBags == null ? "" : $"{billLading.NumberBags} PACKAGES";
+            billLading.NettWeightKgText = billLading.NettWeightKg == null ? "" : $"{billLading.NettWeightKg:F4} KGS";
+            billLading.GrossWeightKgText = billLading.GrossWeightKg == null ? "" : $"{billLading.GrossWeightKg:F4} KGS";
+            billLading.VgmWeightKgText = billLading.GrossWeightKgText;
+            billLading.PreCargoDescription = GetPreCargoDescription(billLading.NumberBags, billLading.ContainersOnBoard, billLading.GrossWeightKg, billLading.ProductDescription,
+                billLading.Teu);
 
             await _session.StoreAsync(billLading);
             billLadingDto.Id = billLading.Id;
@@ -123,9 +134,6 @@ namespace AmbRcnTradeServer.Services
 
         public async Task<ServerResponse> MoveBillLadingToVessel(string billLadingId, string fromVesselId, string toVesselId)
         {
-            // var fromVessel = await _vesselService.Load(fromVesselId);
-            // var toVessel = await _vesselService.Load(toVesselId);
-
             var fromVessel = await _session.Include<Vessel>(c => c.BillLadingIds)
                 .LoadAsync<Vessel>(fromVesselId);
 
@@ -155,10 +163,29 @@ namespace AmbRcnTradeServer.Services
 
             await _session.StoreAsync(fromVessel);
             await _session.StoreAsync(toVessel);
-            // await _vesselService.Save(fromVessel);
-            // await _vesselService.Save(toVessel);
             await _session.SaveChangesAsync();
             return new ServerResponse("Moved Bill of Lading");
+        }
+
+        public CargoDescription GetPreCargoDescription(double? numberBags, double numberContainers, double? grossWeightKg, string productDescription, Teu teu)
+        {
+            var teuText = teu switch
+            {
+                Teu.Teu20 => "20HC",
+                Teu.Teu40=>"40HC",
+                _ => ""
+            };
+            
+            var bodyText = $"{numberBags} PACKAGES IN TOTAL\n" +
+                           $"{numberContainers}X{teuText} CONTAINER(S) SAID TO CONTAIN:\n" +
+                           "DRIED RAW CASHEW NUTS\n"+
+                           "HS CODE: 08013100";
+            
+            var weightsText = $"IN {numberBags} JUTE BAGS OF {productDescription}\n" +
+                                      $"GROSS WEIGHT: {grossWeightKg:F0} KGS\n" +
+                                      $"LESS WEIGHT OF EMPTY BAGS: {numberBags} KGS\n" +
+                                      $"NET WEIGHT: {grossWeightKg - numberBags:F0} KGS";
+            return new CargoDescription() {Header = bodyText, Footer = weightsText};
         }
     }
 }
