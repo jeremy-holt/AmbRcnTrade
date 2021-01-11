@@ -112,6 +112,7 @@ namespace Tests
 
             var customer = fixture.DefaultEntity<Customer>()
                 .With(c => c.Reference, "IEC: 0716922126")
+                .With(c=>c.Address,new Address(){Street3="street3"})
                 .With(c => c.Filter, CustomerGroup.Supplier)
                 .With(c => c.Email, "abc@gmail.com")
                 .Create();
@@ -124,6 +125,7 @@ namespace Tests
             actual.Should().NotBeNull();
             actual.Filter.Should().Be(CustomerGroup.Supplier);
             actual.Reference.Should().NotBeNullOrEmpty();
+            actual.Address.Street3.Should().Be("street3");
         }
     }
 }

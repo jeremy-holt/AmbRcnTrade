@@ -8,6 +8,9 @@ export class TextInput {
   @bindable public disabled = false;
   @bindable public small = false;
   @bindable public placeholder: string = undefined!;
+  @bindable public maxlength = 1000;
+
+  protected numChars = 0;
 
   constructor(
     private el: Element
@@ -16,9 +19,11 @@ export class TextInput {
   protected bind() {
     this.disabled = trueFalse(this.disabled) as boolean;
     this.placeholder = this.placeholder ?? this.label;
+    this.numChars = this.value?.length;
   }
 
   protected valueChanged() {
+    this.numChars = this.value?.length;
     this.notify();
   }
 

@@ -16,11 +16,11 @@
     <div class="card-body">
       <div class="row">
         <div class="col-4">
-          <text-input value.bind="model.name" label="Short name"></text-input>
+          <text-input value.bind="model.name" maxlength="32"  label="Short name"></text-input>
         </div>
       
         <div class="col">
-          <text-input value.bind="model.companyName" label="Company"></text-input>
+          <text-input value.bind="model.companyName" maxlength="32" label="Company"></text-input>
         </div>
       </div>
 
@@ -31,26 +31,34 @@
       </div>
     
       <div class="form-group">
-        <text-input value.bind="model.address.street1" label="Street 1"></text-input>
+        <text-input value.bind="model.address.street1" maxlength="32"  label="Street 1"></text-input>
       </div>
     
       <div class="form-group">
-        <text-input value.bind="model.address.street2" label="Street 2"></text-input>
+        <text-input value.bind="model.address.street2" maxlength="32"  label="Street 2"></text-input>
+      </div>
+      
+      <div class="form-group">
+        <text-input value.bind="model.address.street3" maxlength="32"  label="Street 3"></text-input>
+      </div>
+
+      <div class="form-group">
+        <text-input value.bind="model.address.street4" maxlength="32"  label="Street 4"></text-input>
       </div>
     
     
       <div class="row">
         <div class="col">
-          <text-input value.bind="model.address.city" label="City"></text-input>
+          <text-input value.bind="model.address.city" maxlength="32"  label="City"></text-input>
         </div>
         <div class="col">
-          <text-input value.bind="model.address.postCode" label="Post code"></text-input>
+          <text-input value.bind="model.address.postCode" maxlength="32"  label="Post code"></text-input>
         </div>
       </div>
     
       <div class="row">
         <div class="col">
-          <text-input value.bind="model.address.state" label="State"></text-input>
+          <text-input value.bind="model.address.state" maxlength="32"  label="State"></text-input>
         </div>
       
         <div class="col">

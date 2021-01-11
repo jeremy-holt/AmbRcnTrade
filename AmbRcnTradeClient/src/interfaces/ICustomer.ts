@@ -19,6 +19,8 @@ export interface ICustomer extends IEntityCompany {
 export interface IAddress {
   street1?: string | null;
   street2?: string | null;
+  street3?: string | null;
+  street4?: string | null;
   city?: string | null;
   postCode?: string | null;
   state?: string | null;
