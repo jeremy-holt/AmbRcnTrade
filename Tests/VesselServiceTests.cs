@@ -151,6 +151,7 @@ namespace Tests
             actual.ShippingCompanyName.Should().Be(customers[0].Name);
             actual.ForwardingAgentName.Should().Be(customers[1].Name);
             actual.VoyageNumber.Should().Be("235N");
+            actual.NumberBillsLading.Should().Be(bills.Count);
         }
 
         [Fact]

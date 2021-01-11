@@ -17,7 +17,7 @@ namespace AmbRcnTradeServer.Services
 {
     public interface IBillLadingService
     {
-        Task<ServerResponse> AddContainersToBillLading(string billLadingId, IEnumerable<string> containerIds);
+        Task<ServerResponse> AddContainersToBillLading(string billLadingId, List<string> containerIds);
         Task<ServerResponse<BillLadingDto>> Save(BillLadingDto billLadingDto);
         Task<BillLadingDto> Load(string id);
         Task<List<BillLadingListItem>> LoadList(string companyId);
@@ -105,28 +105,45 @@ namespace AmbRcnTradeServer.Services
 
             var query = await _session.Query<Container, Containers_Available_ForBillLading>()
                 .Where(c => c.CompanyId == companyId && c.Status.In(allowed))
-                // .ProjectInto<Container>()
                 .ToListAsync();
 
             return query;
         }
 
-        public async Task<ServerResponse> AddContainersToBillLading(string billLadingId, IEnumerable<string> containerIds)
+        public async Task<ServerResponse> AddContainersToBillLading(string billLadingId, List<string> containerIds)
         {
             var billLading = await _session.LoadAsync<BillLading>(billLadingId);
+
             foreach (var containerId in containerIds)
             {
                 if (!billLading.ContainerIds.Contains(containerId))
                     billLading.ContainerIds.Add(containerId);
             }
+            
 
+            var containers = await _session.LoadListFromMultipleIdsAsync<Container>(containerIds);
+            
+            foreach (var container in containers)
+            {
+                container.Status = ContainerStatus.OnBoardVessel;
+            }
+            
+            await _session.SaveChangesAsync();
+            
             return new ServerResponse("Added container(s) to Bill of Lading");
         }
 
         public async Task<ServerResponse<BillLadingDto>> RemoveContainersFromBillLading(string billLadingId, IEnumerable<string> containerIds)
         {
-            var billLading = await _session.LoadAsync<BillLading>(billLadingId);
+            var billLading = await _session
+                .Include<BillLading>(c=>c.ContainerIds)
+                .LoadAsync<BillLading>(billLadingId);
+            
             billLading.ContainerIds.RemoveAll(c => c.In(containerIds));
+            
+            var removedContainers = await _session.LoadListFromMultipleIdsAsync<Container>(containerIds);
+            foreach (var container in removedContainers)
+                container.Status = ContainerStatus.StuffingComplete;
 
             var dto = await Load(billLadingId);
             return new ServerResponse<BillLadingDto>(dto, "Removed containers from Bill of Lading");
@@ -172,20 +189,20 @@ namespace AmbRcnTradeServer.Services
             var teuText = teu switch
             {
                 Teu.Teu20 => "20HC",
-                Teu.Teu40=>"40HC",
+                Teu.Teu40 => "40HC",
                 _ => ""
             };
-            
+
             var bodyText = $"{numberBags} PACKAGES IN TOTAL\n" +
                            $"{numberContainers}X{teuText} CONTAINER(S) SAID TO CONTAIN:\n" +
-                           "DRIED RAW CASHEW NUTS\n"+
+                           "DRIED RAW CASHEW NUTS\n" +
                            "HS CODE: 08013100";
-            
+
             var weightsText = $"IN {numberBags} JUTE BAGS OF {productDescription}\n" +
-                                      $"GROSS WEIGHT: {grossWeightKg:N0} KGS\n" +
-                                      $"LESS WEIGHT OF EMPTY BAGS: {numberBags} KGS\n" +
-                                      $"NET WEIGHT: {grossWeightKg - numberBags:N0} KGS";
-            return new CargoDescription() {Header = bodyText, Footer = weightsText};
+                              $"GROSS WEIGHT: {grossWeightKg:N0} KGS\n" +
+                              $"LESS WEIGHT OF EMPTY BAGS: {numberBags} KGS\n" +
+                              $"NET WEIGHT: {grossWeightKg - numberBags:N0} KGS";
+            return new CargoDescription {Header = bodyText, Footer = weightsText};
         }
     }
 }

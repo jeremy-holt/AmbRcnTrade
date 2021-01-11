@@ -22,6 +22,7 @@ namespace AmbRcnTradeServer.RavenIndexes
                     container.CompanyId,
                     container.ContainerNumber,
                     container.Bags,
+                    container.StuffingWeightKg,
                     container.SealNumber,
                     container.WeighbridgeWeightKg,
                     container.BookingNumber
@@ -38,6 +39,7 @@ namespace AmbRcnTradeServer.RavenIndexes
                     container.CompanyId,
                     container.ContainerNumber,
                     container.Bags,
+                    container.StuffingWeightKg,
                     container.SealNumber,
                     container.WeighbridgeWeightKg,
                     container.BookingNumber
@@ -52,6 +54,7 @@ namespace AmbRcnTradeServer.RavenIndexes
                     container.CompanyId,
                     container.ContainerNumber,
                     container.Bags,
+                    container.StuffingWeightKg,
                     container.SealNumber,
                     container.WeighbridgeWeightKg,
                     container.BookingNumber
@@ -66,6 +69,7 @@ namespace AmbRcnTradeServer.RavenIndexes
                     grp.Key.CompanyId,
                     grp.Key.ContainerNumber,
                     grp.Key.Bags,
+                    grp.Key.StuffingWeightKg,
                     grp.Key.SealNumber,
                     grp.Key.WeighbridgeWeightKg,
                     grp.Key.BookingNumber
@@ -86,6 +90,7 @@ namespace AmbRcnTradeServer.RavenIndexes
             public string Id { get; set; }
             public string ContainerNumber { get; set; }
             public double Bags { get; set; }
+            public double StuffingWeightKg { get; set; }
             public string SealNumber { get; set; }
             public string BookingNumber { get; set; }
             public double WeighbridgeWeightKg { get; set; }

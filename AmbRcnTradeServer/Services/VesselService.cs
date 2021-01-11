@@ -64,6 +64,7 @@ namespace AmbRcnTradeServer.Services
             {
                 bl.ContainersOnBoard = bl.ContainerIds.Count;
                 bl.PortOfDestinationName = ports.FirstOrDefault(c => c.Id == bl.PortOfDestinationId)?.Name;
+                
             }
 
             var vesselDto = new VesselDto();

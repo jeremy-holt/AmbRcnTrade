@@ -57,7 +57,7 @@
             label="Weighbridge weight kg"></number-input>
         </div>
         <div class="col">
-          <number-input value.bind="model.netWeightKg" disabled.bind="!canEditContainer" label="Container nett weight">
+          <number-input value.bind="model.nettWeightKg" disabled.bind="!canEditContainer" label="Container nett weight">
           </number-input>
         </div>
       </div>
@@ -69,7 +69,7 @@
             <li class="list-group-item">
               <div repeat.for="item of model.incomingStocks" class="row">
                 <div class="col">${item.bags | numberFormat:"0,0"} bags
-                  <span class="small font-italic">(approx. ${item.bags * 80 | numberFormat: "0,0"} kg)</span>
+                  <span class="small font-italic">(Stuffed ${model.stuffingWeightKg | numberFormat: "0,0"} kg)</span>
                 </div>
                 <div class="col">
                   <a class="with-decoration" route-href="stockBalanceList; params.bind:{lotNo:item.lotNo}">Lot no:

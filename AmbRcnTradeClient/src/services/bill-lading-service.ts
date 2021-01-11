@@ -1,19 +1,20 @@
-import { encodeParams } from "./../core/helpers";
-import { GetUrlService } from "./get-url-service";
-import { IMoveBillLadingRequest } from "./../interfaces/shipping/IMoveBillLadingRequest";
-import { IContainer } from "./../interfaces/shipping/IContainer";
-import { HttpClient, json } from "aurelia-fetch-client";
+import { HttpClient } from "aurelia-fetch-client";
 import { autoinject } from "aurelia-framework";
 import { Router } from "aurelia-router";
 import { Store } from "aurelia-store";
+import { IBillLadingContainersRequest } from "interfaces/shipping/IBillLadingContainersRequest";
 import { IBillLadingListItem } from "interfaces/shipping/IBillLadingListItem";
 import _ from "lodash";
 import { QueryId } from "models/QueryId";
 import { IState } from "store/state";
+import { encodeParams } from "./../core/helpers";
+import { IAddContainersToBillLadingRequest } from "./../interfaces/shipping/IAddContainersToBillLadingRequest";
 import { IBillLading } from "./../interfaces/shipping/IBillLading";
+import { IContainer } from "./../interfaces/shipping/IContainer";
+import { IMoveBillLadingRequest } from "./../interfaces/shipping/IMoveBillLadingRequest";
 import { FetchService } from "./fetch-service";
+import { GetUrlService } from "./get-url-service";
 import { noOpAction } from "./no-op-action";
-import { FetchRoute } from "requests/FetchRoute";
 @autoinject
 
 export class BillLadingService extends FetchService {
@@ -44,7 +45,8 @@ export class BillLadingService extends FetchService {
   }
 
   public async removeContainersFromBillLading(billLadingId: string, containerIds: string[]) {
-    return super.post({ billLadingId, containerIds }, "removeContainersFromBillLading", noOpAction);
+    const request : IBillLadingContainersRequest={billLadingId, containerIds};
+    return super.post(request, "removeContainersFromBillLading", noOpAction);
   }
 
   public async getNotLoadedContainers() {
@@ -58,6 +60,11 @@ export class BillLadingService extends FetchService {
   public async moveBillLadingToVessel(billLadingId: string, fromVesselId: string, toVesselId: string) {
     const request: IMoveBillLadingRequest = { billLadingId, fromVesselId, toVesselId };
     return super.post<IMoveBillLadingRequest>(request, "moveBillLadingToVessel", noOpAction);
+  }
+
+  public async addContainersToBillLading(billLadingId: string, containerIds: string[]){
+    const request: IAddContainersToBillLadingRequest={billLadingId,containerIds};
+    return super.post<IBillLading>(request,"addContainersToBillLading", noOpAction);
   }
 
   public async getDraftBillOfLading(vesselId: string, billLadingId: string) {
@@ -93,3 +100,4 @@ export function billLadingNotLoadedContainersAction(state: IState, notLoadedCont
   newState.vessel.notLoadedContainers = notLoadedContainers;
   return newState;
 }
+

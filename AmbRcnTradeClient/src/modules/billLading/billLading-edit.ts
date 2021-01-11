@@ -95,14 +95,23 @@ export class BillLadingEdit {
   }
 
   protected removeContainer(index: number) {
+    const billLadingId = this.model.id;
+
     this.dialogService.open({
       viewModel: DeleteDialog,
-      model: { body: "This will remove the container from this Bill of Lading. It will not delete the container" }
+      model: {
+        header: "Remove container from Bill of Lading",
+        body: "This will remove the container from this Bill of Lading. It will not delete it.<br>The status of the container will be changed to <b>Stuffing Complete</b>"
+      }
     }).whenClosed(async result => {
       if (!result.wasCancelled) {
-        this.model.containerIds.splice(index, 1);
-        this.model.containers.splice(index, 1);
-        await this.save();
+        const containerToRemove = this.model.containerIds[index];
+        console.log(billLadingId);
+        await this.billLadingService.removeContainersFromBillLading(billLadingId, [containerToRemove]);
+        // this.model.containerIds.splice(index, 1);
+        // this.model.containers.splice(index, 1);
+        // await this.save();
+        await this.billLadingService.load(billLadingId);
       }
     });
   }
@@ -120,7 +129,8 @@ export class BillLadingEdit {
             this.model.containerIds.push(row.id);
             this.model.containers.push(row);
           });
-          await this.save();
+          await this.billLadingService.addContainersToBillLading(this.model.id, this.model.containerIds);
+          await this.billLadingService.load(this.model.id);
         }
       });
   }

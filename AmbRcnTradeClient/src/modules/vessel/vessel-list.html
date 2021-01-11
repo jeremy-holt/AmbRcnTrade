@@ -15,7 +15,8 @@
             <th>Vessel</th>
             <th>Eta</th>
             <th>Shipping co</th>
-            <th>Forwarding agent</th>            
+            <th>Forwarding agent</th>          
+            <th>No. Bills of Lading</th>  
             <th>Containers on board</th>
             <th>B/L date</th>
             <th>B/L number</th>
@@ -30,6 +31,7 @@
             <td>${item.eta | dateFormat: "DD/MM/YYYY"}</td>
             <td>${item.shippingCompanyName}</td>
             <td>${item.forwardingAgentName}</td>
+            <td>${item.numberBillsLading}</td>
             <td>${item.containersOnBoard}</td>
             <td>${item.blDate | dateFormat: "DD/MM/YYYY"}</td>
             <td>${item.blNumber}</td>            

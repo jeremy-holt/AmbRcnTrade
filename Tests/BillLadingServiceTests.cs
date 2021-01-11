@@ -49,11 +49,17 @@ namespace Tests
 
             // Act
             var response = await sut.AddContainersToBillLading(billLading.Id, containers.Select(x => x.Id).ToList());
+            await session.SaveChangesAsync();
+            WaitForIndexing(store);
+            
             var actual = await session.LoadAsync<BillLading>(billLading.Id);
 
             // Assert
             response.Message.Should().Be("Added container(s) to Bill of Lading");
             actual.ContainerIds.Should().Contain(containers.Select(x => x.Id).ToList());
+
+            var actualContainers = await session.Query<Container>().ToListAsync();
+            actualContainers.Should().OnlyContain(c => c.Status == ContainerStatus.OnBoardVessel);
         }
 
         [Fact]
@@ -101,6 +107,7 @@ namespace Tests
             list.Should().NotContain(c => c.Status == ContainerStatus.Cancelled);
             list.Should().Contain(c => c.Status == ContainerStatus.Gated);
             list.Should().NotContain(c => c.Status == ContainerStatus.Empty);
+            list.Should().Contain(c => c.StuffingWeightKg > 0);
         }
 
         [Fact]
@@ -184,7 +191,7 @@ namespace Tests
         }
 
         [Fact]
-        public async Task RemoveContainersFromBillLading_ShouldRemoveTheContainers()
+        public async Task RemoveContainersFromBillLading_ShouldRemoveTheContainersAndChangeStatusToStuffingComplete()
         {
             // Arrange
             using var store = GetDocumentStore();
@@ -213,6 +220,9 @@ namespace Tests
 
             response.Dto.Containers.Should().NotContain(c => c.Id == containers[0].Id);
             response.Dto.ContainerIds.Should().NotContain(containers[0].Id);
+
+            var actualContainer = await session.LoadAsync<Container>(containers[0].Id);
+            actualContainer.Status.Should().Be(ContainerStatus.StuffingComplete);
         }
 
         [Fact]
@@ -369,6 +379,7 @@ namespace Tests
             var actualMovedToVessel = await session.LoadAsync<Vessel>(vessels[1].Id);
             actualMovedToVessel.BillLadingIds.Should().Contain(billLading.Id);
             actualMovedToVessel.ContainersOnBoard.Should().Be(2);
+            
         }
     }
 }

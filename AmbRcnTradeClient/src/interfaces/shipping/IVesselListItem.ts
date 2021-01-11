@@ -6,7 +6,7 @@ export interface IVesselListItem {
   forwardingAgentName: string;
   containersOnBoard: number;  
   companyId: string;
-
+  numberBillsLading: number;
   selected?:boolean
 }
 

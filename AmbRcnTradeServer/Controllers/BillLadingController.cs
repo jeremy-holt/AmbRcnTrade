@@ -59,7 +59,7 @@ namespace AmbRcnTradeServer.Controllers
         public async Task<ActionResult<ServerResponse>> RemoveContainersFromBillLading(BillLadingContainersRequest request)
         {
             await _auditingService.Log(Request);
-            return await _service.RemoveContainersFromBillLading(request.BillOfLadingId, request.ContainerIds);
+            return await _service.RemoveContainersFromBillLading(request.BillLadingId, request.ContainerIds);
         }
 
         [Authorize]
@@ -82,6 +82,13 @@ namespace AmbRcnTradeServer.Controllers
         {
             return await _service.MoveBillLadingToVessel(request.BillLadingId, request.FromVesselId, request.ToVesselId);
         }
+
+        [Authorize]
+        [HttpPost("[action]")]
+        public async Task<ActionResult<ServerResponse>> AddContainersToBillLading(AddContainersToBillLadingRequest request)
+        {
+            return await _service.AddContainersToBillLading(request.BillLadingId, request.ContainerIds);
+        }
         
         [Authorize]
         [HttpGet("[action]")]
@@ -90,6 +97,12 @@ namespace AmbRcnTradeServer.Controllers
             var response =  await _draftBillLadingService.GetWorkbook( MAERSK_DRAFT_BL_TEMPLATE_BL_XLSX, vesselId, billLadingId);
             return File(response.FileContents, response.ContentType, response.FileName);
         }
+    }
+
+    public class AddContainersToBillLadingRequest
+    {
+        public string BillLadingId { get; set; }
+        public List<string> ContainerIds { get; set; }
     }
 
     public class MoveBillLadingRequest
@@ -102,7 +115,7 @@ namespace AmbRcnTradeServer.Controllers
     public class BillLadingContainersRequest
     {
         public IEnumerable<string> ContainerIds { get; set; }
-        public string BillOfLadingId { get; set; }
+        public string BillLadingId { get; set; }
     }
 
     public class SaveBillLadingRequest

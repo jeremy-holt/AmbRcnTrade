@@ -25,7 +25,8 @@ namespace AmbRcnTradeServer.RavenIndexes
                     ShippingCompanyName = shippingCompany.Name,
                     Eta = vessel.Eta,
                     CompanyId = vessel.CompanyId,
-                    VesselName = vessel.VesselName
+                    VesselName = vessel.VesselName,
+                    NumberBillsLading = vessel.BillLadingIds.Count
                 };
 
             Index(x => x.Eta, FieldIndexing.Default);
