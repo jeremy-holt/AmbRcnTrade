@@ -30,5 +30,6 @@ namespace AmbRcnTradeServer.Models.InspectionModels
         public double UnallocatedBags { get; set; }
         public double UnallocatedWeightKg { get; set; }
         public double WeightKg { get; set; }
+        public double AvgBagWeightKg { get; set; }
     }
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AmberwoodCore.Extensions;
+using AmberwoodCore.Responses;
 using AmbRcnTradeServer.Constants;
 using AmbRcnTradeServer.Models.DictionaryModels;
 using AmbRcnTradeServer.Models.InspectionModels;
@@ -115,8 +116,8 @@ namespace Tests
             var inspections = fixture.DefaultEntity<Inspection>()
                 .Without(c => c.AnalysisResult)
                 .With(c => c.SupplierId, customer.Id)
-                .With(c=>c.Bags,10)
-                .With(c=>c.WeightKg,5000)
+                .With(c => c.Bags, 10)
+                .With(c => c.WeightKg, 5000)
                 .CreateMany()
                 .ToList();
             inspections[0].AnalysisResult = analysisResult1;
@@ -158,6 +159,7 @@ namespace Tests
             actual.RejectsPct.Should().BeGreaterThan(0);
             actual.StockReferences.Should().HaveCount(3);
             actual.StockAllocations.Should().Be(3);
+            actual.AvgBagWeightKg.Should().Be(expected.AvgBagWeightKg);
         }
 
         [Fact]
@@ -170,9 +172,9 @@ namespace Tests
             var fixture = new Fixture();
 
             var inspection = fixture.DefaultEntity<Inspection>()
-                .With(c=>c.Bags,10)
-                .With(c=>c.WeightKg,5000)
-                .With(c=>c.StockReferences,new List<StockReference>(){new StockReference("",3,1000,DateTime.Today, 1)})
+                .With(c => c.Bags, 10)
+                .With(c => c.WeightKg, 5000)
+                .With(c => c.StockReferences, new List<StockReference>() {new StockReference("", 3, 1000, DateTime.Today, 1)})
                 .Create();
             await session.StoreAsync(inspection);
 
@@ -187,6 +189,56 @@ namespace Tests
             list[0].UnallocatedBags.Should().Be(inspection.Bags - inspection.StockReferences.Sum(x => x.Bags));
             list[0].UnallocatedWeightKg.Should().Be(5000 - 1000);
             list[0].UnallocatedWeightKg.Should().Be(inspection.WeightKg - inspection.StockReferences.Sum(x => x.WeightKg));
+        }
+
+        [Fact]
+        public async Task DeleteInspection_ShouldDeleteInspection()
+        {
+            // Arrange
+            using var store = GetDocumentStore();
+            using var session = store.OpenAsyncSession();
+            var sut = GetInspectionService(session);
+            var fixture = new Fixture();
+
+            var inspection = fixture.DefaultEntity<Inspection>()
+                .Without(c => c.StockReferences)
+                .Create();
+
+            await session.StoreAsync(inspection);
+
+            // Act
+            ServerResponse response = await sut.DeleteInspection(inspection.Id);
+            
+            // Assert
+            response.Message.Should().Be("Deleted inspection");
+            
+            using var session2 = store.OpenAsyncSession();
+            var actual = await session2.LoadAsync<Inspection>(inspection.Id);
+            actual.Should().BeNull();
+
+            var query = await session2.Query<Inspection>().ToListAsync();
+            query.Should().HaveCount(0);
+        }
+
+        [Fact]
+        public async Task DeleteInspection_ShouldThrowExceptionIfAlreadyAllocated()
+        {
+            // Arrange
+            using var store = GetDocumentStore();
+            using var session = store.OpenAsyncSession();
+            var sut = GetInspectionService(session);
+            var fixture = new Fixture();
+
+            var inspection = fixture.DefaultEntity<Inspection>()
+                .Create();
+
+            await session.StoreAsync(inspection);
+
+            // Act
+            Func<Task> action =async ()=> await sut.DeleteInspection(inspection.Id);
+            
+            // Assert
+            await action.Should().ThrowAsync<InvalidOperationException>().WithMessage("Cannot delete an inspection if it has already been moved to stock");
         }
 
         [Fact]
@@ -217,10 +269,10 @@ namespace Tests
                 LotNo = "Lot 1234",
                 TruckPlate = "AA BB CC",
                 Bags = 300,
-                WeightKg=29_999.0,
+                WeightKg = 29_999.0,
                 Location = "Bouake warehouse",
                 Analyses = analyses,
-                Origin="Firkei"
+                Origin = "Firkei"
             };
 
             // Act
@@ -235,6 +287,7 @@ namespace Tests
             actual.AnalysisResult.Moisture.Should().Be(10);
             actual.Origin.Should().Be("Firkei");
             actual.WeightKg.Should().Be(29_999);
+            actual.AvgBagWeightKg.Should().Be(inspection.WeightKg / inspection.Bags);
         }
     }
 }

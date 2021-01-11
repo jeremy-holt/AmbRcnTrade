@@ -19,6 +19,7 @@
           <tr>
             <th>Inspection date</th>
             <th>Bags / kg</th>
+            <th>Avg bag kg</th>
             <th>Stock allocations</th>
             <th class="text-right">Unallocated bags / kg</th>
             <th>KOR</th>
@@ -38,7 +39,8 @@
                 Inspection: ${item.inspectionDate | dateFormat: "DD/MM/YYYY"}
               </a>
             </td>
-            <td>${item.bags} / ${item.weightKg | numberFormat:"0,0"}</td>
+            <td class="text-nowrap">${item.bags} / ${item.weightKg | numberFormat:"0,0"}</td>
+            <td class="text-right">${item.avgBagWeightKg | numberFormat: "0,0.00"}</td>
             <td>
               <div if.bind="item.stockAllocations == 0">
                 Not in stock

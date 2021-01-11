@@ -36,14 +36,15 @@ namespace AmbRcnTradeServer.RavenIndexes
                     Origin = stock.Origin,
                     InspectionId = stock.InspectionId,
                     InspectionDate = inspection.InspectionDate,
-                    StockDate = stock.IsStockIn ? stock.StockInDate : stock.StockOutDate
+                    StockDate = stock.IsStockIn ? stock.StockInDate : stock.StockOutDate,
+                    AvgBagWeightKg = stock.Bags > 0 ? stock.WeightKg / stock.Bags : 0
                 };
 
             Index(x => x.StockId, FieldIndexing.Default);
             Index(x => x.CompanyId, FieldIndexing.Default);
             Index(x => x.IsStockIn, FieldIndexing.Default);
             Index(x => x.LotNo, FieldIndexing.Default);
-            Index(x=>x.SupplierId,FieldIndexing.Default);
+            Index(x => x.SupplierId, FieldIndexing.Default);
 
             StoreAllFields(FieldStorage.Yes);
         }

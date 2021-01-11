@@ -18,4 +18,5 @@ export interface IInspection extends IEntityCompany {
   analysisResult: IAnalysisResult;
   stockReferences: IStockReference[];
   origin: string;
+  avgBagWeightKg:number;
 }

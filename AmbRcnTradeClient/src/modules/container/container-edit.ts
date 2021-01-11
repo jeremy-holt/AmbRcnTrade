@@ -72,11 +72,11 @@ export class ContainerEdit {
   }
 
   protected get canUnstuffContainer() {
-    return this.containerService.canUnstuffContainer(this.model) && isInRole(["admin","user","warehouseManager"],this.state);
+    return this.containerService.canUnstuffContainer(this.model) && isInRole(["admin", "user", "warehouseManager"], this.state);
   }
 
   protected get canDeleteContainer() {
-    return this.model?.incomingStocks.length === 0 && isInRole(["admin","user","warehouseManager"],this.state);
+    return this.model?.incomingStocks.length === 0 && isInRole(["admin", "user", "warehouseManager"], this.state);
   }
 
   protected deleteContainer() {
@@ -88,7 +88,11 @@ export class ContainerEdit {
     });
   }
 
-  protected get canEditContainer(){
-    return isInRole(["admin","user","warehouseManager"],this.state);
+  protected get canEditContainer() {
+    return isInRole(["admin", "user", "warehouseManager"], this.state);
+  }
+
+  protected get canShowDeleteContainer() {
+    return this.model?.bags > 0;
   }
 }

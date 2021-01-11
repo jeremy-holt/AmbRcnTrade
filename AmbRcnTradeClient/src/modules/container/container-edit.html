@@ -88,7 +88,7 @@
             <button type="button" class="btn btn-danger" disabled.bind="!canUnstuffContainer"
               click.delegate="unstuffContainer()">Unstuff container</button>
 
-            <button type="button" class="btn btn-danger" disabled.bind="!canDeleteContainer"
+            <button if.bind="canShowDeleteContainer" type="button" class="btn btn-danger" disabled.bind="!canDeleteContainer"
               click.delegate="deleteContainer()">Delete container</button>
           </div>
         </div>

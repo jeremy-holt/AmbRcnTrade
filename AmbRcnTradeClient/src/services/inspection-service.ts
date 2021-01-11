@@ -7,11 +7,12 @@ import _ from "lodash";
 import { QueryId } from "models/QueryId";
 import { IState } from "store/state";
 import { Approval } from "./../constants/app-constants";
-import { fixAspNetCoreDate } from "./../core/helpers";
+import { encodeParams, fixAspNetCoreDate } from "./../core/helpers";
 import { IAnalysis, IAnalysisResult } from "./../interfaces/inspections/IAnalysis";
 import { IInspection } from "./../interfaces/inspections/IInspection";
 import { IInspectionListItem } from "./../interfaces/inspections/IInspectionListItem";
 import { FetchService } from "./fetch-service";
+import { noOpAction } from "./no-op-action";
 
 @autoinject
 export class InspectionService extends FetchService {
@@ -42,6 +43,10 @@ export class InspectionService extends FetchService {
 
   public async loadList(approval: Approval) {
     return super.getMany<IInspectionListItem[]>([super.currentCompanyIdQuery(), new QueryId("approval", approval)], "loadList", inspectionListAction);
+  }
+
+  public async deleteInspection(id: string){
+    return super.delete(id,"deleteInspection",noOpAction);
   }
 
   public canAddInspectionToStock(inspection: IInspection): boolean {

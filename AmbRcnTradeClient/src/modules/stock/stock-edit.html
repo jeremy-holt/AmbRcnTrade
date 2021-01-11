@@ -13,22 +13,22 @@
 
     <div class="card-body">
       <div class="row">
-        <div class="col">
+        <div class="col-4">
           <labelled-text class="mb-2" label.bind="model.stockInDate ? 'Date IN' : 'Date OUT'"
             value.bind="model.stockInDate ? model.stockInDate : model.stockOutDate | dateFormat: 'DD/MM/YYYY'">
           </labelled-text>
         </div>
-        <div class="col">
+        <div class="col-4">
           <labelled-text class="mb-2" label="Origin of goods" value.bind="model.origin"></labelled-text>
         </div>
       </div>
 
       <div class="row">
-        <div class="col">
+        <div class="col-4">
           <labelled-text class="mb-2" label="Warehouse location" value.bind="locationName"></labelled-text>
         </div>
 
-        <div class="col">
+        <div class="col-4">
           <labelled-text class="mb-2" label="Supplier" value.bind="supplierName"></labelled-text>
         </div>
       </div>
@@ -40,6 +40,9 @@
         <div class="col">
           <labelled-text class="mb-2" label="Weight (kg)" value.bind="model.weightKg | numberFormat: '0,0'">
           </labelled-text>
+        </div>
+        <div class="col">
+          <labelled-text class="mb-2" label="Avg bag (kg)" value.bind="model.weightKg / model.bags | numberFormat: '0,0.00'"></labelled-text>
         </div>
       </div>
 

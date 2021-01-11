@@ -17,8 +17,9 @@ export interface IStockBalance {
   weightKgIn: number;
   weightKgOut: number;
   balanceWeightKg: number;
+  avgBagWeightKg: number;
   supplierName: string;
   supplierId: string;
 
-  selected?:boolean;
+  selected?: boolean;
 }

@@ -25,6 +25,8 @@ export class StuffContainerDialog {
   public stuffingStatusLabel = "Completed stuffing";
   public stuffingDate = moment().format(DATEFORMAT);
 
+
+  private avgBagWeightKg = 0;
   private containerStatus = ContainerStatus.StuffingComplete;
 
   constructor(
@@ -35,6 +37,8 @@ export class StuffContainerDialog {
 
   protected async activate(model: { stockBalance: IStockBalance }) {
     this.model = model.stockBalance;
+    this.avgBagWeightKg = model.stockBalance.avgBagWeightKg;
+
     await this.stocksManagementService.getAvailableContainers();
   }
 
@@ -56,7 +60,7 @@ export class StuffContainerDialog {
   }
 
   protected bagsChanged(value: number) {
-    this.stockWeightKg = Math.floor(+value * 80);
+    this.stockWeightKg = _.round(+value * this.avgBagWeightKg, 2);
   }
 
   protected get isOverweightContainer() {

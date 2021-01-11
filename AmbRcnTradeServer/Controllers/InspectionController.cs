@@ -63,5 +63,12 @@ namespace AmbRcnTradeServer.Controllers
                 }
             });
         }
+
+        [Authorize]
+        [HttpDelete("[action]")]
+        public async Task<ActionResult<ServerResponse>> DeleteInspection(string id)
+        {
+            return await _service.DeleteInspection(id);
+        }
     }
 }

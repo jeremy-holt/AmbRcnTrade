@@ -27,6 +27,7 @@ export class InspectionEdit {
   @observable protected approvalChecked = false;
 
   protected suppliers: IListItem[] = [];
+  private isDeleting = false;
 
   constructor(
     private inspectionService: InspectionService,
@@ -61,7 +62,7 @@ export class InspectionEdit {
   }
 
   protected get canSave() {
-    return this.canAddAnalysis && this.model?.analyses?.length > 0 && this.canSaveAnalysis;
+    return this.canAddAnalysis && this.model?.analyses?.length > 0 && this.canSaveAnalysis && !this.isDeleting;
   }
 
   protected async save() {
@@ -121,9 +122,19 @@ export class InspectionEdit {
     return isInRole(["admin", "user", "warehouseManager"], this.state);
   }
 
+  protected async deleteInspection() {
+    this.isDeleting = true;
+    await this.inspectionService.deleteInspection(this.model.id);
+    this.router.navigateToRoute("inspectionList");
+  }
+
+  protected get canDeleteInspection() {
+    return isInRole(["admin", "user", "warehouseManager"], this.state) && this.model?.stockReferences?.length === 0;
+  }
+
   protected async openAddToStockDialog() {
     await this.save();
-    
+
     this.dialogService.open(
       {
         viewModel: AddToStockDialog,

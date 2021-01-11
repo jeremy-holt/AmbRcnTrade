@@ -68,7 +68,11 @@
             <td>${item.origin}</td>
             <td>
               <div if.bind="item.bagsIn>0">${item.bagsIn | numberFormat: "0,0"} bags<br>
-                <span class="font-italic small">${item.weightKgIn | numberFormat:"0,0"} kg</span>
+                <span class="font-italic small">
+                  ${item.weightKgIn | numberFormat:"0,0"} kg<br>
+                  ${item.avgBagWeightKg | numberFormat: "0,0.00"} bag
+                </span>
+
               </div>
             </td>
             <td class="text-success">

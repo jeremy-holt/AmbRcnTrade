@@ -41,14 +41,17 @@
             label="Number bags in lot. (${remainingBagsToAllocate} that can be allocated)"></number-input>
         </div>
         <div class="col">
-          <number-input value.bind="model.weightKg" label="Weight kg in lot (${remainingKgToAllocate | numberFormat:'0,0'} that can be allocated)">          </number-input>
+          <number-input value.bind="model.weightKg"
+            label="Weight kg in lot (${remainingKgToAllocate | numberFormat:'0,0'} that can be allocated)">
+          </number-input>
         </div>
       </div>
 
       <div class="row">
         <div class="col"></div>
         <div class="col">
-          <labelled-text value.bind="averageWeightBagsKg | numberFormat:'0,0.00'" label="Average weight of bags kg"></labelled-text>
+          <labelled-text value.bind="averageWeightBagsKg | numberFormat:'0,0.00'" label="Average weight of bags kg">
+          </labelled-text>
         </div>
       </div>
 
@@ -71,6 +74,14 @@
       <div class="row">
         <div class="col">
           <analysis-result model.bind="model.analysisResult" approval-checked.bind="approvalChecked"></analysis-result>
+        </div>
+      </div>
+
+      <div class="row mt-1">
+        <div class="col">
+          <button type="button" class="btn btn-danger" disabled.bind="!canDeleteInspection"
+            click.delegate="deleteInspection()">Delete this inspection</button>
+            <div if.bind="!canDeleteInspection" class="text-info small">Cannot delete an inspection that has been allocated to stock</div>
         </div>
       </div>
 

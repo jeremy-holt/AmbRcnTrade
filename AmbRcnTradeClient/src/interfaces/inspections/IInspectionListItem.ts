@@ -21,5 +21,6 @@ export interface IInspectionListItem {
   stockAllocations: number;
   unallocatedBags: number;
   unallocatedWeightKg: number;
+  avgBagWeightKg:number;
   css?: string;
 }

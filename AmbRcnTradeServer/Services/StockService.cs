@@ -91,6 +91,7 @@ namespace AmbRcnTradeServer.Services
                 item.Balance = item.BagsIn - item.BagsOut;
                 item.BalanceWeightKg = item.WeightKgIn - item.WeightKgOut;
                 item.IsStockZero = item.Balance < 1 && item.Balance > -1;
+                item.AvgBagWeightKg = item.Balance > 0 ? item.BalanceWeightKg / item.Balance : 0;
             }
 
             return list;

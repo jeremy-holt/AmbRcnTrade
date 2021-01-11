@@ -272,6 +272,7 @@ namespace Tests
             actual.SupplierId.Should().Be(stockIn2.SupplierId);
             actual.SupplierName.Should().Be(supplier2.Name);
             actual.AnalysisResults.Should().HaveCountGreaterThan(0);
+            actual.AvgBagWeightKg.Should().Be(actual.BalanceWeightKg / actual.Balance);
         }
 
         [Fact]
@@ -355,6 +356,7 @@ namespace Tests
             actual.SupplierId.Should().Be(supplier.Id);
             actual.InspectionId.Should().Be(stockIn2.InspectionId);
             actual.WeightKgIn.Should().Be(stockIn2.WeightKg);
+            actual.AvgBagWeightKg.Should().Be(stockIn2.WeightKg / stockIn2.Bags);
         }
 
         [Fact]

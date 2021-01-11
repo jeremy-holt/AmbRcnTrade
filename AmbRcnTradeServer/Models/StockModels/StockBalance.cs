@@ -27,5 +27,6 @@ namespace AmbRcnTradeServer.Models.StockModels
         public double BalanceWeightKg { get; set; }
         public string SupplierName { get; set; }
         public string SupplierId { get; set; }
+        public double AvgBagWeightKg { get; set; }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using AmberwoodCore.Responses;
@@ -19,6 +20,7 @@ namespace AmbRcnTradeServer.Services
         Task<List<InspectionListItem>> LoadList(InspectionQueryParams prms);
         Task<List<AnalysisResult>> GetAnalysisResult(IEnumerable<string> inspectionIds);
         Task<AnalysisResult> GetAnalysisResult(string inspectionId);
+        Task<ServerResponse> DeleteInspection(string id);
     }
 
     public class InspectionService : IInspectionService
@@ -33,6 +35,8 @@ namespace AmbRcnTradeServer.Services
 
         public async Task<ServerResponse<Inspection>> Save(Inspection inspection)
         {
+            inspection.AvgBagWeightKg = inspection.Bags > 0 ? inspection.WeightKg / inspection.Bags : 0;
+            
             await _session.StoreAsync(inspection);
             await _session.SaveChangesAsync();
             inspection.AnalysisResult = await GetAnalysisResult(inspection.Id);
@@ -73,7 +77,8 @@ namespace AmbRcnTradeServer.Services
                     Moisture = c.AnalysisResult.Moisture,
                     RejectsPct = c.AnalysisResult.RejectsPct,
                     StockReferences = c.StockReferences,
-                    StockAllocations = c.StockReferences.Count
+                    StockAllocations = c.StockReferences.Count,
+                    AvgBagWeightKg = c.AvgBagWeightKg
                 })
                 .ToListAsync();
 
@@ -107,6 +112,22 @@ namespace AmbRcnTradeServer.Services
         {
             var result = await GetAnalysisResult(new[] {inspectionId});
             return result.Count == 0 ? new AnalysisResult() : result.First();
+        }
+
+        public async Task<ServerResponse> DeleteInspection(string id)
+        {
+            var inspection = await _session.LoadAsync<Inspection>(id);
+
+            if (inspection.StockReferences.Any())
+                throw new InvalidOperationException("Cannot delete an inspection if it has already been moved to stock");
+            
+            _session.Delete(inspection);
+            await _session.SaveChangesAsync();
+
+            var x = await _session.LoadAsync<Inspection>(id);
+            Debug.Assert(x==null,"Should have delete inspection");
+
+            return await Task.FromResult( new ServerResponse("Deleted inspection"));
         }
     }
 }
