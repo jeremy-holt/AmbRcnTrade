@@ -1,3 +1,4 @@
+import { DeleteDialog } from "dialogs/delete-dialog";
 import { isInRole } from "./../../services/role-service";
 import { DialogService } from "aurelia-dialog";
 import { autoinject, observable } from "aurelia-framework";
@@ -57,6 +58,30 @@ export class StockBalanceList {
   }
 
   protected get canAddContainer() {
+    return isInRole(["admin", "user", "warehouseManager"], this.state);
+  }
+
+  protected zeroStock(item: IStockBalance) {
+    if (!this.canZeroStock) {
+      return;
+    }
+    console.log(item);
+
+    this.dialogService.open({
+      viewModel: DeleteDialog,
+      model: {
+        header: "Zero Stock",
+        body: "This will mark the physical stock as zero.<br>Are you sure you want to do this?"
+      }
+    }).whenClosed(async result => {
+      if (!result.wasCancelled) {
+        await this.stockService.ZeroStock(item.lotNo);
+        await this.stockService.loadStockBalanceList(null);
+      }
+    });
+  }
+
+  protected canZeroStock() {
     return isInRole(["admin", "user", "warehouseManager"], this.state);
   }
 }

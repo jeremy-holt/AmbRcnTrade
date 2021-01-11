@@ -63,7 +63,9 @@
                 ${item.inspectionDate | dateFormat: "DD/MM/YYYY"}</a>
             </td>
             <td>${item.stockDate | dateFormat: "DD/MM/YYYY"}</td>
-            <td>${item.locationName}</td>
+            <td>${item.locationName}
+              <span if.bind="item.zeroedStock" class="font-weight-bold text-danger"><br>Stock Zeroed</span>
+            </td>
             <td>${item.supplierName}</td>
             <td>${item.origin}</td>
             <td>

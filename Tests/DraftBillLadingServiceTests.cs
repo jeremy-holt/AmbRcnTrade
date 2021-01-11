@@ -93,7 +93,7 @@ namespace Tests
             
             // Act
             var data = await sut.LoadData(vessel.Id, billLading.Id);
-            var actual =  sut.FillTemplate(MaerskDraftBlTemplateBlXlsx, data);
+            sut.FillTemplate(MaerskDraftBlTemplateBlXlsx, data);
             
             // Assert
             data.BillLadingDto.Containers.Should().HaveCount(0);

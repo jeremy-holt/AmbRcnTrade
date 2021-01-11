@@ -74,7 +74,7 @@ namespace AmbRcnTradeServer.Controllers
         }
 
         [Authorize]
-        [HttpPatch("[action]")]
+        [HttpPost("[action]")]
         public async Task<ActionResult<ServerResponse>> ZeroStock(ZeroStockRequest request)
         {
             return await _service.ZeroStock(request.CompanyId, request.LotNo);

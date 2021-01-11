@@ -633,7 +633,7 @@ namespace Tests
 
             // Assert
             response.Message.Should().Be("Marked Lot 3 as having zero physical stock");
-            actualStocks.Where(c => c.IsStockIn).Should().Contain(c => c.ZeroedStock == true);
+            actualStocks.Where(c => c.IsStockIn).Should().Contain(c => c.ZeroedStock);
 
             var actualStockOut = await session.LoadAsync<Stock>(stockOut.Id);
             actualStockOut.ZeroedStock.Should().BeFalse();

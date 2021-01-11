@@ -27,6 +27,6 @@ namespace AmbRcnTradeServer.Models.StockModels
         public string SupplierName { get; set; }
         public string SupplierId { get; set; }
         public double AvgBagWeightKg { get; set; }
-        public bool ZeroedStock { get; set; }
+        public bool? ZeroedStock { get; set; }
     }
 }
