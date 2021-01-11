@@ -195,6 +195,9 @@ namespace AmbRcnTradeServer.Services
             if (!worksheet.Cells.FindText("Container.Rows", true, false, out var row, out _))
                 return;
 
+            if (!data.BillLadingDto.Containers.Any())
+                return;
+            
             worksheet.Rows.InsertCopy(row + 1, data.BillLadingDto.Containers.Count - 1, worksheet.Rows[row]);
 
             for (var i = 0; i < data.BillLadingDto.Containers.Count; i++)

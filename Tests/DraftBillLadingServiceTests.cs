@@ -73,6 +73,32 @@ namespace Tests
         }
 
         [Fact]
+        public async Task LoadData_ShouldNotThrowErrorIfBillLadingHasNoContainers()
+        {
+            // Arrange
+            using var store = GetDocumentStore();
+            using var session = store.OpenAsyncSession();
+            var sut = GetDraftBillLadingService(session);
+            var fixture = new Fixture();
+            
+            var billLading = await new BillLading().CreateAndStore(session);
+            billLading.ContainerIds = new List<string>();
+            
+            var vessel = fixture.DefaultEntity<Vessel>()
+                .With(c => c.BillLadingIds, new List<string> {billLading.Id})
+                .Create();
+            await session.StoreAsync(vessel);
+            await session.SaveChangesAsync();
+            
+            // Act
+            var data = await sut.LoadData(vessel.Id, billLading.Id);
+            var actual =  sut.FillTemplate(MaerskDraftBlTemplateBlXlsx, data);
+            
+            // Assert
+            data.BillLadingDto.Containers.Should().HaveCount(0);
+        }
+
+        [Fact]
         public async Task GetBillLadingCustomers_ShouldReturnBillLadingFormatCustomer()
         {
             // Arrange
