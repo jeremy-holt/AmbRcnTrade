@@ -17,7 +17,6 @@ namespace AmbRcnTradeServer.Models.StockModels
         public double Balance { get; set; }
         public string LocationName { get; set; }
         public string LocationId { get; set; }
-        public bool IsStockZero { get; set; }
         public List<AnalysisResult> AnalysisResults { get; set; } = new();
         public double Kor { get; set; }
         public double Moisture { get; set; }
@@ -28,5 +27,6 @@ namespace AmbRcnTradeServer.Models.StockModels
         public string SupplierName { get; set; }
         public string SupplierId { get; set; }
         public double AvgBagWeightKg { get; set; }
+        public bool ZeroedStock { get; set; }
     }
 }

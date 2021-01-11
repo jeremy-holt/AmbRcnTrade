@@ -1,6 +1,6 @@
 <template>
   <div>
-    <label if.bind="label" class="form-label">${label} <span if.bind="maxlength != 1000" small>(${numChars}/${maxlength})</span></label>
+    <label if.bind="label" class="form-label">${label} <span if.bind="showMaxLength" small>(${numChars}/${maxlength})</span></label>
     <input type="text" class.bind="formControlClass" maxlength.bind="maxlength" disabled.bind="disabled" value.bind="value" placeholder.bind="placeholder">
     
   </div>

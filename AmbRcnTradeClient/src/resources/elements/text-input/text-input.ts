@@ -37,4 +37,8 @@ export class TextInput {
   protected get formControlClass() {
     return this.small ? "form-control form-control-sm" : "form-control";
   }
+
+  protected get showMaxLength() {
+    return this.maxlength !== 1000 && this.numChars > 0;
+  }
 }

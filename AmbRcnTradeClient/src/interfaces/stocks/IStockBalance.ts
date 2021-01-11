@@ -8,8 +8,7 @@ export interface IStockBalance {
   bagsOut: number;
   balance: number;
   locationName: string;
-  locationId: string;
-  isStockZero: boolean;
+  locationId: string;  
   analysisResults: IAnalysisResult[];
   kor: number;
   moisture: number;
@@ -20,6 +19,6 @@ export interface IStockBalance {
   avgBagWeightKg: number;
   supplierName: string;
   supplierId: string;
-
+  zeroedStock: boolean;
   selected?: boolean;
 }

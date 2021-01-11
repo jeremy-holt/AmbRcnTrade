@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using AmberwoodCore.Extensions;
 using AmberwoodCore.Models;
+using AmberwoodCore.Responses;
 using AmbRcnTradeServer.Constants;
 using AmbRcnTradeServer.Models.DictionaryModels;
 using AmbRcnTradeServer.Models.InspectionModels;
@@ -207,6 +208,7 @@ namespace Tests
                 .With(c => c.LotNo, 1)
                 .With(c => c.InspectionId, "inspections/1-A")
                 .With(c => c.IsStockIn, true)
+                .With(c => c.ZeroedStock, true)
                 .Create();
             await session.StoreAsync(stockIn1);
 
@@ -218,6 +220,7 @@ namespace Tests
                 .With(c => c.Bags, 500)
                 .With(c => c.InspectionId, "inspections/1-A")
                 .With(c => c.IsStockIn, true)
+                .With(c => c.ZeroedStock, true)
                 .Create();
             await session.StoreAsync(stockIn2);
 
@@ -256,6 +259,7 @@ namespace Tests
 
             var actual = list.First(c => c.LotNo == stockIn2.LotNo);
             actual.LotNo.Should().Be(2);
+            actual.ZeroedStock.Should().BeTrue();
 
             var expectedBalanceBags = stockIn2.Bags - stockOut.Bags;
             var expectedBalanceStockWeightKg = stockIn2.WeightKg - stockOut.WeightKg;
@@ -305,6 +309,7 @@ namespace Tests
                 .Without(c => c.StockOutDate)
                 .Without(c => c.InspectionId)
                 .Without(c => c.LocationId)
+                .With(c => c.ZeroedStock, true)
                 .With(c => c.SupplierId, supplier.Id)
                 .Create();
             await sut.Save(stockIn1);
@@ -599,6 +604,39 @@ namespace Tests
 
             // Assert
             await action.Should().ThrowAsync<InvalidOperationException>().WithMessage("A stock cannot have both a Stock In date and a Stock Out date");
+        }
+
+        [Fact]
+        public async Task ZeroStockBalance_ShouldManuallyMarkStockAndLotsAsPhysicallyEmpty()
+        {
+            // Arrange
+            using var store = GetDocumentStore();
+            using var session = store.OpenAsyncSession();
+            var sut = GetStockService(session);
+            var fixture = new Fixture();
+
+            var stocksIn = fixture.DefaultEntity<Stock>()
+                .With(c => c.IsStockIn, true)
+                .With(c => c.LotNo, 3)
+                .CreateMany().ToList();
+            await stocksIn.SaveList(session);
+
+            var stockOut = fixture.DefaultEntity<Stock>()
+                .With(c => c.IsStockIn, false)
+                .With(c => c.LotNo, 3)
+                .Create();
+            await session.StoreAsync(stockOut);
+
+            // Act
+            ServerResponse response = await sut.ZeroStock(COMPANY_ID, 3);
+            var actualStocks = await session.Query<Stock>().ToListAsync();
+
+            // Assert
+            response.Message.Should().Be("Marked Lot 3 as having zero physical stock");
+            actualStocks.Where(c => c.IsStockIn).Should().Contain(c => c.ZeroedStock == true);
+
+            var actualStockOut = await session.LoadAsync<Stock>(stockOut.Id);
+            actualStockOut.ZeroedStock.Should().BeFalse();
         }
     }
 }

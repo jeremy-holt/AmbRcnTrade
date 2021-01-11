@@ -21,6 +21,7 @@ namespace AmbRcnTradeServer.Services
         Task<List<StockListItem>> LoadStockList(string companyId, string locationId);
         Task<List<StockListItem>> LoadStockList(string companyId, List<string> stockIds);
         Task<ServerResponse> DeleteStock(string stockId);
+        Task<ServerResponse> ZeroStock(string companyId, long lotNo);
     }
 
     public class StockService : IStockService
@@ -90,7 +91,6 @@ namespace AmbRcnTradeServer.Services
 
                 item.Balance = item.BagsIn - item.BagsOut;
                 item.BalanceWeightKg = item.WeightKgIn - item.WeightKgOut;
-                item.IsStockZero = item.Balance < 1 && item.Balance > -1;
                 item.AvgBagWeightKg = item.Balance > 0 ? item.BalanceWeightKg / item.Balance : 0;
             }
 
@@ -123,6 +123,20 @@ namespace AmbRcnTradeServer.Services
             _session.Delete(stock);
 
             return new ServerResponse("Deleted stock");
+        }
+
+        public async Task<ServerResponse> ZeroStock(string companyId, long lotNo)
+        {
+            var stocks = await _session.Query<Stock>()
+                .Where(c => c.CompanyId == companyId && c.LotNo == lotNo && c.IsStockIn)
+                .ToListAsync();
+
+            foreach (var stock in stocks)
+            {
+                stock.ZeroedStock = true;
+            }
+
+            return new ServerResponse($"Marked Lot 3 as having zero physical stock");
         }
 
         private async Task<List<StockListItem>> LoadStockList(string companyId, string locationId, IReadOnlyCollection<string> stockIds)

@@ -282,8 +282,11 @@ namespace AmbRcnTradeServer.Services
             {
                 customer?.Address?.Street1?.Trim() ?? "",
                 customer?.Address?.Street2?.Trim() ?? "",
+                customer?.Address?.Street3?.Trim() ?? "",
+                customer?.Address?.Street4?.Trim() ?? "",
                 $"{customer?.Address?.City?.Trim()}{spcCity}{customer?.Address?.State?.Trim()}{spcState}{customer?.Address?.Country?.Trim()}".Trim(),
-                customer?.Reference?.Trim() ?? "",
+                customer?.Reference1?.Trim() ?? "",
+                customer?.Reference2?.Trim() ?? "",
                 customer?.Email?.Trim() ?? ""
             };
 

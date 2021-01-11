@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using AmberwoodCore.Extensions;
+using AmberwoodCore.Models;
 using AmbRcnTradeServer.Models.ContainerModels;
 using AmbRcnTradeServer.Models.DictionaryModels;
 using AmbRcnTradeServer.Models.VesselModels;
@@ -98,8 +99,9 @@ namespace Tests
             data.BillLadingDto.Containers.Should().HaveCount(0);
         }
 
+        
         [Fact]
-        public async Task GetBillLadingCustomers_ShouldReturnBillLadingFormatCustomer()
+        public async Task GetBillLadingCustomers_ShouldReturnBillLadingForCustomer()
         {
             // Arrange
             using var store = GetDocumentStore();
@@ -108,6 +110,9 @@ namespace Tests
             var fixture = new Fixture();
 
             var shipper = await new Customer().CreateAndStore(session);
+            shipper.Address.Street3 = null;
+            shipper.Address.Street4 = null;
+            
             shipper.Address.City = "London";
             shipper.Address.State = null;
             shipper.Address.Country = "UK";
@@ -142,8 +147,55 @@ namespace Tests
             actual.Shipper.Address1.Value.Should().Be(shipper.Address.Street1.ToUpper());
             actual.Shipper.Address2.Value.Should().Be(shipper.Address.Street2.ToUpper());
             actual.Shipper.Address3.Value.Should().Be("London UK".ToUpper());
-            actual.Shipper.Address4.Value.Should().Be(shipper.Reference.ToUpper());
-            actual.Shipper.Address5.Value.Should().Be(shipper.Email.ToUpper());
+            actual.Shipper.Address4.Value.Should().Be(shipper.Reference1.ToUpper());
+            actual.Shipper.Address5.Value.Should().Be(shipper.Reference2.ToUpper());
+
+            actual.Shipper.CompanyName.Key.Should().Be("BillLading.ShipperCompanyName");
+            actual.Shipper.Address1.Key.Should().Be("BillLading.ShipperAddress1");
+
+            actual.DestinationAgent.CompanyName.Value.Should().Be("");
+        }
+
+        [Fact]
+        public async Task GetBillLadingCustomers_ShouldReturnAddressForStreet3_and_Stree4()
+        {
+            // Arrange
+            using var store = GetDocumentStore();
+            using var session = store.OpenAsyncSession();
+            var sut = GetDraftBillLadingService(session);
+            var fixture = new Fixture();
+
+            var shipper = await new Customer().CreateAndStore(session);
+            shipper.Address = new Address()
+            {
+                Street3 = "street 2",
+                Street4 = "Street 4",
+                City = "London",
+                Country = "UK"
+            };
+            shipper.Reference1 = "reference 1";
+            shipper.Reference2 = "reference 2";
+
+            var billLading = await new BillLading().CreateAndStore(session);
+            billLading.ShipperId = shipper.Id;
+            
+            var vessel = fixture.DefaultEntity<Vessel>()
+                .With(c => c.BillLadingIds, new List<string> {billLading.Id})
+                .Create();
+            await session.StoreAsync(vessel);
+            await session.SaveChangesAsync();
+
+            // Act
+            var data = await sut.LoadData(vessel.Id, billLading.Id);
+            var actual = sut.GetBillLadingCustomers(data);
+
+            // Assert
+            actual.Shipper.CompanyName.Value.Should().Be(shipper.CompanyName.ToUpper());
+            actual.Shipper.Address1.Value.Should().Be(shipper.Address.Street3.ToUpper());
+            actual.Shipper.Address2.Value.Should().Be(shipper.Address.Street4.ToUpper());
+            actual.Shipper.Address3.Value.Should().Be("London UK".ToUpper());
+            actual.Shipper.Address4.Value.Should().Be(shipper.Reference1.ToUpper());
+            actual.Shipper.Address5.Value.Should().Be(shipper.Reference2.ToUpper());
 
             actual.Shipper.CompanyName.Key.Should().Be("BillLading.ShipperCompanyName");
             actual.Shipper.Address1.Key.Should().Be("BillLading.ShipperAddress1");
@@ -163,10 +215,13 @@ namespace Tests
             var shipper = await new Customer().CreateAndStore(session);
             shipper.Address.Street1 = null;
             shipper.Address.Street2 = null;
+            shipper.Address.Street3 = null;
+            shipper.Address.Street4 = null;
             shipper.Address.City = null;
             shipper.Address.State = null;
             shipper.Address.Country = "UK";
-            shipper.Reference = null;
+            shipper.Reference1 = null;
+            shipper.Reference2 = null;
             shipper.Email = null;
 
             var billLading = await new BillLading().CreateAndStore(session);

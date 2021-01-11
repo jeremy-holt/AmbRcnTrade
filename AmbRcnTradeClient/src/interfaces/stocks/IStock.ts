@@ -18,6 +18,6 @@ export interface IStock extends IEntityCompany {
   origin: string;
   supplierId: string;
   stuffingRecords: IStuffingRecord[];
-
+  zeroedStock: boolean;
   selected?: boolean;
 }

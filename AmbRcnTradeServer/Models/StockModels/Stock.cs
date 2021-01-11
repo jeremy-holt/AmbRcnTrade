@@ -28,5 +28,6 @@ namespace AmbRcnTradeServer.Models.StockModels
         public string CompanyId { get; set; }
         public string Id { get; set; }
         public string Name { get; set; }
+        public bool ZeroedStock { get; set; }
     }
 }

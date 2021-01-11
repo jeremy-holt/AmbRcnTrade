@@ -47,7 +47,7 @@
       </div>
     
     
-      <div class="row">
+      <div class="row mt-2">
         <div class="col">
           <text-input value.bind="model.address.city" maxlength="32"  label="City"></text-input>
         </div>
@@ -56,7 +56,7 @@
         </div>
       </div>
     
-      <div class="row">
+      <div class="row mt-2">
         <div class="col">
           <text-input value.bind="model.address.state" maxlength="32"  label="State"></text-input>
         </div>
@@ -66,13 +66,19 @@
         </div>
       </div>
 
-      <div class="row">
+      <div class="row mt-2">
+        <div class="col">
+          <text-input value.bind="model.reference2" maxlength="32" label="Reference 1"></text-input>
+        </div>
+        <div class="col">
+          <text-input value.bind="model.reference1" maxlength="32" label="Reference 2"></text-input>
+        </div>
+      </div>
+
+      <div class="row mt-2">
         <div class="col">
           <text-input value.bind="model.email" label="Email"></text-input>
-        </div>
-        <div class="col">
-          <text-input value.bind="model.reference" label="References"></text-input>
-        </div>
+        </div>        
       </div>
     
       <div class="form-group">
