@@ -70,9 +70,8 @@
         caption="Go to the inspection"></analysis-result>
 
       <div>
-        <button type="button" disabled.bind="!canDelete" class="btn btn-danger" click.delegate="deleteStock()">Delete
-          this
-          stock</button>
+        <button type="button" disabled.bind="!canDelete" class="btn btn-danger" click.delegate="deleteStock()">Undo stock entry</button>
+        <div class="small mt-1 text-info">If goods have not yet been placed in a container, you can undo this stock entry, which will place it back as unallocated on the inspections page</div>
       </div>
 
     </div>

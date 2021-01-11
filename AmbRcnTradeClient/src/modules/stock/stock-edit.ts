@@ -63,7 +63,10 @@ export class StockEdit {
   protected deleteStock() {
     this.dialogService.open({
       viewModel: DeleteDialog,
-      model: { body: "Are you sure you want to delete this stock? After deleting it the inspection will be shown as unallocated" }
+      model: {
+        header: "Undo stock",
+        body: "Are you sure you want to undo this stock? After deleting it the inspection will be shown as unallocated"
+      }
     }).whenClosed(async result => {
       if (!result.wasCancelled) {
         await this.stockService.deleteStock(this.model.id);

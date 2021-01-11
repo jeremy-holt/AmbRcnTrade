@@ -8,6 +8,7 @@ Payments:
 
 StockBalance:
   ✔ Need to check calculation for stockBalance @done (03/01/2021, 01:06:28)
+  ☐ Calculate weight losses
 
 Purchases:
   ✔ Soemthing wrong with add stocks to detail @high @done (08/01/2021, 15:50:15)
@@ -17,4 +18,6 @@ BillLading:
   ✔ Move B/L to another vessel @done (11/01/2021, 01:33:46)
 
 Inspection:
-  ☐ Fix calculation of averageBagWeightKg @critical 
+  ✔ Fix calculation of averageBagWeightKg @critical @done (11/01/2021, 08:56:01)
+
+

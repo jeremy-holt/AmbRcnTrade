@@ -32,7 +32,8 @@
     "test"
   ],
   "exclude": [
-    "node_modules"
+    "node_modules",
+    "test/mock-css.js"
   ],
   "atom": {
     "rewriteTsconfig": false

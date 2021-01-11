@@ -122,6 +122,8 @@ export class InspectionEdit {
   }
 
   protected async openAddToStockDialog() {
+    await this.save();
+    
     this.dialogService.open(
       {
         viewModel: AddToStockDialog,
@@ -150,10 +152,6 @@ export class InspectionEdit {
 
   protected get averageWeightBagsKg() {
     return this.model.bags > 0 ? this.model.weightKg / this.model.bags : 0;
-  }
-
-  protected calWeightKg() {
-    this.model.weightKg = this.model.bags * 80;
   }
 
   protected encode(value: string) {

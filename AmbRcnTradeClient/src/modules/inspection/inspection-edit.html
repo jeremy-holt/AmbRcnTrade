@@ -37,11 +37,11 @@
 
       <div class="row">
         <div class="col-6">
-          <number-input value.bind="model.bags" change.delegate="calWeightKg()"
+          <number-input value.bind="model.bags"
             label="Number bags in lot. (${remainingBagsToAllocate} that can be allocated)"></number-input>
         </div>
         <div class="col">
-          <number-input value.bind="model.weightKg" label="Weight kg in lot (${remainingKgToAllocate} that can be allocated)">          </number-input>
+          <number-input value.bind="model.weightKg" label="Weight kg in lot (${remainingKgToAllocate | numberFormat:'0,0'} that can be allocated)">          </number-input>
         </div>
       </div>
 

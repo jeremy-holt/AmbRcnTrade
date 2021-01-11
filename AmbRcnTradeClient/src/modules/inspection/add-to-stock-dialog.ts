@@ -73,10 +73,6 @@ export class AddToStockDialog {
       !this.inspectionService.wouldExceedInspectionBags(this.inspection, this.model?.bags);
   }
 
-  protected calcWeightKg() {
-    return this.model.weightKg = this.model.bags * this.averageBagWeightKg;
-  }
-
   protected get warningMessage() {
     return this.inspectionService.wouldExceedInspectionBags(this.inspection, this?.model.bags)
       ? `Putting ${this?.model.bags} into stock would exceed the total number of bags inspected`
