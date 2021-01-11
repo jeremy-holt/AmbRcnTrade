@@ -122,7 +122,7 @@ namespace Tests
             actual.Shipper.CompanyName.Key.Should().Be("BillLading.ShipperCompanyName");
             actual.Shipper.Address1.Key.Should().Be("BillLading.ShipperAddress1");
 
-            actual.DestinationAgent.Should().BeNull();
+            actual.DestinationAgent.CompanyName.Value.Should().Be("");
         }
 
         [Fact]
@@ -169,7 +169,8 @@ namespace Tests
             actual.Shipper.CompanyName.Key.Should().Be("BillLading.ShipperCompanyName");
             actual.Shipper.Address1.Key.Should().Be("BillLading.ShipperAddress1");
 
-            actual.DestinationAgent.Should().BeNull();
+            actual.DestinationAgent.Address1.Key.Should().Be("BillLading.DestinationAgentAddress1");
+            actual.DestinationAgent.Address1.Value.Should().Be("");
         }
 
         [Fact]
@@ -181,19 +182,9 @@ namespace Tests
             var sut = GetDraftBillLadingService(session);
             var fixture = new Fixture();
 
-            var shipper = await new Customer().CreateAndStore(session);
-            // shipper.Address.Street1 = null;
-            // shipper.Address.Street2 = null;
-            // shipper.Address.City = null;
-            // shipper.Address.State = null;
-            // shipper.Address.Country = "UK";
-            // shipper.Reference = null;
-            // shipper.Email = null;
-
             var billLading = await new BillLading().CreateAndStore(session);
             billLading.ShipperId = null;
-            // billLading.DestinationAgentId = null;
-
+            
             var vessel = fixture.DefaultEntity<Vessel>()
                 .With(c => c.BillLadingIds, new List<string> {billLading.Id})
                 .Without(c => c.ForwardingAgentId)

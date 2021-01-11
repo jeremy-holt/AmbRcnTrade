@@ -42,11 +42,12 @@ namespace Tests
 
             const string inspectionId = "inspections/1-A";
             const string stockId = "stocks/1-A";
+            const double weightKg = 29_999;
 
             var stockReferences = new List<StockReference>
             {
-                new(stockId, 100, DateTime.Today, 1),
-                new("stocks/2-A", 100, DateTime.Today, 1)
+                new(stockId, 100, weightKg, DateTime.Today, 1),
+                new("stocks/2-A", 100, weightKg, DateTime.Today, 1)
             };
 
             var inspection = fixture.DefaultEntity<Inspection>()
@@ -79,6 +80,7 @@ namespace Tests
 
             var actualInspection = await session2.LoadAsync<Inspection>(inspectionId);
             actualInspection.StockReferences.Should().OnlyContain(c => c.StockId == "stocks/2-A");
+            actualInspection.StockReferences.Should().Contain(c => Math.Abs(c.WeightKg - weightKg) < 0.01);
         }
 
         [Fact]

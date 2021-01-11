@@ -279,7 +279,7 @@ namespace AmbRcnTradeServer.Services
             {
                 customer?.Address?.Street1?.Trim() ?? "",
                 customer?.Address?.Street2?.Trim() ?? "",
-                $"{customer?.Address?.City?.Trim()}{spcCity}{customer?.Address?.State?.Trim()}{spcState}{customer?.Address?.Country?.Trim()}".Trim() ?? "",
+                $"{customer?.Address?.City?.Trim()}{spcCity}{customer?.Address?.State?.Trim()}{spcState}{customer?.Address?.Country?.Trim()}".Trim(),
                 customer?.Reference?.Trim() ?? "",
                 customer?.Email?.Trim() ?? ""
             };

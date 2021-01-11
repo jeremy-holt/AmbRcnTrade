@@ -25,5 +25,6 @@ namespace AmbRcnTradeServer.Models.InspectionModels
         public string Name { get; set; }
         public string CompanyId { get; set; }
         public string Origin { get; set; }
+        public double WeightKg { get; set; }
     }
 }

@@ -257,8 +257,9 @@ namespace Tests
 
             // Act
             const double bags = 400;
+            const double weightKg = 29_999;
 
-            var response = await sut.MoveInspectionToStock(inspection.Id, bags, new DateTime(2013, 1, 1), 0, location.Id, "Firkei");
+            var response = await sut.MoveInspectionToStock(inspection.Id, bags, weightKg, new DateTime(2013, 1, 1), 0, location.Id, "Firkei");
             await session.SaveChangesAsync();
 
             // Assert
@@ -269,6 +270,7 @@ namespace Tests
             actualStock.StockInDate.Should().Be(new DateTime(2013, 1, 1));
             actualStock.SupplierId.Should().Be(supplier.Id);
             actualStock.Bags.Should().Be(400);
+            actualStock.WeightKg.Should().Be(weightKg);
             actualStock.LocationId.Should().Be(location.Id);
             actualStock.LotNo.Should().Be(1);
             actualStock.InspectionId.Should().Be(inspection.Id);
@@ -282,6 +284,7 @@ namespace Tests
             actualInspection.StockReferences.Should().HaveCount(1);
             actualInspection.StockReferences[0].StockId.Should().Be(response.Dto.StockId);
             actualInspection.StockReferences[0].Bags.Should().Be(bags);
+            actualInspection.StockReferences[0].WeightKg.Should().Be(weightKg);
             actualInspection.StockReferences[0].Date.Should().Be(new DateTime(2013, 1, 1));
             actualInspection.StockReferences[0].LotNo.Should().Be(1);
         }
@@ -320,8 +323,9 @@ namespace Tests
 
             // Act
             const double bags = 400;
+            const double weightKg = 0;
 
-            var response = await sut.MoveInspectionToStock(inspection.Id, bags, new DateTime(2013, 1, 1), 17, location.Id, "Siguella");
+            var response = await sut.MoveInspectionToStock(inspection.Id, bags, weightKg, new DateTime(2013, 1, 1), 17, location.Id, "Siguella");
             await session.SaveChangesAsync();
 
             // Assert
@@ -346,6 +350,7 @@ namespace Tests
             actualInspection.StockReferences.Should().HaveCount(1);
             actualInspection.StockReferences[0].StockId.Should().Be(response.Dto.StockId);
             actualInspection.StockReferences[0].Bags.Should().Be(bags);
+            actualInspection.StockReferences[0].WeightKg.Should().Be(weightKg);
             actualInspection.StockReferences[0].Date.Should().Be(new DateTime(2013, 1, 1));
             actualInspection.StockReferences[0].LotNo.Should().Be(17);
         }
@@ -370,7 +375,7 @@ namespace Tests
             var inspection = fixture.DefaultEntity<Inspection>()
                 .With(c => c.SupplierId, supplier.Id)
                 .With(c => c.Bags, 500)
-                .With(c => c.StockReferences, new List<StockReference> {new("stocks/1-A", 400, new DateTime(2013, 1, 1), 1)})
+                .With(c => c.StockReferences, new List<StockReference> {new("stocks/1-A", 400, 30_000, new DateTime(2013, 1, 1), 1)})
                 .Create();
             await session.StoreAsync(inspection);
 

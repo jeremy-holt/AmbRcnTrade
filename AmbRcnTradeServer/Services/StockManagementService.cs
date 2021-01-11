@@ -20,7 +20,9 @@ namespace AmbRcnTradeServer.Services
 {
     public interface IStockManagementService
     {
-        Task<ServerResponse<MovedInspectionResult>> MoveInspectionToStock(string inspectionId, double bags, DateTime date, long lotNo, string locationId, string origin);
+        Task<ServerResponse<MovedInspectionResult>> MoveInspectionToStock(string inspectionId, double bags, double weightKg, DateTime date, long lotNo, string locationId,
+            string origin);
+
         Task<ServerResponse> RemoveInspectionFromStock(string inspectionId, string stockId);
         Task<List<StockListItem>> GetNonCommittedStocks(string companyId, string supplierId);
         Task<List<AvailableContainer>> GetAvailableContainers(string companyId);
@@ -42,7 +44,8 @@ namespace AmbRcnTradeServer.Services
             _inspectionService = inspectionService;
         }
 
-        public async Task<ServerResponse<MovedInspectionResult>> MoveInspectionToStock(string inspectionId, double bags, DateTime date, long lotNo, string locationId,
+        public async Task<ServerResponse<MovedInspectionResult>> MoveInspectionToStock(string inspectionId, double bags, double weightKg, DateTime date, long lotNo,
+            string locationId,
             string origin)
         {
             Debug.WriteLine(_session.Advanced.NumberOfRequests);
@@ -52,7 +55,7 @@ namespace AmbRcnTradeServer.Services
             var stock = new Stock();
             {
                 stock.Bags = bags;
-                stock.WeightKg = bags * 80;
+                stock.WeightKg = weightKg == 0 ? bags * 80 : weightKg;
                 stock.StockInDate = date;
                 stock.SupplierId = inspection.SupplierId;
                 stock.CompanyId = inspection.CompanyId;
@@ -67,7 +70,7 @@ namespace AmbRcnTradeServer.Services
 
             if (inspection.StockReferences.FirstOrDefault(c => c.StockId == stockResponse.Id) == null)
             {
-                inspection.StockReferences.Add(new StockReference(stockResponse.Id, bags, date, stock.LotNo));
+                inspection.StockReferences.Add(new StockReference(stockResponse.Id, bags, weightKg, date, stock.LotNo));
                 await _inspectionService.Save(inspection);
             }
 
@@ -106,7 +109,7 @@ namespace AmbRcnTradeServer.Services
 
             var stocksUsedInPurchasesIds = stocks.Where(c => c.PurchaseId.IsNotNullOrEmpty() && c.IsStockIn).Distinct().Select(c => c.StockId).ToList();
             var allStocksUsedInSystemIds = stocks.Where(c => c.IsStockIn).Distinct().Select(x => x.StockId).ToList();
-            
+
             var unallocatedIds = allStocksUsedInSystemIds.Except(stocksUsedInPurchasesIds).ToList();
             var unallocatedStocks = stocks.Where(c => c.StockId.In(unallocatedIds)).ToList();
 

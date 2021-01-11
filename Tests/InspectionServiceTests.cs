@@ -115,6 +115,8 @@ namespace Tests
             var inspections = fixture.DefaultEntity<Inspection>()
                 .Without(c => c.AnalysisResult)
                 .With(c => c.SupplierId, customer.Id)
+                .With(c=>c.Bags,10)
+                .With(c=>c.WeightKg,5000)
                 .CreateMany()
                 .ToList();
             inspections[0].AnalysisResult = analysisResult1;
@@ -144,6 +146,7 @@ namespace Tests
             actual.LotNo.Should().Be(expected.LotNo);
             actual.Inspector.Should().Be(expected.Inspector);
             actual.Bags.Should().Be(expected.Bags);
+            actual.WeightKg.Should().Be(expected.WeightKg);
             actual.Approved.Should().Be(expected.AnalysisResult.Approved);
             actual.Location.Should().Be(expected.Location);
             actual.TruckPlate.Should().Be(expected.TruckPlate);
@@ -166,7 +169,11 @@ namespace Tests
             var sut = GetInspectionService(session);
             var fixture = new Fixture();
 
-            var inspection = fixture.DefaultEntity<Inspection>().Create();
+            var inspection = fixture.DefaultEntity<Inspection>()
+                .With(c=>c.Bags,10)
+                .With(c=>c.WeightKg,5000)
+                .With(c=>c.StockReferences,new List<StockReference>(){new StockReference("",3,1000,DateTime.Today, 1)})
+                .Create();
             await session.StoreAsync(inspection);
 
             await session.SaveChangesAsync();
@@ -178,6 +185,8 @@ namespace Tests
 
             // Assert
             list[0].UnallocatedBags.Should().Be(inspection.Bags - inspection.StockReferences.Sum(x => x.Bags));
+            list[0].UnallocatedWeightKg.Should().Be(5000 - 1000);
+            list[0].UnallocatedWeightKg.Should().Be(inspection.WeightKg - inspection.StockReferences.Sum(x => x.WeightKg));
         }
 
         [Fact]
@@ -208,6 +217,7 @@ namespace Tests
                 LotNo = "Lot 1234",
                 TruckPlate = "AA BB CC",
                 Bags = 300,
+                WeightKg=29_999.0,
                 Location = "Bouake warehouse",
                 Analyses = analyses,
                 Origin="Firkei"
@@ -224,6 +234,7 @@ namespace Tests
             actual.AnalysisResult.Count.Should().Be(180);
             actual.AnalysisResult.Moisture.Should().Be(10);
             actual.Origin.Should().Be("Firkei");
+            actual.WeightKg.Should().Be(29_999);
         }
     }
 }

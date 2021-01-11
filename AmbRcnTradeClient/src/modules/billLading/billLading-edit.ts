@@ -1,6 +1,3 @@
-import { ITeu, TEU_LIST } from "./../../constants/app-constants";
-import { IPort } from "./../../interfaces/IPort";
-import { PortService } from "./../../services/port-service";
 import { DialogService } from "aurelia-dialog";
 import { autoinject, observable } from "aurelia-framework";
 import { Router } from "aurelia-router";
@@ -10,18 +7,20 @@ import _ from "lodash";
 import { BillLadingUploadDialog } from "modules/billLadingUploadDialog/billLading-upload-dialog";
 import { DocumentsDownloadDialog } from "modules/documents-download-dialog/documents-download-dialog";
 import { IState } from "store/state";
+import { ITeu, TEU_LIST } from "./../../constants/app-constants";
 import { encodeParams } from "./../../core/helpers";
 import { DeleteDialog } from "./../../dialogs/delete-dialog";
 import { ICustomerListItem } from "./../../interfaces/ICustomerListItem";
+import { IPort } from "./../../interfaces/IPort";
 import { IBillLading } from "./../../interfaces/shipping/IBillLading";
 import { IContainer } from "./../../interfaces/shipping/IContainer";
 import { BillLadingService } from "./../../services/bill-lading-service";
 import { CustomerService } from "./../../services/customer-service";
+import { PortService } from "./../../services/port-service";
 import { isInRole } from "./../../services/role-service";
 import { VesselService } from "./../../services/vessel-service";
 import { AddContainersDialog } from "./add-containers-dialog";
 import { MoveBillLadingDialog } from "./move-billLading-dialog";
-import { base64StringToBlob, blobToDataURL } from "blob-util";
 
 @autoinject
 @connectTo()

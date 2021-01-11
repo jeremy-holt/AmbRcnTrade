@@ -56,6 +56,10 @@ export class InspectionService extends FetchService {
     return inspection.stockReferences.reduce((a, b) => a += b.bags, 0);
   }
 
+  public weightKgAlreadyAllocated(inspection: IInspection, averageWeightBagKg: number): number {
+    return this.bagsAlreadyAllocated(inspection) * averageWeightBagKg;
+  }
+
   public inspectionApproved(inspection: IInspection) {
     return inspection.analysisResult.approved === Approval.Approved;
   }

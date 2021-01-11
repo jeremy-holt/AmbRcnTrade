@@ -18,9 +18,9 @@
         <thead>
           <tr>
             <th>Inspection date</th>
-            <th>Bags</th>
+            <th>Bags / kg</th>
             <th>Stock allocations</th>
-            <th class="text-right">Unallocated bags</th>
+            <th class="text-right">Unallocated bags / kg</th>
             <th>KOR</th>
             <th>Count</th>
             <th>Moisture</th>
@@ -38,7 +38,7 @@
                 Inspection: ${item.inspectionDate | dateFormat: "DD/MM/YYYY"}
               </a>
             </td>
-            <td>${item.bags}</td>
+            <td>${item.bags} / ${item.weightKg | numberFormat:"0,0"}</td>
             <td>
               <div if.bind="item.stockAllocations == 0">
                 Not in stock
@@ -48,7 +48,7 @@
                   stock allocation(s)</a>
               </div>
             </td>
-            <td class="text-right">${item.unallocatedBags | numberFormat:"0,0"}</td>
+            <td class="text-right">${item.unallocatedBags | numberFormat:"0,0"} / ${item.unallocatedWeightKg | numberFormat: "0,0"}</td>
             <td class.bind="item.css">${item.kor | numberFormat:"0,0.00"}</td>
             <td class.bind="item.css">${item.count | numberFormat: "0,0.00"}</td>
             <td class.bind="item.css">${item.moisture/100 | numberFormat: "0.00%"}</td>

@@ -14,4 +14,7 @@ Purchases:
   ✔ Check out Purchses_ById - indexing errors @critical @done (08/01/2021, 08:22:19)
 
 BillLading:
-  ☐ Move B/L to another vessel
+  ✔ Move B/L to another vessel @done (11/01/2021, 01:33:46)
+
+Inspection:
+  ☐ Fix calculation of averageBagWeightKg @critical 

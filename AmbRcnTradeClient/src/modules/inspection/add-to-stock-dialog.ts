@@ -27,6 +27,7 @@ export class AddToStockDialog {
   public model: IMoveInspectionToStockRequest = {} as IMoveInspectionToStockRequest;
   public inspection: IInspection
   public supplierName = "";
+  protected averageBagWeightKg=0;
 
   constructor(
     protected controller: DialogController,
@@ -55,6 +56,8 @@ export class AddToStockDialog {
     this.supplierName = model.supplierName;
 
     this.model.bags = this.inspection.bags - this.inspection.stockReferences.reduce((a, b) => a += b.bags, 0);
+    this.model.weightKg = this.inspection.weightKg - this.inspection.stockReferences.reduce((a, b) => a += b.weightKg, 0);
+    this.averageBagWeightKg = this.model.bags > 0 ? this.model.weightKg / this.model.bags : 0;
     this.model.inspectionId = this.inspection.id;
     this.model.date = moment().format(DATEFORMAT);
     this.model.origin = this.inspection.origin;
@@ -68,6 +71,10 @@ export class AddToStockDialog {
     return this.model?.bags > 0 && this.model?.date && this.model?.locationId !== null &&
       (this.newStockItem || this.stockList.some(x => x.selected)) &&
       !this.inspectionService.wouldExceedInspectionBags(this.inspection, this.model?.bags);
+  }
+
+  protected calcWeightKg() {
+    return this.model.weightKg = this.model.bags * this.averageBagWeightKg;
   }
 
   protected get warningMessage() {
@@ -102,6 +109,7 @@ export class AddToStockDialog {
     return {
       inspectionId: this.model.inspectionId,
       bags: this.model.bags,
+      weightKg: this.model.weightKg,
       date: this.model.date,
       locationId: this.selectedLocation.id,
       lotNo: this.newStockItem ? 0 : this.stockList.find(c => c.selected)?.lotNo,

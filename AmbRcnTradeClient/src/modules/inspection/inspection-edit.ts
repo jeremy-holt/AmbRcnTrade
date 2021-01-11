@@ -144,6 +144,18 @@ export class InspectionEdit {
     return this.model.bags - this.inspectionService.bagsAlreadyAllocated(this.model);
   }
 
+  protected get remainingKgToAllocate() {
+    return this.model.weightKg - this.inspectionService.weightKgAlreadyAllocated(this.model, this.averageWeightBagsKg);
+  }
+
+  protected get averageWeightBagsKg() {
+    return this.model.bags > 0 ? this.model.weightKg / this.model.bags : 0;
+  }
+
+  protected calWeightKg() {
+    this.model.weightKg = this.model.bags * 80;
+  }
+
   protected encode(value: string) {
     return encodeParams(value);
   }

@@ -60,6 +60,7 @@ namespace AmbRcnTradeServer.Services
                 {
                     Approved = c.AnalysisResult.Approved,
                     Bags = c.Bags,
+                    WeightKg = c.WeightKg,
                     Inspector = c.Inspector,
                     InspectionDate = c.InspectionDate,
                     Location = c.Location,
@@ -73,9 +74,15 @@ namespace AmbRcnTradeServer.Services
                     RejectsPct = c.AnalysisResult.RejectsPct,
                     StockReferences = c.StockReferences,
                     StockAllocations = c.StockReferences.Count,
-                    UnallocatedBags = c.Bags - c.StockReferences.Sum(x => x.Bags)
+                    UnallocatedBags = c.Bags - c.StockReferences.Sum(x => x.Bags),
+                    UnallocatedWeightKg = c.WeightKg - c.StockReferences.Sum(x => x.WeightKg)
                 })
                 .ToListAsync();
+
+            foreach (var item in list)
+            {
+               item.UnallocatedWeightKg = double.IsNaN(item.UnallocatedWeightKg) ? 0 : item.UnallocatedWeightKg ;
+            }
 
             var customers = await _session.Query<Customer>().Where(c => c.Id.In(list.Select(x => x.SupplierId))).ToListAsync();
 

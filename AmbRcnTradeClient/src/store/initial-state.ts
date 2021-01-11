@@ -82,6 +82,7 @@ export const initialState: IState = {
       location: undefined!,
       truckPlate: undefined!,
       bags: undefined!,
+      weightKg: undefined!,
       id: undefined!,
       name: undefined!,
       companyId: undefined!,

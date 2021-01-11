@@ -11,6 +11,7 @@ namespace AmbRcnTradeServer.Models.StockManagementModels
     {
         public string InspectionId { get; set; }
         public double Bags { get; set; }
+        public double WeightKg { get; set; }
         public DateTime Date { get; set; }
         public string LocationId { get; set; }
         public long LotNo { get; set; }

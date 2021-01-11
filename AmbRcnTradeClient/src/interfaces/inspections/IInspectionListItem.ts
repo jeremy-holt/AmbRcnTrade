@@ -9,6 +9,7 @@ export interface IInspectionListItem {
   lotNo: string;
   inspector: string;
   bags: number;
+  weightKg: number;
   truckPlate: string;
   supplierName: string;
   supplierId: string;
@@ -18,6 +19,7 @@ export interface IInspectionListItem {
   rejectsPct: number;
   stockReferences: IStockReference[];
   stockAllocations: number;
-  unallocatedBags:number;
+  unallocatedBags: number;
+  unallocatedWeightKg: number;
   css?: string;
 }

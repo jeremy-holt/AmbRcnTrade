@@ -28,5 +28,7 @@ namespace AmbRcnTradeServer.Models.InspectionModels
         public List<StockReference> StockReferences { get; set; } = new();
         public int StockAllocations { get; set; }
         public double UnallocatedBags { get; set; }
+        public double UnallocatedWeightKg { get; set; }
+        public double WeightKg { get; set; }
     }
 }

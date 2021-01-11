@@ -9,6 +9,7 @@ export interface IInspection extends IEntityCompany {
   location: string;
   truckPlate: string;
   bags: number;
+  weightKg: number;
   id: string;
   name: string;
   companyId: string;
