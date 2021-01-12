@@ -88,7 +88,7 @@ export class AuthenticationService {
       try {
         const json = JSON.parse(text);
         this.taskQueue.queueMicroTask(async () => {
-          await this.serverMessageService.setErrorMessage(this.i18n.tr(json.message));
+          await this.serverMessageService.setErrorMessage(json.message);
         });
       } catch (e) {
         log.error("Login error", e);

@@ -11,6 +11,7 @@ import { LOCAL_STORAGE } from "../localStorage-consts";
 import { FetchRoute } from "../requests/FetchRoute";
 import { IState } from "../store/state";
 import { QueryId } from "./../models/QueryId";
+import { logoutAction } from "./authentication-service";
 import { GetUrlService } from "./get-url-service";
 import { serverErrorMessageAction, ServerMessageService } from "./server-message-service";
 
@@ -57,13 +58,6 @@ export class FetchService {
     return localState;
   }
 
-  // public navigateBack(router: Router) {
-  //   const fragment = (router.history as History)._getFragment();
-  //   if (!fragment || !fragment.includes("/notauthorized")) {
-  //     router.navigateBack();
-  //   }
-  // }
-
   public get isRequesting() {
     return this.http.isRequesting;
   }
@@ -97,29 +91,41 @@ export class FetchService {
     const params = typeof (id) === "string" ? [new QueryId("id", id)] : id;
     const url = this.getUrlService.getUrl(new FetchRoute(params, action));
 
-    const response = await this.http.fetch(url);
-    return this.handleResponse<T>(response, reducer);
+    try {
+      const response = await this.http.fetch(url);
+      return this.handleResponse<T>(response, reducer);
+    } catch (ex) {
+      return this.handleErrorResponse<T>(ex as Response);
+    }
   }
 
-  protected url(id: string | null | QueryId[],action :string){
+  protected url(id: string | null | QueryId[], action: string) {
     const params = typeof (id) === "string" ? [new QueryId("id", id)] : id;
-    return this.getUrlService.getUrl(new FetchRoute(params,action));
+    return this.getUrlService.getUrl(new FetchRoute(params, action));
   }
 
   protected async getData<T>(id: QueryId[], action: string) {
     const url = this.getUrlService.getUrl(new FetchRoute(id, action));
-    const response = await this.http.fetch(url);
-    if (response.ok) {
-      const data = await response.json();
-      return data as T;
+    try {
+      const response = await this.http.fetch(url);
+      if (response.ok) {
+        const data = await response.json();
+        return data as T;
+      }
+    } catch (ex) {
+      return this.handleErrorResponse<T>(ex as Response);
     }
   }
 
   protected async delete<T>(id: string | QueryId[], action: string, reducer: Reducer<IState, unknown[]>) {
     const params = typeof (id) === "string" ? [new QueryId("id", id)] : id;
     const url = this.getUrlService.getUrl(new FetchRoute(params, action));
-    const response = await this.http.fetch(url, { method: "DELETE" });
-    return this.handleResponse<T>(response, reducer);
+    try {
+      const response = await this.http.fetch(url, { method: "DELETE" });
+      return this.handleResponse<T>(response, reducer);
+    } catch (ex) {
+      return this.handleErrorResponse<T>(ex as Response);
+    }
   }
 
   protected async post<T>(model: any, action: string, reducer?: Reducer<IState, unknown[]>) {
@@ -127,8 +133,12 @@ export class FetchService {
 
     model["companyId"] = this.currentCompanyId();
 
-    const response = await this.http.fetch(url, { method: "POST", body: json(model) });
-    return this.handleResponse<T>(response, reducer);
+    try {
+      const response = await this.http.fetch(url, { method: "POST", body: json(model) });
+      return this.handleResponse<T>(response, reducer);
+    } catch (ex) {
+      return this.handleErrorResponse<T>(ex as Response);
+    }
   }
 
   protected async postImage(formData: FormData, headers: Headers, action: string) {
@@ -142,21 +152,32 @@ export class FetchService {
       httpHeaders.append(name, value);
     });
 
-    const response = await this.http.fetch(
-      url, {
-        method: "post",
-        body: formData,
-        headers: httpHeaders
-      }
-    );
-
-    return this.handleResponse(response, null);
+    try {
+      const response = await this.http.fetch(
+        url, {
+          method: "post",
+          body: formData,
+          headers: httpHeaders
+        }
+      );
+      return this.handleResponse(response, null);
+    } catch (ex) {
+      return this.handleErrorResponse(ex as Response);
+    }
   }
 
   protected async getMany<TListItem>(queryParams: QueryId[], action: string, reducer?: Reducer<IState, unknown[]>) {
     const url = this.getUrlService.getUrl(new FetchRoute(queryParams, action));
-    const response = await this.http.fetch(url);
-    return this.handleResponse<TListItem[]>(response, reducer);
+    try {
+      const response = await this.http.fetch(url);
+      return this.handleResponse<TListItem[]>(response, reducer);
+    } catch (ex) {
+      return this.handleErrorResponse<TListItem[]>(ex as Response);
+    }
+  }
+
+  private logResponse(response: Response) {
+    log.error(`Status: ${response?.status}, StatusText: ${response?.statusText}`, response);
   }
 
   private async handleResponse<T>(response: Response, reducer?: Reducer<IState, any[]>): Promise<void | T> {
@@ -192,7 +213,9 @@ export class FetchService {
     return data as T;
   }
 
-  private async handleErrorResponse(response: Response) {
+  private async handleErrorResponse<T>(response: Response) {
+    this.logResponse(response);
+
     if (!response.status) {
       throw response;
     }
@@ -211,17 +234,21 @@ export class FetchService {
         break;
       }
       case 401:
-        this.router.navigateToRoute("login", { trigger: true, replace: false });
+        this.store.dispatch(logoutAction);
+        this.router.navigateToRoute("login", { httpStatusCode: response.status }, { trigger: true, replace: false });
         break;
       case 403:
-        this.router.navigateToRoute("notAuthorized", { trigger: true, replace: false });
+        this.store.dispatch(logoutAction);
+        this.router.navigateToRoute("login", { httpStatusCode: response.status }, { trigger: true, replace: false });
         break;
       default: {
         const serverError = (await response.text()) as string;
         this.store.dispatch(serverErrorMessageAction, serverError);
         log.error(serverError);
+        this.router.navigateToRoute("login", { httpStatusCode: response.status }, { trigger: true, replace: false });
         throw serverError;
       }
     }
+    return {} as T;
   }
 }

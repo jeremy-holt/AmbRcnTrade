@@ -18,6 +18,7 @@ export class LoginEdit {
   public canLogin = false;
   private controller: ValidationController;
   private subscriptions: Subscription[] = [];
+  protected statusCodeMessage = "";
 
   constructor(
     private authService: AuthenticationService,
@@ -47,9 +48,24 @@ export class LoginEdit {
     }
   }
 
-  protected async activate() {
+  protected async activate(params: { httpStatusCode: string }) {
+    if (params) {
+      switch (params.httpStatusCode) {
+        case "401":
+          this.statusCodeMessage = "You need to login before accessing the sytem";
+          break;
+        case "403":
+ 
+          this.statusCodeMessage = "You are not authorized to view this page. Please check with the system administrator";
+          break;
+        default:          
+          break;
+      }
+    }
+
     this.serverMessageService.clearMessages();
   }
+
 
   protected detached() {
     this.subscriptions.forEach(c => c.dispose());

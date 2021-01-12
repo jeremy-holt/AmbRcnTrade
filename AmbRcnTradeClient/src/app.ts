@@ -54,7 +54,7 @@ export class App {
     config.map(
       [
         { route: ["", "home"], name: "home", title: "Home", nav: true, moduleId: "modules/home/home-edit" },
-        { route: "login", name: "login", title: "Login", moduleId: "modules/login/login-edit" },
+        { route: "login/:httpStatusCode?", name: "login", title: "Login", moduleId: "modules/login/login-edit" },
 
 
         // Inspections
