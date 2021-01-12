@@ -45,12 +45,6 @@ namespace AmbRcnTradeServer.Services
             stock.AnalysisResult = await _inspectionService.GetAnalysisResult(stock.InspectionId);
             stock.IsStockIn = stock.StockInDate != null;
 
-            // if (!stock.IsStockIn)
-            // {
-            //     stock.Bags = -stock.Bags;
-            //     stock.WeightKg = -stock.WeightKg;
-            // }
-
             if (stock.Id.IsNullOrEmpty() && stock.IsStockIn && stock.LotNo == 0)
             {
                 stock.LotNo = await _counterService.GetNextLotNumber(stock.CompanyId);

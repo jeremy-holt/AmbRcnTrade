@@ -65,7 +65,6 @@ export class StockBalanceList {
     if (!this.canZeroStock) {
       return;
     }
-    console.log(item);
 
     this.dialogService.open({
       viewModel: DeleteDialog,
