@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using AmberwoodCore.Controllers;
 using AmberwoodCore.Responses;
+using AmberwoodCore.Services;
 using AmbRcnTradeServer.Models.ContainerModels;
 using AmbRcnTradeServer.Models.StockManagementModels;
 using AmbRcnTradeServer.Models.StockModels;
@@ -30,7 +31,7 @@ namespace AmbRcnTradeServer.Controllers
         [HttpPost("[action]")]
         public async Task<ActionResult<ServerResponse<MovedInspectionResult>>> MoveInspectionToStock(MoveInspectionToStockRequest request)
         {
-            await _auditingService.Log(Request);
+            await _auditingService.Log(Request, request.InspectionId);
             return await _service.MoveInspectionToStock(request.InspectionId, request.Bags, request.WeightKg, request.Date, request.LotNo, request.LocationId, request.Origin);
         }
 
@@ -38,7 +39,7 @@ namespace AmbRcnTradeServer.Controllers
         [HttpPost("[action]")]
         public async Task<ActionResult<ServerResponse>> RemoveInspectionFromStock(RemoveInspectionFromStockRequest request)
         {
-            await _auditingService.Log(Request);
+            await _auditingService.Log(Request, request.InspectionId, request.StockId);
             return await _service.RemoveInspectionFromStock(request.InspectionId, request.StockId);
         }
 
@@ -46,7 +47,7 @@ namespace AmbRcnTradeServer.Controllers
         [HttpPost("[action]")]
         public async Task<ActionResult<ServerResponse<OutgoingStock>>> StuffContainer(StuffingRequest request)
         {
-            await _auditingService.Log(Request);
+            await _auditingService.Log(Request, request.ContainerId);
             return await _service.StuffContainer(request.ContainerId, request.Status, request.StockBalance, request.Bags, request.WeightKg, request.StuffingDate);
         }
 

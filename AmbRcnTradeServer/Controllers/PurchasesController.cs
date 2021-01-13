@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using AmberwoodCore.Controllers;
 using AmberwoodCore.Responses;
+using AmberwoodCore.Services;
 using AmbRcnTradeServer.Models.PurchaseModels;
 using AmbRcnTradeServer.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -29,7 +30,7 @@ namespace AmbRcnTradeServer.Controllers
         [HttpPost("[action]")]
         public async Task<ActionResult<ServerResponse<Purchase>>> Save(Purchase purchase)
         {
-            await _auditingService.Log(Request);
+            await _auditingService.Log(Request, purchase.Id);
             return await _service.Save(purchase);
         }
 

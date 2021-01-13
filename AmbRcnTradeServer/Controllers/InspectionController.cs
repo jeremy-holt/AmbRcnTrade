@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using AmberwoodCore.Controllers;
 using AmberwoodCore.Responses;
+using AmberwoodCore.Services;
 using AmbRcnTradeServer.Constants;
 using AmbRcnTradeServer.Models.InspectionModels;
 using AmbRcnTradeServer.Services;
@@ -30,7 +31,7 @@ namespace AmbRcnTradeServer.Controllers
         [HttpPost("[action]")]
         public async Task<ActionResult<ServerResponse<Inspection>>> Save(Inspection inspection)
         {
-            await _auditingService.Log(Request);
+            await _auditingService.Log(Request, inspection.Id);
             return await _service.Save(inspection);
         }
 
@@ -69,6 +70,7 @@ namespace AmbRcnTradeServer.Controllers
         [HttpDelete("[action]")]
         public async Task<ActionResult<ServerResponse>> DeleteInspection(string id)
         {
+            await _auditingService.Log(Request, id);
             return await _service.DeleteInspection(id);
         }
     }

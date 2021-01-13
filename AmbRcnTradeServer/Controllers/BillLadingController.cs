@@ -2,7 +2,9 @@
 using System.Linq;
 using System.Threading.Tasks;
 using AmberwoodCore.Controllers;
+using AmberwoodCore.Extensions;
 using AmberwoodCore.Responses;
+using AmberwoodCore.Services;
 using AmbRcnTradeServer.Models.ContainerModels;
 using AmbRcnTradeServer.Models.VesselModels;
 using AmbRcnTradeServer.Services;
@@ -34,7 +36,7 @@ namespace AmbRcnTradeServer.Controllers
         [HttpPost("[action]")]
         public async Task<ActionResult<ServerResponse<BillLadingDto>>> Save(BillLadingDto billLading)
         {
-            await _auditingService.Log(Request);
+            await _auditingService.Log(Request, billLading.Id);
             return await _service.Save(billLading);
         }
 
@@ -58,7 +60,7 @@ namespace AmbRcnTradeServer.Controllers
         [HttpPost("[action]")]
         public async Task<ActionResult<ServerResponse>> RemoveContainersFromBillLading(BillLadingContainersRequest request)
         {
-            await _auditingService.Log(Request);
+            await _auditingService.Log(Request, request.BillLadingId, request.ContainerIds.ToAggregateString());
             return await _service.RemoveContainersFromBillLading(request.BillLadingId, request.ContainerIds);
         }
 
@@ -80,6 +82,7 @@ namespace AmbRcnTradeServer.Controllers
         [HttpPost("[action]")]
         public async Task<ActionResult<ServerResponse>> MoveBillLadingToVessel(MoveBillLadingRequest request)
         {
+            await _auditingService.Log(Request, $"From vessel {request.FromVesselId}, To vessel {request.ToVesselId}, To BillLading {request.BillLadingId}");
             return await _service.MoveBillLadingToVessel(request.BillLadingId, request.FromVesselId, request.ToVesselId);
         }
 
@@ -87,6 +90,7 @@ namespace AmbRcnTradeServer.Controllers
         [HttpPost("[action]")]
         public async Task<ActionResult<ServerResponse>> AddContainersToBillLading(AddContainersToBillLadingRequest request)
         {
+            await _auditingService.Log(Request, request.BillLadingId, request.ContainerIds.ToAggregateString());
             return await _service.AddContainersToBillLading(request.BillLadingId, request.ContainerIds);
         }
         

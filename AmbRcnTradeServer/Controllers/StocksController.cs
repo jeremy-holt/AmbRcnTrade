@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using AmberwoodCore.Controllers;
 using AmberwoodCore.Responses;
+using AmberwoodCore.Services;
 using AmbRcnTradeServer.Models.StockModels;
 using AmbRcnTradeServer.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -29,7 +30,7 @@ namespace AmbRcnTradeServer.Controllers
         [HttpPost("[action]")]
         public async Task<ActionResult<ServerResponse<Stock>>> Save(Stock stock)
         {
-            await _auditingService.Log(Request);
+            await _auditingService.Log(Request, stock.Id);
             return await _service.Save(stock);
         }
 
@@ -69,7 +70,7 @@ namespace AmbRcnTradeServer.Controllers
         [HttpDelete("[action]")]
         public async Task<ActionResult<ServerResponse>> Delete(string id)
         {
-            await _auditingService.Log(Request);
+            await _auditingService.Log(Request, id);
             return await _service.DeleteStock(id);
         }
 
@@ -77,6 +78,7 @@ namespace AmbRcnTradeServer.Controllers
         [HttpPost("[action]")]
         public async Task<ActionResult<ServerResponse>> ZeroStock(ZeroStockRequest request)
         {
+            await _auditingService.Log(Request, request.LotNo.ToString());
             return await _service.ZeroStock(request.CompanyId, request.LotNo);
         }
     }

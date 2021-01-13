@@ -4,6 +4,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using AmberwoodCore.Controllers;
 using AmberwoodCore.Responses;
+using AmberwoodCore.Services;
 using AmbRcnTradeServer.Models.DictionaryModels;
 using AmbRcnTradeServer.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -17,16 +18,19 @@ namespace AmbRcnTradeServer.Controllers
     public class CustomerController : RavenController
     {
         private readonly ICustomerService _customerService;
+        private readonly IAuditingService _auditingService;
 
-        public CustomerController(IAsyncDocumentSession session, ICustomerService customerService) : base(session)
+        public CustomerController(IAsyncDocumentSession session, ICustomerService customerService, IAuditingService auditingService) : base(session)
         {
             _customerService = customerService;
+            _auditingService = auditingService;
         }
 
         [Authorize]
         [HttpPost("[action]")]
         public async Task<ActionResult<ServerResponse<Customer>>> Save(Customer customer)
         {
+            await _auditingService.Log(Request, customer.Id);
             return await _customerService.SaveCustomer(customer);
         }
 

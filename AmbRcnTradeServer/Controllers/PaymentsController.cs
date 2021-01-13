@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using AmberwoodCore.Controllers;
 using AmberwoodCore.Responses;
+using AmberwoodCore.Services;
 using AmbRcnTradeServer.Models.PaymentModels;
 using AmbRcnTradeServer.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -40,7 +41,7 @@ namespace AmbRcnTradeServer.Controllers
         [HttpPost("[action]")]
         public async Task<ActionResult<ServerResponse<Payment>>> Save(Payment payment)
         {
-            await _auditingService.Log(Request);
+            await _auditingService.Log(Request, payment.Id);
             return await _service.Save(payment);
         }
 
@@ -62,7 +63,7 @@ namespace AmbRcnTradeServer.Controllers
         [HttpDelete("[action]")]
         public async Task<ActionResult<ServerResponse>> DeletePayment(string id)
         {
-            await _auditingService.Log(Request);
+            await _auditingService.Log(Request, id);
             return await _service.DeletePayment(id);
         }
     }

@@ -1,19 +1,19 @@
-import { Router } from "aurelia-router";
-import { DeleteDialog } from "./../../dialogs/delete-dialog";
 import { DialogService } from "aurelia-dialog";
-import { encodeParams } from "./../../core/helpers";
+import { autoinject, observable } from "aurelia-framework";
+import { Router } from "aurelia-router";
+import { connectTo } from "aurelia-store";
+import { IPayment } from "interfaces/payments/IPayment";
+import _ from "lodash";
+import numbro from "numbro";
 import { CURRENCIES_LIST, Currency } from "./../../constants/app-constants";
+import { encodeParams } from "./../../core/helpers";
+import { DeleteDialog } from "./../../dialogs/delete-dialog";
 import { ICustomerListItem } from "./../../interfaces/ICustomerListItem";
 import { IParamsId } from "./../../interfaces/IParamsId";
-import { PaymentService } from "./../../services/payment-service";
-import { CustomerService } from "./../../services/customer-service";
 import { IPaymentDto } from "./../../interfaces/payments/IPaymentDto";
+import { CustomerService } from "./../../services/customer-service";
+import { PaymentService } from "./../../services/payment-service";
 import { IState } from "./../../store/state";
-import { autoinject, observable } from "aurelia-framework";
-import { connectTo } from "aurelia-store";
-import _ from "lodash";
-import { IPayment } from "interfaces/payments/IPayment";
-import numbro from "numbro";
 
 @autoinject
 @connectTo()

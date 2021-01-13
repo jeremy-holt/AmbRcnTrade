@@ -2,7 +2,9 @@
 using System.Linq;
 using System.Threading.Tasks;
 using AmberwoodCore.Controllers;
+using AmberwoodCore.Extensions;
 using AmberwoodCore.Responses;
+using AmberwoodCore.Services;
 using AmbRcnTradeServer.Models.VesselModels;
 using AmbRcnTradeServer.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -15,8 +17,8 @@ namespace AmbRcnTradeServer.Controllers
 {
     public class VesselController : RavenController
     {
-        private readonly IVesselService _service;
         private readonly IAuditingService _auditingService;
+        private readonly IVesselService _service;
 
         public VesselController(IAsyncDocumentSession session, IVesselService service, IAuditingService auditingService) : base(session)
         {
@@ -28,7 +30,7 @@ namespace AmbRcnTradeServer.Controllers
         [HttpPost("[action]")]
         public async Task<ActionResult<ServerResponse<VesselDto>>> Save(VesselDto vessel)
         {
-            await _auditingService.Log(Request);
+            await _auditingService.Log(Request, vessel.Id);
             return await _service.Save(vessel);
         }
 
@@ -52,7 +54,7 @@ namespace AmbRcnTradeServer.Controllers
         [HttpPost("[action]")]
         public async Task<ActionResult<ServerResponse>> RemoveBillsLadingFromVessel(VesselContainersRequest request)
         {
-            await _auditingService.Log(Request);
+            await _auditingService.Log(Request, request.VesselId, request.BillLadingIds.ToAggregateString());
             return await _service.RemoveBillsLadingFromVessel(request.VesselId, request.BillLadingIds);
         }
 
