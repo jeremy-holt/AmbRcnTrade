@@ -95,4 +95,9 @@ export class ContainerEdit {
   protected get canShowDeleteContainer() {
     return this.model?.bags > 0;
   }
+
+  protected async addContainer(){
+    await this.containerService.createContainer();
+    this.selectedContainerStatus = this.containerStatusList.find(c => c.id === this.model.status);
+  }
 }

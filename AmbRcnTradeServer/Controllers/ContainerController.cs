@@ -52,7 +52,7 @@ namespace AmbRcnTradeServer.Controllers
         [HttpGet("[action]")]
         public async Task<ActionResult<Container>> Create(string companyId)
         {
-            return await Task.FromResult(new Container {CompanyId = companyId});
+            return await Task.FromResult(new Container {CompanyId = companyId, Status = ContainerStatus.Empty});
         }
 
         [Authorize]

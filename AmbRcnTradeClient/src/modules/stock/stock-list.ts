@@ -84,4 +84,8 @@ export class StockList {
   protected get canNavigateToContainer(){
     return isInRole(["admin","user","warehouseManager"],this.state);
   }
+
+  protected navigateToWarehouseList(){
+    this.router.navigateToRoute("stockBalanceList");
+  }
 }

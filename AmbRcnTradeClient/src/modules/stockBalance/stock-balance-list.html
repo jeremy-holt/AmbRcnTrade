@@ -1,13 +1,15 @@
 <template>
-  <toolbar type="menu" caption="Stock Balances" list-route="stockList"></toolbar>
+  <toolbar type="menu" caption="Stock Balances" list-route="stockList">
+    <toolbar-item icon="fas fa-container-storage" click.call="navigateToContainerList()"></toolbar-item>
+  </toolbar>
 
   <div class="card card-">
     <div class="card-header">
       <h4>Stock Balances</h4>
-      <div class="my-4">Select the <i class="fas fa-fw fa-container-storage text-blue"></i> container button to stuff a
+      <div class="my-4">Select the <i class="fas fa-fw fa-container-storage text-primary"></i> container button to stuff a
         container</div>
       <div>There are ${numberEmptyContainers} empty container(s) available. <a route-href="containerList"
-          class="with-decoration">Go to the containers list</a></div>          
+          class="with-decoration"><i class="fas fa-fw fa-container-storage mr-1"></i>Go to the containers list</a></div>          
     </div>
 
     <div class="card-body">

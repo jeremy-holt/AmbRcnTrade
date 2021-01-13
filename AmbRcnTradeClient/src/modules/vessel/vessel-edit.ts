@@ -50,19 +50,20 @@ export class VesselEdit {
     this.portsList.unshift({ id: null, name: "[Select]" } as IPort);
 
     this.model.billLadings.forEach(c => {
-      c.shipperName = this.customerList.find(x => x.id === c.shipperId)?.name;
-      c.consigneeName = this.customerList.find(x => x.id === c.consigneeId)?.name;
-      c.notifyParty1Name = this.customerList.find(x => x.id === c.notifyParty1Id)?.name;
+      c.shipperName = c.shipperId ? this.customerList.find(x => x.id === c.shipperId)?.name : "";
+      c.consigneeName = c.consigneeId ? this.customerList.find(x => x.id === c.consigneeId)?.name : "";
+      c.notifyParty1Name = c.notifyParty1Id ? this.customerList.find(x => x.id === c.notifyParty1Id)?.name : "";
     });
   }
 
   protected get canSave() {
-    return this.model.vesselName?.length > 3;
+    return this.model.vesselName?.length > 3 && this.model.voyageNumber?.length > 0 && this.model.bookingNumber?.length > 0 && this.model.shippingCompanyId !== null;
   }
 
   protected async save() {
     if (this.canSave) {
       await this.vesselService.save(this.model);
+      this.router.navigateToRoute("vesselEdit", { id: encodeParams(this.model.id) }, { trigger: false, replace: true });
     }
   }
 
@@ -75,8 +76,12 @@ export class VesselEdit {
     return encodeParams(value);
   }
 
-  protected get canAddBillLading(){
-    return isInRole(["admin","user"], this.state);
+  protected get canAddBillLading() {
+    return isInRole(["admin", "user"], this.state) && this.model.id?.length > 0;
+  }
+
+  protected get canEditBillLading() {
+    return isInRole(["admin", "user"], this.state);
   }
 
 }

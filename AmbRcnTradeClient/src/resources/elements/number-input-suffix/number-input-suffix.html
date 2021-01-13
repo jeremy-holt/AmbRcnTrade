@@ -1,7 +1,9 @@
 <template>
   
   <div>
-    <label if.bind="label" class="form-label">${label}</label>
+    <label if.bind="label" class="form-label">${label}
+      <show-required required="true" value.bind="value"></show-required>
+    </label>
     <div class="input-group">
       <div if.bind="prefix" class="input-group-append">
         <span class="input-group-text">${prefix}</span>

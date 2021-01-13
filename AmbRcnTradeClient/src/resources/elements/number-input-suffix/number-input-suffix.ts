@@ -13,6 +13,7 @@ export class NumberInputSuffix {
   @bindable public max: number = undefined!;
   @bindable public step: number = undefined!;
   @bindable public small=false;
+  @bindable public required="";
 
   constructor(private el:Element){}
 

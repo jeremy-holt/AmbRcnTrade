@@ -45,4 +45,12 @@ export class ContainerList {
   protected get canAddContainer() {
     return isInRole(["admin", "user", "warehouseManager"], this.state);
   }
+
+  protected navigateToStockBalanceList(){
+    this.router.navigateToRoute("stockBalanceList");
+  }
+
+  protected navigateToVesselList(){
+    this.router.navigateToRoute("vesselList");
+  }
 }

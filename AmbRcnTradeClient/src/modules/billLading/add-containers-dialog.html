@@ -19,7 +19,7 @@
         <li class="list-group-item ${item.selected ? 'list-group-item-highlight' : ''}" repeat.for="item of list">
           <a href="javascript:(0)" class="text-decoration-none"  click.delegate="selectRow($index)">
             <div class="row">
-              <div class="col">${item.status | containerStatusFormatter}</div>
+              <div class="col"><select-item></select-item>${item.status | containerStatusFormatter}</div>
               <div class="col">${item.containerNumber}</div>
               <div class="col">${item.bookingNumber}</div>
               <div class="col text-right">${item.bags} bags / ${item.stuffingWeightKg | numberFormat: "0,0"} kg</div>

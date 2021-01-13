@@ -1,6 +1,7 @@
 <template>
   <div>
-    <label if.bind="label" class="form-label">${label}</label>
+    <label if.bind="label" class="form-label">${label}</label>    
+    <show-required required.bind="required" value.bind="value"></show-required>
     <select disabled.bind="disabled" class.bind="selectClass" value.bind="value" matcher.bind="matcher">    
       <option if.bind="!useModelId" repeat.for="item of source" model.bind="item">
         ${item[property]}

@@ -13,6 +13,7 @@ export class SelectInput {
   @bindable public small = false;
   @bindable public matcher: unknown = undefined!;
   @bindable public warnNull = true;
+  @bindable public required = "";
 
   private hasBound = false;
 

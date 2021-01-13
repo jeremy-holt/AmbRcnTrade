@@ -115,4 +115,11 @@ export class PaymentEdit {
       }
     });
   }
+
+  protected async addPayment() {
+    await this.paymentService.createPayment();
+    this.selectedSupplier = this.customerList[0];
+    this.valueUsd = undefined!;
+
+  }
 }

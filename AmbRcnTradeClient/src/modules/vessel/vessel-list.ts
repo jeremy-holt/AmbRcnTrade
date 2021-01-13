@@ -36,4 +36,8 @@ export class VesselList {
   protected encode(value: string){
     return encodeParams(value);
   }
+
+  protected navigateToContainersList(){
+    this.router.navigateToRoute("containerList");
+  }
 }

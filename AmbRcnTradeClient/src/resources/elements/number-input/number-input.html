@@ -2,7 +2,7 @@
 
     <div>
       <label if.bind="label" class="form-label">${label}
-        <span if.bind="showRequired" class="text-danger"><i class="fas fa-fw fa-asterisk"></i></span>
+        <show-required required.bind="required" value.bind="value"></show-required>
       </label>
       <input type="number" class.bind="formControlClass" disabled.bind="disabled" value.bind="value | number"
              min.bind="min" max.bind="max" step.bind="step" placeholder.bind="label">

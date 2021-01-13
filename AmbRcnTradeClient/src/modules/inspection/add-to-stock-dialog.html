@@ -29,7 +29,9 @@
         <li repeat.for="item of stockList" class="list-group-item ${newStockItem ? 'bg-light' : ''} ${item.selected ? 'list-group-item-success' : ''}">
           <a href="#" class="text-decoration-none" click.trigger="selectStockRow(item)">
             <div class="row">
-              <div class="col">Lot no ${item.lotNo}</div>
+              <div class="col">
+                <select-item></select-item>
+                Lot no ${item.lotNo}</div>
               <div class="col">${item.locationName}</div>
               <div class="col">${item.bagsIn | numberFormat: "0,0"} / ${item.weightKgIn | numberFormat:"0,0"} kg</div>
               <div class="col">${item.analysisResult.kor | numberFormat: "0,0.00"}</div>

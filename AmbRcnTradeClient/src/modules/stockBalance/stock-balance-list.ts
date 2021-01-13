@@ -12,6 +12,7 @@ import { IAvailableContainer } from "./../../interfaces/stockManagement/IAvailab
 import { IStockBalance } from "./../../interfaces/stocks/IStockBalance";
 import { StockService } from "./../../services/stock-service";
 import { StuffContainerDialog } from "./stuff-container-dialog";
+import { Router } from "aurelia-router";
 
 @autoinject
 @connectTo()
@@ -24,7 +25,8 @@ export class StockBalanceList {
   constructor(
     private stockService: StockService,
     private dialogService: DialogService,
-    private stockManagementService: StockManagementService
+    private stockManagementService: StockManagementService,
+    private router: Router
   ) { }
 
   public async activate(prms: { lotNo: number, locationId: string }) {
@@ -82,5 +84,9 @@ export class StockBalanceList {
 
   protected canZeroStock() {
     return isInRole(["admin", "user", "warehouseManager"], this.state);
+  }
+
+  protected navigateToContainerList(){
+    this.router.navigateToRoute("containerList");
   }
 }

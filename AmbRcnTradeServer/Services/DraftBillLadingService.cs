@@ -216,7 +216,7 @@ namespace AmbRcnTradeServer.Services
                 currentRow.Cells[2].SetValue(container.SealNumber);
                 currentRow.Cells[5].SetValue($"{container.Bags} PACKAGES");
                 currentRow.Cells[8].SetValue($"{container.WeighbridgeWeightKg:N0} KGS");
-                currentRow.Cells[9].SetValue($"{container.WeighbridgeWeightKg:N0} KGS");
+                currentRow.Cells[9].SetValue($"{container.NettWeightKg:N0} KGS");
                 currentRow.Cells[10].SetValue(teuText);
             }
         }

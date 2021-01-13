@@ -76,7 +76,7 @@ export class BillLadingEdit {
   }
 
   protected get canSave() {
-    return this.canEditBillLading;
+    return this.canEditBillLading && this.model?.teu && this.model?.portOfLoadingId !== null && this.model?.portOfDestinationId !==null;
   }
 
   protected async save() {
@@ -106,11 +106,7 @@ export class BillLadingEdit {
     }).whenClosed(async result => {
       if (!result.wasCancelled) {
         const containerToRemove = this.model.containerIds[index];
-        console.log(billLadingId);
         await this.billLadingService.removeContainersFromBillLading(billLadingId, [containerToRemove]);
-        // this.model.containerIds.splice(index, 1);
-        // this.model.containers.splice(index, 1);
-        // await this.save();
         await this.billLadingService.load(billLadingId);
       }
     });
@@ -161,6 +157,10 @@ export class BillLadingEdit {
 
   protected get canEditBillLading() {
     return isInRole(["admin", "user"], this.state);
+  }
+
+  protected get canPrintBillLading(){
+    return this.model?.id?.length>0 && this.model?.shipperId?.length>0 && this.model?.consigneeId?.length>0 && this.model?.portOfLoadingId?.length>0 && this.model?.portOfDestinationId?.length>0 && ((this.model.teu as unknown) as number)!==0;
   }
 
   protected navigateToVessel() {

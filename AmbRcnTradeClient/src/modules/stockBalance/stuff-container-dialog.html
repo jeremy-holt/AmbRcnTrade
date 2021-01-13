@@ -1,7 +1,7 @@
 <template>
   <require from="../container/container-status-formatter-valueconverter"></require>
 
-  <ux-dialog style="min-width:800px;">
+  <ux-dialog style="min-width:850px;">
     <ux-dialog-header>
       <h4>Stuff container from Lot ${model.lotNo}</h4>
     </ux-dialog-header>
@@ -45,7 +45,7 @@
           <li class="list-group-item font-weight-bold">
             <div class="row">
               <div class="col-2">Status</div>
-              <div class="col">Container number</div>
+              <div class="col-3">Container number</div>
               <div class="col-2">Booking number</div>
               <div class="col-2">Bags already in container</div>
               <div class="col-2">Stuffed weight kg</div>
@@ -54,8 +54,12 @@
           <li class="list-group-item ${item.selected ? 'list-group-item-highlight' : ''}" repeat.for="item of list">
             <a href="#" click.delegate="selectRow($index)" class="text-decoration-none">
               <div class="row">
-                <div class="col-2">${item.status | containerStatusFormatter}</div>
-                <div class="col">
+                <div class="col-3">
+                  <div class="text-nowrap">
+                    <select-item></select-item>${item.status | containerStatusFormatter}
+                  </div>
+                </div>
+                <div class="col-3">
                   <a href="javascript:(0)" class="with-decoration"
                     click.delegate="navigateToContainer(item.id) & debounce:200">${item.containerNumber}</a>
                 </div>

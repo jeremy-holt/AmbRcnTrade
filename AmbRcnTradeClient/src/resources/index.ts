@@ -25,6 +25,8 @@ export function configure(config: FrameworkConfiguration) {
     "./elements/help-toolbar-link/help-toolbaritem-link",
     "./elements/file-uploader/file-uploader",
     "./elements/labelled-text/labelled-text",
+    "./elements/select-item/select-item",
+    "./elements/show-required/show-required",
     "./value-converters/date-format",
     "./value-converters/number-format",
     "./value-converters/pos-neg-color",

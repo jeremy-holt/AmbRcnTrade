@@ -15,19 +15,19 @@
 
     <div class="card-body">
 
-      <div class="row mb-2">
+      <div if.bind="model.id" class="row mb-2">
         <div class="col-3">
           <a class="btn btn-primary" disabled.bind="!canPrintPackingList"
-            route-href="packingList; params.bind:{vesselId: encode(vessel.id), billLadingId: encode(model.id)}"
-            target="_blank">
+            route-href="packingList; params.bind:{vesselId: encode(vessel.id), billLadingId: encode(model.id)}">
             <i class="fas fa-fw fa-print"></i>
             Print packing list</a>
         </div>
         <div class="col-3">
-          <button type="button" class="btn btn-primary" click.delegate="printBillLading()">
+          <button type="button" class="btn btn-primary" disabled.bind="!canPrintBillLading"
+            click.delegate="printBillLading()">
             <i class="fas fa-fw fa-print"></i>Print Bill of Lading
           </button>
-  
+
         </div>
         <div class="col-4">
           <button type="button" class="btn btn-primary" click.delegate="moveBillLadingToVessel()">Move this B/L to
@@ -44,7 +44,7 @@
       <div class="row mb-2">
         <div class="col">
           <select-input source.bind="customersList | customerFilter: 'billLading'" value.bind="model.shipperId"
-            disabled.bind="!canEditBillLading" label="Shipper" use-model-id="true"></select-input>
+            required="true" disabled.bind="!canEditBillLading" label="Shipper" use-model-id="true"></select-input>
         </div>
         <div class="col">
           <text-input value.bind="model.ownReferences" disabled.bind="!canEditBillLading" label="Own references">
@@ -61,7 +61,8 @@
       <div class="row mb-2">
         <div class="col">
           <select-input source.bind="customersList | customerFilter: 'billLading'" value.bind="model.consigneeId"
-            disabled.bind="!canEditBillLading" label="Consignee" use-model-id="true"></select-input>
+            required="true" disabled.bind="!canEditBillLading" label="Consignee" use-model-id="true">
+          </select-input>
         </div>
 
         <div class="col">
@@ -69,10 +70,11 @@
         </div>
       </div>
 
-      <div class="row mb-2">
+      <div class="row">
         <div class="col">
           <select-input source.bind="customersList | customerFilter: 'billLading'" value.bind="model.notifyParty1Id"
-            disabled.bind="!canEditBillLading" label="Notify party 1" use-model-id="true"></select-input>
+            warn-null="false" disabled.bind="!canEditBillLading" label="Notify party 1" use-model-id="true">
+          </select-input>
         </div>
         <div class="col">
           <select-input source.bind="customersList | customerFilter: 'billLading'" value.bind="model.notifyParty2Id"
@@ -81,15 +83,18 @@
         </div>
         <div class="col">
           <select-input source.bind="customersList | customerFilter: 'billLading'" value.bind="model.destinationAgentId"
-          disabled.bind="!canEditBillLading" warn-null="false" label="Destination agent" use-model-id="true"></select-input>
+            disabled.bind="!canEditBillLading" warn-null="false" label="Destination agent" use-model-id="true">
+          </select-input>
         </div>
       </div>
 
-      <div class="row mb-2">
+      <div class="row my-2">
         <div class="col-4">
           <date-input value.bind="model.blDate" label="B/L date" disabled.bind="!canEditBillLading"></date-input>
 
-          <text-input value.bind="model.blNumber" label="B/L number" disabled.bind="!canEditBillLading"></text-input>
+          <div class="my-1">
+            <text-input value.bind="model.blNumber" label="B/L number" disabled.bind="!canEditBillLading"></text-input>
+          </div>
 
           <div class="d-flex justify-content-between mt-4">
             <div class="custom-control custom-checkbox">
@@ -104,14 +109,21 @@
           <div class="row">
             <div class="col">
               <text-input value.bind="model.oceanFreight" label="Ocean freight"></text-input>
-              <text-input value.bind="model.freightOriginCharges" label="Origin charges"></text-input>
-              <text-input value.bind="model.freightDestinationCharge" label="Destination charges"></text-input>
+              <div class="mt-1">
+                <text-input value.bind="model.freightOriginCharges" label="Origin charges"></text-input>
+              </div>
+              <div class="mt-1">
+                <text-input value.bind="model.freightDestinationCharge" label="Destination charges"></text-input>
+              </div>
             </div>
 
             <div class="col">
               <text-input value.bind="model.oceanFreightPaidBy" label="Ocean freight paid by"></text-input>
-              <text-input value.bind="model.freightOriginChargesPaidBy" label="Origin charges paid by"></text-input>
-              <text-input value.bind="model.freightDestinationChargePaidBy" label="Destination charges paid by"></text-input>
+              <div class="my-1">
+                <text-input value.bind="model.freightOriginChargesPaidBy" label="Origin charges paid by"></text-input>
+              </div>
+              <text-input value.bind="model.freightDestinationChargePaidBy" label="Destination charges paid by">
+              </text-input>
             </div>
           </div>
         </div>
@@ -119,15 +131,16 @@
 
       <div class="row mb-2">
         <div class="col">
-          <select-input source.bind="portsList" value.bind="model.portOfLoadingId" use-model-id="true"
+          <select-input source.bind="portsList" value.bind="model.portOfLoadingId" use-model-id="true" required="true"
             disabled.bind="!canEditBillLading" label="Port of loading"></select-input>
         </div>
         <div class="col">
           <select-input source.bind="portsList" value.bind="model.portOfDestinationId" use-model-id="true"
-            disabled.bind="!canEditBillLading" label="Port of destination"></select-input>
+            required="true" disabled.bind="!canEditBillLading" label="Port of destination"></select-input>
         </div>
         <div class="col">
-          <select-input source.bind="teuList" value.bind="model.teu" use-model-id="true" label="TEU"></select-input>
+          <select-input source.bind="teuList" value.bind="model.teu" use-model-id="true" label="TEU" required="true">
+          </select-input>
         </div>
       </div>
 
@@ -136,11 +149,13 @@
           <text-input value.bind="model.productDescription" label="Product description"></text-input>
         </div>
       </div>
-      
+
       <div class="row mt-2">
         <div class="col">
-          <text-area-input value.bind="model.preCargoDescription.header" label="Cargo description header"></text-area-input>
-          <text-area-input value.bind="model.preCargoDescription.footer" label="Cargo description footer"></text-area-input>
+          <text-area-input value.bind="model.preCargoDescription.header" label="Cargo description header">
+          </text-area-input>
+          <text-area-input value.bind="model.preCargoDescription.footer" label="Cargo description footer">
+          </text-area-input>
         </div>
 
         <div class="col">
@@ -150,15 +165,17 @@
       </div>
 
       <div class="mt-2">
-        <text-area-input value.bind="model.shippingMarks" rows="2" disabled.bind="!canEditBillLading" label="Shipping marks">
+        <text-area-input value.bind="model.shippingMarks" rows="2" disabled.bind="!canEditBillLading"
+          label="Shipping marks">
         </text-area-input>
       </div>
 
       <div class="row my-3">
-        <div class="col">
+        <div if.bind="model.id" class="col">
           <button type="button" class="btn btn-primary" disabled.bind="!canAddContainer"
             click.delegate="addContainersDialog()">Add containers</button>
         </div>
+        <div else class="col"></div>
         <div class="col">
           <labelled-text value.bind="model.numberPackagesText" label="Number packages"></labelled-text>
         </div>
@@ -170,7 +187,7 @@
         </div>
       </div>
 
-      <div class="row">
+      <div if.bind="model.containers.length > 0" class="row">
         <div class="col">
           <ul class="list-group small">
             <li class="list-group-item font-weight-bold">
@@ -190,7 +207,7 @@
               <div class="row">
                 <div class="col-2 text-nowrap">
                   <a href="#" click.delegate="removeContainer($index)" if.bind="canEditBillLading">
-                    <i class="fas fa-trash text-danger"></i>
+                    <i class="fas fa-minus-circle text-danger"></i>
                   </a>
                   ${item.status | containerStatusFormatter}
                 </div>
@@ -200,7 +217,8 @@
                 </div>
                 <div class="col">${item.sealNumber} </div>
                 <div class="col-1">${item.incomingStocks[0].kor | numberFormat: "0,0.00"}</div>
-                <div class="col">${item.bags | numberFormat: "0,0"} bags /<br>${item.stuffingWeightKg/1000 | numberFormat: "0,0.00"} mt</div>
+                <div class="col">${item.bags | numberFormat: "0,0"} bags /<br>${item.stuffingWeightKg/1000 |
+                  numberFormat: "0,0.00"} mt</div>
                 <div class="col">${item.weighbridgeWeightKg | numberFormat: "0,0"} </div>
                 <div class="col">${item.nettWeightKg | numberFormat: "0,0"} </div>
                 <div class="col">${item.bookingNumber} </div>
@@ -209,6 +227,9 @@
             </li>
           </ul>
         </div>
+      </div>
+      <div else class="alert alert-info my-2">
+        No containers have been added to this Bill of Lading yet
       </div>
     </div>
   </div>

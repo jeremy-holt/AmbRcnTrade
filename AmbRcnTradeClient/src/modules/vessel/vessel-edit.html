@@ -13,23 +13,23 @@
     <div class="card-body">
       <div class="row">
         <div class="col-4">
-          <text-input disabled.bind="!canAddBillLading" value.bind="model.vesselName" label="Vessel name"></text-input>
+          <text-input disabled.bind="!canEditBillLading" value.bind="model.vesselName" label="Vessel name"></text-input>
         </div>
         <div class="col-4">
-          <text-input disabled.bind="!canAddBillLading" value.bind="model.voyageNumber" label="Voyage no"></text-input>
+          <text-input disabled.bind="!canEditBillLading" value.bind="model.voyageNumber" label="Voyage no"></text-input>
         </div>
         <div class="col-4">
-          <date-input disabled.bind="!canAddBillLading" value.bind="model.eta" label="ETA"></date-input>
+          <date-input disabled.bind="!canEditBillLading" value.bind="model.eta" label="ETA"></date-input>
         </div>
       </div>
 
       <div class="row">
         <div class="col-4">
-          <select-input source.bind="customerList| customerFilter:'logisticsCompany'" disabled.bind="!canAddBillLading"
+          <select-input source.bind="customerList| customerFilter:'logisticsCompany'" disabled.bind="!canEditBillLading"
             value.bind="model.shippingCompanyId" use-model-id="true" label="Shipping company"></select-input>
         </div>
         <div class="col-4">
-          <select-input source.bind="customerList| customerFilter:'logisticsCompany'" disabled.bind="!canAddBillLading"
+          <select-input source.bind="customerList| customerFilter:'logisticsCompany'" disabled.bind="!canEditBillLading"
             value.bind="model.forwardingAgentId" use-model-id="true" label="Forwarding agent"></select-input>
         </div>
 
@@ -40,7 +40,7 @@
           <text-input value.bind="model.bookingNumber" label="Booking number"></text-input>
         </div>
         <div class="col-4">
-          <text-input value.bind="model.serviceContract" disabled.bind="!canAddBillLading" label="Service contract">
+          <text-input value.bind="model.serviceContract" disabled.bind="!canEditBillLading" label="Service contract">
           </text-input>
         </div>
       </div>
@@ -50,6 +50,9 @@
         <div class="col">
           <button type="button" disabled.bind="!canAddBillLading" class="btn btn-primary"
             click.delegate="addBillLading()">Add B/L to vessel</button>
+            <div if.bind="canEditBillLading && !canAddBillLading" class="small font-italic mt-1">
+              Please save this vessel before adding any Bills of Lading
+            </div>
         </div>
       </div>
 
@@ -82,10 +85,18 @@
                 </td>
                 <td>${item.blNumber}</td>
                 <td>${item.blDate | dateFormat: "DD/MM/YYYY"}</td>
-                <td>${item.portOfDestinationName}</td>
-                <td>${item.shipperName}</td>
-                <td>${item.consigneeName}</td>
-                <td>${item.notifyParty1Name}</td>
+                <td>${item.portOfDestinationName}
+                  <i class="fas fa-exclamation-triangle text-danger" if.bind="item.portOfDestinationId == null" title="No destination!"></i>
+                </td>
+                <td>${item.shipperName}
+                  <i class="fas fa-exclamation-triangle text-danger" if.bind="item.shipperId == null" title="No shipper!"></i>
+                </td>
+                <td>${item.consigneeName}
+                  <i class="fas fa-exclamation-triangle text-danger" if.bind="item.consigneeId == null" title="No consignee!"></i>
+                </td>
+                <td>${item.notifyParty1Name}
+                  <i class="fas fa-exclamation-triangle text-danger" if.bind="item.notifyParty1Id == null" title="No notify party!"></i>
+                </td>
               </tr>
             </tbody>
           </table>

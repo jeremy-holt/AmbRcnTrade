@@ -35,8 +35,4 @@ export class NumberInput {
       detail: value
     }));
   }
-
-  protected get showRequired() {
-    return this.required?.length > 0 && !this.value;
-  }
 }

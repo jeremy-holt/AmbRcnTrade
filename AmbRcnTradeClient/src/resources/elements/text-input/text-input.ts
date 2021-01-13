@@ -42,8 +42,4 @@ export class TextInput {
   protected get showMaxLength() {
     return this.maxlength !== 1000 && this.numChars > 0;
   }
-
-  protected get showRequired() {
-    return this.required?.length > 0 && !this.value;
-  }
 }

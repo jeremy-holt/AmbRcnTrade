@@ -1,5 +1,6 @@
 <template>
   <toolbar type="menu" caption="Payment" save.call="save()" disabled-save.bind="!canSave" list-route="paymentList">
+    <toolbar-item icon="fas fa-plus" click.call="addPayment()"></toolbar-item>
     <toolbar-item icon="fa fa-trash" click.call="deletePayment()"></toolbar-item>
   </toolbar>
 
