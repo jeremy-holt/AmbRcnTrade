@@ -17,8 +17,8 @@ namespace AmbRcnTradeServer.Controllers
 {
     public class InspectionController : RavenController
     {
-        private readonly IInspectionService _service;
         private readonly IAuditingService _auditingService;
+        private readonly IInspectionService _service;
 
         public InspectionController(IAsyncDocumentSession session, IInspectionService service, IAuditingService auditingService) : base(session)
         {
@@ -60,7 +60,8 @@ namespace AmbRcnTradeServer.Controllers
                 AnalysisResult = new AnalysisResult
                 {
                     Approved = Approval.Rejected
-                }
+                },
+                Analyses = new List<Analysis> {new()}
             });
         }
 

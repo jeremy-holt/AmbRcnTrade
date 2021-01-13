@@ -1,3 +1,4 @@
+import { IInspection } from "interfaces/inspections/IInspection";
 import { ValidationRules } from "aurelia-validation";
 import moment from "moment";
 import "moment/locale/fr";
@@ -36,6 +37,12 @@ import { ICompany } from "./../interfaces/ICompany";
 //   .ensure((c: IPurchase) => c.kor).satisfies(val => val > 0).withMessage("* KOR must be greater than 0")
 //   .ensure((c: IPurchase) => c.quantityKg).satisfies(val => val > 0).withMessage("* Quantity must be greater than 0")
 //   .ensure((c: IPurchase) => c.price).satisfies(val => val > 0).withMessage("* Price must be greater than 0");
+export const inspection = ValidationRules
+  .ensure((c: IInspection) => c.inspector).required()
+  .ensure((c: IInspection) => c.inspectionDate).required()
+  .ensure((c: IInspection) => c.bags).satisfies(x => x > 10).withMessage("Must be greater than 10")
+  .ensure((c: IInspection) => c.weightKg).satisfies(x => x > 0)
+  .ensure((c:IInspection)=>c.supplierId).required();
 
 export const company = ValidationRules
   .ensure((c: ICompany) => c.name).required().withMessage("* Please provide the company name");

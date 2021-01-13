@@ -11,6 +11,7 @@ export class NumberInput {
   @bindable public max: number = undefined!;
   @bindable public step: number = undefined!;
   @bindable public small = false;
+  @bindable public required="";
 
   constructor(
     private el: Element
@@ -33,5 +34,9 @@ export class NumberInput {
       bubbles: true,
       detail: value
     }));
+  }
+
+  protected get showRequired() {
+    return this.required?.length > 0 && !this.value;
   }
 }

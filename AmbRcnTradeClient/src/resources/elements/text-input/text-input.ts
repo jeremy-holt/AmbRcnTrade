@@ -9,6 +9,7 @@ export class TextInput {
   @bindable public small = false;
   @bindable public placeholder: string = undefined!;
   @bindable public maxlength = 1000;
+  @bindable public required = "";
 
   protected numChars = 0;
 
@@ -40,5 +41,9 @@ export class TextInput {
 
   protected get showMaxLength() {
     return this.maxlength !== 1000 && this.numChars > 0;
+  }
+
+  protected get showRequired() {
+    return this.required?.length > 0 && !this.value;
   }
 }

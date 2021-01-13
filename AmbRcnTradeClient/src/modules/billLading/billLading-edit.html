@@ -89,6 +89,8 @@
         <div class="col-4">
           <date-input value.bind="model.blDate" label="B/L date" disabled.bind="!canEditBillLading"></date-input>
 
+          <text-input value.bind="model.blNumber" label="B/L number" disabled.bind="!canEditBillLading"></text-input>
+
           <div class="d-flex justify-content-between mt-4">
             <div class="custom-control custom-checkbox">
               <input type="checkbox" class="custom-control-input" id="chk1" checked.bind="model.freightPrepaid"

@@ -7,7 +7,7 @@ import _ from "lodash";
 import { QueryId } from "models/QueryId";
 import { IState } from "store/state";
 import { Approval } from "./../constants/app-constants";
-import { encodeParams, fixAspNetCoreDate } from "./../core/helpers";
+import { fixAspNetCoreDate } from "./../core/helpers";
 import { IAnalysis, IAnalysisResult } from "./../interfaces/inspections/IAnalysis";
 import { IInspection } from "./../interfaces/inspections/IInspection";
 import { IInspectionListItem } from "./../interfaces/inspections/IInspectionListItem";
@@ -45,16 +45,18 @@ export class InspectionService extends FetchService {
     return super.getMany<IInspectionListItem[]>([super.currentCompanyIdQuery(), new QueryId("approval", approval)], "loadList", inspectionListAction);
   }
 
-  public async deleteInspection(id: string){
-    return super.delete(id,"deleteInspection",noOpAction);
+  public async deleteInspection(id: string) {
+    return super.delete(id, "deleteInspection", noOpAction);
   }
 
   public canAddInspectionToStock(inspection: IInspection): boolean {
     const bagsAlreadyAllocated = this.bagsAlreadyAllocated(inspection);
-    if (!bagsAlreadyAllocated) {
-      return true;
-    }
-    return bagsAlreadyAllocated < inspection.bags;
+
+    // if (!bagsAlreadyAllocated) {
+    //   return true;
+    // }
+
+    return (bagsAlreadyAllocated < inspection.bags) && inspection.inspector?.length > 0 && inspection.supplierId?.length > 0;
   }
 
   public bagsAlreadyAllocated(inspection: IInspection): number {

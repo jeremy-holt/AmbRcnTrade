@@ -36,6 +36,10 @@ export class AnalysisResultCustomElement {
     }
   }
 
+  protected get isInValidAnalysis(){
+    return !this.model.count || !this.model.kor || !this.model.moisture || !this.model.rejectsPct || !this.model.soundPct || !this.model.spottedPct;
+  }
+
   protected selectedApprovalChanged() {
     if (this.model) {
       this.model.approved = this.selectedApproval.id;

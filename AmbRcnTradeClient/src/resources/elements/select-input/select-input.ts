@@ -33,6 +33,6 @@ export class SelectInput {
       return `${this.class} ${this.small ? "custom-select custom-select-sm" : "custom-select "}`;
     }
     const val = typeof this.value === "string" ? this.value : this.value?.id;
-    return `${this.class} ${this.small ? "custom-select custom-select-sm" : "custom-select "} ${!val && this.warnNull ? "bg-danger text-white" : ""}`;
+    return `${this.class} ${this.small ? "custom-select custom-select-sm" : "custom-select "} ${!val && this.warnNull ? "bg-mid-danger" : ""}`;
   }
 }

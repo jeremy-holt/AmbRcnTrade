@@ -128,7 +128,7 @@ export class FetchService {
     }
   }
 
-  protected async post<T>(model: any, action: string, reducer?: Reducer<IState, unknown[]>) {
+  protected async post<T>(model: unknown, action: string, reducer?: Reducer<IState, unknown[]>) {
     const url = this.getUrlService.getPostUrl(action);
 
     model["companyId"] = this.currentCompanyId();
@@ -180,7 +180,7 @@ export class FetchService {
     log.error(`Status: ${response?.status}, StatusText: ${response?.statusText}`, response);
   }
 
-  private async handleResponse<T>(response: Response, reducer?: Reducer<IState, any[]>): Promise<void | T> {
+  private async handleResponse<T>(response: Response, reducer?: Reducer<IState, T[]>): Promise<void | T> {
     this.serverMessageService.clearMessages();
 
     if (!response.ok) {

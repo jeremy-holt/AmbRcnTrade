@@ -42,7 +42,7 @@
         <tfoot>
           <tr>
             <th colspan="2">
-              <switch class="${approvalCss}" checked.bind="approvalChecked" disabled.bind="disabled" label.bind="approvalLabel"></switch>
+              <switch class="${approvalCss}" checked.bind="approvalChecked" disabled.bind="disabled || isInValidAnalysis" label.bind="approvalLabel"></switch>
             </th>
           </tr>
         </tfoot>

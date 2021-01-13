@@ -250,6 +250,8 @@ footer .language a.btn {
   color: $dark;
 }
 
+
+
 .list-group-item-success {
   .small-label {
     color: $primary;
@@ -313,6 +315,11 @@ currencies-list select.custom-select {
 
 .bg-highlight, .list-group-item-highlight {
   background-color: lighten($highlight,15%);
+}
+
+.bg-mid-danger {
+  background-color: pink !important;
+  color: $secondary;
 }
 
 .text-blue {
@@ -420,6 +427,10 @@ currencies-list select.custom-select {
     min-width: 300px;
     margin-bottom: 1rem;
   }
+}
+
+.text-pre-line{
+  white-space: pre-line;
 }
 
 .card-footer.card-footer-info {

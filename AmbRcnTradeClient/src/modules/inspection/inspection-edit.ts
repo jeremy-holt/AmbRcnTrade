@@ -1,4 +1,5 @@
 import { DialogService } from "aurelia-dialog";
+import { Subscription } from "aurelia-event-aggregator";
 import { autoinject, observable } from "aurelia-framework";
 import { Router } from "aurelia-router";
 import { connectTo } from "aurelia-store";
@@ -29,13 +30,16 @@ export class InspectionEdit {
   protected suppliers: IListItem[] = [];
   private isDeleting = false;
 
+  private subscriptions: Subscription[] = [];
+
   constructor(
     private inspectionService: InspectionService,
     private customerService: CustomerService,
     private stockManagementService: StockManagementService,
     private router: Router,
     private dialogService: DialogService
-  ) { }
+  ) {
+  }
 
   protected stateChanged(state: IState) {
     this.model = _.cloneDeep(state.inspection.current);
@@ -129,7 +133,8 @@ export class InspectionEdit {
   }
 
   protected get canDeleteInspection() {
-    return isInRole(["admin", "user", "warehouseManager"], this.state) && this.model?.stockReferences?.length === 0;
+    return isInRole(["admin", "user", "warehouseManager"], this.state) && this.model.id?.length > 0
+      && this.model?.stockReferences?.length === 0;
   }
 
   protected async openAddToStockDialog() {
@@ -173,5 +178,9 @@ export class InspectionEdit {
 
   protected navigateToStockList() {
     this.router.navigateToRoute("stockList");
+  }
+
+  protected detached(){
+    this.subscriptions.forEach(c=>c.dispose());
   }
 }
