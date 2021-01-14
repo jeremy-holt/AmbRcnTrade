@@ -26,15 +26,15 @@ export class PurchaseService extends FetchService {
   }
 
   public async load(id: string) {
-    return super.get<IPurchase>(id, "load", purchaseEditAction);
+    return await super.get<IPurchase>(id, "load", purchaseEditAction);
   }
 
   public async save(purchase: IPurchase) {
-    return super.post<IPurchase>(purchase, "save", purchaseEditAction);
+    return await super.post<IPurchase>(purchase, "save", purchaseEditAction);
   }
 
   public async loadList(supplierId: string) {
-    return super.getMany<IPurchaseListItem[]>(
+    return await super.getMany<IPurchaseListItem[]>(
       [
         this.currentCompanyIdQuery(),
         new QueryId("supplierId", supplierId)
@@ -42,7 +42,7 @@ export class PurchaseService extends FetchService {
   }
 
   public async createPurchase() {
-    return super.get([super.currentCompanyIdQuery()], "create", purchaseEditAction);
+    return await super.get([super.currentCompanyIdQuery()], "create", purchaseEditAction);
   }
 
   public getStockAverages(stocks: IStockListItem[]) {

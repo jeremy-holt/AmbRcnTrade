@@ -23,23 +23,23 @@ export class CustomerService extends FetchService {
   }
 
   public async loadCustomer(id: string) {
-    return super.get(id, "load", customerEditAction);
+    return await super.get(id, "load", customerEditAction);
   }
 
   public async saveCustomer(model: ICustomer) {
-    return super.post(model, "save", customerEditAction);
+    return await super.post(model, "save", customerEditAction);
   }
 
   public async loadAllCustomers() {
-    return super.getMany<ICustomer>([super.currentCompanyIdQuery()], "loadAllCustomers", customerListAction);
+    return await super.getMany<ICustomer>([super.currentCompanyIdQuery()], "loadAllCustomers", customerListAction);
   }
 
   public async createCustomer() {
-    return super.get([], "create", customerEditAction);
+    return await super.get([], "create", customerEditAction);
   }
 
   public async loadCustomersForAppUserList() {
-    return super.getMany<ICustomerListItem>([
+    return await super.getMany<ICustomerListItem>([
       super.currentCompanyIdQuery()
     ], "loadCustomerListForAppUser", customerAppUserListAction);
   }

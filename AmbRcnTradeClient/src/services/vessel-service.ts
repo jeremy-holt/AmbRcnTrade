@@ -25,27 +25,27 @@ export class VesselService extends FetchService {
   }
 
   public async save(vessel: IVessel) {
-    return super.post<IVessel>(vessel, "save", vesselEditFunction);
+    return await super.post<IVessel>(vessel, "save", vesselEditFunction);
   }
 
   public async load(id: string) {
-    return super.get<IVessel>(id, "load", vesselEditFunction);
+    return await super.get<IVessel>(id, "load", vesselEditFunction);
   }
 
   public async loadList() {
-    return super.getMany<IVesselListItem[]>([this.currentCompanyIdQuery()], "loadList", vesselListAction);
+    return await super.getMany<IVesselListItem[]>([this.currentCompanyIdQuery()], "loadList", vesselListAction);
   }
 
   public async addBillLadingToVessel(request: IVesselContainersRequest) {
-    return super.post(request, "addBillLadingToVessel", noOpAction);
+    return await super.post(request, "addBillLadingToVessel", noOpAction);
   }
 
   public async createVessel() {
-    return super.get<IVessel>([this.currentCompanyIdQuery()], "create", vesselEditFunction);
+    return await super.get<IVessel>([this.currentCompanyIdQuery()], "create", vesselEditFunction);
   }
 
   public async deleteVessel(id: string) {
-    return super.delete(id, "deleteVessel", noOpAction);
+    return await super.delete(id, "deleteVessel", noOpAction);
   }
 
 }

@@ -31,15 +31,15 @@ export class AppUserService extends FetchService {
   }
 
   public async listCustomersAndUsers() {
-    return super.get([super.currentCompanyIdQuery()], "listCustomersAndUsers", customerAndUsersListAction);
+    return await super.get([super.currentCompanyIdQuery()], "listCustomersAndUsers", customerAndUsersListAction);
   }
 
   public async saveAppUsersPasswords(model: IAppUserPassword[]) {
-    return super.post(model, "saveAppUsersPasswords", noOpAction);
+    return await super.post(model, "saveAppUsersPasswords", noOpAction);
   }
 
   public async loadAppUsersPasswords() {
-    return super.getData<IAppUserPassword[]>([], "loadAppUsersPasswords");
+    return await super.getData<IAppUserPassword[]>([], "loadAppUsersPasswords");
   }
 }
 

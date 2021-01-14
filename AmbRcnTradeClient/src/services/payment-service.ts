@@ -31,16 +31,16 @@ export class PaymentService extends FetchService {
   }
 
   public async load(id: string) {
-    return super.get<IPayment>(id, "load", paymentEditAction);
+    return await super.get<IPayment>(id, "load", paymentEditAction);
   }
 
   public async save(payment: IPayment) {
-    return super.post<IPayment>(payment, "save", paymentEditAction);
+    return await super.post<IPayment>(payment, "save", paymentEditAction);
   }
 
   public async loadList(supplierId: string) {
 
-    return super.getMany<IPaymentListItem[]>(
+    return await super.getMany<IPaymentListItem[]>(
       [
         this.currentCompanyIdQuery(),
         new QueryId("supplierId", supplierId)
@@ -48,11 +48,11 @@ export class PaymentService extends FetchService {
   }
 
   public async loadPaymentsPurchasesList(supplierId: string) {
-    return super.get<IPaymentDto>([this.currentCompanyIdQuery(), new QueryId("supplierId", supplierId)], "loadPaymentsPurchasesList", loadPaymentsPurchasesListAction);
+    return await super.get<IPaymentDto>([this.currentCompanyIdQuery(), new QueryId("supplierId", supplierId)], "loadPaymentsPurchasesList", loadPaymentsPurchasesListAction);
   }
 
   public async deletePayment(id: string) {
-    return super.delete(id, "deletePayment", noOpAction);
+    return await super.delete(id, "deletePayment", noOpAction);
   }
 }
 

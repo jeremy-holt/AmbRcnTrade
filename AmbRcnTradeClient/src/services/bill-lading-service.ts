@@ -33,42 +33,42 @@ export class BillLadingService extends FetchService {
   }
 
   public async save(billLading: IBillLading) {
-    return super.post<IBillLading>(billLading, "save", billLadingEditAction);
+    return await super.post<IBillLading>(billLading, "save", billLadingEditAction);
   }
 
   public async load(id: string) {
-    return super.get<IBillLading>(id, "load", billLadingEditAction);
+    return await super.get<IBillLading>(id, "load", billLadingEditAction);
   }
 
   public async loadList() {
-    return super.getMany<IBillLadingListItem[]>([super.currentCompanyIdQuery()], "loadList", billLadingListAction);
+    return await super.getMany<IBillLadingListItem[]>([super.currentCompanyIdQuery()], "loadList", billLadingListAction);
   }
 
   public async removeContainersFromBillLading(billLadingId: string, containerIds: string[]) {
     const request: IBillLadingContainersRequest = { billLadingId, containerIds };
-    return super.post(request, "removeContainersFromBillLading", noOpAction);
+    return await super.post(request, "removeContainersFromBillLading", noOpAction);
   }
 
   public async getNotLoadedContainers() {
-    return super.getMany<IContainer[]>([super.currentCompanyIdQuery()], "getNotLoadedContainers", billLadingNotLoadedContainersAction);
+    return await super.getMany<IContainer[]>([super.currentCompanyIdQuery()], "getNotLoadedContainers", billLadingNotLoadedContainersAction);
   }
 
   public async createBillLading(vesselId: string) {
-    return super.get<IBillLading>([this.currentCompanyIdQuery(), new QueryId("vesselId", vesselId)], "create", billLadingEditAction);
+    return await super.get<IBillLading>([this.currentCompanyIdQuery(), new QueryId("vesselId", vesselId)], "create", billLadingEditAction);
   }
 
   public async moveBillLadingToVessel(billLadingId: string, fromVesselId: string, toVesselId: string) {
     const request: IMoveBillLadingRequest = { billLadingId, fromVesselId, toVesselId };
-    return super.post<IMoveBillLadingRequest>(request, "moveBillLadingToVessel", noOpAction);
+    return await super.post<IMoveBillLadingRequest>(request, "moveBillLadingToVessel", noOpAction);
   }
 
   public async addContainersToBillLading(billLadingId: string, vesselId: string, containerIds: string[]) {
     const request: IAddContainersToBillLadingRequest = { billLadingId, vesselId, containerIds };    
-    return await super.post<IBillLading>(request, "addContainersToBillLading", noOpAction);
+    return await await super.post<IBillLading>(request, "addContainersToBillLading", noOpAction);
   }
 
   public async deleteBillLading(vesselId: string, billLadingId: string) {
-    return super.post({ vesselId, billLadingId }, "deleteBillLading", noOpAction);
+    return await super.post({ vesselId, billLadingId }, "deleteBillLading", noOpAction);
   }
 
   public async getDraftBillOfLading(vesselId: string, billLadingId: string) {

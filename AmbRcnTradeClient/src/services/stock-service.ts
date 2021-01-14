@@ -27,15 +27,15 @@ export class StockService extends FetchService {
   }
 
   public async load(id: string) {
-    return super.get(id, "load", stockEditAction);
+    return await super.get(id, "load", stockEditAction);
   }
 
   public async save(stock: IStock) {
-    return super.post<IStock>(stock, "save", stockEditAction);
+    return await super.post<IStock>(stock, "save", stockEditAction);
   }
 
   public async loadStockList(locationId: string) {    
-    return super.getMany<IStockListItem[]>(
+    return await super.getMany<IStockListItem[]>(
       [
         this.currentCompanyIdQuery(),
         new QueryId("locationId", locationId)
@@ -44,7 +44,7 @@ export class StockService extends FetchService {
   }
 
   public async loadStockBalanceList(locationId: string) {
-    return super.getMany<IStockListItem[]>(
+    return await super.getMany<IStockListItem[]>(
       [
         this.currentCompanyIdQuery(),
         new QueryId("locationId", locationId)
@@ -53,15 +53,15 @@ export class StockService extends FetchService {
   }
 
   public async createStock() {
-    return super.get([super.currentCompanyIdQuery()], "create", stockEditAction);
+    return await super.get([super.currentCompanyIdQuery()], "create", stockEditAction);
   }
 
   public async deleteStock(id: string){
-    return super.delete(id,"delete",noOpAction);
+    return await super.delete(id,"delete",noOpAction);
   }
 
   public async ZeroStock(lotNo: number){
-    return super.post({companyId: this.currentCompanyId, lotNo}, "zeroStock",noOpAction);
+    return await super.post({companyId: this.currentCompanyId, lotNo}, "zeroStock",noOpAction);
   }
 }
 

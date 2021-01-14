@@ -32,66 +32,62 @@ export class AdminService extends FetchService {
   }
 
   public async saveCompany(model: ICompany) {
-    return super.post<ICompany>(model, "saveCompany", adminCompanyAction);
+    return await super.post<ICompany>(model, "saveCompany", adminCompanyAction);
   }
 
   public async loadCompany(id: string) {
-    return super.get(id, "loadCompany", adminCompanyAction);
+    return await super.get(id, "loadCompany", adminCompanyAction);
   }
 
   public async createEmptyCompany() {
-    return super.get("", "createEmptyCompany", adminCompanyAction);
+    return await super.get("", "createEmptyCompany", adminCompanyAction);
   }
 
   public async loadCompaniesList() {
-    return super.getMany<ICompanyListItem>([], "loadCompaniesList", adminCompanyListAction);
+    return await super.getMany<ICompanyListItem>([], "loadCompaniesList", adminCompanyListAction);
   }
 
   public async deleteCompany(id: string) {
-    return super.delete<ICompany>(id, "deleteCompany", adminCompanyAction);
+    return await super.delete<ICompany>(id, "deleteCompany", adminCompanyAction);
   }
 
   public async getCompanyName(id: string) {
-    return super.get(id, "getCompanyName", adminCompanyNameAction);
+    return await super.get(id, "getCompanyName", adminCompanyNameAction);
   }
 
   public async deleteUser(id: string) {
-    return super.delete<IAppUser>(id, "deleteUser", adminUserAction);
+    return await super.delete<IAppUser>(id, "deleteUser", adminUserAction);
   }
 
   public async createAdminUser(){
-    return super.post({companyId: null},"createAdminUser",noOpAction);
+    return await super.post({companyId: null},"createAdminUser",noOpAction);
   }
 
   public async saveUser(model: IAppUser) {
     if (model.id) {
-      return super.post<IAppUser>(model, "saveUser", adminUserAction);
+      return await super.post<IAppUser>(model, "saveUser", adminUserAction);
     }
-    return super.post<IAppUser>(model, "createAppUser", adminUserAction);
+    return await super.post<IAppUser>(model, "createAppUser", adminUserAction);
   }
 
   public async loadUser(id: string) {
-    return super.get(id, "loadUser", adminUserAction);
+    return await super.get(id, "loadUser", adminUserAction);
   }
 
   public async createEmptyUser() {
-    return super.get("", "createEmptyAppUser", adminUserAction);
+    return await super.get("", "createEmptyAppUser", adminUserAction);
   }
 
-  // public async createUser(model: IAppUser) {
-  //   return super.post<IAppUser>(model, "createUser", adminUserAction);
-  // }
-
   public async loadUsersList() {
-    return super.getMany<IAppUserListItem>([], "loadUsersList", adminUserListAction);
+    return await super.getMany<IAppUserListItem>([], "loadUsersList", adminUserListAction);
   }
 
   public async getRoleNames() {
-    return super.getMany<IRoleNameItem>([], "getRoleNames", adminRoleNamesAction);
+    return await super.getMany<IRoleNameItem>([], "getRoleNames", adminRoleNamesAction);
   }
 
   public async removeDemonstrationCompany(companyId: string) {
-    return super.delete([new QueryId("companyId", companyId)], "RemoveDemonstrationCompany", noOpAction);
+    return await super.delete([new QueryId("companyId", companyId)], "RemoveDemonstrationCompany", noOpAction);
   }
 }
 

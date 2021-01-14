@@ -18,10 +18,10 @@ export class AuditingService extends FetchService {
   }
 
   public async loadList(){
-    return super.getData<IAuditLog[]>([],"loadList");
+    return await super.getData<IAuditLog[]>([],"loadList");
   }
 
   public async clearLogs(days: number){
-    return super.post({days},"clearLogs",noOpAction);
+    return await super.post({days},"clearLogs",noOpAction);
   }
 }

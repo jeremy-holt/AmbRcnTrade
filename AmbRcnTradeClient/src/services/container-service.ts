@@ -26,23 +26,23 @@ export class ContainerService extends FetchService {
   }
 
   public async load(id: string) {
-    return super.get(id, "load", containerEditAction);
+    return await super.get(id, "load", containerEditAction);
   }
 
   public async loadList(status: ContainerStatus) {
-    return super.getMany<IContainer[]>([super.currentCompanyIdQuery(), new QueryId("status", status)], "loadList", containerListAction);
+    return await super.getMany<IContainer[]>([super.currentCompanyIdQuery(), new QueryId("status", status)], "loadList", containerListAction);
   }
 
   public async save(container: IContainer) {
-    return super.post(container, "save", containerEditAction);
+    return await super.post(container, "save", containerEditAction);
   }
 
   public async createContainer() {
-    return super.get([super.currentCompanyIdQuery()], "create", containerEditAction);
+    return await super.get([super.currentCompanyIdQuery()], "create", containerEditAction);
   }
 
   public async unstuffContainer(request: IUnstuffContainerRequest) {
-    return super.post(request, "unstuffContainer", noOpAction);
+    return await super.post(request, "unstuffContainer", noOpAction);
   }
 
   public canUnstuffContainer(container: IContainer) {

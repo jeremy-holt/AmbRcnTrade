@@ -41,11 +41,11 @@ export class StockManagementService extends FetchService {
   }
 
   public async removeInspectionFromStock(request: IRemoveInspectionFromStockRequest) {
-    return super.post(request, "removeInspectionFromStock", noOpAction);
+    return await super.post(request, "removeInspectionFromStock", noOpAction);
   }
 
   public async getNonCommittedStocks(supplierId: string) {
-    return super.getMany<IStock[]>([super.currentCompanyIdQuery(), new QueryId("supplierId", supplierId)], "getNonCommittedStocks", nonCommittedStocksListAction);
+    return await super.getMany<IStock[]>([super.currentCompanyIdQuery(), new QueryId("supplierId", supplierId)], "getNonCommittedStocks", nonCommittedStocksListAction);
   }
 
   public async stuffContainer(containerId: string, stuffingDate: string, stockBalance: IStockBalance, bags: number, weightKg: number, status: ContainerStatus) {
@@ -57,11 +57,11 @@ export class StockManagementService extends FetchService {
       weightKg,
       status
     };
-    return super.post(request, "stuffContainer", stuffContainerAction);
+    return await super.post(request, "stuffContainer", stuffContainerAction);
   }
 
   public async getAvailableContainers() {
-    return super.get<IAvailableContainer[]>([super.currentCompanyIdQuery()], "getAvailableContainers", availableContainersAction);
+    return await super.get<IAvailableContainer[]>([super.currentCompanyIdQuery()], "getAvailableContainers", availableContainersAction);
   }
 }
 

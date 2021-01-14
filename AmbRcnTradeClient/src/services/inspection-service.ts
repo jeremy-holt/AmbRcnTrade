@@ -28,34 +28,29 @@ export class InspectionService extends FetchService {
   }
 
   public async load(id: string) {
-    return super.get(id, "load", inspectionEditAction);
+    return await super.get(id, "load", inspectionEditAction);
   }
 
   public async save(model: IInspection) {
     model.inspectionDate = fixAspNetCoreDate(model.inspectionDate, false);
 
-    return super.post(model, "save", inspectionEditAction);
+    return await super.post(model, "save", inspectionEditAction);
   }
 
   public async createInspection() {
-    return super.get([], "create", inspectionEditAction);
+    return await super.get([], "create", inspectionEditAction);
   }
 
   public async loadList(approval: Approval) {
-    return super.getMany<IInspectionListItem[]>([super.currentCompanyIdQuery(), new QueryId("approval", approval)], "loadList", inspectionListAction);
+    return await super.getMany<IInspectionListItem[]>([super.currentCompanyIdQuery(), new QueryId("approval", approval)], "loadList", inspectionListAction);
   }
 
   public async deleteInspection(id: string) {
-    return super.delete(id, "deleteInspection", noOpAction);
+    return await super.delete(id, "deleteInspection", noOpAction);
   }
 
   public canAddInspectionToStock(inspection: IInspection): boolean {
     const bagsAlreadyAllocated = this.bagsAlreadyAllocated(inspection);
-
-    // if (!bagsAlreadyAllocated) {
-    //   return true;
-    // }
-
     return (bagsAlreadyAllocated < inspection.bags) && inspection.inspector?.length > 0 && inspection.supplierId?.length > 0;
   }
 

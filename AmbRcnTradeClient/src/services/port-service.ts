@@ -21,19 +21,19 @@ export class PortService extends FetchService {
   }
 
   public async loadPort(id: string) {
-    return super.get(id, "load", portEditAction);
+    return await super.get(id, "load", portEditAction);
   }
 
   public async savePort(model: IPort) {
-    return super.post(model, "save", portEditAction);
+    return await super.post(model, "save", portEditAction);
   }
 
   public async loadPortList() {
-    return super.getMany<IPort[]>([this.currentCompanyIdQuery()], "loadPorts", portListAction);
+    return await super.getMany<IPort[]>([this.currentCompanyIdQuery()], "loadPorts", portListAction);
   }
 
   public async createPort() {
-    return super.get([], "create", portEditAction);
+    return await super.get([], "create", portEditAction);
   }
 }
 
