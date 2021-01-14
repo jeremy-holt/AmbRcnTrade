@@ -114,7 +114,9 @@ export class BillLadingEdit {
 
   protected async addContainersDialog() {
     await this.billLadingService.getNotLoadedContainers();
-    this.dialogService.open({
+    const vesselId = this.model.vesselId;
+
+    await this.dialogService.open({
       viewModel: AddContainersDialog,
       model: { unloadedContainers: this.state.vessel.notLoadedContainers }
     })
@@ -125,7 +127,7 @@ export class BillLadingEdit {
             this.model.containerIds.push(row.id);
             this.model.containers.push(row);
           });
-          await this.billLadingService.addContainersToBillLading(this.model.id, this.model.containerIds);
+          await this.billLadingService.addContainersToBillLading(this.model.id, vesselId, this.model.containerIds);
           await this.billLadingService.load(this.model.id);
         }
       });

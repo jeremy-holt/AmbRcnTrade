@@ -1,16 +1,18 @@
-import { isInRole } from "./../../services/role-service";
-import { DeleteDialog } from "./../../dialogs/delete-dialog";
-import { UnstuffContainerDialog } from "./unstuff-container-dialog";
 import { DialogService } from "aurelia-dialog";
-import { Router } from "aurelia-router";
-import { CONTAINER_STATUS_LIST, IContainerStatus, TEU_LIST } from "./../../constants/app-constants";
-import { IParamsId } from "interfaces/IParamsId";
-import { ContainerService } from "./../../services/container-service";
 import { autoinject, observable } from "aurelia-framework";
+import { Router } from "aurelia-router";
 import { connectTo } from "aurelia-store";
+import { IParamsId } from "interfaces/IParamsId";
 import { IContainer } from "interfaces/shipping/IContainer";
-import { IState } from "store/state";
 import _ from "lodash";
+import { IState } from "store/state";
+import { CONTAINER_STATUS_LIST, IContainerStatus, TEU_LIST } from "./../../constants/app-constants";
+import { DeleteDialog } from "./../../dialogs/delete-dialog";
+import { IVessel } from "./../../interfaces/shipping/IVessel";
+import { ContainerService } from "./../../services/container-service";
+import { isInRole } from "./../../services/role-service";
+import { VesselService } from "./../../services/vessel-service";
+import { UnstuffContainerDialog } from "./unstuff-container-dialog";
 
 @autoinject
 @connectTo()
@@ -20,16 +22,18 @@ export class ContainerEdit {
   protected containerStatusList = CONTAINER_STATUS_LIST;
   protected teuList = TEU_LIST;
   @observable protected selectedContainerStatus: IContainerStatus = undefined;
+  protected vessel: IVessel = undefined!;
 
   constructor(
     private containerService: ContainerService,
+    private vesselService: VesselService,
     private dialogService: DialogService,
     private router: Router
   ) { }
 
   protected async activate(prms: IParamsId) {
     if (prms?.id) {
-      await this.containerService.load(prms.id);
+      await this.containerService.load(prms.id);      
     } else {
       await this.containerService.createContainer();
     }
@@ -37,13 +41,15 @@ export class ContainerEdit {
 
   protected stateChanged(state: IState) {
     this.model = _.cloneDeep(state.container.current);
+    this.vessel = _.cloneDeep(state.vessel.current);
 
     this.teuList = _.cloneDeep(TEU_LIST);
-    this.teuList.unshift({ id: null, name: "[Select]" });
+    this.teuList.unshift({ id: null, name: "[Select]" });    
   }
 
-  protected bind() {
+  protected async bind() {
     this.selectedContainerStatus = this.containerStatusList.find(c => c.id === this.model.status);
+    await this.vesselService.load(this.model.vesselId);
   }
 
   protected get canSave() {
@@ -96,7 +102,7 @@ export class ContainerEdit {
     return this.model?.bags > 0;
   }
 
-  protected async addContainer(){
+  protected async addContainer() {
     await this.containerService.createContainer();
     this.selectedContainerStatus = this.containerStatusList.find(c => c.id === this.model.status);
   }

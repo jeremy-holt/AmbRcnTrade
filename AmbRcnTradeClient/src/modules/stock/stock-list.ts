@@ -65,9 +65,9 @@ export class StockList {
     await this.runQuery();
   }
 
-  protected addStock() {
-    this.router.navigateToRoute("stockEdit", { id: null });
-  }
+  // protected addStock() {
+  //   this.router.navigateToRoute("stockEdit", { id: null });
+  // }
 
   protected async runQuery() {
     this.stockService.loadStockList(this.selectedLocation.id);

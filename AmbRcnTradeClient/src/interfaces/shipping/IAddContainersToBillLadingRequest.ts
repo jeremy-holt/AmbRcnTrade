@@ -1,4 +1,5 @@
 export interface IAddContainersToBillLadingRequest {
-    billLadingId: string;
-    containerIds: string[];
+  billLadingId: string;
+  vesselId: string;
+  containerIds: string[];
 }

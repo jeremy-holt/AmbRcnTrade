@@ -43,6 +43,79 @@ namespace Tests
             actual.Should().NotBeNull();
         }
 
+        // [Fact]
+        // public async Task FindBillLading_ShouldFindVesselFromContainerId()
+        // {
+        //     // Arrange
+        //     using var store = GetDocumentStore();
+        //     using var session = store.OpenAsyncSession();
+        //     await InitializeIndexes(store);
+        //     var sut = GetContainerService(session);
+        //     var fixture = new Fixture();
+        //
+        //     var vessel = fixture.DefaultEntity<Vessel>()
+        //         .With(c=>c.VesselName,"Lollipop")
+        //         .With(c=>c.VoyageNumber,"123N")
+        //         .Create();
+        //     await session.StoreAsync(vessel);
+        //
+        //     var containers = fixture.DefaultEntity<Container>().CreateMany().ToList();
+        //     await containers.SaveList(session);
+        //
+        //     var bill = fixture.DefaultEntity<BillLading>()
+        //         .With(c => c.ContainerIds, containers.GetPropertyFromList(c => c.Id))
+        //         .With(c => c.VesselId, vessel.Id)
+        //         .Without(c => c.VoyageNumber)
+        //         .Without(c => c.VesselName)
+        //         .Create();
+        //     await session.StoreAsync(bill);
+        //
+        //     await session.SaveChangesAsync();
+        //     WaitForIndexing(store);
+        //
+        //     // Act
+        //     var response = await sut.FindBillLading(containers[1].Id);
+        //
+        //     // Assert
+        //     response.Id.Should().Be(bill.Id);
+        //     response.ConsigneeId.Should().Be(bill.ConsigneeId);
+        //     response.VesselName.Should().Be("Lollipop");
+        //     response.VoyageNumber.Should().Be("123N");
+        // }
+
+        // [Fact]
+        // public async Task FindBillLading_ShouldNotThrowExceptionIfContainerIdNotFound()
+        // {
+        //     // Arrange
+        //     using var store = GetDocumentStore();
+        //     using var session = store.OpenAsyncSession();
+        //     await InitializeIndexes(store);
+        //     var sut = GetContainerService(session);
+        //     var fixture = new Fixture();
+        //
+        //     var containers = fixture.DefaultEntity<Container>().CreateMany().ToList();
+        //     await containers.SaveList(session);
+        //
+        //     var bill = fixture.DefaultEntity<BillLading>()
+        //         .With(c => c.ContainerIds, containers.GetPropertyFromList(c => c.Id))
+        //         .Create();
+        //     await session.StoreAsync(bill);
+        //
+        //     await session.SaveChangesAsync();
+        //     WaitForIndexing(store);
+        //
+        //     // Act
+        //     var response = await sut.FindBillLading("containers/999-A");
+        //
+        //     // Assert
+        //     response.Id.Should().BeNullOrEmpty();
+        // }
+
+        // private static async Task InitializeIndexes(IDocumentStore store)
+        // {
+        //     await new BillsLading_ByContainers().ExecuteAsync(store);
+        // }
+
         [Fact]
         public async Task LoadList_ShouldLoadContainersBasedOnStatus()
         {
@@ -238,21 +311,21 @@ namespace Tests
             var fixture = new Fixture();
 
             var containers = fixture.DefaultEntity<Container>()
-                .Without(c=>c.IncomingStocks)
+                .Without(c => c.IncomingStocks)
                 .CreateMany().ToList();
             await containers.SaveList(session);
-            
+
             var billLading = fixture.DefaultEntity<BillLading>()
-                .With(c => c.ContainerIds, containers.GetPropertyFromList(c=>c.Id))
+                .With(c => c.ContainerIds, containers.GetPropertyFromList(c => c.Id))
                 .Create();
             await session.StoreAsync(billLading);
 
             await session.SaveChangesAsync();
             WaitForIndexing(store);
-            
+
             // Act
             ServerResponse response = await sut.DeleteContainer(containers[1].Id);
-            
+
             // Assert
             response.Message.Should().Be("Deleted container");
             var actualContainer = await session.LoadAsync<Container>(containers[1].Id);
@@ -270,21 +343,21 @@ namespace Tests
             using var session = store.OpenAsyncSession();
             var sut = GetContainerService(session);
             var fixture = new Fixture();
-            
+
             var containers = fixture.DefaultEntity<Container>()
-                .Without(c=>c.IncomingStocks)
+                .Without(c => c.IncomingStocks)
                 .CreateMany().ToList();
             await containers.SaveList(session);
-            
+
             var billLading = fixture.DefaultEntity<BillLading>()
-                .With(c => c.ContainerIds, containers.GetPropertyFromList(c=>c.Id))
+                .With(c => c.ContainerIds, containers.GetPropertyFromList(c => c.Id))
                 .Create();
             billLading.ContainerIds.RemoveAll(c => c == containers[0].Id);
             await session.StoreAsync(billLading);
-            
+
             // Act
             await sut.DeleteContainer(containers[0].Id);
-            
+
             // Assert
             var actual = await session.LoadAsync<Container>(containers[0].Id);
             actual.Should().BeNull();
@@ -298,22 +371,22 @@ namespace Tests
             using var session = store.OpenAsyncSession();
             var sut = GetContainerService(session);
             var fixture = new Fixture();
-            
+
             var containers = fixture.DefaultEntity<Container>()
                 .CreateMany().ToList();
             await containers.SaveList(session);
-            
+
             var billLading = fixture.DefaultEntity<BillLading>()
-                .With(c => c.ContainerIds, containers.GetPropertyFromList(c=>c.Id))
+                .With(c => c.ContainerIds, containers.GetPropertyFromList(c => c.Id))
                 .Create();
             await session.StoreAsync(billLading);
 
             await session.SaveChangesAsync();
             WaitForIndexing(store);
-            
+
             // Act
-            Func<Task> action = async ()=> await sut.DeleteContainer(containers[1].Id);
-            
+            Func<Task> action = async () => await sut.DeleteContainer(containers[1].Id);
+
             // Assert
             await action.Should().ThrowAsync<InvalidOperationException>().WithMessage("Cannot delete a container that has already been stuffed");
         }

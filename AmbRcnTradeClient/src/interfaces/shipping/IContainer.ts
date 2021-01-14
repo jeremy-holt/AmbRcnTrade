@@ -6,18 +6,18 @@ export interface IContainer extends IEntityCompany {
   sealNumber: string;
   bookingNumber: string;
   bags: number;
-  weighbridgeWeightKg: number; 
+  weighbridgeWeightKg: number;
   status: ContainerStatus;
   id: string;
   name: string;
-  companyId: string;  
-  dispatchDate:  string | null;
+  companyId: string;
+  dispatchDate: string | null;
   stuffingWeightKg: number;
   incomingStocks: IIncomingStock[];
   nettWeightKg: number;
   stuffingDate: string | null;
   vgmTicketNumber: string;
   teu: Teu;
-
-  selected?:boolean;
+  vesselId: string;
+  selected?: boolean;
 }

@@ -90,8 +90,8 @@ namespace AmbRcnTradeServer.Controllers
         [HttpPost("[action]")]
         public async Task<ActionResult<ServerResponse>> AddContainersToBillLading(AddContainersToBillLadingRequest request)
         {
-            await _auditingService.Log(Request, request.BillLadingId, request.ContainerIds.ToAggregateString());
-            return await _service.AddContainersToBillLading(request.BillLadingId, request.ContainerIds);
+            await _auditingService.Log(Request, request.BillLadingId,request.VesselId, request.ContainerIds.ToAggregateString());
+            return await _service.AddContainersToBillLading(request.BillLadingId, request.VesselId, request.ContainerIds);
         }
 
         [Authorize]
@@ -121,6 +121,7 @@ namespace AmbRcnTradeServer.Controllers
     {
         public string BillLadingId { get; set; }
         public List<string> ContainerIds { get; set; }
+        public string VesselId { get; set; }
     }
 
     public class MoveBillLadingRequest

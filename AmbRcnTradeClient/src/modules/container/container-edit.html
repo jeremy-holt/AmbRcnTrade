@@ -1,12 +1,19 @@
 <template>
   <toolbar type="menu" caption="Container" disabled-save.bind="!canSave" save.call="save()" list-route="containerList">
-    <toolbar-item icon = "fa fa-plus" click.call="addContainer()"></toolbar-item>
+    <toolbar-item icon="fa fa-plus" click.call="addContainer()"></toolbar-item>
   </toolbar>
 
   <div class="card">
     <div class="card-header">
       <h4 if.bind="model.id">Container ${model.containerNumber}</h4>
       <h4 else>New container</h4>
+
+      <h4 if.bind="vessel.id">On board vessel ${vessel.vesselName} ${vessel.voyageNumber}
+        <a route-href="vesselEdit; params.bind:{id: encode(vessel.Id)}" class="with-decoration">
+          <i class="fas fa-ship"></i>Go to vessel
+        </a>
+      </h4>
+      <h5 else>Not assigned to a vessel</h5>
     </div>
 
     <div class="card-body">
@@ -88,8 +95,8 @@
             <button type="button" class="btn btn-danger" disabled.bind="!canUnstuffContainer"
               click.delegate="unstuffContainer()">Unstuff container</button>
 
-            <button if.bind="canShowDeleteContainer" type="button" class="btn btn-danger" disabled.bind="!canDeleteContainer"
-              click.delegate="deleteContainer()">Delete container</button>
+            <button if.bind="canShowDeleteContainer" type="button" class="btn btn-danger"
+              disabled.bind="!canDeleteContainer" click.delegate="deleteContainer()">Delete container</button>
           </div>
         </div>
       </div>

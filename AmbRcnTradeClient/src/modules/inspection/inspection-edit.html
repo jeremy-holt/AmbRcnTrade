@@ -85,8 +85,11 @@
 
       <div class="d-flex justify-content-between mt-1">
         <div if.bind="showCanAddInspectionToStock">
-          <button type="button" class="btn-primary btn" disabled.bind="!canAddInspectionToStock"
-            click.delegate="openAddToStockDialog()">Add this inspection to stocks</button>
+          <div if.bind="canAddInspectionToStock">
+            <button type="button" class="btn-primary btn"
+              click.delegate="openAddToStockDialog()">Add this inspection to stocks</button>
+          </div>
+            <div else class="font-weight-bold">All inspections have been allocated to stocks</div>
         </div>
 
         <div>

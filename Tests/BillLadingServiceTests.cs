@@ -41,14 +41,20 @@ namespace Tests
 
             var containers = fixture.DefaultEntity<Container>().CreateMany().ToList();
             await containers.SaveList(session);
-
+            
             var billLading = fixture.DefaultEntity<BillLading>()
+                .With(c=>c.VesselId,"vessels/1-A")
                 .Without(c => c.ContainerIds)
                 .Create();
             await session.StoreAsync(billLading);
 
+            var vessel = fixture.DefaultEntity<Vessel>()
+                .With(c => c.BillLadingIds, billLading.ContainerIds)
+                .Create();
+            await session.StoreAsync(vessel);
+
             // Act
-            var response = await sut.AddContainersToBillLading(billLading.Id, containers.Select(x => x.Id).ToList());
+            var response = await sut.AddContainersToBillLading(billLading.Id, billLading.VesselId, containers.Select(x => x.Id).ToList());
             await session.SaveChangesAsync();
             WaitForIndexing(store);
 
@@ -58,8 +64,10 @@ namespace Tests
             response.Message.Should().Be("Added container(s) to Bill of Lading");
             actual.ContainerIds.Should().Contain(containers.Select(x => x.Id).ToList());
 
-            var actualContainers = await session.Query<Container>().ToListAsync();
+            using var session2 = store.OpenAsyncSession();
+            var actualContainers = await session2.Query<Container>().ToListAsync();
             actualContainers.Should().OnlyContain(c => c.Status == ContainerStatus.OnBoardVessel);
+            actualContainers.Should().OnlyContain(c => c.VesselId == vessel.Id);
         }
 
         [Fact]
@@ -338,6 +346,7 @@ namespace Tests
 
             var actualContainer = await session.LoadAsync<Container>(containers[0].Id);
             actualContainer.Status.Should().Be(ContainerStatus.StuffingComplete);
+            actualContainer.VesselId.Should().BeNullOrEmpty();
         }
 
         [Fact]

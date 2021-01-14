@@ -72,6 +72,13 @@ namespace AmbRcnTradeServer.Controllers
             return await _service.DeleteContainer(id);
         }
 
+        // [Authorize]
+        // [HttpGet("[action]")]
+        // public async Task<ActionResult<BillLading>> FindBillLading(string containerId)
+        // {
+        //     return await _service.FindBillLading(containerId);
+        // }
+
         public class UnstuffContainerRequest
         {
             public string ContainerId { get; set; }

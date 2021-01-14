@@ -1,4 +1,3 @@
-import { fixAspNetCoreDate } from "./../core/helpers";
 import { HttpClient } from "aurelia-fetch-client";
 import { autoinject } from "aurelia-framework";
 import { Router } from "aurelia-router";
@@ -8,6 +7,7 @@ import _ from "lodash";
 import { QueryId } from "models/QueryId";
 import { IState } from "store/state";
 import { ContainerStatus } from "./../constants/app-constants";
+import { fixAspNetCoreDate } from "./../core/helpers";
 import { IContainer } from "./../interfaces/shipping/IContainer";
 import { FetchService } from "./fetch-service";
 import { noOpAction } from "./no-op-action";
@@ -22,7 +22,7 @@ export class ContainerService extends FetchService {
     super("api/container", http, store, router);
 
     store.registerAction("containerEditAction", containerEditAction);
-    store.registerAction("containerListAction", containerListAction);
+    store.registerAction("containerListAction", containerListAction);    
   }
 
   public async load(id: string) {

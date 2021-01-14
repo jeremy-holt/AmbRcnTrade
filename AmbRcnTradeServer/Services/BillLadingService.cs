@@ -17,7 +17,7 @@ namespace AmbRcnTradeServer.Services
 {
     public interface IBillLadingService
     {
-        Task<ServerResponse> AddContainersToBillLading(string billLadingId, List<string> containerIds);
+        Task<ServerResponse> AddContainersToBillLading(string billLadingId, string vesselId, List<string> containerIds);
         Task<ServerResponse<BillLadingDto>> Save(BillLadingDto billLadingDto);
         Task<BillLadingDto> Load(string id);
         Task<List<BillLadingListItem>> LoadList(string companyId);
@@ -111,7 +111,7 @@ namespace AmbRcnTradeServer.Services
             return query;
         }
 
-        public async Task<ServerResponse> AddContainersToBillLading(string billLadingId, List<string> containerIds)
+        public async Task<ServerResponse> AddContainersToBillLading(string billLadingId, string vesselId, List<string> containerIds)
         {
             var billLading = await _session.LoadAsync<BillLading>(billLadingId);
 
@@ -127,6 +127,7 @@ namespace AmbRcnTradeServer.Services
             foreach (var container in containers)
             {
                 container.Status = ContainerStatus.OnBoardVessel;
+                container.VesselId = vesselId;
             }
             
             await _session.SaveChangesAsync();
@@ -144,7 +145,10 @@ namespace AmbRcnTradeServer.Services
             
             var removedContainers = await _session.LoadListFromMultipleIdsAsync<Container>(containerIds);
             foreach (var container in removedContainers)
+            {
                 container.Status = ContainerStatus.StuffingComplete;
+                container.VesselId = null;
+            }
 
             var dto = await Load(billLadingId);
             return new ServerResponse<BillLadingDto>(dto, "Removed containers from Bill of Lading");
