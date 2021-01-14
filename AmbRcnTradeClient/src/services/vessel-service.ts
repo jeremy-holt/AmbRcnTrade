@@ -40,12 +40,12 @@ export class VesselService extends FetchService {
     return super.post(request, "addBillLadingToVessel", noOpAction);
   }
 
-  public async removeBillsLadingFromVessel(request: IVesselContainersRequest) {
-    return super.post(request, "removeBillsLadingFromVessel", noOpAction);
-  }
-
   public async createVessel() {
     return super.get<IVessel>([this.currentCompanyIdQuery()], "create", vesselEditFunction);
+  }
+
+  public async deleteVessel(id: string) {
+    return super.delete(id, "deleteVessel", noOpAction);
   }
 
 }

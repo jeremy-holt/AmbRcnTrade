@@ -76,7 +76,7 @@ export class BillLadingEdit {
   }
 
   protected get canSave() {
-    return this.canEditBillLading && this.model?.teu && this.model?.portOfLoadingId !== null && this.model?.portOfDestinationId !==null;
+    return this.canEditBillLading && this.model?.teu && this.model?.portOfLoadingId !== null && this.model?.portOfDestinationId !== null;
   }
 
   protected async save() {
@@ -159,8 +159,8 @@ export class BillLadingEdit {
     return isInRole(["admin", "user"], this.state);
   }
 
-  protected get canPrintBillLading(){
-    return this.model?.id?.length>0 && this.model?.shipperId?.length>0 && this.model?.consigneeId?.length>0 && this.model?.portOfLoadingId?.length>0 && this.model?.portOfDestinationId?.length>0 && ((this.model.teu as unknown) as number)!==0;
+  protected get canPrintBillLading() {
+    return this.model?.id?.length > 0 && this.model?.shipperId?.length > 0 && this.model?.consigneeId?.length > 0 && this.model?.portOfLoadingId?.length > 0 && this.model?.portOfDestinationId?.length > 0 && ((this.model.teu as unknown) as number) !== 0;
   }
 
   protected navigateToVessel() {
@@ -186,6 +186,26 @@ export class BillLadingEdit {
         const { billLadingId, fromVesselId, toVesselId } = result.output;
         await this.billLadingService.moveBillLadingToVessel(billLadingId, fromVesselId, toVesselId);
         this.router.navigateToRoute("vesselEdit", { id: encodeParams(toVesselId) });
+      }
+    });
+  }
+
+  protected deleteBillLading() {
+    const vesselId = this.vessel.id;
+    const billLadingId = this.model.id;
+
+    this.dialogService.open(
+      {
+        viewModel: DeleteDialog,
+        model: {
+          header: "Delete Bill of Lading",
+          body: "Are you sure you wish to delete this Bill of Lading?<br>This will remove it from the vessel and set the status for all the containers to Gated"
+        }
+      }
+    ).whenClosed(async result => {
+      if (!result.wasCancelled) {
+        await this.billLadingService.deleteBillLading(vesselId, billLadingId);
+        this.router.navigateToRoute("vesselEdit", { id: encodeParams(this.vessel.id) });
       }
     });
   }

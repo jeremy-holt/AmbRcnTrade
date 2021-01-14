@@ -93,14 +93,28 @@ namespace AmbRcnTradeServer.Controllers
             await _auditingService.Log(Request, request.BillLadingId, request.ContainerIds.ToAggregateString());
             return await _service.AddContainersToBillLading(request.BillLadingId, request.ContainerIds);
         }
-        
+
         [Authorize]
         [HttpGet("[action]")]
         public async Task<ActionResult> GetDraftBillOfLading(string vesselId, string billLadingId)
         {
-            var response =  await _draftBillLadingService.GetWorkbook( MAERSK_DRAFT_BL_TEMPLATE_BL_XLSX, vesselId, billLadingId);
+            var response = await _draftBillLadingService.GetWorkbook(MAERSK_DRAFT_BL_TEMPLATE_BL_XLSX, vesselId, billLadingId);
             return File(response.FileContents, response.ContentType, response.FileName);
         }
+
+        [Authorize]
+        [HttpPost("[action]")]
+        public async Task<ActionResult<ServerResponse>> DeleteBillLading(DeleteBillLadingRequest request)
+        {
+            await _auditingService.Log(Request, request.VesselId, request.BillLadingId);
+            return await this._service.DeleteBillLading(request.VesselId, request.BillLadingId);
+        }
+    }
+
+    public class DeleteBillLadingRequest
+    {
+        public string VesselId { get; set; }
+        public string BillLadingId { get; set; }
     }
 
     public class AddContainersToBillLadingRequest

@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Threading.Tasks;
 using AmberwoodCore.Controllers;
-using AmberwoodCore.Extensions;
 using AmberwoodCore.Responses;
 using AmberwoodCore.Services;
 using AmbRcnTradeServer.Models.VesselModels;
@@ -49,20 +48,19 @@ namespace AmbRcnTradeServer.Controllers
             return await _service.LoadList(companyId);
         }
 
-
-        [Authorize]
-        [HttpPost("[action]")]
-        public async Task<ActionResult<ServerResponse>> RemoveBillsLadingFromVessel(VesselContainersRequest request)
-        {
-            await _auditingService.Log(Request, request.VesselId, request.BillLadingIds.ToAggregateString());
-            return await _service.RemoveBillsLadingFromVessel(request.VesselId, request.BillLadingIds);
-        }
-
         [Authorize]
         [HttpGet("[action]")]
         public async Task<ActionResult<VesselDto>> Create(string companyId)
         {
             return await Task.FromResult(new VesselDto {CompanyId = companyId});
+        }
+
+        [Authorize]
+        [HttpDelete("[action]")]
+        public async Task<ActionResult<ServerResponse>> DeleteVessel(string id)
+        {
+            await _auditingService.Log(Request, id);
+            return await _service.DeleteVessel(id);
         }
     }
 

@@ -2,6 +2,7 @@
   <require from="../container/container-status-formatter-valueconverter"></require>
 
   <toolbar type="menu" caption="Vessel" disabled-save.bind="!canSave" save.call="save()" list-route="vesselList">
+    <toolbar-item icon="fas fa-trash" disabled.bind="!canDeleteVessel" click.call="deleteVessel()"></toolbar-item>
   </toolbar>
 
   <div class="card">

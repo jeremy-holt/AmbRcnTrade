@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AmberwoodCore.Extensions;
+using AmberwoodCore.Responses;
+using AmbRcnTradeServer.Constants;
 using AmbRcnTradeServer.Models.ContainerModels;
 using AmbRcnTradeServer.Models.DictionaryModels;
 using AmbRcnTradeServer.Models.VesselModels;
@@ -154,37 +156,37 @@ namespace Tests
             actual.NumberBillsLading.Should().Be(bills.Count);
         }
 
-        [Fact]
-        public async Task RemoveBillsLadingFromVessel_ShouldRemoveTheBillsLading()
-        {
-            // Arrange
-            using var store = GetDocumentStore();
-            using var session = store.OpenAsyncSession();
-            var sut = GetVesselService(session);
-            var fixture = new Fixture();
-
-            var billsLading = fixture.DefaultEntity<BillLading>().CreateMany().ToList();
-            await billsLading.SaveList(session);
-
-            var vessel = fixture.DefaultEntity<Vessel>()
-                .With(c => c.BillLadingIds, billsLading.Select(x => x.Id).ToList)
-                .Create();
-            await session.StoreAsync(vessel);
-
-            // Act
-            var response = await sut.RemoveBillsLadingFromVessel(vessel.Id, new[] {billsLading[0].Id});
-            await session.SaveChangesAsync();
-
-            using var session2 = store.OpenAsyncSession();
-            var actual = await session2.LoadAsync<Vessel>(vessel.Id);
-
-            // Assert
-            response.Message.Should().Be("Removed Bills of Lading from vessel");
-            actual.BillLadingIds.Should().NotContain(billsLading[0].Id);
-
-            response.Dto.BillLadings.Should().NotContain(c => c.Id == billsLading[0].Id);
-            response.Dto.BillLadingIds.Should().NotContain(billsLading[0].Id);
-        }
+        // [Fact]
+        // public async Task RemoveBillsLadingFromVessel_ShouldRemoveTheBillsLading()
+        // {
+        //     // Arrange
+        //     using var store = GetDocumentStore();
+        //     using var session = store.OpenAsyncSession();
+        //     var sut = GetVesselService(session);
+        //     var fixture = new Fixture();
+        //
+        //     var billsLading = fixture.DefaultEntity<BillLading>().CreateMany().ToList();
+        //     await billsLading.SaveList(session);
+        //
+        //     var vessel = fixture.DefaultEntity<Vessel>()
+        //         .With(c => c.BillLadingIds, billsLading.Select(x => x.Id).ToList)
+        //         .Create();
+        //     await session.StoreAsync(vessel);
+        //
+        //     // Act
+        //     var response = await sut.RemoveBillsLadingFromVessel(vessel.Id, new[] {billsLading[0].Id});
+        //     await session.SaveChangesAsync();
+        //
+        //     using var session2 = store.OpenAsyncSession();
+        //     var actual = await session2.LoadAsync<Vessel>(vessel.Id);
+        //
+        //     // Assert
+        //     response.Message.Should().Be("Removed Bills of Lading from vessel");
+        //     actual.BillLadingIds.Should().NotContain(billsLading[0].Id);
+        //
+        //     response.Dto.BillLadings.Should().NotContain(c => c.Id == billsLading[0].Id);
+        //     response.Dto.BillLadingIds.Should().NotContain(billsLading[0].Id);
+        // }
 
         [Fact]
         public async Task Save_ShouldSaveAVessel()
@@ -224,6 +226,48 @@ namespace Tests
             actual.CompanyId.Should().Be(vesselDto.CompanyId);
             actual.ForwardingAgentId.Should().Be(vesselDto.ForwardingAgentId);
             actual.ShippingCompanyId.Should().Be(vesselDto.ShippingCompanyId);
+        }
+
+        [Fact]
+        public async Task DeleteVessel_ShouldRemoveBillLadingAndContainers()
+        {
+            // Arrange
+            using var store = GetDocumentStore();
+            using var session = store.OpenAsyncSession();
+            var sut = GetVesselService(session);
+            var fixture = new Fixture();
+            
+            var containers = fixture.DefaultEntity<Container>()
+                .With(c=>c.Status,ContainerStatus.OnBoardVessel)
+                .CreateMany().ToList();
+            await containers.SaveList(session);
+
+            var billLading = fixture.DefaultEntity<BillLading>()
+                .With(c => c.ContainerIds, containers.GetPropertyFromList(c => c.Id))
+                .Create();
+            await session.StoreAsync(billLading);
+
+            var vessel = fixture.DefaultEntity<Vessel>()
+                .With(c => c.BillLadingIds, new List<string> {billLading.Id})
+                .Create();
+            await session.StoreAsync(vessel);
+
+            await session.SaveChangesAsync();
+            WaitForIndexing(store);
+            
+            // Act
+            ServerResponse response = await sut.DeleteVessel(vessel.Id);
+
+            response.Message.Should().Be("Deleted vessel");
+            
+            var actualVessel = await session.LoadAsync<Vessel>(vessel.Id);
+            actualVessel.Should().BeNull();
+
+            var actualBillLading = await session.LoadAsync<BillLading>(billLading.Id);
+            actualBillLading.Should().BeNull();
+
+            var actualContainers = await session.Query<Container>().ToListAsync();
+            actualContainers.Should().OnlyContain(c => c.Status == ContainerStatus.StuffingComplete);
         }
     }
 }

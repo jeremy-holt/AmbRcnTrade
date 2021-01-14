@@ -45,7 +45,7 @@ export class BillLadingService extends FetchService {
   }
 
   public async removeContainersFromBillLading(billLadingId: string, containerIds: string[]) {
-    const request : IBillLadingContainersRequest={billLadingId, containerIds};
+    const request: IBillLadingContainersRequest = { billLadingId, containerIds };
     return super.post(request, "removeContainersFromBillLading", noOpAction);
   }
 
@@ -62,9 +62,13 @@ export class BillLadingService extends FetchService {
     return super.post<IMoveBillLadingRequest>(request, "moveBillLadingToVessel", noOpAction);
   }
 
-  public async addContainersToBillLading(billLadingId: string, containerIds: string[]){
-    const request: IAddContainersToBillLadingRequest={billLadingId,containerIds};
-    return super.post<IBillLading>(request,"addContainersToBillLading", noOpAction);
+  public async addContainersToBillLading(billLadingId: string, containerIds: string[]) {
+    const request: IAddContainersToBillLadingRequest = { billLadingId, containerIds };
+    return super.post<IBillLading>(request, "addContainersToBillLading", noOpAction);
+  }
+
+  public async deleteBillLading(vesselId: string, billLadingId: string) {
+    return super.post({ vesselId, billLadingId }, "deleteBillLading", noOpAction);
   }
 
   public async getDraftBillOfLading(vesselId: string, billLadingId: string) {

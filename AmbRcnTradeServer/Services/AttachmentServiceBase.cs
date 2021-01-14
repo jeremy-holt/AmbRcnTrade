@@ -33,7 +33,7 @@ namespace AmbRcnTradeServer.Services
     {
         private readonly IAsyncDocumentSession _session;
 
-        public AttachmentServiceBase(IAsyncDocumentSession session)
+        protected AttachmentServiceBase(IAsyncDocumentSession session)
         {
             _session = session;
         }

@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Threading.Tasks;
 using AmberwoodCore.Extensions;
-using AmberwoodCore.Responses;
 using AmbRcnTradeServer.Constants;
 using AmbRcnTradeServer.Models.ContainerModels;
 using AmbRcnTradeServer.Models.DictionaryModels;
@@ -28,6 +27,7 @@ namespace Tests
         {
             await new Containers_Available_ForBillLading().ExecuteAsync(store);
             await new BillsOfLading_ByCustomers().ExecuteAsync(store);
+            await new Vessels_ByBillLadingId().ExecuteAsync(store);
         }
 
         [Fact]
@@ -51,7 +51,7 @@ namespace Tests
             var response = await sut.AddContainersToBillLading(billLading.Id, containers.Select(x => x.Id).ToList());
             await session.SaveChangesAsync();
             WaitForIndexing(store);
-            
+
             var actual = await session.LoadAsync<BillLading>(billLading.Id);
 
             // Assert
@@ -60,6 +60,51 @@ namespace Tests
 
             var actualContainers = await session.Query<Container>().ToListAsync();
             actualContainers.Should().OnlyContain(c => c.Status == ContainerStatus.OnBoardVessel);
+        }
+
+        [Fact]
+        public async Task DeleteBillOfLading_ShouldDeleteBillAndReleaseContainers()
+        {
+            // Arrange
+            using var store = GetDocumentStore();
+            using var session = store.OpenAsyncSession();
+            var sut = GetBillLadingService(session);
+            await InitializeIndexes(store);
+            var fixture = new Fixture();
+
+            var containers = fixture.DefaultEntity<Container>()
+                .With(c=>c.Status,ContainerStatus.OnBoardVessel)
+                .CreateMany().ToList();
+            await containers.SaveList(session);
+
+            var billLading = fixture.DefaultEntity<BillLading>()
+                .With(c => c.ContainerIds, containers.GetPropertyFromList(c => c.Id))
+                .Create();
+            await session.StoreAsync(billLading);
+
+            var vessel = fixture.DefaultEntity<Vessel>()
+                .With(c => c.BillLadingIds, new List<string> {billLading.Id})
+                .Create();
+            await session.StoreAsync(vessel);
+
+            await session.SaveChangesAsync();
+            WaitForIndexing(store);
+
+            // Act
+            var response = await sut.DeleteBillLading(vessel.Id, billLading.Id);
+            await session.SaveChangesAsync();
+
+            // Assert
+            response.Message.Should().Be("Deleted Bill of Lading");
+
+            var actualVessel = await session.LoadAsync<Vessel>(vessel.Id);
+            actualVessel.BillLadingIds.Should().NotContain(billLading.Id);
+
+            var actualBillLading = await session.LoadAsync<BillLading>(billLading.Id);
+            actualBillLading.Should().BeNull();
+
+            var actualContainers = await session.Query<Container>().ToListAsync();
+            actualContainers.Should().OnlyContain(c => c.Status == ContainerStatus.Gated);
         }
 
         [Fact]
@@ -108,6 +153,37 @@ namespace Tests
             list.Should().Contain(c => c.Status == ContainerStatus.Gated);
             list.Should().NotContain(c => c.Status == ContainerStatus.Empty);
             list.Should().Contain(c => c.StuffingWeightKg > 0);
+        }
+
+        [Fact]
+        public void GetPreCargoDescription_ShouldReturnTextToInsertInCargoDescription()
+        {
+            // Arrange
+            using var store = GetDocumentStore();
+            using var session = store.OpenAsyncSession();
+            var sut = GetBillLadingService(session);
+
+            const double numberBags = 1280;
+            const double numberContainers = 4;
+            const double grossWeightKg = 101_790;
+            const string productDescription = "Ivory Coast Origin 2020 season";
+            const Teu teu = Teu.Teu40;
+            // Act
+            var actual = sut.GetPreCargoDescription(numberBags, numberContainers, grossWeightKg, productDescription, teu);
+
+            var expectedBodyText = $"{numberBags} PACKAGES IN TOTAL\n" +
+                                   $"{numberContainers}X40HC CONTAINER(S) SAID TO CONTAIN:\n" +
+                                   "DRIED RAW CASHEW NUTS\n" +
+                                   "HS CODE: 08013100";
+
+            var expectedWeightsText = $"IN {numberBags} JUTE BAGS OF {productDescription}\n" +
+                                      $"GROSS WEIGHT: {grossWeightKg:N0} KGS\n" +
+                                      $"LESS WEIGHT OF EMPTY BAGS: {numberBags} KGS\n" +
+                                      $"NET WEIGHT: {grossWeightKg - numberBags:N0} KGS";
+
+            // Assert
+            actual.Header.Should().Be(expectedBodyText);
+            actual.Footer.Should().Be(expectedWeightsText);
         }
 
         [Fact]
@@ -188,6 +264,45 @@ namespace Tests
             actual.NotifyParty2Name.Should().Be(customers[2].Name);
             actual.ShipperName.Should().Be(customers[3].Name);
             actual.VesselId.Should().Be("Vessels/1-A");
+        }
+
+        [Fact]
+        public async Task MoveBillLadingToVessel_ShouldMoveTheBillOfLadingToAnotherVessel()
+        {
+            // Arrange
+            using var store = GetDocumentStore();
+            using var session = store.OpenAsyncSession();
+            var sut = GetBillLadingService(session);
+            var fixture = new Fixture();
+
+            var billLading = await new BillLading().CreateAndStore(session);
+            billLading.ContainersOnBoard = 0;
+            billLading.ContainerIds = new List<string> {"containers/1-A", "containers/2-A"};
+            await session.StoreAsync(billLading);
+
+            var vessels = fixture.DefaultEntity<Vessel>()
+                .Without(c => c.BillLadingIds)
+                .Without(c => c.ContainersOnBoard)
+                .CreateMany()
+                .ToList();
+            vessels[0].BillLadingIds.Add(billLading.Id);
+
+            await vessels.SaveList(session);
+
+            // Act
+            var response = await sut.MoveBillLadingToVessel(billLading.Id, vessels[0].Id, vessels[1].Id);
+            await session.SaveChangesAsync();
+
+            // Assert
+            response.Message.Should().Be("Moved Bill of Lading");
+
+            var actualFirstVessel = await session.LoadAsync<Vessel>(vessels[0].Id);
+            actualFirstVessel.BillLadingIds.Should().NotContain(billLading.Id);
+            actualFirstVessel.ContainersOnBoard.Should().Be(0);
+
+            var actualMovedToVessel = await session.LoadAsync<Vessel>(vessels[1].Id);
+            actualMovedToVessel.BillLadingIds.Should().Contain(billLading.Id);
+            actualMovedToVessel.ContainersOnBoard.Should().Be(2);
         }
 
         [Fact]
@@ -309,77 +424,6 @@ namespace Tests
             actual.PreCargoDescription.Footer.Should().NotBeNullOrEmpty();
 
             actualVessel.BillLadingIds.Should().Contain(response.Id);
-        }
-
-        [Fact]
-        public void GetPreCargoDescription_ShouldReturnTextToInsertInCargoDescription()
-        {
-            // Arrange
-            using var store = GetDocumentStore();
-            using var session = store.OpenAsyncSession();
-            var sut = GetBillLadingService(session);
-
-            const double numberBags = 1280;
-            const double numberContainers = 4;
-            const double grossWeightKg = 101_790;
-            const string productDescription = "Ivory Coast Origin 2020 season";
-            const Teu teu = Teu.Teu40;
-            // Act
-            CargoDescription actual = sut.GetPreCargoDescription(numberBags, numberContainers, grossWeightKg, productDescription, teu);
-
-            var expectedBodyText = $"{numberBags} PACKAGES IN TOTAL\n" +
-                                   $"{numberContainers}X40HC CONTAINER(S) SAID TO CONTAIN:\n" +
-                                   "DRIED RAW CASHEW NUTS\n" +
-                                   "HS CODE: 08013100";
-
-            var expectedWeightsText = $"IN {numberBags} JUTE BAGS OF {productDescription}\n" +
-                                      $"GROSS WEIGHT: {grossWeightKg:N0} KGS\n" +
-                                      $"LESS WEIGHT OF EMPTY BAGS: {numberBags} KGS\n" +
-                                      $"NET WEIGHT: {grossWeightKg - numberBags:N0} KGS";
-
-            // Assert
-            actual.Header.Should().Be(expectedBodyText);
-            actual.Footer.Should().Be(expectedWeightsText);
-        }
-
-        [Fact]
-        public async Task MoveBillLadingToVessel_ShouldMoveTheBillOfLadingToAnotherVessel()
-        {
-            // Arrange
-            using var store = GetDocumentStore();
-            using var session = store.OpenAsyncSession();
-            var sut = GetBillLadingService(session);
-            var fixture = new Fixture();
-
-            var billLading = await new BillLading().CreateAndStore(session);
-            billLading.ContainersOnBoard = 0;
-            billLading.ContainerIds = new List<string>() {"containers/1-A", "containers/2-A"};
-            await session.StoreAsync(billLading);
-
-            var vessels = fixture.DefaultEntity<Vessel>()
-                .Without(c => c.BillLadingIds)
-                .Without(c => c.ContainersOnBoard)
-                .CreateMany()
-                .ToList();
-            vessels[0].BillLadingIds.Add(billLading.Id);
-
-            await vessels.SaveList(session);
-
-            // Act
-            ServerResponse response = await sut.MoveBillLadingToVessel(billLading.Id, vessels[0].Id, vessels[1].Id);
-            await session.SaveChangesAsync();
-
-            // Assert
-            response.Message.Should().Be("Moved Bill of Lading");
-
-            var actualFirstVessel = await session.LoadAsync<Vessel>(vessels[0].Id);
-            actualFirstVessel.BillLadingIds.Should().NotContain(billLading.Id);
-            actualFirstVessel.ContainersOnBoard.Should().Be(0);
-
-            var actualMovedToVessel = await session.LoadAsync<Vessel>(vessels[1].Id);
-            actualMovedToVessel.BillLadingIds.Should().Contain(billLading.Id);
-            actualMovedToVessel.ContainersOnBoard.Should().Be(2);
-            
         }
     }
 }

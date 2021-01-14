@@ -3,6 +3,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using AmberwoodCore.Extensions;
 using AmberwoodCore.Responses;
+using AmbRcnTradeServer.Constants;
+using AmbRcnTradeServer.Models.ContainerModels;
 using AmbRcnTradeServer.Models.DictionaryModels;
 using AmbRcnTradeServer.Models.VesselModels;
 using AmbRcnTradeServer.RavenIndexes;
@@ -17,9 +19,12 @@ namespace AmbRcnTradeServer.Services
     {
         Task<ServerResponse<VesselDto>> Save(VesselDto vesselDto);
         Task<VesselDto> Load(string id);
+
         Task<List<VesselListItem>> LoadList(string companyId);
-        Task<ServerResponse<VesselDto>> RemoveBillsLadingFromVessel(string vesselId, IEnumerable<string> billLadingIds);
+
+        // Task<ServerResponse<VesselDto>> RemoveBillsLadingFromVessel(string vesselId, IEnumerable<string> billLadingIds);
         Task<ServerResponse> AddBillLadingToVessel(string vesselId, IEnumerable<string> billLadingIds);
+        Task<ServerResponse> DeleteVessel(string id);
     }
 
     public class VesselService : IVesselService
@@ -64,7 +69,6 @@ namespace AmbRcnTradeServer.Services
             {
                 bl.ContainersOnBoard = bl.ContainerIds.Count;
                 bl.PortOfDestinationName = ports.FirstOrDefault(c => c.Id == bl.PortOfDestinationId)?.Name;
-                
             }
 
             var vesselDto = new VesselDto();
@@ -84,15 +88,6 @@ namespace AmbRcnTradeServer.Services
                 .OrderBy(c => c.Eta).ToListAsync();
         }
 
-        public async Task<ServerResponse<VesselDto>> RemoveBillsLadingFromVessel(string vesselId, IEnumerable<string> billLadingIds)
-        {
-            var vessel = await _session.LoadAsync<Vessel>(vesselId);
-            vessel.BillLadingIds.RemoveAll(c => c.In(billLadingIds));
-
-            var dto = await Load(vesselId);
-            return new ServerResponse<VesselDto>(dto, "Removed Bills of Lading from vessel");
-        }
-
         public async Task<ServerResponse> AddBillLadingToVessel(string vesselId, IEnumerable<string> billLadingIds)
         {
             var vessel = await _session.LoadAsync<Vessel>(vesselId);
@@ -103,6 +98,27 @@ namespace AmbRcnTradeServer.Services
             }
 
             return new ServerResponse("Added Bill of Lading to vessel");
+        }
+
+        public async Task<ServerResponse> DeleteVessel(string id)
+        {
+            var vessel = await _session
+                .Include<Vessel>(c => c.BillLadingIds)
+                .LoadAsync<Vessel>(id);
+
+            var bills = await _session.LoadListFromMultipleIdsAsync<BillLading>(vessel.BillLadingIds);
+
+            var containers = await _session.LoadListFromMultipleIdsAsync<Container>(bills.SelectMany(c => c.ContainerIds));
+
+            foreach (var container in containers)
+                container.Status = ContainerStatus.StuffingComplete;
+
+            foreach (var billLading in bills)
+                _session.Delete(billLading);
+
+            _session.Delete(vessel);
+
+            return new ServerResponse("Deleted vessel");
         }
     }
 }

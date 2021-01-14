@@ -20,4 +20,8 @@ BillLading:
 Inspection:
   ✔ Fix calculation of averageBagWeightKg @critical @done (11/01/2021, 08:56:01)
 
+Vessel:
+  ☐ Fix problem with Teu not sticking
+  ☐ Containers should be Stuffing Complete, but deleteVessel is not changing the status
+
 

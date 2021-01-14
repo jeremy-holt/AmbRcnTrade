@@ -1,3 +1,4 @@
+import { DeleteDialog } from "dialogs/delete-dialog";
 import { isInRole } from "./../../services/role-service";
 import { DialogService } from "aurelia-dialog";
 import { autoinject, observable } from "aurelia-framework";
@@ -82,6 +83,25 @@ export class VesselEdit {
 
   protected get canEditBillLading() {
     return isInRole(["admin", "user"], this.state);
+  }
+
+  protected get canDeleteVessel() {
+    return this.model?.id?.length > 0;
+  }
+
+  protected deleteVessel() {
+    this.dialogService.open({
+      viewModel: DeleteDialog,
+      model: {
+        header: "Delete this vessel",
+        body: "Are you sure you wish to delete this vessel?<br>Doing so will delete all the Bills of Lading on this vessel, and return any boarded containers<br>to the container pool with status set to Stuffing Complete"
+      }
+    }).whenClosed(async result => {
+      if (!result.wasCancelled) {
+        await this.vesselService.deleteVessel(this.model.id);
+        this.router.navigateToRoute("vesselList");
+      }
+    });
   }
 
 }

@@ -25,6 +25,7 @@ namespace AmbRcnTradeServer.Services
         Task<ServerResponse<BillLadingDto>> RemoveContainersFromBillLading(string billLadingId, IEnumerable<string> containerIds);
         Task<ServerResponse> MoveBillLadingToVessel(string billLadingId, string fromVesselId, string toVesselId);
         CargoDescription GetPreCargoDescription(double? numberBags, double numberContainers, double? grossWeightKg, string productDescription, Teu teu);
+        Task<ServerResponse> DeleteBillLading(string vesselId, string billLadingId);
     }
 
     public class BillLadingService : IBillLadingService
@@ -203,6 +204,30 @@ namespace AmbRcnTradeServer.Services
                               $"LESS WEIGHT OF EMPTY BAGS: {numberBags} KGS\n" +
                               $"NET WEIGHT: {grossWeightKg - numberBags:N0} KGS";
             return new CargoDescription {Header = bodyText, Footer = weightsText};
+        }
+
+        public async Task<ServerResponse> DeleteBillLading(string vesselId, string billLadingId)
+        {
+
+            var vessel = await _session
+                .Include<Vessel>(c=>c.BillLadingIds)
+                .LoadAsync<Vessel>(vesselId);
+            
+            var billLading = await _session
+                .Include<BillLading>(c=>c.ContainerIds)
+                .LoadAsync<BillLading>(billLadingId);
+
+            var containers = await _session.LoadListFromMultipleIdsAsync<Container>(billLading.ContainerIds);
+
+            vessel.BillLadingIds.Remove(billLadingId);
+
+            foreach (var container in containers)
+                container.Status = ContainerStatus.Gated;
+            
+            
+            _session.Delete(billLading);
+
+            return new ServerResponse("Deleted Bill of Lading");
         }
     }
 }
