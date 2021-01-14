@@ -33,7 +33,12 @@ namespace Tests
             var sut = GetContainerService(session);
             var fixture = new Fixture();
 
-            var container = fixture.DefaultEntity<Container>().Create();
+            var vessel = await new Vessel().CreateAndStore(session);
+
+            var container = fixture.DefaultEntity<Container>()
+                .With(c => c.VesselId, vessel.Id)
+                .Without(c => c.VesselName)
+                .Create();
             await session.StoreAsync(container);
 
             // Act
@@ -41,80 +46,8 @@ namespace Tests
 
             // Assert
             actual.Should().NotBeNull();
+            actual.VesselName.Should().Be($"{vessel.VesselName} {vessel.VoyageNumber}");
         }
-
-        // [Fact]
-        // public async Task FindBillLading_ShouldFindVesselFromContainerId()
-        // {
-        //     // Arrange
-        //     using var store = GetDocumentStore();
-        //     using var session = store.OpenAsyncSession();
-        //     await InitializeIndexes(store);
-        //     var sut = GetContainerService(session);
-        //     var fixture = new Fixture();
-        //
-        //     var vessel = fixture.DefaultEntity<Vessel>()
-        //         .With(c=>c.VesselName,"Lollipop")
-        //         .With(c=>c.VoyageNumber,"123N")
-        //         .Create();
-        //     await session.StoreAsync(vessel);
-        //
-        //     var containers = fixture.DefaultEntity<Container>().CreateMany().ToList();
-        //     await containers.SaveList(session);
-        //
-        //     var bill = fixture.DefaultEntity<BillLading>()
-        //         .With(c => c.ContainerIds, containers.GetPropertyFromList(c => c.Id))
-        //         .With(c => c.VesselId, vessel.Id)
-        //         .Without(c => c.VoyageNumber)
-        //         .Without(c => c.VesselName)
-        //         .Create();
-        //     await session.StoreAsync(bill);
-        //
-        //     await session.SaveChangesAsync();
-        //     WaitForIndexing(store);
-        //
-        //     // Act
-        //     var response = await sut.FindBillLading(containers[1].Id);
-        //
-        //     // Assert
-        //     response.Id.Should().Be(bill.Id);
-        //     response.ConsigneeId.Should().Be(bill.ConsigneeId);
-        //     response.VesselName.Should().Be("Lollipop");
-        //     response.VoyageNumber.Should().Be("123N");
-        // }
-
-        // [Fact]
-        // public async Task FindBillLading_ShouldNotThrowExceptionIfContainerIdNotFound()
-        // {
-        //     // Arrange
-        //     using var store = GetDocumentStore();
-        //     using var session = store.OpenAsyncSession();
-        //     await InitializeIndexes(store);
-        //     var sut = GetContainerService(session);
-        //     var fixture = new Fixture();
-        //
-        //     var containers = fixture.DefaultEntity<Container>().CreateMany().ToList();
-        //     await containers.SaveList(session);
-        //
-        //     var bill = fixture.DefaultEntity<BillLading>()
-        //         .With(c => c.ContainerIds, containers.GetPropertyFromList(c => c.Id))
-        //         .Create();
-        //     await session.StoreAsync(bill);
-        //
-        //     await session.SaveChangesAsync();
-        //     WaitForIndexing(store);
-        //
-        //     // Act
-        //     var response = await sut.FindBillLading("containers/999-A");
-        //
-        //     // Assert
-        //     response.Id.Should().BeNullOrEmpty();
-        // }
-
-        // private static async Task InitializeIndexes(IDocumentStore store)
-        // {
-        //     await new BillsLading_ByContainers().ExecuteAsync(store);
-        // }
 
         [Fact]
         public async Task LoadList_ShouldLoadContainersBasedOnStatus()
@@ -147,6 +80,34 @@ namespace Tests
             list[0].StuffingDate.Should().Be(containers[1].IncomingStocks[0].StuffingDate);
             list[0].IncomingStocks[0].Kor.Should().Be(containers[1].IncomingStocks[0].Kor);
         }
+
+        [Fact]
+        public async Task LoadList_ShouldLoadVesselName()
+        {
+            // Arrange
+            using var store = GetDocumentStore();
+            using var session = store.OpenAsyncSession();
+            var sut = GetContainerService(session);
+            var fixture = new Fixture();
+
+            var vessel = await new Vessel().CreateAndStore(session);
+
+            var containers = fixture.DefaultEntity<Container>()
+                .With(c => c.VesselId, vessel.Id)
+                .Without(c => c.VesselName)
+                .CreateMany()
+                .ToList();
+            await containers.SaveList(session);
+            WaitForIndexing(store);
+
+            // Act
+            var list = await sut.LoadList(COMPANY_ID, null);
+
+            // Assert
+            var actual = list[0];
+            actual.VesselName.Should().Be(vessel.VesselName + " " + vessel.VoyageNumber);
+        }
+
 
         [Fact]
         public async Task Save_ShouldSaveAContainer()

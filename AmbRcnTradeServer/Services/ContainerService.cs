@@ -44,19 +44,31 @@ namespace AmbRcnTradeServer.Services
 
         public async Task<Container> Load(string id)
         {
-            return await _session.LoadAsync<Container>(id);
+            var container = await _session.Include<Container>(c=>c.VesselId).LoadAsync<Container>(id);
+            var vessel = await _session.LoadAsync<Vessel>(container.VesselId);
+            container.VesselName = $"{vessel?.VesselName} {vessel?.VoyageNumber}";
+            return container;
         }
 
         public async Task<List<Container>> LoadList(string companyId, ContainerStatus? status)
         {
-            var query = Queryable.Where(_session.Query<Container>(), c => c.CompanyId == companyId);
+            var query = _session.Query<Container>()
+                .Include(c=>c.VesselId)
+                .Where(c => c.CompanyId == companyId);
+            
             if (status != null)
                 query = query.Where(c => c.Status == status);
 
             var list = await query.ToListAsync();
 
+            var vessels = await _session.LoadListFromMultipleIdsAsync<Vessel>(list.GetPropertyFromList(c => c.VesselId));
+
             foreach (var container in list)
+            {
                 container.StuffingDate = container.IncomingStocks.FirstOrDefault()?.StuffingDate;
+                var vessel = vessels.FirstOrDefault(c => c.Id == container.VesselId);
+                container.VesselName = $"{vessel?.VesselName} {vessel?.VoyageNumber}";
+            }
 
             return list
                 .OrderBy(c => Enum.GetName(typeof(ContainerStatus), c.Status))

@@ -12,7 +12,8 @@
     <div class="card-header">
       <h4>Containers list</h4>
       <div class="my-4">Go to the <a route-href="stockBalanceList" class="with-decoration">Stock balances</a> page to
-        select the stock to stuff into a container <a href="#" if.bind="canAddContainer" click.delegate="addContainer()" class="with-decoration">
+        select the stock to stuff into a container <a href="#" if.bind="canAddContainer" click.delegate="addContainer()"
+          class="with-decoration">
           <i class="fas fa-fw fa-plus"></i> or add a new Container
         </a></div>
     </div>
@@ -47,8 +48,12 @@
             <td>${item.status | containerStatusFormatter}</td>
             <td>${item.incomingStocks[0].kor | numberFormat: "0,0.00"}</td>
             <td>
+              <div if.bind="item.vesselName" class="small font-italic">
+                ${item.vesselName}
+              </div>
               <a route-href="containerEdit; params.bind:{id: encode(item.id)}"
-                class="with-decoration">${item.containerNumber}</a>
+                class="with-decoration">${item.containerNumber}
+              </a>
             </td>
             <td>${item.sealNumber}</td>
             <td>${item.bookingNumber}</td>

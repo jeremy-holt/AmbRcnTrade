@@ -8,11 +8,11 @@
       <h4 if.bind="model.id">Container ${model.containerNumber}</h4>
       <h4 else>New container</h4>
 
-      <h4 if.bind="vessel.id">On board vessel ${vessel.vesselName} ${vessel.voyageNumber}
-        <a route-href="vesselEdit; params.bind:{id: encode(vessel.Id)}" class="with-decoration">
-          <i class="fas fa-ship"></i>Go to vessel
+      <div if.bind="model.vesselId"><span class="h4">On board vessel ${model.vesselName}</span>
+        <a route-href="vesselEdit; params.bind:{id: encode(model.vesselId)}" class="with-decoration ml-3">
+          Go to vessel<i class="fas fa-ship ml-1"></i>
         </a>
-      </h4>
+      </div>
       <h5 else>Not assigned to a vessel</h5>
     </div>
 

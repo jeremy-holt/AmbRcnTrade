@@ -1,3 +1,4 @@
+import { encodeParams } from "./../../core/helpers";
 import { DialogService } from "aurelia-dialog";
 import { autoinject, observable } from "aurelia-framework";
 import { Router } from "aurelia-router";
@@ -22,34 +23,31 @@ export class ContainerEdit {
   protected containerStatusList = CONTAINER_STATUS_LIST;
   protected teuList = TEU_LIST;
   @observable protected selectedContainerStatus: IContainerStatus = undefined;
-  protected vessel: IVessel = undefined!;
-
+  
   constructor(
-    private containerService: ContainerService,
-    private vesselService: VesselService,
+    private containerService: ContainerService,    
     private dialogService: DialogService,
     private router: Router
   ) { }
 
-  protected async activate(prms: IParamsId) {
+  protected async activate(prms: IParamsId) {   
     if (prms?.id) {
-      await this.containerService.load(prms.id);      
+      await this.containerService.load(prms.id);
     } else {
       await this.containerService.createContainer();
-    }
+    }    
   }
 
   protected stateChanged(state: IState) {
     this.model = _.cloneDeep(state.container.current);
-    this.vessel = _.cloneDeep(state.vessel.current);
-
+  
     this.teuList = _.cloneDeep(TEU_LIST);
-    this.teuList.unshift({ id: null, name: "[Select]" });    
+    this.teuList.unshift({ id: null, name: "[Select]" });
   }
 
   protected async bind() {
     this.selectedContainerStatus = this.containerStatusList.find(c => c.id === this.model.status);
-    await this.vesselService.load(this.model.vesselId);
+    // await this.vesselService.load(this.model.vesselId);
   }
 
   protected get canSave() {
@@ -105,5 +103,9 @@ export class ContainerEdit {
   protected async addContainer() {
     await this.containerService.createContainer();
     this.selectedContainerStatus = this.containerStatusList.find(c => c.id === this.model.status);
+  }
+
+  protected encode(value: string){
+    return encodeParams(value);
   }
 }

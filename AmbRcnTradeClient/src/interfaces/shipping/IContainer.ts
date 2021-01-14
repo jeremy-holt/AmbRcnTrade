@@ -19,5 +19,6 @@ export interface IContainer extends IEntityCompany {
   vgmTicketNumber: string;
   teu: Teu;
   vesselId: string;
+  vesselName?: string;
   selected?: boolean;
 }

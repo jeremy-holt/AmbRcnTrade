@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using AmberwoodCore.Interfaces;
 using AmbRcnTradeServer.Constants;
+using Newtonsoft.Json;
 using Raven.Client.Documents;
 using Raven.Client.Documents.Linq;
 using Raven.Client.Documents.Session;
@@ -29,5 +30,6 @@ namespace AmbRcnTradeServer.Models.ContainerModels
         public string Name { get; set; }
         public string CompanyId { get; set; }
         public string VesselId { get; set; }
+        [JsonIgnore]public string VesselName { get; set; }
     }
 }
