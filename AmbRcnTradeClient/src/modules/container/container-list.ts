@@ -1,16 +1,14 @@
-import { sum } from "./../../core/array-functions";
-import { ContainerStatusFormatterValueConverter } from "./container-status-formatter-valueconverter";
-import { isInRole } from "./../../services/role-service";
-import { Router } from "aurelia-router";
-import { encodeParams } from "core/helpers";
 import { autoinject, observable } from "aurelia-framework";
+import { Router } from "aurelia-router";
 import { connectTo } from "aurelia-store";
+import { encodeParams } from "core/helpers";
 import _ from "lodash";
 import { IState } from "store/state";
-import { ContainerStatus, CONTAINER_STATUS_LIST, IContainerStatus } from "./../../constants/app-constants";
+import { CONTAINER_STATUS_LIST, IContainerStatus } from "./../../constants/app-constants";
 import { IContainer } from "./../../interfaces/shipping/IContainer";
 import { ContainerService } from "./../../services/container-service";
-import { group } from "console";
+import { isInRole } from "./../../services/role-service";
+import { ContainerStatusFormatterValueConverter } from "./container-status-formatter-valueconverter";
 
 @autoinject
 @connectTo()

@@ -53,7 +53,7 @@ namespace AmbRcnTradeServer.Controllers
         public async Task<ActionResult<List<StockBalance>>> LoadStockBalanceList(string companyId, long? lotNo, string locationId)
         {
             await _auditingService.Log(Request);
-            return await _service.LoadStockBalanceList(companyId, locationId);
+            return await _service.LoadStockBalanceList(companyId, lotNo, locationId);
         }
 
         [Authorize]

@@ -1,7 +1,6 @@
-import { DeleteDialog } from "dialogs/delete-dialog";
-import { isInRole } from "./../../services/role-service";
 import { DialogService } from "aurelia-dialog";
 import { autoinject, observable } from "aurelia-framework";
+import { Router } from "aurelia-router";
 import { connectTo } from "aurelia-store";
 import { encodeParams } from "core/helpers";
 import _ from "lodash";
@@ -10,9 +9,9 @@ import { IState } from "store/state";
 import { ContainerStatus } from "./../../constants/app-constants";
 import { IAvailableContainer } from "./../../interfaces/stockManagement/IAvailableContainerItem";
 import { IStockBalance } from "./../../interfaces/stocks/IStockBalance";
+import { isInRole } from "./../../services/role-service";
 import { StockService } from "./../../services/stock-service";
 import { StuffContainerDialog } from "./stuff-container-dialog";
-import { Router } from "aurelia-router";
 
 @autoinject
 @connectTo()
@@ -21,6 +20,7 @@ export class StockBalanceList {
   protected list: IStockBalance[] = [];
   protected availableContainersList: IAvailableContainer[] = [];
   protected numberEmptyContainers = 0;
+  private currentLotNo: number = undefined!;
 
   constructor(
     private stockService: StockService,
@@ -32,6 +32,7 @@ export class StockBalanceList {
   public async activate(prms: { lotNo: number, locationId: string }) {
     await this.stockManagementService.getAvailableContainers();
     await this.stockService.loadStockBalanceList(prms?.locationId);
+    this.currentLotNo = prms?.lotNo;
   }
 
   protected stateChanged(state: IState) {

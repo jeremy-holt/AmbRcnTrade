@@ -10,7 +10,8 @@
     <div class="card-header">
       <h4>Stock list</h4>
       <div class="my-4">
-        Please go to the <a route-href="stockBalanceList" class="with-decoration"><i class="fas fa-warehouse mr-1"></i>Stock Balances</a> page to select
+        Please go to the <a route-href="stockBalanceList" class="with-decoration"><i
+            class="fas fa-warehouse mr-1"></i>Stock Balances</a> page to select
         which stocks to stuff into a container
       </div>
     </div>
@@ -26,8 +27,7 @@
         <div class="mr-2 w-100">
           <div class="form-label">Filter by lot numbers</div>
           <select class="custom-select" value.bind="filterLotNo">
-            <option>[All]</option>
-            <option repeat.for="item of lotNoList">${item}</option>
+            <option repeat.for="item of lotNoList" model.bind="item.id">${item.name}</option>
           </select>
         </div>
         <div>
@@ -55,16 +55,19 @@
         <tbody>
           <tr repeat.for="item of list | lotNoFilter: filterLotNo" class="${!item.isStockIn ? 'bg-light' : ''}">
             <td>
-              <a if.bind="canNavigateToStock" route-href="stockEdit; params.bind:{id: encode(item.stockId)}" class="with-decoration">Stock: Lot
-                ${item.lotNo}</a>
-                <span else>Stock: Lot ${item.lotNo}</span>
-                <br>
-              <a route-href="inspectionEdit; params.bind:{id: encode(item.inspectionId)}"
+              <!-- <a if.bind="canNavigateToStock" route-href="stockEdit; params.bind:{id: encode(item.stockId)}"
+                class="with-decoration">Stock: Lot
+                ${item.lotNo}
+              </a> -->
+              <a if.bind="canNavigateToStock" route-href="stockBalanceList; params.bind:{lotNo: item.lotNo}" class="with-decoration">Stock: Lot ${item.lotNo}</a>
+              <span else>Stock: Lot ${item.lotNo}</span>
+              <br>
+              <a if.bind="item.isStockIn" route-href="inspectionEdit; params.bind:{id: encode(item.inspectionId)}"
                 class="with-decoration">Inspection:
                 ${item.inspectionDate | dateFormat: "DD/MM/YYYY"}</a>
             </td>
             <td>${item.stockDate | dateFormat: "DD/MM/YYYY"}</td>
-            <td>${item.locationName}              
+            <td>${item.locationName}
             </td>
             <td>${item.supplierName}</td>
             <td>${item.origin}</td>
@@ -90,8 +93,9 @@
             <td>
               <ul class="list-unstyled">
                 <li repeat.for="sr of item.stuffingRecords">
-                  <a if.bind="canNavigateToContainer" class="with-decoration" route-href="containerEdit; params.bind:{id: encode(sr.containerId)}">
-                    ${sr.containerNumber}                    
+                  <a if.bind="canNavigateToContainer" class="with-decoration"
+                    route-href="containerEdit; params.bind:{id: encode(sr.containerId)}">
+                    ${sr.containerNumber}
                   </a>
                   <span else>${sr.containerNumber}</span>
                 </li>
@@ -103,7 +107,7 @@
           <tr>
             <th>Stock balance</th>
             <th>${stockBalance.bags | numberFormat: "0,0"} bags</th>
-            <th class="font-italic">Approx. ${stockBalance.weightKg/1000 | numberFormat: "0,0"} tons</th>
+            <th class="font-italic">${stockBalance.weightKg | numberFormat: "0,0"} kg</th>
             <th colspan="7"></th>
           </tr>
         </tfoot>

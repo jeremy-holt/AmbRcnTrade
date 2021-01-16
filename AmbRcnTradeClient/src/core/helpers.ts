@@ -1,6 +1,5 @@
-import { IEntity, IIdentity } from "./../interfaces/IEntity";
 import { Container } from "aurelia-framework";
-import { I18N, RtValueConverter } from "aurelia-i18n";
+import { I18N } from "aurelia-i18n";
 import _ from "lodash";
 import moment from "moment";
 import "moment/locale/fr";
@@ -8,6 +7,7 @@ import "moment/locale/pt";
 import "moment/locale/vi";
 import { DATEFORMAT } from "../constants/app-constants";
 import { IState } from "../store/state";
+import { IEntity, IIdentity } from "./../interfaces/IEntity";
 import { log } from "./log";
 import { Fn } from "./types";
 
@@ -216,6 +216,32 @@ export const distinct = (list: IEntity[]) => {
       result.push({
         id: item.id,
         name: item.name
+      });
+    }
+  }
+  return result;
+};
+
+export const distinctBy = <T, TU extends keyof T>(list: T[], key: TU) => {
+  const result: { id: string | number, name: string }[] = [];
+  const map = new Map();
+  for (const item of list) {
+    if (!map.has(item[key])) {
+      map.set(item[key], true);
+      let id: string | number = undefined!;      
+      switch (typeof (item[key])) {
+        case "string":
+          id = item[key].toString();
+          break;
+        case "number":
+          id = item[key] as unknown as number;
+          break;
+        default:
+          throw new Error(`Cannot determine typeof ${item[key]}`);          
+      }
+      result.push({
+        id: id,
+        name: item["name"]
       });
     }
   }

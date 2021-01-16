@@ -93,7 +93,7 @@ export const arrayMinValue = (array: number[]): number => {
   return Math.min(...array);
 };
 
-export const concatArray = <T, U>(array: T[], fieldPath: Fn<T, U>, eol: string = ", ") => {
+export const concatArray = <T, TU>(array: T[], fieldPath: Fn<T, TU>, eol = ", ") => {
   let result = "";
 
   const lastItem = array[array.length - 1];
@@ -122,7 +122,7 @@ export const union = <T>(a: T[], b: T[]) => {
   return Array.from(new Set([...a, ...b]));
 };
 
-export const range = (start: number, end?: number, step: number = 1) => {
+export const range = (start: number, end?: number, step = 1) => {
   const list: number[] = [];
   if (!end) {
     end = start;

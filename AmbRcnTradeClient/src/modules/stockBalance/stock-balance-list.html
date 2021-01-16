@@ -24,7 +24,7 @@
             <div class="col">Quality</div>
           </div>
         </li>
-        <li class="list-group-item ${item.selected ? " list-group-item-danger" : '' }" repeat.for="item of list">
+        <li class="list-group-item ${item.lotNo == currentLotNo ? 'list-group-item-highlight' : '' }" repeat.for="item of list">
           <div class="row">
             <div class="col-2">
               <div>

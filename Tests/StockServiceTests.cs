@@ -248,7 +248,7 @@ namespace Tests
             WaitForIndexing(store);
 
             // Act
-            var list = await sut.LoadStockBalanceList(COMPANY_ID, null);
+            var list = await sut.LoadStockBalanceList(COMPANY_ID, null, null);
 
             // Assert
             list.Should().HaveCount(3);
