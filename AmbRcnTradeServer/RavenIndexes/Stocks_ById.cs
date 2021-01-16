@@ -37,8 +37,7 @@ namespace AmbRcnTradeServer.RavenIndexes
                     InspectionId = stock.InspectionId,
                     InspectionDate = inspection.InspectionDate,
                     StockDate = stock.IsStockIn ? stock.StockInDate : stock.StockOutDate,
-                    AvgBagWeightKg = stock.Bags > 0 ? stock.WeightKg / stock.Bags : 0,
-                    ZeroedStock = stock.ZeroedStock
+                    AvgBagWeightKg = stock.Bags > 0 ? stock.WeightKg / stock.Bags : 0
                 };
 
             Index(x => x.StockId, FieldIndexing.Default);

@@ -10,7 +10,7 @@
     <div class="card-header">
       <h4>Stock list</h4>
       <div class="my-4">
-        Please go to the <a route-href="stockBalanceList" class="with-decoration">Stock Balances</a> page to select
+        Please go to the <a route-href="stockBalanceList" class="with-decoration"><i class="fas fa-warehouse mr-1"></i>Stock Balances</a> page to select
         which stocks to stuff into a container
       </div>
     </div>
@@ -64,8 +64,7 @@
                 ${item.inspectionDate | dateFormat: "DD/MM/YYYY"}</a>
             </td>
             <td>${item.stockDate | dateFormat: "DD/MM/YYYY"}</td>
-            <td>${item.locationName}
-              <span if.bind="item.zeroedStock" class="font-weight-bold text-danger"><br>Stock Zeroed</span>
+            <td>${item.locationName}              
             </td>
             <td>${item.supplierName}</td>
             <td>${item.origin}</td>

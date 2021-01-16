@@ -1,8 +1,7 @@
-import { Router } from "aurelia-router";
-import { IInspectionListItem } from "./../../interfaces/inspections/IInspectionListItem";
 import { DialogController } from "aurelia-dialog";
 import { autoinject } from "aurelia-framework";
-import { encodeParams } from "core/helpers";
+import { Router } from "aurelia-router";
+import { IInspectionListItem } from "./../../interfaces/inspections/IInspectionListItem";
 
 @autoinject
 export class StockNavigationDialog {
@@ -19,6 +18,6 @@ export class StockNavigationDialog {
 
   protected navigateToStockReference(index: number) {
     this.controller.cancel();
-    this.router.navigateToRoute("stockEdit", { id: encodeParams(this.model.stockReferences[index].stockId) });
+    this.router.navigateToRoute("stockBalanceList", { lotNo: this.model.stockReferences[index].lotNo });
   }
 }

@@ -66,7 +66,7 @@ export class InspectionEdit {
   }
 
   protected get canSave() {
-    return this.canAddAnalysis && this.model?.analyses?.length > 0 && this.canSaveAnalysis && !this.isDeleting;
+    return this.canAddAnalysis && this.model?.analyses?.length > 0 && this.canSaveAnalysis && !this.isDeleting && this.model?.supplierId?.length > 0 && this.model.bags > 0 && this.avgBagWeightKg > 70;
   }
 
   protected async save() {
@@ -77,8 +77,8 @@ export class InspectionEdit {
 
   protected get canSaveAnalysis() {
     return this.model && !this.model.analyses.some(
-      c => c.count === undefined! ||
-        c.moisture === undefined || c.soundGm === undefined ||
+      c => c.count === undefined! || c.count===0 ||
+        c.moisture === undefined || c.soundGm === undefined || c.moisture===0 || c.soundGm===0 ||
         c.rejectsGm === undefined || c.spottedGm === undefined ||
         c.kor === undefined);
 
@@ -116,6 +116,10 @@ export class InspectionEdit {
       return false;
     }
     return this.inspectionService.canAddInspectionToStock(this.model) && this.wasInspectionApproved && isInRole(["admin", "user", "warehouseManager"], this.state);
+  }
+
+  protected get canChangeApproval(){
+    return this.model.stockReferences.length===0;
   }
 
   protected get wasInspectionApproved() {
@@ -163,10 +167,10 @@ export class InspectionEdit {
   }
 
   protected get remainingKgToAllocate() {
-    return this.model.weightKg - this.inspectionService.weightKgAlreadyAllocated(this.model, this.averageWeightBagsKg);
+    return this.model.weightKg - this.inspectionService.weightKgAlreadyAllocated(this.model, this.avgBagWeightKg);
   }
 
-  protected get averageWeightBagsKg() {
+  protected get avgBagWeightKg() {
     return this.model.bags > 0 ? this.model.weightKg / this.model.bags : 0;
   }
 
@@ -180,7 +184,7 @@ export class InspectionEdit {
     this.router.navigateToRoute("stockList");
   }
 
-  protected detached(){
-    this.subscriptions.forEach(c=>c.dispose());
+  protected detached() {
+    this.subscriptions.forEach(c => c.dispose());
   }
 }

@@ -1,3 +1,5 @@
+import { sum } from "./../../core/array-functions";
+import { ContainerStatusFormatterValueConverter } from "./container-status-formatter-valueconverter";
 import { isInRole } from "./../../services/role-service";
 import { Router } from "aurelia-router";
 import { encodeParams } from "core/helpers";
@@ -5,9 +7,10 @@ import { autoinject, observable } from "aurelia-framework";
 import { connectTo } from "aurelia-store";
 import _ from "lodash";
 import { IState } from "store/state";
-import { CONTAINER_STATUS_LIST, IContainerStatus } from "./../../constants/app-constants";
+import { ContainerStatus, CONTAINER_STATUS_LIST, IContainerStatus } from "./../../constants/app-constants";
 import { IContainer } from "./../../interfaces/shipping/IContainer";
 import { ContainerService } from "./../../services/container-service";
+import { group } from "console";
 
 @autoinject
 @connectTo()
@@ -16,10 +19,12 @@ export class ContainerList {
   protected list: IContainer[] = [];
   protected containerStatusList = _.cloneDeep(CONTAINER_STATUS_LIST);
   @observable protected selectedContainerStatus: IContainerStatus = undefined!;
+  protected containerSummary: { name: string, count: number }[] = [];
 
   constructor(
     private containerService: ContainerService,
-    private router: Router
+    private router: Router,
+    private containerStatusFormatter: ContainerStatusFormatterValueConverter
   ) { }
 
   protected async activate() {
@@ -28,6 +33,21 @@ export class ContainerList {
 
   protected stateChanged(state: IState) {
     this.list = _.cloneDeep(state.container.list);
+
+    this.setContainersSummary();
+  }
+
+  protected setContainersSummary() {
+    const summary: { name: string, count: number }[] = [];
+
+    const groupedList = _.groupBy(this.list, "status");
+    let k: keyof typeof groupedList;
+    for (k in groupedList) {
+      const v = groupedList[k];      
+      summary.push({ name: this.containerStatusFormatter.toView(k), count: v.length });
+    }
+
+    this.containerSummary = summary;
   }
 
   protected async selectedContainerStatusChanged(status: IContainerStatus) {
@@ -46,11 +66,11 @@ export class ContainerList {
     return isInRole(["admin", "user", "warehouseManager"], this.state);
   }
 
-  protected navigateToStockBalanceList(){
+  protected navigateToStockBalanceList() {
     this.router.navigateToRoute("stockBalanceList");
   }
 
-  protected navigateToVesselList(){
+  protected navigateToVesselList() {
     this.router.navigateToRoute("vesselList");
   }
 }

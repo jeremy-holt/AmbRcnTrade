@@ -63,30 +63,7 @@ export class StockBalanceList {
     return isInRole(["admin", "user", "warehouseManager"], this.state);
   }
 
-  protected zeroStock(item: IStockBalance) {
-    if (!this.canZeroStock) {
-      return;
-    }
-
-    this.dialogService.open({
-      viewModel: DeleteDialog,
-      model: {
-        header: "Zero Stock",
-        body: "This will mark the physical stock as zero.<br>Are you sure you want to do this?"
-      }
-    }).whenClosed(async result => {
-      if (!result.wasCancelled) {
-        await this.stockService.ZeroStock(item.lotNo);
-        await this.stockService.loadStockBalanceList(null);
-      }
-    });
-  }
-
-  protected canZeroStock() {
-    return isInRole(["admin", "user", "warehouseManager"], this.state);
-  }
-
-  protected navigateToContainerList(){
+  protected navigateToContainerList() {
     this.router.navigateToRoute("containerList");
   }
 }

@@ -34,10 +34,9 @@ namespace AmbRcnTradeServer.RavenIndexes
                     InspectionIds = new List<string>(),
                     c.SupplierId,
                     SupplierName = supplier.Name,
-                    c.ZeroedStock
                 };
             Reduce = results => from c in results
-                group c by new {c.CompanyId, c.LocationId, c.LocationName, c.LotNo, c.SupplierId, c.SupplierName, c.ZeroedStock}
+                group c by new {c.CompanyId, c.LocationId, c.LocationName, c.LotNo, c.SupplierId, c.SupplierName}
                 into grp
                 select new
                 {
@@ -47,7 +46,6 @@ namespace AmbRcnTradeServer.RavenIndexes
                     grp.Key.LocationName,
                     grp.Key.SupplierId,
                     grp.Key.SupplierName,
-                    grp.Key.ZeroedStock,
                     BagsIn = grp.Sum(x => x.BagsIn),
                     BagsOut = grp.Sum(x => x.BagsOut),
                     WeightKgIn = grp.Sum(x => x.WeightKgIn),
@@ -77,7 +75,6 @@ namespace AmbRcnTradeServer.RavenIndexes
             public double BagsOut { get; set; }
             public double WeightKgIn { get; set; }
             public double WeightKgOut { get; set; }
-            public bool ZeroedStock { get; set; }
             public AnalysisResult AnalysisResult { get; set; }
             public string InspectionId { get; set; }
             public IEnumerable<AnalysisResult> AnalysisResults { get; set; }

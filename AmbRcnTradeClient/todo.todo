@@ -24,4 +24,7 @@ Vessel:
   ☐ Fix problem with Teu not sticking
   ☐ Containers should be Stuffing Complete, but deleteVessel is not changing the status
 
+Containers:
+  ☐ Unstuffing container reverts StockBalance to original stocks values
+
 

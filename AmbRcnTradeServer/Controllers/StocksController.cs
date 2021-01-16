@@ -73,14 +73,6 @@ namespace AmbRcnTradeServer.Controllers
             await _auditingService.Log(Request, id);
             return await _service.DeleteStock(id);
         }
-
-        [Authorize]
-        [HttpPost("[action]")]
-        public async Task<ActionResult<ServerResponse>> ZeroStock(ZeroStockRequest request)
-        {
-            await _auditingService.Log(Request, request.LotNo.ToString());
-            return await _service.ZeroStock(request.CompanyId, request.LotNo);
-        }
     }
 
     public class ZeroStockRequest

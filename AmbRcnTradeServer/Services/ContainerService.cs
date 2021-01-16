@@ -82,6 +82,7 @@ namespace AmbRcnTradeServer.Services
                 .LoadAsync<Container>(containerId);
 
             var stocks = await _session.LoadListFromMultipleIdsAsync<Stock>(container.IncomingStocks.SelectMany(stock => stock.StockIds.Select(stockItem => stockItem.StockId)));
+            var stockOuts = stocks.Where(c => !c.IsStockIn && containerId.In(c.StuffingRecords.GetPropertyFromList(x=>x.ContainerId))).ToList();
 
             var removableStatus = new[] {ContainerStatus.Cancelled, ContainerStatus.Empty, ContainerStatus.Stuffing, ContainerStatus.StuffingComplete};
 
@@ -93,7 +94,7 @@ namespace AmbRcnTradeServer.Services
                 stock.StuffingRecords.RemoveAll(c => c.ContainerId == containerId);
             }
 
-            var stockOuts = stocks.Where(c => !c.IsStockIn);
+            // var stockOuts = stocks.Where(c => !c.IsStockIn);
             foreach (var stockOut in stockOuts)
             {
                 _session.Delete(stockOut);

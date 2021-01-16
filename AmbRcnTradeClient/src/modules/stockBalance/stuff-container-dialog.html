@@ -15,7 +15,7 @@
             ${model.balance | numberFormat:"0,0"} bags available on stock
           </div>
           <div class="col">
-            About ${model.balance * 80/1000 | numberFormat: "0,0"} tons available on stock
+            ${model.balanceWeightKg | numberFormat: "0,0"} kg available on stock
           </div>
           <div class="col">
             Average bag weight ${model.avgBagWeightKg | numberFormat: "0,0.00"} kg
@@ -60,8 +60,11 @@
                   </div>
                 </div>
                 <div class="col-3">
-                  <a href="javascript:(0)" class="with-decoration"
-                    click.delegate="navigateToContainer(item.id) & debounce:200">${item.containerNumber}</a>
+                  ${item.containerNumber}
+                  <a href="javascript:(0)" class="with-decoration" title="Go to the container"
+                    click.delegate="navigateToContainer(item.id) & debounce:200">
+                    <i class="fas fa-arrow-alt-circle-right text-primary ml-1"></i>
+                  </a>
                 </div>
                 <div class="col-2">${item.bookingNumber}</div>
                 <div class="col-2">${item.bags | numberFormat: "0,0"}

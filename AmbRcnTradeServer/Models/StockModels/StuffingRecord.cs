@@ -12,5 +12,10 @@ namespace AmbRcnTradeServer.Models.StockModels
         public string ContainerId { get; set; }
         public string ContainerNumber { get; set; }
         public DateTime StuffingDate { get; set; }
+
+        public override string ToString()
+        {
+            return $"ContainerId: {ContainerId}, ContainerNumber: {ContainerNumber}";
+        }
     }
 }

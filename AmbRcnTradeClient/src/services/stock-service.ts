@@ -59,10 +59,6 @@ export class StockService extends FetchService {
   public async deleteStock(id: string){
     return await super.delete(id,"delete",noOpAction);
   }
-
-  public async ZeroStock(lotNo: number){
-    return await super.post({companyId: this.currentCompanyId, lotNo}, "zeroStock",noOpAction);
-  }
 }
 
 

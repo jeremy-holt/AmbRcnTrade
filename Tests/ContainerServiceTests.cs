@@ -150,7 +150,9 @@ namespace Tests
 
             const string stockId1 = "stocks/1-A";
             const string stockId2 = "stocks/2-A";
-            const string stockOutId = "stocks/3-A";
+            const string stockOut1Id = "stocks/3-A";
+            const string stockOut2Id = "stocks/4-A";
+            const string stockOut3Id = "stocks/5-A";
 
             var incomingStocks = new List<IncomingStock>
             {
@@ -163,72 +165,112 @@ namespace Tests
                     {
                         new(stockId1, true),
                         new(stockId2, true),
-                        new(stockOutId, false)
+                        new(stockOut1Id, false)
                     }
                 }
             };
 
-            var container = fixture.DefaultEntity<Container>()
+            var container1 = fixture.DefaultEntity<Container>()
                 .With(c => c.Bags, 302)
                 .With(c => c.StuffingWeightKg, 24000)
                 .With(c => c.IncomingStocks, incomingStocks)
                 .Create();
-            await session.StoreAsync(container);
+            await session.StoreAsync(container1);
+            
+            var container2 = fixture.DefaultEntity<Container>()
+                .With(c => c.Bags, 100)
+                .With(c => c.StuffingWeightKg, 8000)
+                .With(c => c.IncomingStocks, incomingStocks)
+                .Create();
+            await session.StoreAsync(container2);
+            
+            var container3 = fixture.DefaultEntity<Container>()
+                .With(c => c.Bags, 100)
+                .With(c => c.StuffingWeightKg, 8000)
+                .With(c => c.IncomingStocks, incomingStocks)
+                .Create();
+            await session.StoreAsync(container3);
+            
 
-            var stuffingRecords = new List<StuffingRecord>
+            var stuffingRecords1 = new List<StuffingRecord>
             {
-                new() {ContainerId = container.Id, ContainerNumber = container.ContainerNumber}
+                new() {ContainerId = container1.Id, ContainerNumber = container1.ContainerNumber},
+                new (){ContainerId = container2.Id,ContainerNumber = container2.ContainerNumber}
             };
-
+            
+            var stuffingRecords2 = new List<StuffingRecord>
+            {
+                new (){ContainerId = container3.Id,ContainerNumber = container3.ContainerNumber}
+            };
+            
             var stockIn1 = fixture.DefaultEntity<Stock>()
                 .With(c => c.Id, stockId1)
                 .With(c => c.Bags, 500)
                 .With(c => c.WeightKg, 8000)
                 .Without(c => c.InspectionId)
                 .With(c => c.IsStockIn, true)
-                .With(c => c.StuffingRecords, stuffingRecords)
+                .With(c => c.StuffingRecords, stuffingRecords1)
                 .Create();
-            await session.StoreAsync(stockIn1);
-
+            
             var stockIn2 = fixture.DefaultEntity<Stock>()
                 .With(c => c.Id, stockId2)
                 .With(c => c.Bags, 50)
                 .With(c => c.WeightKg, 1000)
                 .Without(c => c.InspectionId)
                 .With(c => c.IsStockIn, true)
-                .With(c => c.StuffingRecords, stuffingRecords)
+                .With(c => c.StuffingRecords, stuffingRecords2)
                 .Create();
-            await session.StoreAsync(stockIn2);
-
-            var stockOut = fixture.DefaultEntity<Stock>()
-                .With(c => c.Id, stockOutId)
+            
+            var stockOut1 = fixture.DefaultEntity<Stock>()
+                .With(c => c.Id, stockOut1Id)
                 .With(c => c.Bags, 110)
                 .With(c => c.WeightKg, 3_0000)
                 .With(c => c.IsStockIn, false)
-                .With(c => c.StuffingRecords, stuffingRecords)
+                .With(c => c.StuffingRecords, new List<StuffingRecord>(){new(){ContainerId = container1.Id,ContainerNumber = container1.ContainerNumber}})
                 .Create();
-
-            await session.StoreAsync(stockOut);
-
-            await session.SaveChangesAsync();
+            
+            var stockOut2 = fixture.DefaultEntity<Stock>()
+                .With(c => c.Id, stockOut2Id)
+                .With(c => c.Bags, 70)
+                .With(c => c.WeightKg, 5600)
+                .With(c => c.IsStockIn, false)
+                .With(c => c.StuffingRecords, new List<StuffingRecord>(){new(){ContainerId = container2.Id,ContainerNumber = container2.ContainerNumber}})
+                .Create();
+            
+            var stockOut3 = fixture.DefaultEntity<Stock>()
+                .With(c => c.Id, stockOut3Id)
+                .With(c => c.Bags, 50)
+                .With(c => c.WeightKg, 400)
+                .With(c => c.IsStockIn, false)
+                .With(c => c.StuffingRecords, new List<StuffingRecord>(){new(){ContainerId = container3.Id, ContainerNumber = container3.ContainerNumber}})
+                .Create();
+            
+            var stocks = new[] {stockIn1, stockIn2,stockOut1, stockOut2, stockOut3};
+            await stocks.SaveList(session);
+            
 
             // Act
-            var response = await sut.UnStuffContainer(container.Id);
+            var response = await sut.UnStuffContainer(container1.Id);
             await session.SaveChangesAsync();
 
             var actualStock1 = await session.LoadAsync<Stock>(stockId1);
             var actualStock2 = await session.LoadAsync<Stock>(stockId2);
-            var actualStockOut = await session.LoadAsync<Stock>(stockOutId);
-            var actualContainer = await session.LoadAsync<Container>(container.Id);
+            
+            var actualStockOut1 = await session.LoadAsync<Stock>(stockOut1Id);
+            var actualStockOut2 = await session.LoadAsync<Stock>(stockOut2Id);
+            var actualStockOut3 = await session.LoadAsync<Stock>(stockOut3Id);
+            var actualContainer = await session.LoadAsync<Container>(container1.Id);
 
             // Assert
             actualStock1.Should().NotBeNull();
-            actualStock1.StuffingRecords.Should().NotContain(c => c.ContainerId == container.Id);
+            actualStock1.StuffingRecords.Should().NotContain(c => c.ContainerId == container1.Id);
 
             actualStock2.Should().NotBeNull();
-            actualStock2.StuffingRecords.Should().NotContain(c => c.ContainerId == container.Id);
+            actualStock2.StuffingRecords.Should().NotContain(c => c.ContainerId == container1.Id);
 
-            actualStockOut.Should().BeNull();
+            actualStockOut1.Should().BeNull();
+            actualStockOut2.Should().NotBeNull();
+            actualStockOut3.Should().NotBeNull();
 
             response.Message.Should().Be("Unstuffed container");
 

@@ -1,3 +1,4 @@
+import { IStockBalance } from "interfaces/stocks/IStockBalance";
 import { isInRole } from "./../../services/role-service";
 import { autoinject, observable } from "aurelia-framework";
 import { Router } from "aurelia-router";
@@ -49,9 +50,16 @@ export class StockList {
   }
 
   protected get stockBalance() {
+    const filter = (list: IStockBalance[])=>list.filter(c=>c.lotNo===this.filterLotNo && c.locationId===this.selectedLocation.id);
+    const bagsIn = this.list.filter(c => c.isStockIn && c.lotNo === this.filterLotNo && c.locationId===this.selectedLocation.id).reduce((a, b) => a += b.bagsIn, 0);
+    const bagsOut = this.list.filter(c => !c.isStockIn).reduce((a, b) => a += b.bagsOut, 0);
+
+    const weightIn = this.list.filter(c => c.isStockIn).reduce((a, b) => a += b.weightKgIn, 0);
+    const weightOut = this.list.filter(c => !c.isStockIn).reduce((a, b) => a += b.weightKgOut, 0);
+
     return {
-      bags: this.list.reduce((a, b) => a += (b.bagsIn - b.bagsOut), 0),
-      weightKg: this.list.reduce((a, b) => a += (b.weightKgIn - b.weightKgOut), 0)
+      bags: bagsIn - bagsOut,
+      weightKg: weightIn - weightOut
     };
   }
 
@@ -65,10 +73,6 @@ export class StockList {
     await this.runQuery();
   }
 
-  // protected addStock() {
-  //   this.router.navigateToRoute("stockEdit", { id: null });
-  // }
-
   protected async runQuery() {
     this.stockService.loadStockList(this.selectedLocation.id);
   }
@@ -77,15 +81,15 @@ export class StockList {
     return encodeParams(value);
   }
 
-  protected get canNavigateToStock(){
-    return isInRole(["admin","user","warehouseManager"],this.state);
+  protected get canNavigateToStock() {
+    return isInRole(["admin", "user", "warehouseManager"], this.state);
   }
 
-  protected get canNavigateToContainer(){
-    return isInRole(["admin","user","warehouseManager"],this.state);
+  protected get canNavigateToContainer() {
+    return isInRole(["admin", "user", "warehouseManager"], this.state);
   }
 
-  protected navigateToWarehouseList(){
+  protected navigateToWarehouseList() {
     this.router.navigateToRoute("stockBalanceList");
   }
 }

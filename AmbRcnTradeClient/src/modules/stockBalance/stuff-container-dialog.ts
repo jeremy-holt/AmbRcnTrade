@@ -37,6 +37,7 @@ export class StuffContainerDialog {
 
   protected async activate(model: { stockBalance: IStockBalance }) {
     this.model = model.stockBalance;
+    console.log(this.model);
     this.avgBagWeightKg = model.stockBalance.avgBagWeightKg;
 
     await this.stocksManagementService.getAvailableContainers();

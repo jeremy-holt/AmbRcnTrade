@@ -15,7 +15,12 @@
         select the stock to stuff into a container <a href="#" if.bind="canAddContainer" click.delegate="addContainer()"
           class="with-decoration">
           <i class="fas fa-fw fa-plus"></i> or add a new Container
-        </a></div>
+        </a>
+      </div>
+      <h6>Available containers</h6>
+      <div repeat.for="item of containerSummary">
+        ${item.count} x ${item.name}
+      </div>
     </div>
 
     <div class="card-body">

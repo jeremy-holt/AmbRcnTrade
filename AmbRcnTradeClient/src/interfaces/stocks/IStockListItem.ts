@@ -20,6 +20,5 @@ export interface IStockListItem {
   selected?: boolean;
   weightKgIn: number;
   weightKgOut: number;
-  avgBagWeightKg: number;
-  zeroedStock: boolean;
+  avgBagWeightKg: number;  
 }
