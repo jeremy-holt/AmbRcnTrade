@@ -27,5 +27,10 @@ namespace AmbRcnTradeServer.Models.StockModels
         public string SupplierName { get; set; }
         public string SupplierId { get; set; }
         public double AvgBagWeightKg { get; set; }
+
+        public override string ToString()
+        {
+            return $"LotNo: {LotNo}, BagsIn: {BagsIn}, BagsOut: {BagsOut}, Balance: {Balance}, WeightKgIn: {WeightKgIn}, WeightKgOut: {WeightKgOut}, BalanceWeightKg: {BalanceWeightKg}, AvgBagWeightKg: {AvgBagWeightKg}";
+        }
     }
 }

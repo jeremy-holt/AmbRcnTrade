@@ -442,42 +442,78 @@ namespace Tests
                 Kor = 55
             };
 
-            var container = new Container
+            var container1 = new Container
             {
-                ContainerNumber = "TRIU 1234",
+                ContainerNumber = "First container",
                 Status = ContainerStatus.Cancelled
             };
-            await session.StoreAsync(container);
+            await session.StoreAsync(container1);
+            
+            var container2 = new Container
+            {
+                ContainerNumber = "Second container",
+                Status = ContainerStatus.Cancelled
+            };
+            await session.StoreAsync(container2);
 
             await session.SaveChangesAsync();
 
             // Act
-            const double incomingBags = 2000;
-            const double incomingWeightKg = 16_000;
+            const double incomingBags1 = 2000;
+            const double incomingWeightKg1 = 16_000;
+            
+            const double incomingBags2 = 300;
+            const double incomingWeightKg2 = 6_000;
+            
+            
             const ContainerStatus containerStatus = ContainerStatus.StuffingComplete;
-            ServerResponse response = await sut.StuffContainer(container.Id, containerStatus, stockBalance, incomingBags, incomingWeightKg, new DateTime(2020, 1, 1));
+            
+            ServerResponse response1 = await sut.StuffContainer(container1.Id, containerStatus, stockBalance, incomingBags1, incomingWeightKg1, new DateTime(2020, 1, 1));
+            ServerResponse response2 = await sut.StuffContainer(container2.Id, containerStatus, stockBalance, incomingBags2, incomingWeightKg2, new DateTime(2020, 1, 1));
 
             await session.SaveChangesAsync();
 
             // Assert
-            response.Message.Should().Be("Stuffed container");
+            response1.Message.Should().Be("Stuffed container");
 
-            var actualContainer = await session.LoadAsync<Container>(container.Id);
+            var actualContainer = await session.LoadAsync<Container>(container1.Id);
             actualContainer.IncomingStocks.Should().HaveCount(1);
             actualContainer.IncomingStocks[0].LotNo.Should().Be(1);
             actualContainer.IncomingStocks[0].StockIds.Should().ContainEquivalentOf(new IncomingStockItem(stock1.Id, true));
             actualContainer.IncomingStocks[0].StockIds.Should().ContainEquivalentOf(new IncomingStockItem(stock2.Id, true));
             actualContainer.IncomingStocks[0].StockIds.Should().ContainEquivalentOf(new IncomingStockItem("stocks/3-A", false));
-            actualContainer.IncomingStocks[0].Bags.Should().Be(incomingBags);
-            actualContainer.IncomingStocks[0].WeightKg.Should().Be(incomingWeightKg);
+            actualContainer.IncomingStocks[0].Bags.Should().Be(incomingBags1);
+            actualContainer.IncomingStocks[0].WeightKg.Should().Be(incomingWeightKg1);
             actualContainer.IncomingStocks[0].StuffingDate.Should().Be(new DateTime(2020, 1, 1));
             actualContainer.IncomingStocks[0].Kor.Should().Be(55);
             actualContainer.Status.Should().Be(containerStatus);
 
             var actualStock1 = await session.LoadAsync<Stock>(stock1.Id);
-            actualStock1.StuffingRecords[0].ContainerId.Should().Be(container.Id);
-            actualStock1.StuffingRecords[0].ContainerNumber.Should().Be(container.ContainerNumber);
+            actualStock1.StuffingRecords.Should().HaveCount(2).And.Contain(c => c.ContainerId.In(container1.Id, container2.Id));
+            actualStock1.StuffingRecords.Should().Contain(c=>c.ContainerNumber.In(container1.ContainerNumber,container2.ContainerNumber));
             actualStock1.StuffingRecords[0].StuffingDate.Should().Be(new DateTime(2020, 1, 1));
+
+            var actualStock2 = await session.LoadAsync<Stock>(stock2.Id);
+            actualStock2.StuffingRecords.Should().HaveCount(2).And.Contain(c => c.ContainerId.In(container1.Id, container2.Id));
+            actualStock2.StuffingRecords.Should().Contain(c=>c.ContainerNumber.In(container1.ContainerNumber,container2.ContainerNumber));
+            actualStock2.StuffingRecords[1].StuffingDate.Should().Be(new DateTime(2020, 1, 1));
+
+            var actualStocks = await session.Query<Stock>().ToListAsync();
+            actualStocks.Should().HaveCount(4);
+            
+            var stocksOut  = actualStocks.Where(c => !c.IsStockIn).ToList();
+
+            var actualStockOut1 = stocksOut[0];
+            actualStockOut1.Bags.Should().Be(incomingBags1);
+            actualStockOut1.WeightKg.Should().Be(incomingWeightKg1);
+            actualStockOut1.StuffingRecords.Should().HaveCount(1);
+            actualStockOut1.StuffingRecords[0].ContainerId.Should().Be(container1.Id);
+            
+            var actualStockOut2 = stocksOut[1];
+            actualStockOut2.Bags.Should().Be(incomingBags2);
+            actualStockOut2.WeightKg.Should().Be(incomingWeightKg2);
+            actualStockOut2.StuffingRecords.Should().HaveCount(1);
+            actualStockOut2.StuffingRecords[0].ContainerId.Should().Be(container2.Id);
         }
 
         [Fact]

@@ -19,6 +19,11 @@ namespace AmbRcnTradeServer.Models.ContainerModels
         public List<IncomingStockItem> StockIds { get; set; } = new();
         public DateTime StuffingDate { get; set; }
         public double Kor { get; set; }
+
+        public override string ToString()
+        {
+            return $"Bags: {Bags}, WeightKg: {WeightKg}, LotNo: {LotNo}";
+        }
     }
 
     public class StuffingRequest
@@ -34,6 +39,11 @@ namespace AmbRcnTradeServer.Models.ContainerModels
     public class OutgoingStock
     {
         public string StockId { get; set; }
+
+        public override string ToString()
+        {
+            return $"StockId: {StockId}";
+        }
     }
 
     public class IncomingStockItem
@@ -47,5 +57,10 @@ namespace AmbRcnTradeServer.Models.ContainerModels
         public IncomingStockItem() { }
         public string StockId { get; set; }
         public bool IsStockIn { get; set; }
+
+        public override string ToString()
+        {
+            return $"StockId: {StockId}, IsStockIn: {IsStockIn}";
+        }
     }
 }
