@@ -146,14 +146,14 @@ namespace AmbRcnTradeServer.Services
             DateTime stuffingDate)
         {
             var container = await _session.LoadAsync<Container>(containerId);
-            var stocks = await _session.Query<Stock>().Where(c => c.LotNo == stockBalance.LotNo).ToListAsync();
+            var stocksIn = await _session.Query<Stock>().Where(c => c.LotNo == stockBalance.LotNo && c.IsStockIn).ToListAsync();
 
             var incomingStock = new IncomingStock
             {
                 LotNo = stockBalance.LotNo,
                 Bags = bags,
                 WeightKg = weightKg,
-                StockIds = stocks.Select(c => new IncomingStockItem(c.Id, true)).ToList(),
+                StockIds = stocksIn.Select(c => new IncomingStockItem(c.Id, true)).ToList(),
                 StuffingDate = stuffingDate,
                 Kor = stockBalance.Kor
             };
@@ -164,7 +164,7 @@ namespace AmbRcnTradeServer.Services
             container.StuffingWeightKg = container.IncomingStocks.Sum(x => x.WeightKg);
             container.Status = status;
 
-            foreach (var stock in stocks)
+            foreach (var stock in stocksIn)
             {
                 stock.StuffingRecords.Add(new StuffingRecord {ContainerId = container.Id, ContainerNumber = container.ContainerNumber, StuffingDate = stuffingDate});
             }
@@ -175,12 +175,12 @@ namespace AmbRcnTradeServer.Services
                 Bags = bags,
                 WeightKg = weightKg,
                 StockOutDate = stuffingDate,
-                AnalysisResult = stocks.AverageAnalysisResults(),
+                AnalysisResult = stocksIn.AverageAnalysisResults(),
                 LocationId = stockBalance.LocationId,
                 IsStockIn = false,
                 SupplierId = stockBalance.SupplierId,
-                Origin = stocks.Select(x => x.Origin).ToAggregateString(),
-                CompanyId = stocks.FirstOrDefault()?.CompanyId,
+                Origin = stocksIn.Select(x => x.Origin).ToAggregateString(),
+                CompanyId = stocksIn.FirstOrDefault()?.CompanyId,
                 StuffingRecords = new List<StuffingRecord>
                 {
                     new()
