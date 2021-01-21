@@ -31,6 +31,7 @@ namespace AmbRcnTradeServer.Models.StockModels
         public double WeightKgOut { get; set; }
         public List<StuffingRecord> StuffingRecords { get; set; } = new();
         public double AvgBagWeightKg { get; set; }
+        public string Fiche { get; set; }
 
         public override string ToString()
         {

@@ -27,7 +27,7 @@ export class AddToStockDialog {
   public model: IMoveInspectionToStockRequest = {} as IMoveInspectionToStockRequest;
   public inspection: IInspection
   public supplierName = "";
-  protected averageBagWeightKg=0;
+  protected averageBagWeightKg = 0;
 
   constructor(
     protected controller: DialogController,
@@ -57,10 +57,12 @@ export class AddToStockDialog {
 
     this.model.bags = this.inspection.bags - this.inspection.stockReferences.reduce((a, b) => a += b.bags, 0);
     this.model.weightKg = this.inspection.weightKg - this.inspection.stockReferences.reduce((a, b) => a += b.weightKg, 0);
-    this.averageBagWeightKg = this.model.bags > 0 ? this.model.weightKg / this.model.bags : 0;
+    // this.averageBagWeightKg = this.model.bags > 0 ? this.model.weightKg / this.model.bags : 0;
+    this.averageBagWeightKg = this.inspection.avgBagWeightKg;
     this.model.inspectionId = this.inspection.id;
     this.model.date = moment().format(DATEFORMAT);
     this.model.origin = this.inspection.origin;
+    this.calcWeightKg();
   }
 
   protected bind() {
@@ -101,6 +103,10 @@ export class AddToStockDialog {
     }
   }
 
+  protected calcWeightKg() {
+    this.model.weightKg = _.round(+this.model.bags * this.averageBagWeightKg, 2);
+  }
+
   protected get requestModel(): IMoveInspectionToStockRequest {
     return {
       inspectionId: this.model.inspectionId,
@@ -109,7 +115,8 @@ export class AddToStockDialog {
       date: this.model.date,
       locationId: this.selectedLocation.id,
       lotNo: this.newStockItem ? 0 : this.stockList.find(c => c.selected)?.lotNo,
-      origin: this.model.origin
+      origin: this.model.origin,
+      fiche: this.model.fiche
     };
   }
 

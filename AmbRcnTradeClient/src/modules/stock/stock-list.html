@@ -72,7 +72,7 @@
             <td>${item.stockDate | dateFormat: "DD/MM/YYYY"}</td>
             <td>${item.locationName}
             </td>
-            <td>${item.supplierName}</td>
+            <td>${item.supplierName}<br>${item.fiche}</td>
             <td>${item.origin}</td>
             <td>
               <div if.bind="item.bagsIn>0">${item.bagsIn | numberFormat: "0,0"} bags<br>

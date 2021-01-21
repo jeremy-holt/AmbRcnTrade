@@ -57,7 +57,7 @@
             <date-input value.bind="model.date" label="Date stock enters"></date-input>
           </div>
           <div class="col">
-            <number-input value.bind="model.bags" label="Number of bags to enter stock"></number-input>
+            <number-input value.bind="model.bags" label="Number of bags to enter stock" change.delegate="calcWeightKg()"></number-input>
           </div>
           <div class="col">
             <number-input value.bind="model.weightKg" label="Weight kg to enter stock"></number-input>
@@ -71,6 +71,9 @@
           </div>
           <div class="col">
             <text-input value.bind="model.origin" label="Origin of goods"></text-input>
+          </div>
+          <div class="col">
+            <text-input value.bind="model.fiche" label="Fiche de Transfert"></text-input>
           </div>
         </div>
   

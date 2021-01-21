@@ -2,6 +2,8 @@
   <require from="./../analysis-result-custom-element/analysis-result-custom-element"></require>
 
   <toolbar type="menu" caption="Stock" list-route="stockList">
+    <toolbar-item icon="fas fa-file-upload" click.call="uploadDocuments()"></toolbar-item>
+    <toolbar-item icon="fas fa-file-download" click.call="downloadDocuments()"></toolbar-item>
   </toolbar>
 
   <div class="card">
@@ -33,7 +35,7 @@
         </div>
 
         <div class="col-4">
-          <text-input value.bind="model.fiche" label="Fiche de transfert"></text-input>
+          <labelled-text value.bind="model.fiche" label="Fiche de transfert"></labelled-text>
         </div>
       </div>
 

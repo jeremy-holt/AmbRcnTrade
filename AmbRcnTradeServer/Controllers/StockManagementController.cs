@@ -32,7 +32,7 @@ namespace AmbRcnTradeServer.Controllers
         public async Task<ActionResult<ServerResponse<MovedInspectionResult>>> MoveInspectionToStock(MoveInspectionToStockRequest request)
         {
             await _auditingService.Log(Request, request.InspectionId);
-            return await _service.MoveInspectionToStock(request.InspectionId, request.Bags, request.WeightKg, request.Date, request.LotNo, request.LocationId, request.Origin);
+            return await _service.MoveInspectionToStock(request.InspectionId, request.Bags, request.WeightKg, request.Date, request.LotNo, request.LocationId, request.Origin, request.Fiche);
         }
 
         [Authorize]

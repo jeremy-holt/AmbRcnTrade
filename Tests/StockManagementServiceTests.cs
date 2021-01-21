@@ -259,7 +259,7 @@ namespace Tests
             const double bags = 400;
             const double weightKg = 29_999;
             const string fiche = "Fiche";
-            var response = await sut.MoveInspectionToStock(inspection.Id, bags, weightKg, new DateTime(2013, 1, 1), 0, location.Id, "Firkei");
+            var response = await sut.MoveInspectionToStock(inspection.Id, bags, weightKg, new DateTime(2013, 1, 1), 0, location.Id, "Firkei", fiche);
             await session.SaveChangesAsync();
 
             // Assert
@@ -275,6 +275,7 @@ namespace Tests
             actualStock.LotNo.Should().Be(1);
             actualStock.InspectionId.Should().Be(inspection.Id);
             actualStock.Origin.Should().Be("Firkei");
+            actualStock.Fiche.Should().Be("Fiche");
 
             var listStocks = await session.Query<Stock>().ToListAsync();
             listStocks.Should().HaveCount(1);
@@ -325,7 +326,7 @@ namespace Tests
             const double bags = 400;
             const double weightKg = 0;
 
-            var response = await sut.MoveInspectionToStock(inspection.Id, bags, weightKg, new DateTime(2013, 1, 1), 17, location.Id, "Siguella");
+            var response = await sut.MoveInspectionToStock(inspection.Id, bags, weightKg, new DateTime(2013, 1, 1), 17, location.Id, "Siguella", "fiche");
             await session.SaveChangesAsync();
 
             // Assert

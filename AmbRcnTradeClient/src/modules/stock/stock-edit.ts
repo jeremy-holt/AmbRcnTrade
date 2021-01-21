@@ -1,3 +1,4 @@
+import { BillLadingUploadDialog } from "./../billLadingUploadDialog/billLading-upload-dialog";
 import { DeleteDialog } from "./../../dialogs/delete-dialog";
 import { DialogService } from "aurelia-dialog";
 import { encodeParams } from "core/helpers";
@@ -11,6 +12,7 @@ import _ from "lodash";
 import { IState } from "store/state";
 import { CustomerService } from "./../../services/customer-service";
 import { StockService } from "./../../services/stock-service";
+import { DocumentsDownloadDialog } from "modules/documents-download-dialog/documents-download-dialog";
 
 @autoinject
 @connectTo()
@@ -73,5 +75,19 @@ export class StockEdit {
         this.router.navigateToRoute("stockList");
       }
     });
+  }
+
+  protected async uploadDocuments() {
+    await this.dialogService.open({
+      viewModel: BillLadingUploadDialog,
+      model: { billLadingId: this.model.id }
+    });
+  }
+
+  protected async downloadDocuments() {
+    await this.dialogService.open({
+      viewModel: DocumentsDownloadDialog,
+      model: { billLadingId: this.model.id }
+    }).whenClosed();
   }
 }

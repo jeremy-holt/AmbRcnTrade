@@ -152,6 +152,7 @@ export class InspectionEdit {
     ).whenClosed(async result => {
       if (!result.wasCancelled) {
         const request = result.output as IMoveInspectionToStockRequest;
+        console.log(request);
 
         await this.stockManagementService.moveInspectionToStock(request);
 
