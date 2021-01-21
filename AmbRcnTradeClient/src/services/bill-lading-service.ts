@@ -64,7 +64,7 @@ export class BillLadingService extends FetchService {
 
   public async addContainersToBillLading(billLadingId: string, vesselId: string, containerIds: string[]) {
     const request: IAddContainersToBillLadingRequest = { billLadingId, vesselId, containerIds };    
-    return await await super.post<IBillLading>(request, "addContainersToBillLading", noOpAction);
+    return await super.post<IBillLading>(request, "addContainersToBillLading", noOpAction);
   }
 
   public async deleteBillLading(vesselId: string, billLadingId: string) {

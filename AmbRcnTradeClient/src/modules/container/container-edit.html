@@ -33,14 +33,14 @@
           </select-input>
         </div>
         <div class="col">
-          <text-input value.bind="model.bookingNumber" disabled.bind="!canEditContainer" label="Booking number">
+          <text-input value.bind="model.bookingNumber" required="true" disabled.bind="!canEditContainer" label="Booking number">
           </text-input>
         </div>
       </div>
 
       <div class="row">
         <div class="col">
-          <text-input value.bind="model.containerNumber" disabled.bind="model.id" label="Container number"></text-input>
+          <text-input value.bind="model.containerNumber" disabled.bind="model.id" required="true" label="Container number"></text-input>
         </div>
         <div class="col">
           <text-input value.bind="model.sealNumber" disabled.bind="!canEditContainer" label="Seal number"></text-input>

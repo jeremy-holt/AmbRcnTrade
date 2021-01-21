@@ -46,7 +46,7 @@ namespace AmbRcnTradeServer.Services
             var dllPath = currentPath.Replace(dllName, "");
             var fileName = Path.Combine(dllPath, "ExcelTemplates", templateFileName);
 
-            SpreadsheetInfo.SetLicense("FREE-LIMITED-KEY");
+            SpreadsheetInfo.SetLicense("SN-2021Jan16-wV4XsTHbtRl0O7fSRvJOlkVTICh9RbsKOOEcmc4BfETFCeRF/tPuJD0ihDmodWDlwFpItYvuXe44dKQokVkj3uXPsnQ==A");
 
             var file = ExcelFile.Load(fileName);
 
@@ -197,7 +197,7 @@ namespace AmbRcnTradeServer.Services
 
             if (!data.BillLadingDto.Containers.Any())
                 return;
-            
+
             worksheet.Rows.InsertCopy(row + 1, data.BillLadingDto.Containers.Count - 1, worksheet.Rows[row]);
 
             for (var i = 0; i < data.BillLadingDto.Containers.Count; i++)

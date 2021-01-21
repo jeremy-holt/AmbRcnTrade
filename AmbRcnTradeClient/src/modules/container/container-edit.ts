@@ -23,24 +23,24 @@ export class ContainerEdit {
   protected containerStatusList = CONTAINER_STATUS_LIST;
   protected teuList = TEU_LIST;
   @observable protected selectedContainerStatus: IContainerStatus = undefined;
-  
+
   constructor(
-    private containerService: ContainerService,    
+    private containerService: ContainerService,
     private dialogService: DialogService,
     private router: Router
   ) { }
 
-  protected async activate(prms: IParamsId) {   
+  protected async activate(prms: IParamsId) {
     if (prms?.id) {
       await this.containerService.load(prms.id);
     } else {
       await this.containerService.createContainer();
-    }    
+    }
   }
 
   protected stateChanged(state: IState) {
     this.model = _.cloneDeep(state.container.current);
-  
+
     this.teuList = _.cloneDeep(TEU_LIST);
     this.teuList.unshift({ id: null, name: "[Select]" });
   }
@@ -69,8 +69,9 @@ export class ContainerEdit {
       }
     ).whenClosed(async result => {
       if (!result.wasCancelled) {
-        await this.containerService.unstuffContainer({ containerId: this.model.id });
-        await this.containerService.load(this.model.id);
+        alert("Will unstuff container - not working at the moment");
+        // await this.containerService.unstuffContainer({ containerId: this.model.id });
+        // await this.containerService.load(this.model.id);
       }
     });
   }
@@ -105,7 +106,7 @@ export class ContainerEdit {
     this.selectedContainerStatus = this.containerStatusList.find(c => c.id === this.model.status);
   }
 
-  protected encode(value: string){
+  protected encode(value: string) {
     return encodeParams(value);
   }
 }

@@ -524,6 +524,7 @@ namespace Tests
             var stock = fixture.DefaultEntity<Stock>()
                 .Without(c => c.StockOutDate)
                 .With(c => c.InspectionId, inspection.Id)
+                .With(c=>c.Fiche,"12345")
                 .With(c => c.Id, "stocks/1-A")
                 .With(c => c.LotNo, 45)
                 .Create();

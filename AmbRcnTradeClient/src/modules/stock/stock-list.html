@@ -55,15 +55,18 @@
         <tbody>
           <tr repeat.for="item of list | lotNoFilter: filterLotNo" class="${!item.isStockIn ? 'bg-light' : ''}">
             <td>
-              <!-- <a if.bind="canNavigateToStock" route-href="stockEdit; params.bind:{id: encode(item.stockId)}"
-                class="with-decoration">Stock: Lot
-                ${item.lotNo}
-              </a> -->
-              <a if.bind="canNavigateToStock" route-href="stockBalanceList; params.bind:{lotNo: item.lotNo}" class="with-decoration">Stock: Lot ${item.lotNo}</a>
+              <a if.bind="canNavigateToStock" route-href="stockEdit; params.bind:{id: encode(item.stockId)}"
+                class="with-decoration">
+                <i class="fas fa-edit"></i>
+                Stock: Lot ${item.lotNo}<br>
+              </a>
+              <a if.bind="canNavigateToStock" route-href="stockBalanceList; params.bind:{lotNo: item.lotNo}" class="with-decoration">
+                <i class="fas fa-arrow-alt-circle-right"></i>
+                Stock: Lot ${item.lotNo}</a>
               <span else>Stock: Lot ${item.lotNo}</span>
               <br>
               <a if.bind="item.isStockIn" route-href="inspectionEdit; params.bind:{id: encode(item.inspectionId)}"
-                class="with-decoration">Inspection:
+                class="with-decoration"> <i class="fas fa-arrow-alt-circle-right"></i> Inspection:
                 ${item.inspectionDate | dateFormat: "DD/MM/YYYY"}</a>
             </td>
             <td>${item.stockDate | dateFormat: "DD/MM/YYYY"}</td>

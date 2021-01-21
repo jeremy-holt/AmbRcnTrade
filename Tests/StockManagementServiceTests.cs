@@ -258,7 +258,7 @@ namespace Tests
             // Act
             const double bags = 400;
             const double weightKg = 29_999;
-
+            const string fiche = "Fiche";
             var response = await sut.MoveInspectionToStock(inspection.Id, bags, weightKg, new DateTime(2013, 1, 1), 0, location.Id, "Firkei");
             await session.SaveChangesAsync();
 
@@ -469,7 +469,7 @@ namespace Tests
             const ContainerStatus containerStatus = ContainerStatus.StuffingComplete;
             
             ServerResponse response1 = await sut.StuffContainer(container1.Id, containerStatus, stockBalance, incomingBags1, incomingWeightKg1, new DateTime(2020, 1, 1));
-            ServerResponse response2 = await sut.StuffContainer(container2.Id, containerStatus, stockBalance, incomingBags2, incomingWeightKg2, new DateTime(2020, 1, 1));
+            await sut.StuffContainer(container2.Id, containerStatus, stockBalance, incomingBags2, incomingWeightKg2, new DateTime(2020, 1, 1));
 
             await session.SaveChangesAsync();
 
