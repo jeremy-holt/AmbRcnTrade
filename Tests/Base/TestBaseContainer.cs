@@ -26,56 +26,6 @@ namespace Tests.Base
         {
             return new CounterService(session);
         }
-        //
-        // protected IContractService GetContractService(IAsyncDocumentSession session)
-        // {
-        //     return new ContractService(session, GetCounterService(session), GetAppUserService(session), GetContractDocumentService(session));
-        // }
-        //
-        // protected IChartOfAccountsService GetChartOfAccountsService(IAsyncDocumentSession session)
-        // {
-        //     return new ChartOfAccountsService(session, GetTransactionService(session));
-        // }
-        //
-        // protected ITransactionService GetTransactionService(IAsyncDocumentSession session)
-        // {
-        //     return new TransactionService(session, GetTransactionHelperService(session));
-        // }
-        //
-        // protected ITransactionHelperService GetTransactionHelperService(IAsyncDocumentSession session)
-        // {
-        //     return new TransactionHelperService(session);
-        // }
-        //
-        // protected IToleranceService GetToleranceService(IAsyncDocumentSession session)
-        // {
-        //     return new ToleranceService(session, GetGradesService(session));
-        // }
-        //
-        // protected static IGradesService GetGradesService(IAsyncDocumentSession session)
-        // {
-        //     return new GradesService(session);
-        // }
-        //
-        // protected IAppUserService GetAppUserService(IAsyncDocumentSession session)
-        // {
-        //     return new AppUserService(session);
-        // }
-        //
-        // protected IAuditingService GetAuditingService(IAsyncDocumentSession session)
-        // {
-        //     return new AuditingService(session);
-        // }
-        //
-        // protected IContractDocumentService GetContractDocumentService(IAsyncDocumentSession session)
-        // {
-        //     return new ContractDocumentService(session, GetAttachmentService(session));
-        // }
-        //
-        // protected IAttachmentService GetAttachmentService(IAsyncDocumentSession session)
-        // {
-        //     return new AttachmentService(session);
-        // }
 
         protected HttpRequest FakeRequest(IIdentity contract, List<PostAttachmentRequest> requests)
         {

@@ -101,7 +101,7 @@ export class BillLadingEdit {
       viewModel: DeleteDialog,
       model: {
         header: "Remove container from Bill of Lading",
-        body: "This will remove the container from this Bill of Lading. It will not delete it.<br>The status of the container will be changed to <b>Stuffing Complete</b>"
+        body: "This will remove the container from this Bill of Lading. It will not delete it.<br>The status of the container will be changed to <b>Gated</b>"
       }
     }).whenClosed(async result => {
       if (!result.wasCancelled) {

@@ -67,4 +67,11 @@ export class StockBalanceList {
   protected navigateToContainerList() {
     this.router.navigateToRoute("containerList");
   }
+
+  protected get summary() {
+    return {
+      bags: this.list.reduce((a, b) => a += b.balance, 0),
+      weightKg: this.list.reduce((a, b) => a += b.balanceWeightKg, 0)
+    }
+  }
 }

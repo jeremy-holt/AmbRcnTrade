@@ -146,7 +146,7 @@ namespace AmbRcnTradeServer.Services
             var removedContainers = await _session.LoadListFromMultipleIdsAsync<Container>(containerIds);
             foreach (var container in removedContainers)
             {
-                container.Status = ContainerStatus.StuffingComplete;
+                container.Status = ContainerStatus.Gated;
                 container.VesselId = null;
             }
 

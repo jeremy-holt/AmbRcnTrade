@@ -314,7 +314,7 @@ namespace Tests
         }
 
         [Fact]
-        public async Task RemoveContainersFromBillLading_ShouldRemoveTheContainersAndChangeStatusToStuffingComplete()
+        public async Task RemoveContainersFromBillLading_ShouldRemoveTheContainersAndChangeStatusToGated()
         {
             // Arrange
             using var store = GetDocumentStore();
@@ -345,7 +345,7 @@ namespace Tests
             response.Dto.ContainerIds.Should().NotContain(containers[0].Id);
 
             var actualContainer = await session.LoadAsync<Container>(containers[0].Id);
-            actualContainer.Status.Should().Be(ContainerStatus.StuffingComplete);
+            actualContainer.Status.Should().Be(ContainerStatus.Gated);
             actualContainer.VesselId.Should().BeNullOrEmpty();
         }
 

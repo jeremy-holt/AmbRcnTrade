@@ -58,6 +58,14 @@
               Moisture: ${item.moisture/100 | numberFormat:"0.00%"}</div>
           </div>
         </li>
+        <li class="list-group-item">
+          <div class="row font-weight-bold">
+            <div class="col-2">Totals</div>
+            <div class="col-2"></div>
+            <div class="col-2 text-right">${summary.bags | numberFormat: "0,0"} bags</div>
+            <div class="col-2 text-right">${summary.weightKg/1000 | numberFormat: "0,0.0"} mt</div>
+          </div>
+        </li> 
       </ul>
     </div>
   </div>

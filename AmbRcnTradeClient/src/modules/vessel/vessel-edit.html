@@ -14,10 +14,10 @@
     <div class="card-body">
       <div class="row">
         <div class="col-4">
-          <text-input disabled.bind="!canEditBillLading" value.bind="model.vesselName" label="Vessel name"></text-input>
+          <text-input disabled.bind="!canEditBillLading" value.bind="model.vesselName" label="Vessel name" required="true"></text-input>
         </div>
         <div class="col-4">
-          <text-input disabled.bind="!canEditBillLading" value.bind="model.voyageNumber" label="Voyage no"></text-input>
+          <text-input disabled.bind="!canEditBillLading" value.bind="model.voyageNumber" label="Voyage no" required="true"></text-input>
         </div>
         <div class="col-4">
           <date-input disabled.bind="!canEditBillLading" value.bind="model.eta" label="ETA"></date-input>
@@ -26,11 +26,11 @@
 
       <div class="row">
         <div class="col-4">
-          <select-input source.bind="customerList| customerFilter:'logisticsCompany'" disabled.bind="!canEditBillLading"
+          <select-input source.bind="customerList| customerFilter:'logisticsCompany'" disabled.bind="!canEditBillLading" required="true"
             value.bind="model.shippingCompanyId" use-model-id="true" label="Shipping company"></select-input>
         </div>
         <div class="col-4">
-          <select-input source.bind="customerList| customerFilter:'logisticsCompany'" disabled.bind="!canEditBillLading"
+          <select-input source.bind="customerList| customerFilter:'logisticsCompany'" disabled.bind="!canEditBillLading" required="true"
             value.bind="model.forwardingAgentId" use-model-id="true" label="Forwarding agent"></select-input>
         </div>
 
@@ -38,7 +38,7 @@
 
       <div class="row">
         <div class="col-4">
-          <text-input value.bind="model.bookingNumber" label="Booking number"></text-input>
+          <text-input value.bind="model.bookingNumber" label="Booking number" required="true"></text-input>
         </div>
         <div class="col-4">
           <text-input value.bind="model.serviceContract" disabled.bind="!canEditBillLading" label="Service contract">

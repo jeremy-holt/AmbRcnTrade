@@ -277,6 +277,7 @@ namespace Tests
             actualContainer.Bags.Should().Be(0);
             actualContainer.StuffingWeightKg.Should().Be(0);
             actualContainer.IncomingStocks.Should().HaveCount(0);
+            actualContainer.Status.Should().Be(ContainerStatus.Empty);
         }
 
 
