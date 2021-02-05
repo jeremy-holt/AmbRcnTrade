@@ -1,4 +1,5 @@
 <template>
+  <require from="./audit-log-user-filter-value-converter"></require> 
   <toolbar type="menu" caption="Audit Logs"></toolbar>
 
   <div class="row d-flex align-items-end mb-3">
@@ -8,6 +9,17 @@
     <div class="col">
       <button type="button" class="btn btn-primary" click.delegate="clearLogs()">Clear Logs</button>
     </div>
+
+    <div class="col">      
+      <div>
+        <label class="form-label">Users</label>
+        <select class="custom-select" value.bind="selectedUser">
+          <option>[All]</option>
+          <option repeat.for="item of uniqueUsers">${item}</option>
+        </select>
+      </div>
+    </div>
+
   </div>
 
   <table class="table table-sm table-bordered">
@@ -21,7 +33,7 @@
       </tr>
     </thead>
     <tbody>
-      <tr repeat.for="item of list" class="small">
+      <tr repeat.for="item of list | auditLogUserFilter: selectedUser" class="small">
         <td class="text-nowrap">${item.date | dateFormat: "DD/MM/YYYY HH:mm"}</td>
         <td>${item.ipAddress}</td>
         <td class="text-nowrap">${item.userName} (${item.userRole})</td>
