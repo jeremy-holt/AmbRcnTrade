@@ -42,8 +42,15 @@
         <div class="col">
           <text-input value.bind="model.containerNumber" disabled.bind="model.id" required="true" label="Container number"></text-input>
         </div>
+        <div class="col">          
+          <text-input value.bind="model.exporterSealNumber" disabled.bind="!canEditContainer" label="Exporter seal number"></text-input>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col"></div>
         <div class="col">
-          <text-input value.bind="model.sealNumber" disabled.bind="!canEditContainer" label="Seal number"></text-input>
+          <text-input value.bind="model.sealNumber" disabled.bind="!canEditContainer" label="Customs seal number"></text-input>
         </div>
       </div>
 

@@ -31,6 +31,7 @@ namespace AmbRcnTradeServer.Models.ContainerModels
         public string CompanyId { get; set; }
         public string VesselId { get; set; }
         [JsonIgnore]public string VesselName { get; set; }
+        public string ExporterSealNumber { get; set; }
 
         public override string ToString()
         {

@@ -4,6 +4,7 @@ import { IEntityCompany } from "interfaces/IEntity";
 export interface IContainer extends IEntityCompany {
   containerNumber: string;
   sealNumber: string;
+  exporterSealNumber: string;
   bookingNumber: string;
   bags: number;
   weighbridgeWeightKg: number;
