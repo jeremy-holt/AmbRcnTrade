@@ -232,6 +232,34 @@ namespace Tests
         }
 
         [Fact]
+        public async Task Load_ShouldCreateNewDocumentsIfTheDoNotAlreadyExist()
+        {
+            // Arrange
+            using var store = GetDocumentStore();
+            using var session = store.OpenAsyncSession();
+            var sut = GetBillLadingService(session);
+            var fixture = new Fixture();
+            
+            var vessel = fixture.DefaultEntity<Vessel>()
+                .Without(c => c.BillLadingIds)
+                .Create();
+            await session.StoreAsync(vessel);
+
+            var blading = fixture.DefaultEntity<BillLadingDto>()
+                .With(c => c.VesselId, vessel.Id)
+                .Without(c => c.Documents)
+                .Create();
+            await session.StoreAsync(blading);
+            
+            // Act
+            var actual = await sut.Load(blading.Id);
+            
+            // Assert
+            actual.Documents.Should().HaveCount(6);
+
+        }
+
+        [Fact]
         public async Task LoadList_ShouldLoadListOfBillsOfLading()
         {
             // Arrange
@@ -433,6 +461,33 @@ namespace Tests
             actual.PreCargoDescription.Footer.Should().NotBeNullOrEmpty();
 
             actualVessel.BillLadingIds.Should().Contain(response.Id);
+        }
+
+        [Fact]
+        public async Task CreateBillOfLading_ShouldAddInitialDocumentsCheckList()
+        {
+            // Arrange
+            using var store = GetDocumentStore();
+            using var session = store.OpenAsyncSession();
+            var sut = GetBillLadingService(session);
+            var fixture = new Fixture();
+
+            var vessel = fixture.DefaultEntity<Vessel>()
+                .Without(c => c.BillLadingIds)
+                .Create();
+            await session.StoreAsync(vessel);
+            
+            var blading = fixture.DefaultEntity<BillLadingDto>()
+                .With(c=>c.VesselId,vessel.Id)
+                .Without(c=>c.Containers)
+                .Without(c => c.Documents)
+                .Create();
+            
+            // Act
+            await sut.Save(blading);
+            
+            // Assert
+            blading.Documents.Should().HaveCount(6);
         }
     }
 }

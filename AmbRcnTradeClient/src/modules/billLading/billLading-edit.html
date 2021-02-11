@@ -28,12 +28,15 @@
             click.delegate="printBillLading()">
             <i class="fas fa-fw fa-print"></i>Print Bill of Lading
           </button>
-
         </div>
-        <div class="col-4">
-          <button type="button" class="btn btn-primary" click.delegate="moveBillLadingToVessel()">Move this B/L to
+        <div class="col-3">
+          <button type="button" class="btn btn-primary" click.delegate="moveBillLadingToVessel()">Move B/L to
             another vessel</button>
         </div>
+        <div class="col-3">
+          <button type="button" class="btn btn-primary" click.delegate="openDocuments()">Documents ${documentCheckList}</button>
+        </div>
+
       </div>
 
       <div class="row mb-2">

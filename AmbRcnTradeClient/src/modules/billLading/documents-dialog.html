@@ -1,0 +1,39 @@
+<template>
+  <ux-dialog>
+    <ux-dialog-header>
+      <h4>Documents checklist</h4>
+    </ux-dialog-header>
+    <ux-dialog-body>
+      <ul class="list-group">
+        <li class="list-group-item" repeat.for="item of model.documents">
+          <div class="row">
+            <div class="col">
+              <text-input value.bind="item.name" label="Document name"></text-input>
+            </div>
+            <div class="col">
+              <date-input value.bind="item.submitted" label="Submitted"></date-input>
+            </div>
+            <div class="col">
+              <date-input value.bind="item.received" label="Received"></date-input>
+            </div>
+          </div>
+          <div class="row d-flex align-items-end">
+            <div class="col-10">
+              <text-area-input rows="3" value.bind="item.notes" label="Notes"></text-area-input>
+            </div>
+            <div class="col d-flex justify-content-end">
+              <button type="button" class="btn btn-sm btn-danger" click.delegate="deleteDocument($index)">Delete</button>
+            </div>
+          </div>          
+        </li>
+      </ul>
+      <div class="mt-2">
+        <button type="button" class="btn btn-primary" click.delegate="addDocument()">Add document</button>
+      </div>
+    </ux-dialog-body>
+    <ux-dialog-footer>
+      <button type="button" class="btn-danger btn" click.delegate="okClicked()">Ok</button>
+      <button type="button" class="btn btn-secondary" click.delegate="controller.cancel()">Cancel</button>
+    </ux-dialog-footer>
+  </ux-dialog>
+</template>

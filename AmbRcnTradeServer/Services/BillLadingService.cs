@@ -55,6 +55,11 @@ namespace AmbRcnTradeServer.Services
                 ? new BillLading {VesselId = billLadingDto.VesselId, CompanyId = billLadingDto.CompanyId}
                 : await _session.Include<BillLading>(c => c.VesselId).LoadAsync<BillLading>(billLadingDto.Id);
 
+            if (billLading.Id.IsNullOrEmpty())
+            {
+                InitializeDocuments(billLadingDto);
+            }
+
             var vessel = await _session.LoadAsync<Vessel>(billLading.VesselId);
 
             _mapper.Map(billLadingDto, billLading);
@@ -78,6 +83,19 @@ namespace AmbRcnTradeServer.Services
             return new ServerResponse<BillLadingDto>(billLadingDto, "Saved");
         }
 
+        private static void InitializeDocuments(BillLading billLadingDto)
+        {
+            billLadingDto.Documents.AddRange(new List<Document>
+            {
+                new("ACE certificate of weight and quality"),
+                new ("CCA redevance"),
+                new ("Customs duties"),
+                new ("Phytosanitary certificate"),
+                new ("Fumigation certificate"),
+                new ("Certificate of origin")
+            });
+        }
+
         public async Task<BillLadingDto> Load(string id)
         {
             var billLading = await _session
@@ -96,6 +114,9 @@ namespace AmbRcnTradeServer.Services
             _mapper.Map(billLading, billLadingDto);
 
             billLadingDto.Containers = containers;
+            
+            if(billLadingDto.Documents.Count==0)
+                InitializeDocuments(billLadingDto);
 
             return billLadingDto;
         }

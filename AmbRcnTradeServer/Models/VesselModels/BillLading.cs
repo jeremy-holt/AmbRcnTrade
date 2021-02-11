@@ -63,6 +63,7 @@ namespace AmbRcnTradeServer.Models.VesselModels
         public string ProductDescription { get; set; } = "IVORY COAST ORIGIN 2020 SEASON";
         public CargoDescription PreCargoDescription { get; set; }
         public Teu Teu { get; set; }
+        public List<Document> Documents { get; set; } = new List<Document>();
     }
 
     public class BillLadingDto : BillLading, IEntityDto

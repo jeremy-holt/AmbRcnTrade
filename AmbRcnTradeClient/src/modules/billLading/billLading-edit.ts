@@ -1,3 +1,4 @@
+import { DocumentsDialog } from "./documents-dialog";
 import { DialogService } from "aurelia-dialog";
 import { autoinject, observable } from "aurelia-framework";
 import { Router } from "aurelia-router";
@@ -210,5 +211,23 @@ export class BillLadingEdit {
         this.router.navigateToRoute("vesselEdit", { id: encodeParams(this.vessel.id) });
       }
     });
+  }
+
+  protected openDocuments() {
+    this.dialogService.open({
+      viewModel: DocumentsDialog,
+      model: this.model
+    })
+      .whenClosed(async result => {
+        if (!result.wasCancelled) {
+          await this.save();
+        }
+      });
+  }
+
+  protected get documentCheckList() {
+    const received = this.model.documents.filter(c => c.received !== null).length;
+    const total = this.model.documents.length;
+    return `${received}/${total}`;
   }
 }

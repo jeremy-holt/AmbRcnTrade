@@ -210,7 +210,8 @@ export const initialState: IState = {
       freightOriginChargesPaidBy: undefined!,
       teu: undefined!,
       vgmWeightKgText: undefined!,
-      oceanFreightPaidBy: undefined!
+      oceanFreightPaidBy: undefined!,
+      documents:[]
     },
     list: []
   },

@@ -7,7 +7,7 @@ import { IBillLadingListItem } from "interfaces/shipping/IBillLadingListItem";
 import _ from "lodash";
 import { QueryId } from "models/QueryId";
 import { IState } from "store/state";
-import { encodeParams } from "./../core/helpers";
+import { encodeParams, fixAspNetCoreDate } from "./../core/helpers";
 import { IAddContainersToBillLadingRequest } from "./../interfaces/shipping/IAddContainersToBillLadingRequest";
 import { IBillLading } from "./../interfaces/shipping/IBillLading";
 import { IContainer } from "./../interfaces/shipping/IContainer";
@@ -88,6 +88,12 @@ export class BillLadingService extends FetchService {
 }
 
 export function billLadingEditAction(state: IState, billLading: IBillLading) {
+  billLading.blDate=fixAspNetCoreDate(billLading.blDate,false);
+  billLading.documents.forEach(doc=>{
+    doc.received=fixAspNetCoreDate(doc.received,false);
+    doc.submitted=fixAspNetCoreDate(doc.submitted,false);
+  });
+  
   const newState = _.cloneDeep(state);
   newState.billLading.current = billLading;
   return newState;

@@ -1,3 +1,4 @@
+import { IDocument } from "./IDocument";
 import { Teu } from "constants/app-constants";
 import { IContainer } from "./IContainer";
 
@@ -55,6 +56,7 @@ export interface IBillLading {
   teu: Teu;
 
   selected?: boolean;
+  documents: IDocument[];
 }
 
 export interface ICargoDescription {
