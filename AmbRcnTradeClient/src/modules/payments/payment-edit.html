@@ -79,7 +79,7 @@
               <tbody>
                 <tr repeat.for="item of paymentDto.paymentList">
                   <td>
-                    <a route-href="paymentEdit; params.bind:{id: encode(item.id)}" class="with-decoration">
+                    <a route-href="paymentEdit; params.bind:{id: encode(item.id), supplierId: encode(model.supplierId)}" class="with-decoration">
                       ${item.paymentNo | numberFormat: "00000"}
                     </a>
                   </td>

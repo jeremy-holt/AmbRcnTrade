@@ -6,11 +6,7 @@
 	<s:String x:Key="/Default/Environment/AssemblyExplorer/XmlDocument/@EntryValue">&lt;AssemblyExplorer&gt;&#xD;
   &lt;Assembly Path="C:\Users\jholt\.nuget\packages\gembox.spreadsheet\47.0.1044\lib\netcoreapp3.1\GemBox.Spreadsheet.dll" /&gt;&#xD;
 &lt;/AssemblyExplorer&gt;</s:String>
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=1265063a_002Da867_002D4143_002Dadb1_002D6cab3a89901c/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="BillLadingServiceTests" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
-  &lt;TestAncestor&gt;&#xD;
-    &lt;TestId&gt;xUnit::2EDAD7D6-2894-47DD-8EAB-467794CA12B6::net5.0::Tests.BillLadingServiceTests&lt;/TestId&gt;&#xD;
-  &lt;/TestAncestor&gt;&#xD;
-&lt;/SessionState&gt;</s:String>
+	
 	
 	
 	

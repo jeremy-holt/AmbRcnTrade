@@ -85,7 +85,7 @@ export class App {
 
         // Payments
         { route: "payment/list", name: "paymentList", title: "Payments", nav: true, moduleId: "modules/payments/payments-list", roles: ["admin", "user"] },
-        { route: "payment/edit/:id?", name: "paymentEdit", title: "Payment", moduleId: "modules/payments/payment-edit", roles: ["admin", "user"] },
+        { route: "payment/edit/:id?/:supplierId?", name: "paymentEdit", title: "Payment", moduleId: "modules/payments/payment-edit", roles: ["admin", "user"] },
 
         // Dictionary items       
         { route: "dictionary/customer/edit", name: "customerEdit", title: "Address book", nav: true, moduleId: "modules/customer/customer-edit", roles: ["admin", "user"] },

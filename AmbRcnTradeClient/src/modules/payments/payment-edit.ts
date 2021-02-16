@@ -9,7 +9,6 @@ import { CURRENCIES_LIST, Currency } from "./../../constants/app-constants";
 import { encodeParams } from "./../../core/helpers";
 import { DeleteDialog } from "./../../dialogs/delete-dialog";
 import { ICustomerListItem } from "./../../interfaces/ICustomerListItem";
-import { IParamsId } from "./../../interfaces/IParamsId";
 import { IPaymentDto } from "./../../interfaces/payments/IPaymentDto";
 import { CustomerService } from "./../../services/customer-service";
 import { PaymentService } from "./../../services/payment-service";
@@ -34,13 +33,17 @@ export class PaymentEdit {
     private router: Router
   ) { }
 
-  protected async activate(prms: IParamsId) {
+  protected async activate(prms: { id: string, supplierId: string }) {
     await this.customerService.loadCustomersForAppUserList();
 
     if (prms?.id) {
       await this.paymentService.load(prms.id);
     } else {
       await this.paymentService.createPayment();
+    }
+
+    if (prms?.supplierId) {
+      await this.paymentService.loadPaymentsPurchasesList(prms.supplierId);
     }
   }
 

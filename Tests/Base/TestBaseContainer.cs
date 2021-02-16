@@ -102,5 +102,10 @@ namespace Tests.Base
         {
             return new DraftBillLadingService(session, GetBillLadingService(session));
         }
+
+        protected IBagDeliveryService GetBagDeliveryService(IAsyncDocumentSession session)
+        {
+            return new BagDeliveryService(session);
+        }
     }
 }
