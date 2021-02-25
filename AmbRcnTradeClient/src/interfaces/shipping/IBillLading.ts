@@ -54,6 +54,7 @@ export interface IBillLading {
   freightDestinationChargePaidBy: string;
 
   teu: Teu;
+  declarationNumber: string;
 
   selected?: boolean;
   documents: IDocument[];

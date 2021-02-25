@@ -211,6 +211,7 @@ export const initialState: IState = {
       teu: undefined!,
       vgmWeightKgText: undefined!,
       oceanFreightPaidBy: undefined!,
+      declarationNumber: undefined!,
       documents:[]
     },
     list: []

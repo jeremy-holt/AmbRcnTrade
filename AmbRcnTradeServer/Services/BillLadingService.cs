@@ -24,7 +24,7 @@ namespace AmbRcnTradeServer.Services
         Task<List<Container>> GetNotLoadedContainers(string companyId);
         Task<ServerResponse<BillLadingDto>> RemoveContainersFromBillLading(string billLadingId, IEnumerable<string> containerIds);
         Task<ServerResponse> MoveBillLadingToVessel(string billLadingId, string fromVesselId, string toVesselId);
-        CargoDescription GetPreCargoDescription(double? numberBags, double numberContainers, double? grossWeightKg, string productDescription, Teu teu);
+        CargoDescription GetPreCargoDescription(double? numberBags, double numberContainers, double? grossWeightKg, string productDescription, Teu teu, string declarationNumber);
         Task<ServerResponse> DeleteBillLading(string vesselId, string billLadingId);
     }
 
@@ -72,7 +72,7 @@ namespace AmbRcnTradeServer.Services
             billLading.GrossWeightKgText = billLading.GrossWeightKg == null ? "" : $"{billLading.GrossWeightKg:N0} KGS";
             billLading.VgmWeightKgText = billLading.GrossWeightKgText;
             billLading.PreCargoDescription = GetPreCargoDescription(billLading.NumberBags, billLading.ContainersOnBoard, billLading.GrossWeightKg, billLading.ProductDescription,
-                billLading.Teu);
+                billLading.Teu, billLading.DeclarationNumber);
 
             await _session.StoreAsync(billLading);
             billLadingDto.Id = billLading.Id;
@@ -81,19 +81,6 @@ namespace AmbRcnTradeServer.Services
                 vessel.BillLadingIds.Add(billLading.Id);
 
             return new ServerResponse<BillLadingDto>(billLadingDto, "Saved");
-        }
-
-        private static void InitializeDocuments(BillLading billLadingDto)
-        {
-            billLadingDto.Documents.AddRange(new List<Document>
-            {
-                new("ACE certificate of weight and quality"),
-                new ("CCA redevance"),
-                new ("Customs duties"),
-                new ("Phytosanitary certificate"),
-                new ("Fumigation certificate"),
-                new ("Certificate of origin")
-            });
         }
 
         public async Task<BillLadingDto> Load(string id)
@@ -114,8 +101,8 @@ namespace AmbRcnTradeServer.Services
             _mapper.Map(billLading, billLadingDto);
 
             billLadingDto.Containers = containers;
-            
-            if(billLadingDto.Documents.Count==0)
+
+            if (billLadingDto.Documents.Count == 0)
                 InitializeDocuments(billLadingDto);
 
             return billLadingDto;
@@ -141,29 +128,29 @@ namespace AmbRcnTradeServer.Services
                 if (!billLading.ContainerIds.Contains(containerId))
                     billLading.ContainerIds.Add(containerId);
             }
-            
+
 
             var containers = await _session.LoadListFromMultipleIdsAsync<Container>(containerIds);
-            
+
             foreach (var container in containers)
             {
                 container.Status = ContainerStatus.OnBoardVessel;
                 container.VesselId = vesselId;
             }
-            
+
             await _session.SaveChangesAsync();
-            
+
             return new ServerResponse("Added container(s) to Bill of Lading");
         }
 
         public async Task<ServerResponse<BillLadingDto>> RemoveContainersFromBillLading(string billLadingId, IEnumerable<string> containerIds)
         {
             var billLading = await _session
-                .Include<BillLading>(c=>c.ContainerIds)
+                .Include<BillLading>(c => c.ContainerIds)
                 .LoadAsync<BillLading>(billLadingId);
-            
+
             billLading.ContainerIds.RemoveAll(c => c.In(containerIds));
-            
+
             var removedContainers = await _session.LoadListFromMultipleIdsAsync<Container>(containerIds);
             foreach (var container in removedContainers)
             {
@@ -210,7 +197,8 @@ namespace AmbRcnTradeServer.Services
             return new ServerResponse("Moved Bill of Lading");
         }
 
-        public CargoDescription GetPreCargoDescription(double? numberBags, double numberContainers, double? grossWeightKg, string productDescription, Teu teu)
+        public CargoDescription GetPreCargoDescription(double? numberBags, double numberContainers, double? grossWeightKg, string productDescription, Teu teu,
+            string declarationNumber)
         {
             var teuText = teu switch
             {
@@ -219,27 +207,30 @@ namespace AmbRcnTradeServer.Services
                 _ => ""
             };
 
-            var bodyText = $"{numberBags} PACKAGES IN TOTAL\n" +
-                           $"{numberContainers}X{teuText} CONTAINER(S) SAID TO CONTAIN:\n" +
-                           "DRIED RAW CASHEW NUTS\n" +
-                           "HS CODE: 08013100";
+            var bodyText =
+                $"{numberContainers}X{teuText} CONTAINER(S) SAID TO CONTAIN:\n" +
+                $"{numberBags} JUTE BAGS OF DRIED RAW CASHEW NUTS IN SHELL\n" +
+                "OF IVORY COAST ORIGIN - 2021 NEW CROP\n" +
+                "HS CODE: 08013100";
 
-            var weightsText = $"IN {numberBags} JUTE BAGS OF {productDescription}\n" +
+            var weightsText = $"IN {numberBags} JUTE BAGS\n" +
                               $"GROSS WEIGHT: {grossWeightKg:N0} KGS\n" +
                               $"LESS WEIGHT OF EMPTY BAGS: {numberBags} KGS\n" +
-                              $"NET WEIGHT: {grossWeightKg - numberBags:N0} KGS";
+                              $"NET WEIGHT: {grossWeightKg - numberBags:N0} KGS\n" +
+                              "FREIGHT PREPAID\n" +
+                              $"DECLARATION NO: {declarationNumber}\n" +
+                              "21 FREE DAYS AT PORT OF DESTINATION";
             return new CargoDescription {Header = bodyText, Footer = weightsText};
         }
 
         public async Task<ServerResponse> DeleteBillLading(string vesselId, string billLadingId)
         {
-
             var vessel = await _session
-                .Include<Vessel>(c=>c.BillLadingIds)
+                .Include<Vessel>(c => c.BillLadingIds)
                 .LoadAsync<Vessel>(vesselId);
-            
+
             var billLading = await _session
-                .Include<BillLading>(c=>c.ContainerIds)
+                .Include<BillLading>(c => c.ContainerIds)
                 .LoadAsync<BillLading>(billLadingId);
 
             var containers = await _session.LoadListFromMultipleIdsAsync<Container>(billLading.ContainerIds);
@@ -248,11 +239,24 @@ namespace AmbRcnTradeServer.Services
 
             foreach (var container in containers)
                 container.Status = ContainerStatus.Gated;
-            
-            
+
+
             _session.Delete(billLading);
 
             return new ServerResponse("Deleted Bill of Lading");
+        }
+
+        private static void InitializeDocuments(BillLading billLadingDto)
+        {
+            billLadingDto.Documents.AddRange(new List<Document>
+            {
+                new("ACE certificate of weight and quality"),
+                new("CCA redevance"),
+                new("Customs duties"),
+                new("Phytosanitary certificate"),
+                new("Fumigation certificate"),
+                new("Certificate of origin")
+            });
         }
     }
 }

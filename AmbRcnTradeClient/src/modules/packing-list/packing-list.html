@@ -50,12 +50,11 @@
     </div>
   </div>
 
-  <table class="table table-bordered mt-5">
+  <table class="table table-bordered mt-5">J'ai rencontré ORAS Afrique qui dit pouvoir livrer 15 000 tonnes à partir de Siguella, Katiola, Dabakala - je lui ai donné vos chiffres.
     <thead>
       <tr>
         <th>Container number</th>
-        <th>Seal number</th>
-        <th>Product</th>
+        <th>Seal number</th>        
         <th class="text-right">Bags</th>
         <th class="text-right">Gross weight</th>
         <th class="text-right">Nett weight</th>
@@ -66,8 +65,7 @@
     <tbody>
       <tr repeat.for="item of model.containers">
         <td>${item.containerNumber}</td>
-        <td>${item.sealNumber}</td>
-        <td>Kor ${item.incomingStocks[0].kor | numberFormat:"0"}</td>
+        <td>${item.sealNumber}</td>        
         <td class="text-right">${item.bags | numberFormat: "0,0"}</td>
         <td class="text-right">${item.weighbridgeWeightKg | numberFormat:"0,0"}</td>
         <td class="text-right">${item.nettWeightKg | numberFormat:"0,0"}</td>

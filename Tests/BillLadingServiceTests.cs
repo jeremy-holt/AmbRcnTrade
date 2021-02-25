@@ -41,9 +41,9 @@ namespace Tests
 
             var containers = fixture.DefaultEntity<Container>().CreateMany().ToList();
             await containers.SaveList(session);
-            
+
             var billLading = fixture.DefaultEntity<BillLading>()
-                .With(c=>c.VesselId,"vessels/1-A")
+                .With(c => c.VesselId, "vessels/1-A")
                 .Without(c => c.ContainerIds)
                 .Create();
             await session.StoreAsync(billLading);
@@ -81,7 +81,7 @@ namespace Tests
             var fixture = new Fixture();
 
             var containers = fixture.DefaultEntity<Container>()
-                .With(c=>c.Status,ContainerStatus.OnBoardVessel)
+                .With(c => c.Status, ContainerStatus.OnBoardVessel)
                 .CreateMany().ToList();
             await containers.SaveList(session);
 
@@ -174,20 +174,26 @@ namespace Tests
             const double numberBags = 1280;
             const double numberContainers = 4;
             const double grossWeightKg = 101_790;
-            const string productDescription = "Ivory Coast Origin 2020 season";
+            const string productDescription = "Ivory Coast Origin 2021 season";
             const Teu teu = Teu.Teu40;
+            const string declarationNumber = "DECL0001";
             // Act
-            var actual = sut.GetPreCargoDescription(numberBags, numberContainers, grossWeightKg, productDescription, teu);
+            var actual = sut.GetPreCargoDescription(numberBags, numberContainers, grossWeightKg, productDescription, teu, declarationNumber);
 
-            var expectedBodyText = $"{numberBags} PACKAGES IN TOTAL\n" +
-                                   $"{numberContainers}X40HC CONTAINER(S) SAID TO CONTAIN:\n" +
-                                   "DRIED RAW CASHEW NUTS\n" +
-                                   "HS CODE: 08013100";
+            var expectedBodyText =
+                $"{numberContainers}X40HC CONTAINER(S) SAID TO CONTAIN:\n" +
+                $"{numberBags} JUTE BAGS OF DRIED RAW CASHEW NUTS IN SHELL\n" +
+                "OF IVORY COAST ORIGIN - 2021 NEW CROP\n" +
+                "HS CODE: 08013100";
 
-            var expectedWeightsText = $"IN {numberBags} JUTE BAGS OF {productDescription}\n" +
+            var expectedWeightsText = $"IN {numberBags} JUTE BAGS\n" +
                                       $"GROSS WEIGHT: {grossWeightKg:N0} KGS\n" +
                                       $"LESS WEIGHT OF EMPTY BAGS: {numberBags} KGS\n" +
-                                      $"NET WEIGHT: {grossWeightKg - numberBags:N0} KGS";
+                                      $"NET WEIGHT: {grossWeightKg - numberBags:N0} KGS\n" +
+                                      "FREIGHT PREPAID\n" +
+                                      $"DECLARATION NO: {declarationNumber}\n" +
+                                      "21 FREE DAYS AT PORT OF DESTINATION";
+
 
             // Assert
             actual.Header.Should().Be(expectedBodyText);
@@ -239,7 +245,7 @@ namespace Tests
             using var session = store.OpenAsyncSession();
             var sut = GetBillLadingService(session);
             var fixture = new Fixture();
-            
+
             var vessel = fixture.DefaultEntity<Vessel>()
                 .Without(c => c.BillLadingIds)
                 .Create();
@@ -250,13 +256,12 @@ namespace Tests
                 .Without(c => c.Documents)
                 .Create();
             await session.StoreAsync(blading);
-            
+
             // Act
             var actual = await sut.Load(blading.Id);
-            
+
             // Assert
             actual.Documents.Should().HaveCount(6);
-
         }
 
         [Fact]
@@ -476,16 +481,16 @@ namespace Tests
                 .Without(c => c.BillLadingIds)
                 .Create();
             await session.StoreAsync(vessel);
-            
+
             var blading = fixture.DefaultEntity<BillLadingDto>()
-                .With(c=>c.VesselId,vessel.Id)
-                .Without(c=>c.Containers)
+                .With(c => c.VesselId, vessel.Id)
+                .Without(c => c.Containers)
                 .Without(c => c.Documents)
                 .Create();
-            
+
             // Act
             await sut.Save(blading);
-            
+
             // Assert
             blading.Documents.Should().HaveCount(6);
         }

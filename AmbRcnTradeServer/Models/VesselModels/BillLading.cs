@@ -64,6 +64,7 @@ namespace AmbRcnTradeServer.Models.VesselModels
         public CargoDescription PreCargoDescription { get; set; }
         public Teu Teu { get; set; }
         public List<Document> Documents { get; set; } = new List<Document>();
+        public string DeclarationNumber { get; set; }
     }
 
     public class BillLadingDto : BillLading, IEntityDto
