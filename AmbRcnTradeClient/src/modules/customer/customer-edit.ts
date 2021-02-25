@@ -52,14 +52,17 @@ export class CustomerEdit {
 
   protected async activate(params: IParamsId): Promise<void> {
     await this.customerService.loadAllCustomers();
-    await this.adminService.loadUsersList();
+
+    if (this.canAddUsers) {
+      await this.adminService.loadUsersList();
+    }
 
     if (params.id) {
       await this.customerService.loadCustomer(decodeParams(params.id) as string);
     }
   }
 
-  protected get caption(){
+  protected get caption() {
     return !this.model?.id ? "Address book - New Customer" : "Address book";
   }
 
@@ -98,7 +101,7 @@ export class CustomerEdit {
     }
   }
 
-  protected bind(){
+  protected bind() {
     this.selectedCustomer = this.list.find(c => c.id === this.model?.id) as ICustomer;
   }
 
