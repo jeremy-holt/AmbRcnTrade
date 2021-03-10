@@ -130,9 +130,9 @@ export class InspectionService extends FetchService {
     }
 
     return {
-      soundPct: (analysis?.soundGm || 0) / total,
-      spottedPct: (analysis?.spottedGm || 0) / total,
-      rejectsPct: (analysis?.rejectsGm || 0) / total
+      soundPct: (analysis?.soundGm || 0) / 1000,
+      spottedPct: (analysis?.spottedGm || 0) / 1000,
+      rejectsPct: (analysis?.rejectsGm || 0) / 1000
     };
   }
 }
