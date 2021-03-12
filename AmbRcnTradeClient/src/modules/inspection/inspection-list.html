@@ -36,7 +36,7 @@
           <tr repeat.for="item of list">
             <td>
               <a class="with-decoration" route-href="inspectionEdit; params.bind:{id: encode(item.id)}">
-                Inspection: ${item.inspectionDate | dateFormat: "DD/MM/YYYY"}
+                Inspection: ${getInspectionNumber(item.id)} ${item.inspectionDate | dateFormat: "DD/MM/YYYY"}
               </a>
             </td>
             <td class="text-nowrap">${item.bags} / ${item.weightKg | numberFormat:"0,0"}</td>

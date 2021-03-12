@@ -5,7 +5,7 @@ import { IListItem } from "interfaces/IEntity";
 import _ from "lodash";
 import { IState } from "store/state";
 import "../../core/helpers";
-import { decodeParams, distinctBy, encodeParams } from "./../../core/helpers";
+import { decodeParams, distinctBy, encodeParams, getRavenRootId } from "./../../core/helpers";
 import { IStockListItem } from "./../../interfaces/stocks/IStockListItem";
 import { CustomerService } from "./../../services/customer-service";
 import { isInRole } from "./../../services/role-service";
@@ -116,5 +116,9 @@ export class StockList {
 
   protected navigateToWarehouseList() {
     this.router.navigateToRoute("stockBalanceList");
+  }
+
+  protected getInspectionNumber(id: string){
+    return getRavenRootId(id);
   }
 }

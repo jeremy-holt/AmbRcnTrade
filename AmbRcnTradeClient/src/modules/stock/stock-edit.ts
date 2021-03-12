@@ -1,7 +1,7 @@
 import { BillLadingUploadDialog } from "./../billLadingUploadDialog/billLading-upload-dialog";
 import { DeleteDialog } from "./../../dialogs/delete-dialog";
 import { DialogService } from "aurelia-dialog";
-import { encodeParams } from "core/helpers";
+import { encodeParams, getRavenRootId } from "core/helpers";
 import { autoinject, observable } from "aurelia-framework";
 import { Router } from "aurelia-router";
 import { connectTo } from "aurelia-store";
@@ -89,5 +89,9 @@ export class StockEdit {
       viewModel: DocumentsDownloadDialog,
       model: { billLadingId: this.model.id }
     }).whenClosed();
+  }
+
+  protected getInspectionNumber(id: string){
+    return getRavenRootId(id);
   }
 }

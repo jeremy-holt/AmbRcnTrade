@@ -76,7 +76,7 @@
       </div>
 
       <analysis-result model.bind="model.analysisResult" inspection-id.bind="model.inspectionId" disabled="true"
-        caption="Go to the inspection"></analysis-result>
+        caption="Go to the inspection #${getInspectionNumber(model.inspectionId)}"></analysis-result>
 
       <div>
         <button type="button" disabled.bind="!canDelete" class="btn btn-danger" click.delegate="deleteStock()">Undo stock entry</button>

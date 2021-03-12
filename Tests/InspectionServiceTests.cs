@@ -142,7 +142,7 @@ namespace Tests
 
             // Assert
             list.Should().Contain(c => c.Approved == prms.Approved);
-            list.Should().BeInDescendingOrder(c => c.InspectionDate);
+            list.Should().BeInDescendingOrder(c => c.Id);
 
             actual.LotNo.Should().Be(expected.LotNo);
             actual.Inspector.Should().Be(expected.Inspector);

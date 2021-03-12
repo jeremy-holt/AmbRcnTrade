@@ -1,7 +1,7 @@
 <template>
   <require from="./../analysis-result-custom-element/analysis-result-custom-element"></require>
 
-  <toolbar caption="Inspection" list-route="inspectionList" disabled-save.bind="!canSave" save.call="save()">
+  <toolbar caption="Inspection #${getInspectionNumber(model.id)}" list-route="inspectionList" disabled-save.bind="!canSave" save.call="save()">
     <toolbar-item icon="fas fa-plus" click.call="addInspection()"></toolbar-item>
     <toolbar-item icon="fas fa-warehouse" click.call="navigateToStockList()"></toolbar-item>
   </toolbar>
@@ -9,7 +9,7 @@
   <div class="card">
     <div class="card-header">
       <div class="d-flex justify-content-between">
-        <h4 class="card-title">Inspection</h4>
+        <h4 class="card-title">Inspection #${getInspectionNumber(model.id)}</h4>
       </div>
     </div>
     <div class="card-body border-0">

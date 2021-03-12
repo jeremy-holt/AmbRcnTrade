@@ -259,3 +259,7 @@ export const randomHtmlId = (prefix: string) => {
   return `${prefix.replace(" ", "_")}_${Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15)}`;
 };
 
+export const getRavenRootId =(id: string) =>{  
+  return id?.split("/")[1].split("-")[0];
+};
+

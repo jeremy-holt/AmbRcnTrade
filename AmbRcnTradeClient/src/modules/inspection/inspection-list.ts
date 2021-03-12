@@ -1,5 +1,3 @@
-import { CustomerService } from "./../../services/customer-service";
-import { StockNavigationDialog } from "./stock-navigation-dialog";
 import { DialogService } from "aurelia-dialog";
 import { autoinject, observable } from "aurelia-framework";
 import { Router } from "aurelia-router";
@@ -8,8 +6,10 @@ import _ from "lodash";
 import { InspectionService } from "services/inspection-service";
 import { IState } from "store/state";
 import { Approval, APPROVAL_LIST } from "./../../constants/app-constants";
-import { encodeParams } from "./../../core/helpers";
+import { encodeParams, getRavenRootId } from "./../../core/helpers";
 import { IInspectionListItem } from "./../../interfaces/inspections/IInspectionListItem";
+import { CustomerService } from "./../../services/customer-service";
+import { StockNavigationDialog } from "./stock-navigation-dialog";
 
 @autoinject
 @connectTo()
@@ -67,5 +67,9 @@ export class InspectionList {
 
   protected navigateToStockList(){
     this.router.navigateToRoute("stockList");
+  }
+
+  protected getInspectionNumber(id: string){
+    return getRavenRootId(id);
   }
 }

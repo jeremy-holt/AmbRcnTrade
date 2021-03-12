@@ -59,7 +59,7 @@ namespace AmbRcnTradeServer.Services
                 query = query.Where(c => c.AnalysisResult.Approved == prms.Approved);
             }
 
-            var list = await query.OrderByDescending(c => c.InspectionDate)
+            var list = await query.OrderByDescending(c => c.Id)
                 .Select(c => new InspectionListItem
                 {
                     Approved = c.AnalysisResult.Approved,

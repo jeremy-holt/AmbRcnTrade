@@ -8,7 +8,7 @@ import { ICustomerListItem } from "interfaces/ICustomerListItem";
 import { IAnalysis } from "interfaces/inspections/IAnalysis";
 import _ from "lodash";
 import { IState } from "store/state";
-import { encodeParams } from "./../../core/helpers";
+import { encodeParams, getRavenRootId } from "./../../core/helpers";
 import { IListItem } from "./../../interfaces/IEntity";
 import { IInspection } from "./../../interfaces/inspections/IInspection";
 import { IParamsId } from "./../../interfaces/IParamsId";
@@ -152,7 +152,6 @@ export class InspectionEdit {
     ).whenClosed(async result => {
       if (!result.wasCancelled) {
         const request = result.output as IMoveInspectionToStockRequest;
-        console.log(request);
 
         await this.stockManagementService.moveInspectionToStock(request);
 
@@ -187,5 +186,9 @@ export class InspectionEdit {
 
   protected detached() {
     this.subscriptions.forEach(c => c.dispose());
+  }
+
+  protected getInspectionNumber(id: string){
+    return getRavenRootId(id);
   }
 }
