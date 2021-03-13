@@ -1,3 +1,4 @@
+import { BillLadingUploadDialog } from "./../billLadingUploadDialog/billLading-upload-dialog";
 import { DialogService } from "aurelia-dialog";
 import { Subscription } from "aurelia-event-aggregator";
 import { autoinject, observable } from "aurelia-framework";
@@ -18,6 +19,7 @@ import { InspectionService } from "./../../services/inspection-service";
 import { isInRole } from "./../../services/role-service";
 import { StockManagementService } from "./../../services/stock-management-service";
 import { AddToStockDialog } from "./add-to-stock-dialog";
+import { DocumentsDownloadDialog } from "modules/documents-download-dialog/documents-download-dialog";
 
 @autoinject
 @connectTo()
@@ -44,7 +46,7 @@ export class InspectionEdit {
   protected stateChanged(state: IState) {
     this.model = _.cloneDeep(state.inspection.current);
     this.suppliers = _.cloneDeep(state.userFilteredCustomers);
-    this.suppliers.unshift({ id: null, name: "[Select]", filter: null } as ICustomerListItem);
+    this.suppliers.unshift({ id: null, name: "[Select]", filter: null } as ICustomerListItem);    
 
     if (this.model) {
       this.approvalChecked = this.model?.analysisResult.approved === Approval.Approved;
@@ -77,8 +79,8 @@ export class InspectionEdit {
 
   protected get canSaveAnalysis() {
     return this.model && !this.model.analyses.some(
-      c => c.count === undefined! || c.count===0 ||
-        c.moisture === undefined || c.soundGm === undefined || c.moisture===0 || c.soundGm===0 ||
+      c => c.count === undefined! || c.count === 0 ||
+        c.moisture === undefined || c.soundGm === undefined || c.moisture === 0 || c.soundGm === 0 ||
         c.rejectsGm === undefined || c.spottedGm === undefined ||
         c.kor === undefined);
 
@@ -118,8 +120,8 @@ export class InspectionEdit {
     return this.inspectionService.canAddInspectionToStock(this.model) && this.wasInspectionApproved && isInRole(["admin", "user", "warehouseManager"], this.state);
   }
 
-  protected get canChangeApproval(){
-    return this.model.stockReferences.length===0;
+  protected get canChangeApproval() {
+    return this.model.stockReferences.length === 0;
   }
 
   protected get wasInspectionApproved() {
@@ -188,7 +190,21 @@ export class InspectionEdit {
     this.subscriptions.forEach(c => c.dispose());
   }
 
-  protected getInspectionNumber(id: string){
+  protected getInspectionNumber(id: string) {
     return getRavenRootId(id);
+  }
+
+  protected async uploadDocuments() {
+    await this.dialogService.open({
+      viewModel: BillLadingUploadDialog,
+      model: { billLadingId: this.model.id }
+    });
+  }
+
+  protected async downloadDocuments() {
+    await this.dialogService.open({
+      viewModel: DocumentsDownloadDialog,
+      model: { billLadingId: this.model.id }
+    }).whenClosed();
   }
 }

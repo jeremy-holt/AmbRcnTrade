@@ -250,6 +250,9 @@ namespace Tests
                 .With(c => c.SupplierId, supplier.Id)
                 .With(c => c.Bags, 500)
                 .With(c => c.AnalysisResult, analysisResult)
+                .With(c=>c.Price,340)
+                .With(c=>c.Fiche,"00123")
+                .With(c=>c.TruckPlate,"ABC")
                 .Without(c => c.StockReferences)
                 .Create();
             await session.StoreAsync(inspection);
@@ -258,8 +261,7 @@ namespace Tests
             // Act
             const double bags = 400;
             const double weightKg = 29_999;
-            const string fiche = "Fiche";
-            var response = await sut.MoveInspectionToStock(inspection.Id, bags, weightKg, new DateTime(2013, 1, 1), 0, location.Id, "Firkei", fiche);
+            var response = await sut.MoveInspectionToStock(inspection.Id, bags, weightKg, new DateTime(2013, 1, 1), 0, location.Id, "Firkei", inspection.Fiche, inspection.Price);
             await session.SaveChangesAsync();
 
             // Assert
@@ -273,9 +275,10 @@ namespace Tests
             actualStock.WeightKg.Should().Be(weightKg);
             actualStock.LocationId.Should().Be(location.Id);
             actualStock.LotNo.Should().Be(1);
+            actualStock.Price.Should().Be(340);
             actualStock.InspectionId.Should().Be(inspection.Id);
             actualStock.Origin.Should().Be("Firkei");
-            actualStock.Fiche.Should().Be("Fiche");
+            actualStock.Fiche.Should().Be("00123");
 
             var listStocks = await session.Query<Stock>().ToListAsync();
             listStocks.Should().HaveCount(1);
@@ -326,7 +329,7 @@ namespace Tests
             const double bags = 400;
             const double weightKg = 0;
 
-            var response = await sut.MoveInspectionToStock(inspection.Id, bags, weightKg, new DateTime(2013, 1, 1), 17, location.Id, "Siguella", "fiche");
+            var response = await sut.MoveInspectionToStock(inspection.Id, bags, weightKg, new DateTime(2013, 1, 1), 17, location.Id, "Siguella", "fiche",99);
             await session.SaveChangesAsync();
 
             // Assert
@@ -342,6 +345,7 @@ namespace Tests
             actualStock.LotNo.Should().Be(17);
             actualStock.InspectionId.Should().Be(inspection.Id);
             actualStock.Origin.Should().Be("Siguella");
+            actualStock.Price.Should().Be(99);
 
             var listStocks = await session.Query<Stock>().ToListAsync();
             listStocks.Should().HaveCount(1);

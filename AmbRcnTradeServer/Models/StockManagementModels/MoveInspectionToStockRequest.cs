@@ -17,5 +17,6 @@ namespace AmbRcnTradeServer.Models.StockManagementModels
         public long LotNo { get; set; }
         public string Origin { get; set; }
         public string Fiche { get; set; }
+        public double Price { get; set; }
     }
 }

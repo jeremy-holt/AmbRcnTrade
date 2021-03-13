@@ -19,5 +19,6 @@ export interface IStock extends IEntityCompany {
   supplierId: string;
   stuffingRecords: IStuffingRecord[];
   fiche: string;
+  price: number;
   selected?: boolean;
 }

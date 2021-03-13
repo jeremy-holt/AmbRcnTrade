@@ -4,6 +4,8 @@
   <toolbar caption="Inspection #${getInspectionNumber(model.id)}" list-route="inspectionList" disabled-save.bind="!canSave" save.call="save()">
     <toolbar-item icon="fas fa-plus" click.call="addInspection()"></toolbar-item>
     <toolbar-item icon="fas fa-warehouse" click.call="navigateToStockList()"></toolbar-item>
+    <toolbar-item icon="fas fa-file-upload" click.call="uploadDocuments()"></toolbar-item>
+    <toolbar-item icon="fas fa-file-download" click.call="downloadDocuments()"></toolbar-item>
   </toolbar>
 
   <div class="card">
@@ -24,7 +26,7 @@
 
       <div class="row">
         <div class="col-md-6">
-          <text-input value.bind="model.location" label="Place of inspection"></text-input>
+          <select-input source.bind="suppliers | customerFilter:'warehouse'" value.bind="model.warehouseId" use-model-id="true" label="Warehouse"></select-input>
         </div>
         <div class="col">
           <text-input value.bind="model.truckPlate" label="Truck plate"></text-input>
@@ -44,16 +46,21 @@
       </div>
 
       <div class="row">
-        <div class="col-md-6"></div>
+        <div class="col-md-3">
+          <number-input value.bind="model.price" label="Price CFA/kg"></number-input>
+        </div>
+        <div class="col-md-3">
+          <labelled-text value.bind="model.price * model.weightKg | numberFormat:'0'" label="Value CFA"></labelled-text>
+        </div>
         <div class="col">
           <labelled-text value.bind="avgBagWeightKg | numberFormat:'0,0.00'" label="Average weight of bags kg">
           </labelled-text>
         </div>
       </div>
 
-      <div class="row">
+      <div class="row d-flex align-items-end">
         <div class="col-md-6">
-          <text-input value.bind="model.lotNo" label="Lot number"></text-input>
+          <text-input value.bind="model.fiche" label="Fiche de transfert"></text-input>
         </div>
       </div>
 

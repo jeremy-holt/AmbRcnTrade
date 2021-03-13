@@ -65,16 +65,16 @@
         </div>
   
         <div class="row mb-3">
-          <div class="col">
+          <!-- <div class="col">
             <select-input source.bind="locations | customerFilter:'warehouse' " value.bind="selectedLocation" label="Select the warehouse">
             </select-input>
-          </div>
+          </div> -->
           <div class="col">
             <text-input value.bind="model.origin" label="Origin of goods"></text-input>
           </div>
-          <div class="col">
+          <!-- <div class="col">
             <text-input value.bind="model.fiche" label="Fiche de Transfert"></text-input>
-          </div>
+          </div> -->
         </div>
   
         <div if.bind="warningMessage" class="alert alert-danger">${warningMessage}</div>

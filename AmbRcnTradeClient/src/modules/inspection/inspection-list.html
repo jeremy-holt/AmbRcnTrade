@@ -18,6 +18,10 @@
         <thead>
           <tr>
             <th>Inspection date</th>
+            <th>Supplier</th>
+            <th>Fiche</th>
+            <th>Truck</th>
+            <th>Price</th>
             <th>Bags / kg</th>
             <th>Avg bag kg</th>
             <th>Stock allocations</th>
@@ -26,9 +30,6 @@
             <th>Count</th>
             <th>Moisture</th>
             <th>Rejects</th>
-            <th>SupplierName</th>
-            <th>Inspection location</th>
-            <th>Inspector</th>
     
           </tr>
         </thead>
@@ -36,9 +37,14 @@
           <tr repeat.for="item of list">
             <td>
               <a class="with-decoration" route-href="inspectionEdit; params.bind:{id: encode(item.id)}">
-                Inspection: ${getInspectionNumber(item.id)} ${item.inspectionDate | dateFormat: "DD/MM/YYYY"}
+                Inspection: ${getInspectionNumber(item.id)} ${item.inspectionDate | dateFormat: "DD/MM/YYYY"}<br>
+                ${item.warehouseName}/${item.inspector}                
               </a>
             </td>
+            <td>${item.supplierName}</td>
+            <td>${item.fiche}</td>
+            <td>${item.truckPlate}</td>
+            <td>${item.price}</td>
             <td class="text-nowrap">${item.bags} / ${item.weightKg | numberFormat:"0,0"}</td>
             <td class="text-right">${item.avgBagWeightKg | numberFormat: "0,0.00"}</td>
             <td>
@@ -55,9 +61,7 @@
             <td class.bind="item.css">${item.count | numberFormat: "0,0.00"}</td>
             <td class.bind="item.css">${item.moisture/100 | numberFormat: "0.00%"}</td>
             <td class.bind="item.css">${item.rejectsPct | numberFormat: "0.00%"}</td>
-            <td>${item.supplierName}</td>
-            <td>${item.location}</td>
-            <td>${item.inspector}</td>
+        
           </tr>
         </tbody>
       </table>

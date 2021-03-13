@@ -36,6 +36,7 @@ namespace AmbRcnTradeServer.Services
         public async Task<ServerResponse<Inspection>> Save(Inspection inspection)
         {
             inspection.AvgBagWeightKg = inspection.Bags > 0 ? inspection.WeightKg / inspection.Bags : 0;
+            inspection.TruckPlate = inspection.TruckPlate?.ToUpper();
 
             await _session.StoreAsync(inspection);
             await _session.SaveChangesAsync();

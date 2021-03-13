@@ -7,4 +7,5 @@ export interface IMoveInspectionToStockRequest {
   lotNo: number;
   origin: string;
   fiche: string;
+  price: number;
 }

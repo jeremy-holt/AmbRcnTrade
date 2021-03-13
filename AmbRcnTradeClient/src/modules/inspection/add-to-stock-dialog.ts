@@ -19,11 +19,11 @@ import { StockService } from "./../../services/stock-service";
 export class AddToStockDialog {
   @observable public state: IState = undefined!;
 
-  public locations: IListItem[] = [];
+  // public locations: IListItem[] = [];
   public stockList: IStockListItem[] = [];
 
   @observable public selectedLocation: IListItem = undefined!;
-  @observable public newStockItem = false;
+  @observable public newStockItem = true;
   public model: IMoveInspectionToStockRequest = {} as IMoveInspectionToStockRequest;
   public inspection: IInspection
   public supplierName = "";
@@ -38,8 +38,8 @@ export class AddToStockDialog {
   ) { }
 
   protected stateChanged(state: IState) {
-    this.locations = _.cloneDeep(state.userFilteredCustomers);
-    this.locations.unshift({ id: null, name: "[Select]" });
+    // this.locations = _.cloneDeep(state.userFilteredCustomers);
+    // this.locations.unshift({ id: null, name: "[Select]" });
     this.stockList = _.cloneDeep(state.stock.list);
   }
 
@@ -62,12 +62,15 @@ export class AddToStockDialog {
     this.model.inspectionId = this.inspection.id;
     this.model.date = moment().format(DATEFORMAT);
     this.model.origin = this.inspection.origin;
+    this.model.locationId = this.inspection.warehouseId;
+    this.model.fiche = this.inspection.fiche;
+    this.model.price = this.inspection.price;
     this.calcWeightKg();
   }
 
-  protected bind() {
-    this.selectedLocation = this.locations.find(c => c.id === this.inspection.supplierId);
-  }
+  // protected bind() {
+  //   this.selectedLocation = this.locations.find(c => c.id === this.inspection.supplierId);
+  // }
 
   protected get canCreate(): boolean {
     return this.model?.bags > 0 && this.model?.date && this.model?.locationId !== null &&
@@ -83,7 +86,7 @@ export class AddToStockDialog {
 
   protected selectStockRow(item: IStockListItem) {
     item.selected = !item.selected;
-    this.selectedLocation = this.locations.find(c => c.id === item.locationId);
+    // this.selectedLocation = this.locations.find(c => c.id === item.locationId);
     if (item.selected) {
       this.newStockItem = false;
     }
@@ -113,10 +116,11 @@ export class AddToStockDialog {
       bags: this.model.bags,
       weightKg: this.model.weightKg,
       date: this.model.date,
-      locationId: this.selectedLocation.id,
+      locationId: this.model.locationId,
       lotNo: this.newStockItem ? 0 : this.stockList.find(c => c.selected)?.lotNo,
       origin: this.model.origin,
-      fiche: this.model.fiche
+      fiche: this.model.fiche,
+      price: this.model.price
     };
   }
 

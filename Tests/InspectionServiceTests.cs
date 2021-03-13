@@ -275,7 +275,7 @@ namespace Tests
                 InspectionDate = new DateTime(2013, 1, 1),
                 Inspector = "Dede",
                 LotNo = "Lot 1234",
-                TruckPlate = "AA BB CC",
+                TruckPlate = "AA bb CC",
                 Bags = 300,
                 WeightKg = 29_999.0,
                 Location = "Bouake warehouse",
@@ -301,6 +301,7 @@ namespace Tests
             actual.AvgBagWeightKg.Should().Be(inspection.WeightKg / inspection.Bags);
             actual.Price.Should().Be(340);
             actual.Fiche.Should().Be("00123");
+            actual.TruckPlate.Should().Be("AA BB CC");
         }
     }
 }
