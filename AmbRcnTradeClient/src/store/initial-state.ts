@@ -91,6 +91,9 @@ export const initialState: IState = {
       supplierId: undefined!,
       stockReferences: [],
       origin: undefined!,
+      price: undefined!,
+      warehouseId: undefined!,
+      fiche: undefined,
       analysisResult: {
         count: 0,
         moisture: 0,

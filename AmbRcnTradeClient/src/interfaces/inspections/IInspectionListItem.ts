@@ -23,4 +23,8 @@ export interface IInspectionListItem {
   unallocatedWeightKg: number;
   avgBagWeightKg:number;
   css?: string;
+  price: number;
+  warehouseName: string;
+  warehouseId: string;
+  fiche: string;
 }

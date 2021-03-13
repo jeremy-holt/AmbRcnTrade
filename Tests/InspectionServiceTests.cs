@@ -101,7 +101,9 @@ namespace Tests
             var fixture = new Fixture();
 
             var customer = fixture.DefaultEntity<Customer>().Create();
+            var warehouse = fixture.DefaultEntity<Customer>().Create();
             await session.StoreAsync(customer);
+            await session.StoreAsync(warehouse);
 
             var analysisResult1 = fixture.Build<AnalysisResult>()
                 .With(c => c.Approved, Approval.Approved)
@@ -118,6 +120,9 @@ namespace Tests
                 .With(c => c.SupplierId, customer.Id)
                 .With(c => c.Bags, 10)
                 .With(c => c.WeightKg, 5000)
+                .With(c=>c.WarehouseId,warehouse.Id)
+                .With(c=>c.Price,340)
+                .With(c=>c.Fiche,"00123")
                 .CreateMany()
                 .ToList();
             inspections[0].AnalysisResult = analysisResult1;
@@ -142,7 +147,7 @@ namespace Tests
 
             // Assert
             list.Should().Contain(c => c.Approved == prms.Approved);
-            list.Should().BeInDescendingOrder(c => c.Id);
+            list.Should().BeInAscendingOrder(c => c.InspectionDate);
 
             actual.LotNo.Should().Be(expected.LotNo);
             actual.Inspector.Should().Be(expected.Inspector);
@@ -160,6 +165,9 @@ namespace Tests
             actual.StockReferences.Should().HaveCount(3);
             actual.StockAllocations.Should().Be(3);
             actual.AvgBagWeightKg.Should().Be(expected.AvgBagWeightKg);
+            actual.Price.Should().Be(expected.Price);
+            actual.WarehouseName.Should().Be(warehouse.Name);
+            actual.Fiche.Should().Be("00123");
         }
 
         [Fact]
@@ -272,7 +280,10 @@ namespace Tests
                 WeightKg = 29_999.0,
                 Location = "Bouake warehouse",
                 Analyses = analyses,
-                Origin = "Firkei"
+                Origin = "Firkei",
+                Price=340,
+                WarehouseId = "customers/1-A",
+                Fiche = "00123"
             };
 
             // Act
@@ -288,6 +299,8 @@ namespace Tests
             actual.Origin.Should().Be("Firkei");
             actual.WeightKg.Should().Be(29_999);
             actual.AvgBagWeightKg.Should().Be(inspection.WeightKg / inspection.Bags);
+            actual.Price.Should().Be(340);
+            actual.Fiche.Should().Be("00123");
         }
     }
 }

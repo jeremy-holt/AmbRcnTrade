@@ -36,7 +36,7 @@ namespace AmbRcnTradeServer.Services
         public async Task<ServerResponse<Inspection>> Save(Inspection inspection)
         {
             inspection.AvgBagWeightKg = inspection.Bags > 0 ? inspection.WeightKg / inspection.Bags : 0;
-            
+
             await _session.StoreAsync(inspection);
             await _session.SaveChangesAsync();
             inspection.AnalysisResult = await GetAnalysisResult(inspection.Id);
@@ -59,7 +59,7 @@ namespace AmbRcnTradeServer.Services
                 query = query.Where(c => c.AnalysisResult.Approved == prms.Approved);
             }
 
-            var list = await query.OrderByDescending(c => c.Id)
+            var list = await query.OrderBy(c => c.InspectionDate).ThenBy(c=>c.Id)
                 .Select(c => new InspectionListItem
                 {
                     Approved = c.AnalysisResult.Approved,
@@ -78,7 +78,10 @@ namespace AmbRcnTradeServer.Services
                     RejectsPct = c.AnalysisResult.RejectsPct,
                     StockReferences = c.StockReferences,
                     StockAllocations = c.StockReferences.Count,
-                    AvgBagWeightKg = c.AvgBagWeightKg
+                    AvgBagWeightKg = c.AvgBagWeightKg,
+                    Price = c.Price,
+                    WarehouseId = c.WarehouseId,
+                    Fiche = c.Fiche
                 })
                 .ToListAsync();
 
@@ -88,11 +91,13 @@ namespace AmbRcnTradeServer.Services
                 item.UnallocatedWeightKg = item.WeightKg - item.StockReferences.Sum(x => x.WeightKg);
             }
 
-            var customers = await _session.Query<Customer>().Where(c => c.Id.In(list.Select(x => x.SupplierId))).ToListAsync();
+            var lookupCustomers = list.Select(x => x.SupplierId).Concat(list.Select(x => x.WarehouseId));
+            var customers = await _session.Query<Customer>().Where(c => c.Id.In(lookupCustomers)).ToListAsync();
 
             foreach (var item in list)
             {
                 item.SupplierName = customers.FirstOrDefault(x => x.Id == item.SupplierId)?.Name;
+                item.WarehouseName = customers.FirstOrDefault(x => x.Id == item.WarehouseId)?.Name;
             }
 
             return list;
@@ -120,14 +125,14 @@ namespace AmbRcnTradeServer.Services
 
             if (inspection.StockReferences.Any())
                 throw new InvalidOperationException("Cannot delete an inspection if it has already been moved to stock");
-            
+
             _session.Delete(inspection);
             await _session.SaveChangesAsync();
 
             var x = await _session.LoadAsync<Inspection>(id);
-            Debug.Assert(x==null,"Should have delete inspection");
+            Debug.Assert(x == null, "Should have delete inspection");
 
-            return await Task.FromResult( new ServerResponse("Deleted inspection"));
+            return await Task.FromResult(new ServerResponse("Deleted inspection"));
         }
     }
 }

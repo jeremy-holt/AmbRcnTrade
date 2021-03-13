@@ -19,4 +19,7 @@ export interface IInspection extends IEntityCompany {
   stockReferences: IStockReference[];
   origin: string;
   avgBagWeightKg:number;
+  price: number;
+  warehouseId: string;
+  fiche: string;
 }
