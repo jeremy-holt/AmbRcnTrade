@@ -45,6 +45,9 @@
       <None Update="ExcelTemplates\Maersk Draft BL Template BL.xlsx">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
+      <None Update="ExcelTemplates\InspectionExportTemplate.xlsx">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
     </ItemGroup>
 
 </Project>

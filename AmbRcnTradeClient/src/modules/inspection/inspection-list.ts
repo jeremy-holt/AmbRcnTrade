@@ -25,6 +25,7 @@ export class InspectionList {
   public suppliersList: ICustomerListItem[] = [];
   @observable protected selectedWarehouse: ICustomerListItem = undefined!;
   @observable protected selectedSupplier: ICustomerListItem = undefined;
+  public totals: { bags: number, weightKg: number, items: number, averagePrice: number, averageKor: number } = undefined!;
 
   constructor(
     private inspectionService: InspectionService,
@@ -93,6 +94,19 @@ export class InspectionList {
     await this.loadList();
   }
 
+  protected async exportInspections() {
+    const objectUrl = await this.inspectionService.exportInspections(this.list);
+    window.location.href = objectUrl;
+  }
+
+  protected setTotals() {
+    const bags = this.list.reduce((a, b) => a += b.bags, 0);
+    const weightKg = this.list.reduce((a, b) => a += b.weightKg, 0);
+    const items = this.list.length;
+    const averagePrice = weightKg > 0 ? this.list.reduce((a, b) => a += (b.weightKg * b.price), 0) / weightKg : 0;
+    const averageKor = weightKg > 0 ? this.list.reduce((a, b) => a += (b.weightKg * b.kor), 0) / weightKg : 0;
+    this.totals = { bags, weightKg, items, averagePrice, averageKor };
+  }
 
   private async loadList() {
     const prms: IInspectionQueryParams = {
@@ -102,5 +116,7 @@ export class InspectionList {
       supplierId: this.selectedSupplier?.id
     };
     await this.inspectionService.loadList(prms);
+
+    this.setTotals();
   }
 }

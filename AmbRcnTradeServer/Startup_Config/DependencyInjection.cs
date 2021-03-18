@@ -8,7 +8,6 @@ using Raven.Client.Documents.Linq;
 using Raven.Client.Documents.Session;
 using Serilog;
 
-
 namespace AmbRcnTradeServer.Startup_Config
 {
     public static class DependencyInjection
@@ -32,6 +31,7 @@ namespace AmbRcnTradeServer.Startup_Config
             services.AddScoped<IBillLadingAttachmentService, BillLadingAttachmentService>();
             services.AddScoped<IDraftBillLadingService, DraftBillLadingService>();
             services.AddScoped<IBagDeliveryService, BagDeliveryService>();
+            services.AddScoped<IInspectionExportService, InspectionExportService>();
 
             Log.Logger.Information("Successfully ran DependencyInjection.Configure()");
         }

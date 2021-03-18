@@ -2,6 +2,7 @@
   <toolbar type="menu" caption="Inspections">
     <toolbar-item icon="fas fa-plus" click.call="addInspection()"></toolbar-item>
     <toolbar-item icon="fas fa-warehouse" click.call="navigateToStockList()"></toolbar-item>
+    <toolbar-item icon="fas fa-file-excel" click.call="exportInspections()"></toolbar-item>
   </toolbar>
 
   <div class="card">
@@ -72,6 +73,13 @@
         
           </tr>
         </tbody>
+        <tfoot>
+          <tr>
+            <th colspan="13">
+              ${totals.items} items, ${totals.bags | numberFormat: "0,0"} bags, ${totals.weightKg | numberFormat: "0,0"} kg, Avg price: CFA ${totals.averagePrice | numberFormat: "0,0.0"} per kg, Avg KOR: ${totals.averageKor | numberFormat: "0,0.00"}
+            </th>
+          </tr>
+        </tfoot>
       </table>
     </div>
   </div>

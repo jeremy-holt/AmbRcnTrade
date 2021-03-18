@@ -19,12 +19,14 @@ namespace AmbRcnTradeServer.Controllers
     public class InspectionController : RavenController
     {
         private readonly IAuditingService _auditingService;
+        private readonly IInspectionExportService _inspectionExportService;
         private readonly IInspectionService _service;
 
-        public InspectionController(IAsyncDocumentSession session, IInspectionService service, IAuditingService auditingService) : base(session)
+        public InspectionController(IAsyncDocumentSession session, IInspectionService service, IAuditingService auditingService, IInspectionExportService inspectionExportService) : base(session)
         {
             _service = service;
             _auditingService = auditingService;
+            _inspectionExportService = inspectionExportService;
         }
 
         [Authorize]
@@ -71,6 +73,15 @@ namespace AmbRcnTradeServer.Controllers
         {
             await _auditingService.Log(Request, id);
             return await _service.DeleteInspection(id);
+        }
+
+        [Authorize]
+        [HttpPost("[action]")]
+        public async Task<ActionResult> ExportInspections(List<InspectionListItem> inspections)
+        {
+            var workbook =  _inspectionExportService.GetWorkbook("InspectionExportTemplate.xlsx",inspections);
+            var response = await _inspectionExportService.SaveWorkbook(workbook);
+            return File(response.FileContents, response.ContentType, response.FileName);
         }
     }
 }

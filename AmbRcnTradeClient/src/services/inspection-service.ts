@@ -1,4 +1,4 @@
-import { HttpClient } from "aurelia-fetch-client";
+import { HttpClient, json } from "aurelia-fetch-client";
 import { autoinject } from "aurelia-framework";
 import { Router } from "aurelia-router";
 import { Store } from "aurelia-store";
@@ -37,12 +37,25 @@ export class InspectionService extends FetchService {
     return await super.post(model, "save", inspectionEditAction);
   }
 
+  public async exportInspections(inspections: IInspectionListItem[]) {
+    const url = this.url(null, "exportInspections");
+    
+    const response = await this.http.fetch(url, {
+      method: "POST", body: json(inspections)
+    });
+
+    const blob = await response.blob();
+    const objectUrl = URL.createObjectURL(blob);
+
+    return objectUrl;
+  }
+
   public async createInspection() {
     return await super.get([], "create", inspectionEditAction);
   }
 
   public async loadList(prms: IInspectionQueryParams) {
-    return await super.post<IInspectionListItem[]>(prms,"loadList", inspectionListAction);
+    return await super.post<IInspectionListItem[]>(prms, "loadList", inspectionListAction);
     // return await super.getMany<IInspectionListItem[]>([super.currentCompanyIdQuery(), new QueryId("approval", approval)], "loadList", inspectionListAction);
   }
 
