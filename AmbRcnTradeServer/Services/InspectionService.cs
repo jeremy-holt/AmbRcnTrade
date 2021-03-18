@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using AmberwoodCore.Extensions;
 using AmberwoodCore.Responses;
 using AmbRcnTradeServer.Models.DictionaryModels;
 using AmbRcnTradeServer.Models.InspectionModels;
@@ -58,6 +59,16 @@ namespace AmbRcnTradeServer.Services
             if (prms.Approved != null)
             {
                 query = query.Where(c => c.AnalysisResult.Approved == prms.Approved);
+            }
+
+            if (prms.WarehouseId.IsNotNullOrEmpty())
+            {
+                query = query.Where(c => c.WarehouseId == prms.WarehouseId);
+            }
+
+            if (prms.SupplierId.IsNotNullOrEmpty())
+            {
+                query = query.Where(c => c.SupplierId == prms.SupplierId);
             }
 
             var list = await query.OrderBy(c => c.InspectionDate).ThenBy(c=>c.Id)

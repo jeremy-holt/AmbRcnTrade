@@ -9,9 +9,17 @@
       <h4>Inspections</h4>
     </div>
     <div class="card-body">
-      <div>
-        <select-input source.bind="approvalList" value.bind="selectedApproval" label="Approved status" warn-null="false">
-        </select-input>
+      <div class="row mb-4">
+        <div class="col">
+          <select-input source.bind="warehouseList" value.bind="selectedWarehouse" label="Warehouse" warn-null="false"></select-input>
+        </div>
+        <div class="col">
+          <select-input source.bind="suppliersList" value.bind="selectedSupplier" label="Supplier" warn-null="false"></select-input>
+        </div>
+        <div class="col">
+          <select-input source.bind="approvalList" value.bind="selectedApproval" label="Approved status" warn-null="false">
+          </select-input>
+        </div>
       </div>
     
       <table class="table table-sm table-bordered small">

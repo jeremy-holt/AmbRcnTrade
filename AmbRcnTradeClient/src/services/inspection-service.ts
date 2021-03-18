@@ -4,13 +4,13 @@ import { Router } from "aurelia-router";
 import { Store } from "aurelia-store";
 import { Fn } from "core/types";
 import _ from "lodash";
-import { QueryId } from "models/QueryId";
 import { IState } from "store/state";
 import { Approval } from "./../constants/app-constants";
 import { fixAspNetCoreDate } from "./../core/helpers";
 import { IAnalysis, IAnalysisResult } from "./../interfaces/inspections/IAnalysis";
 import { IInspection } from "./../interfaces/inspections/IInspection";
 import { IInspectionListItem } from "./../interfaces/inspections/IInspectionListItem";
+import { IInspectionQueryParams } from "./../interfaces/inspections/IInspectionQueryParams";
 import { FetchService } from "./fetch-service";
 import { noOpAction } from "./no-op-action";
 
@@ -41,8 +41,9 @@ export class InspectionService extends FetchService {
     return await super.get([], "create", inspectionEditAction);
   }
 
-  public async loadList(approval: Approval) {
-    return await super.getMany<IInspectionListItem[]>([super.currentCompanyIdQuery(), new QueryId("approval", approval)], "loadList", inspectionListAction);
+  public async loadList(prms: IInspectionQueryParams) {
+    return await super.post<IInspectionListItem[]>(prms,"loadList", inspectionListAction);
+    // return await super.getMany<IInspectionListItem[]>([super.currentCompanyIdQuery(), new QueryId("approval", approval)], "loadList", inspectionListAction);
   }
 
   public async deleteInspection(id: string) {

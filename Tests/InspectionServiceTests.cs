@@ -200,6 +200,36 @@ namespace Tests
         }
 
         [Fact]
+        public async Task LoadList_ShouldFilterByWarehouse()
+        {
+            // Arrange
+            using var store = GetDocumentStore();
+            using var session = store.OpenAsyncSession();
+            var sut = GetInspectionService(session);
+            var fixture = new Fixture();
+            
+            var inspections = fixture.DefaultEntity<Inspection>()
+                .With(c => c.Bags, 10)
+                .With(c => c.WeightKg, 5000)
+                .With(c => c.StockReferences, new List<StockReference>() {new StockReference("", 3, 1000, DateTime.Today, 1)})
+                .Without(c=>c.WarehouseId)
+                .CreateMany().ToList();
+
+            inspections[0].WarehouseId="customers/1-A";
+            await inspections.SaveList(session);
+            
+            await session.SaveChangesAsync();
+            WaitForIndexing(store);
+
+            // Act
+            var prms = new InspectionQueryParams() {CompanyId = COMPANY_ID, WarehouseId = "customers/1-A"};
+            var list = await sut.LoadList(prms);
+            
+            // Assert
+            list.Should().HaveCount(1).And.OnlyContain(c => c.WarehouseId == "customers/1-A");
+        }
+
+        [Fact]
         public async Task DeleteInspection_ShouldDeleteInspection()
         {
             // Arrange

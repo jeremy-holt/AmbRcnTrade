@@ -11,5 +11,7 @@ namespace AmbRcnTradeServer.Models.InspectionModels
     {
         public string CompanyId { get; set; }
         public Approval? Approved { get; set; }
+        public string WarehouseId { get; set; }
+        public string SupplierId { get; set; }
     }
 }
