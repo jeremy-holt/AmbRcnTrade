@@ -93,7 +93,8 @@ namespace AmbRcnTradeServer.Services
                     AvgBagWeightKg = c.AvgBagWeightKg,
                     Price = c.Price,
                     WarehouseId = c.WarehouseId,
-                    Fiche = c.Fiche
+                    Fiche = c.Fiche,
+                    Origin=c.Origin
                 })
                 .ToListAsync();
 

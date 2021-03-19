@@ -123,6 +123,7 @@ namespace Tests
                 .With(c=>c.WarehouseId,warehouse.Id)
                 .With(c=>c.Price,340)
                 .With(c=>c.Fiche,"00123")
+                .With(c=>c.Origin,"Bouake")
                 .CreateMany()
                 .ToList();
             inspections[0].AnalysisResult = analysisResult1;
@@ -168,6 +169,7 @@ namespace Tests
             actual.Price.Should().Be(expected.Price);
             actual.WarehouseName.Should().Be(warehouse.Name);
             actual.Fiche.Should().Be("00123");
+            actual.Origin.Should().Be("Bouake");
         }
 
         [Fact]

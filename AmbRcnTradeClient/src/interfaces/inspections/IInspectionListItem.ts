@@ -27,4 +27,5 @@ export interface IInspectionListItem {
   warehouseName: string;
   warehouseId: string;
   fiche: string;
+  origin: string;
 }

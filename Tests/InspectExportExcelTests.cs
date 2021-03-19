@@ -42,6 +42,9 @@ namespace Tests
             var fixture = new Fixture();
 
             var inspections = fixture.CreateMany<InspectionListItem>().ToList();
+            inspections[0].Id = "inspections/1-A";
+            inspections[1].Id = "inspections/2-A";
+            inspections[2].Id = "inspections/3-A";
             
             // Act
             ExcelFile workbook = sut.GetWorkbook(InspectionExportTemplate, inspections);
@@ -59,8 +62,11 @@ namespace Tests
             var sut = GetInspectionExportService();
             var fixture = new Fixture();
             
-            var inspections = fixture.CreateMany<InspectionListItem>().ToList();
-            
+            var inspections = fixture
+                .Build<InspectionListItem>()
+                .With(c=>c.Id,"inspections/1-A")
+                .CreateMany().ToList();
+
             // Act
             ExcelFile workbook = sut.GetWorkbook(InspectionExportTemplate, inspections);
             var actual = await sut.SaveWorkbook(workbook);

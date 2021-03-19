@@ -25,7 +25,7 @@ export class InspectionList {
   public suppliersList: ICustomerListItem[] = [];
   @observable protected selectedWarehouse: ICustomerListItem = undefined!;
   @observable protected selectedSupplier: ICustomerListItem = undefined;
-  public totals: { bags: number, weightKg: number, items: number, averagePrice: number, averageKor: number } = undefined!;
+  public totals: { bags: number, weightKg: number, items: number, averagePrice: number, averageKor: number, averageMoisture: number , averageCount: number} = undefined!;
 
   constructor(
     private inspectionService: InspectionService,
@@ -105,7 +105,10 @@ export class InspectionList {
     const items = this.list.length;
     const averagePrice = weightKg > 0 ? this.list.reduce((a, b) => a += (b.weightKg * b.price), 0) / weightKg : 0;
     const averageKor = weightKg > 0 ? this.list.reduce((a, b) => a += (b.weightKg * b.kor), 0) / weightKg : 0;
-    this.totals = { bags, weightKg, items, averagePrice, averageKor };
+    const averageMoisture = weightKg > 0 ? this.list.reduce((a, b) => a += (b.weightKg * b.moisture), 0) / weightKg/100 : 0;
+    const averageCount = weightKg>0?this.list.reduce((a,b)=>a +=(b.weightKg*b.count),0)/weightKg:0;
+
+    this.totals = { bags, weightKg, items, averagePrice, averageKor, averageMoisture, averageCount };
   }
 
   private async loadList() {
