@@ -25,7 +25,7 @@ export class InspectionList {
   public suppliersList: ICustomerListItem[] = [];
   @observable protected selectedWarehouse: ICustomerListItem = undefined!;
   @observable protected selectedSupplier: ICustomerListItem = undefined;
-  public totals: { bags: number, weightKg: number, items: number, averagePrice: number, averageKor: number, averageMoisture: number , averageCount: number} = undefined!;
+  public totals: { bags: number, weightKg: number, items: number, averagePrice: number, averageKor: number, averageMoisture: number, averageCount: number } = undefined!;
 
   constructor(
     private inspectionService: InspectionService,
@@ -103,10 +103,13 @@ export class InspectionList {
     const bags = this.list.reduce((a, b) => a += b.bags, 0);
     const weightKg = this.list.reduce((a, b) => a += b.weightKg, 0);
     const items = this.list.length;
-    const averagePrice = weightKg > 0 ? this.list.reduce((a, b) => a += (b.weightKg * b.price), 0) / weightKg : 0;
+
+    const listWithNonZeroPrice = this.list.filter(c=>c.price>0);
+    const weightWithPriceKg = listWithNonZeroPrice.reduce((a, b) => a += b.weightKg, 0);
+    const averagePrice = weightKg > 0 ? listWithNonZeroPrice.reduce((a, b) => a += (b.weightKg * b.price), 0) / weightWithPriceKg : 0;
     const averageKor = weightKg > 0 ? this.list.reduce((a, b) => a += (b.weightKg * b.kor), 0) / weightKg : 0;
-    const averageMoisture = weightKg > 0 ? this.list.reduce((a, b) => a += (b.weightKg * b.moisture), 0) / weightKg/100 : 0;
-    const averageCount = weightKg>0?this.list.reduce((a,b)=>a +=(b.weightKg*b.count),0)/weightKg:0;
+    const averageMoisture = weightKg > 0 ? this.list.reduce((a, b) => a += (b.weightKg * b.moisture), 0) / weightKg / 100 : 0;
+    const averageCount = weightKg > 0 ? this.list.reduce((a, b) => a += (b.weightKg * b.count), 0) / weightKg : 0;
 
     this.totals = { bags, weightKg, items, averagePrice, averageKor, averageMoisture, averageCount };
   }
