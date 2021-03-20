@@ -22,11 +22,6 @@
           <select-input source.bind="suppliersList" value.bind="selectedSupplier" label="Supplier" warn-null="false">
           </select-input>
         </div>
-        <!-- <div class="col">
-          <select-input source.bind="approvalList" value.bind="selectedApproval" label="Approved status"
-            warn-null="false">
-          </select-input>
-        </div> -->
       </div>
 
       <table class="table table-sm table-bordered small">
@@ -56,10 +51,9 @@
                 ${item.warehouseName}/${item.inspector}
               </a>
             </td>
-            <td>
-              <span class="font-weight-bold">${item.buyerName}</span><br>
-              <span class="font-italic">${item.origin}</span><br>
-              <span class="${item.supplierName.includes('Unknown') ? 'text-danger font-weight-bold' : ''}">${item.supplierName}</span>
+            <td class="${!item.buyerName ? 'bg-danger text-white' : ''}">
+              <span class="font-weight-bold">${item.buyerName}</span><br>              
+              <span class="${item.supplierName.includes('Missing') ? 'text-danger font-weight-bold' : ''}">${item.supplierName}</span> (${item.origin})
             </td>
             <td>${item.fiche}</td>
             <td>${item.truckPlate}</td>
