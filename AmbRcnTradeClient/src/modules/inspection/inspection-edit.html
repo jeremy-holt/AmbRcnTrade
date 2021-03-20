@@ -58,21 +58,24 @@
         </div>
       </div>
 
+      <div class="row mb-2">
+        <div class="col-md-6">
+          <select-input source.bind="suppliers | customerFilter: 'buyer'" value.bind="model.buyerId" use-model-id="true" label="Buyer"></select-input>
+        </div>
+        <div class="col-sm-12 col-md-6">
+          <text-input value.bind="model.origin" label="Department"></text-input>
+        </div>
+      </div>
+
       <div class="row d-flex align-items-end">
         <div class="col-md-6">
           <text-input value.bind="model.fiche" label="Fiche de transfert"></text-input>
         </div>
-      </div>
-
-      <div class="row mb-2">
-        <div class="col-md-6">
+        <div class="col">
           <select-input source.bind="suppliers | customerFilter:'supplier'" value.bind="model.supplierId"
-            use-model-id="true" label="Supplier" use-model-id="true"></select-input>
+          label="Supplier" use-model-id="true"></select-input>
         </div>
-        <div class="col-sm-12 col-md-6">
-          <text-input value.bind="model.origin" label="Origin of goods"></text-input>
-        </div>
-      </div>
+      </div> 
 
       <div class="row">
         <div class="col">

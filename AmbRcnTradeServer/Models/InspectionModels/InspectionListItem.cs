@@ -36,5 +36,7 @@ namespace AmbRcnTradeServer.Models.InspectionModels
         public string WarehouseId { get; set; }
         public string Fiche { get; set; }
         public string Origin { get; set; }
+        public string BuyerId { get; set; }
+        public string BuyerName { get; set; }
     }
 }

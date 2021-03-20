@@ -1,5 +1,3 @@
-import { ICustomerListItem } from "./../../interfaces/ICustomerListItem";
-import { IInspectionQueryParams } from "./../../interfaces/inspections/IInspectionQueryParams";
 import { DialogService } from "aurelia-dialog";
 import { autoinject, observable } from "aurelia-framework";
 import { Router } from "aurelia-router";
@@ -7,9 +5,11 @@ import { connectTo } from "aurelia-store";
 import _ from "lodash";
 import { InspectionService } from "services/inspection-service";
 import { IState } from "store/state";
-import { Approval, APPROVAL_LIST, CustomerGroup } from "./../../constants/app-constants";
+import { Approval, CustomerGroup } from "./../../constants/app-constants";
 import { encodeParams, getRavenRootId } from "./../../core/helpers";
+import { ICustomerListItem } from "./../../interfaces/ICustomerListItem";
 import { IInspectionListItem } from "./../../interfaces/inspections/IInspectionListItem";
+import { IInspectionQueryParams } from "./../../interfaces/inspections/IInspectionQueryParams";
 import { CustomerService } from "./../../services/customer-service";
 import { StockNavigationDialog } from "./stock-navigation-dialog";
 
@@ -18,13 +18,13 @@ import { StockNavigationDialog } from "./stock-navigation-dialog";
 export class InspectionList {
   @observable public state: IState;
   public list: IInspectionListItem[] = [];
-  public approvalList = _.cloneDeep(APPROVAL_LIST);
-  @observable selectedApproval = undefined!;
   private customersList: ICustomerListItem[] = [];
   public warehouseList: ICustomerListItem[] = [];
   public suppliersList: ICustomerListItem[] = [];
+  public buyersList: ICustomerListItem[] = [];
   @observable protected selectedWarehouse: ICustomerListItem = undefined!;
   @observable protected selectedSupplier: ICustomerListItem = undefined;
+  @observable protected selectedBuyer: ICustomerListItem = undefined;
   public totals: { bags: number, weightKg: number, items: number, averagePrice: number, averageKor: number, averageMoisture: number, averageCount: number } = undefined!;
 
   constructor(
@@ -45,17 +45,14 @@ export class InspectionList {
     this.customersList = state.userFilteredCustomers;
     this.warehouseList = _.cloneDeep(this.customersList.filter(c => c.filter === CustomerGroup.Warehouse));
     this.suppliersList = _.cloneDeep(this.customersList.filter(c => c.filter === CustomerGroup.Supplier));
+    this.buyersList = _.cloneDeep(this.customersList.filter(c => c.filter === CustomerGroup.Buyer));
     this.warehouseList.unshift({ id: null, name: "[All warehouses]" } as ICustomerListItem);
     this.suppliersList.unshift({ id: null, name: "[All suppliers]" } as ICustomerListItem);
+    this.buyersList.unshift({ id: null, name: "[All buyers]" } as ICustomerListItem);
 
     this.list.forEach(c => {
       c.css = `text-right text-white ${c.approved === Approval.Approved ? "bg-success" : "bg-danger"}`;
     });
-  }
-
-  protected bind() {
-    this.approvalList.unshift({ id: null, name: "[All]" });
-    this.selectedApproval = this.approvalList[0];
   }
 
   protected addInspection() {
@@ -90,7 +87,7 @@ export class InspectionList {
     await this.loadList();
   }
 
-  protected async selectedApprovalChanged() {
+  protected async selectedBuyerChanged() {
     await this.loadList();
   }
 
@@ -104,7 +101,7 @@ export class InspectionList {
     const weightKg = this.list.reduce((a, b) => a += b.weightKg, 0);
     const items = this.list.length;
 
-    const listWithNonZeroPrice = this.list.filter(c=>c.price>0);
+    const listWithNonZeroPrice = this.list.filter(c => c.price > 0);
     const weightWithPriceKg = listWithNonZeroPrice.reduce((a, b) => a += b.weightKg, 0);
     const averagePrice = weightKg > 0 ? listWithNonZeroPrice.reduce((a, b) => a += (b.weightKg * b.price), 0) / weightWithPriceKg : 0;
     const averageKor = weightKg > 0 ? this.list.reduce((a, b) => a += (b.weightKg * b.kor), 0) / weightKg : 0;
@@ -118,8 +115,9 @@ export class InspectionList {
     const prms: IInspectionQueryParams = {
       companyId: this.inspectionService.currentCompanyId(),
       warehouseId: this.selectedWarehouse?.id,
-      approved: this.selectedApproval.id,
-      supplierId: this.selectedSupplier?.id
+      approved: null,
+      supplierId: this.selectedSupplier?.id,
+      buyerId: this.selectedBuyer?.id
     };
     await this.inspectionService.loadList(prms);
 

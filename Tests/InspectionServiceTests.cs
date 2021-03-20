@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AmberwoodCore.Extensions;
-using AmberwoodCore.Responses;
 using AmbRcnTradeServer.Constants;
 using AmbRcnTradeServer.Models.DictionaryModels;
 using AmbRcnTradeServer.Models.InspectionModels;
@@ -26,6 +25,56 @@ namespace Tests
         private static async Task InitializeIndexes(IDocumentStore store)
         {
             await new Inspections_ByAnalysisResult().ExecuteAsync(store);
+        }
+
+        [Fact]
+        public async Task DeleteInspection_ShouldDeleteInspection()
+        {
+            // Arrange
+            using var store = GetDocumentStore();
+            using var session = store.OpenAsyncSession();
+            var sut = GetInspectionService(session);
+            var fixture = new Fixture();
+
+            var inspection = fixture.DefaultEntity<Inspection>()
+                .Without(c => c.StockReferences)
+                .Create();
+
+            await session.StoreAsync(inspection);
+
+            // Act
+            var response = await sut.DeleteInspection(inspection.Id);
+
+            // Assert
+            response.Message.Should().Be("Deleted inspection");
+
+            using var session2 = store.OpenAsyncSession();
+            var actual = await session2.LoadAsync<Inspection>(inspection.Id);
+            actual.Should().BeNull();
+
+            var query = await session2.Query<Inspection>().ToListAsync();
+            query.Should().HaveCount(0);
+        }
+
+        [Fact]
+        public async Task DeleteInspection_ShouldThrowExceptionIfAlreadyAllocated()
+        {
+            // Arrange
+            using var store = GetDocumentStore();
+            using var session = store.OpenAsyncSession();
+            var sut = GetInspectionService(session);
+            var fixture = new Fixture();
+
+            var inspection = fixture.DefaultEntity<Inspection>()
+                .Create();
+
+            await session.StoreAsync(inspection);
+
+            // Act
+            Func<Task> action = async () => await sut.DeleteInspection(inspection.Id);
+
+            // Assert
+            await action.Should().ThrowAsync<InvalidOperationException>().WithMessage("Cannot delete an inspection if it has already been moved to stock");
         }
 
         [Fact]
@@ -92,6 +141,36 @@ namespace Tests
         }
 
         [Fact]
+        public async Task LoadList_ShouldFilterByWarehouse()
+        {
+            // Arrange
+            using var store = GetDocumentStore();
+            using var session = store.OpenAsyncSession();
+            var sut = GetInspectionService(session);
+            var fixture = new Fixture();
+
+            var inspections = fixture.DefaultEntity<Inspection>()
+                .With(c => c.Bags, 10)
+                .With(c => c.WeightKg, 5000)
+                .With(c => c.StockReferences, new List<StockReference> {new("", 3, 1000, DateTime.Today, 1)})
+                .Without(c => c.WarehouseId)
+                .CreateMany().ToList();
+
+            inspections[0].WarehouseId = "customers/1-A";
+            await inspections.SaveList(session);
+
+            await session.SaveChangesAsync();
+            WaitForIndexing(store);
+
+            // Act
+            var prms = new InspectionQueryParams {CompanyId = COMPANY_ID, WarehouseId = "customers/1-A"};
+            var list = await sut.LoadList(prms);
+
+            // Assert
+            list.Should().HaveCount(1).And.OnlyContain(c => c.WarehouseId == "customers/1-A");
+        }
+
+        [Fact]
         public async Task LoadList_ShouldLoadListOfInspections()
         {
             // Arrange
@@ -102,8 +181,10 @@ namespace Tests
 
             var customer = fixture.DefaultEntity<Customer>().Create();
             var warehouse = fixture.DefaultEntity<Customer>().Create();
+            var broker = fixture.DefaultEntity<Customer>().Create();
             await session.StoreAsync(customer);
             await session.StoreAsync(warehouse);
+            await session.StoreAsync(broker);
 
             var analysisResult1 = fixture.Build<AnalysisResult>()
                 .With(c => c.Approved, Approval.Approved)
@@ -120,10 +201,11 @@ namespace Tests
                 .With(c => c.SupplierId, customer.Id)
                 .With(c => c.Bags, 10)
                 .With(c => c.WeightKg, 5000)
-                .With(c=>c.WarehouseId,warehouse.Id)
-                .With(c=>c.Price,340)
-                .With(c=>c.Fiche,"00123")
-                .With(c=>c.Origin,"Bouake")
+                .With(c => c.WarehouseId, warehouse.Id)
+                .With(c => c.Price, 340)
+                .With(c => c.Fiche, "00123")
+                .With(c => c.Origin, "Bouake")
+                .With(c => c.BuyerId, broker.Id)
                 .CreateMany()
                 .ToList();
             inspections[0].AnalysisResult = analysisResult1;
@@ -170,6 +252,8 @@ namespace Tests
             actual.WarehouseName.Should().Be(warehouse.Name);
             actual.Fiche.Should().Be("00123");
             actual.Origin.Should().Be("Bouake");
+            actual.BuyerId.Should().Be(broker.Id);
+            actual.BuyerName.Should().Be(broker.Name);
         }
 
         [Fact]
@@ -184,7 +268,7 @@ namespace Tests
             var inspection = fixture.DefaultEntity<Inspection>()
                 .With(c => c.Bags, 10)
                 .With(c => c.WeightKg, 5000)
-                .With(c => c.StockReferences, new List<StockReference>() {new StockReference("", 3, 1000, DateTime.Today, 1)})
+                .With(c => c.StockReferences, new List<StockReference> {new("", 3, 1000, DateTime.Today, 1)})
                 .Create();
             await session.StoreAsync(inspection);
 
@@ -202,83 +286,31 @@ namespace Tests
         }
 
         [Fact]
-        public async Task LoadList_ShouldFilterByWarehouse()
+        public async Task LoadList_ShouldFilterByBuyers()
         {
             // Arrange
             using var store = GetDocumentStore();
             using var session = store.OpenAsyncSession();
             var sut = GetInspectionService(session);
             var fixture = new Fixture();
-            
+
+            var buyer = fixture.DefaultEntity<Customer>().Create();
+            await session.StoreAsync(buyer);
+
             var inspections = fixture.DefaultEntity<Inspection>()
-                .With(c => c.Bags, 10)
-                .With(c => c.WeightKg, 5000)
-                .With(c => c.StockReferences, new List<StockReference>() {new StockReference("", 3, 1000, DateTime.Today, 1)})
-                .Without(c=>c.WarehouseId)
+                .Without(c=>c.BuyerId)
                 .CreateMany().ToList();
-
-            inspections[0].WarehouseId="customers/1-A";
+            inspections[0].BuyerId = buyer.Id;
             await inspections.SaveList(session);
-            
-            await session.SaveChangesAsync();
             WaitForIndexing(store);
-
+            
             // Act
-            var prms = new InspectionQueryParams() {CompanyId = COMPANY_ID, WarehouseId = "customers/1-A"};
-            var list = await sut.LoadList(prms);
+            var prms = new InspectionQueryParams() {CompanyId = COMPANY_ID, BuyerId = buyer.Id};
+            var actual = await sut.LoadList(prms);
             
             // Assert
-            list.Should().HaveCount(1).And.OnlyContain(c => c.WarehouseId == "customers/1-A");
-        }
+            actual.Should().HaveCount(1).And.OnlyContain(c => c.BuyerId == buyer.Id);
 
-        [Fact]
-        public async Task DeleteInspection_ShouldDeleteInspection()
-        {
-            // Arrange
-            using var store = GetDocumentStore();
-            using var session = store.OpenAsyncSession();
-            var sut = GetInspectionService(session);
-            var fixture = new Fixture();
-
-            var inspection = fixture.DefaultEntity<Inspection>()
-                .Without(c => c.StockReferences)
-                .Create();
-
-            await session.StoreAsync(inspection);
-
-            // Act
-            ServerResponse response = await sut.DeleteInspection(inspection.Id);
-            
-            // Assert
-            response.Message.Should().Be("Deleted inspection");
-            
-            using var session2 = store.OpenAsyncSession();
-            var actual = await session2.LoadAsync<Inspection>(inspection.Id);
-            actual.Should().BeNull();
-
-            var query = await session2.Query<Inspection>().ToListAsync();
-            query.Should().HaveCount(0);
-        }
-
-        [Fact]
-        public async Task DeleteInspection_ShouldThrowExceptionIfAlreadyAllocated()
-        {
-            // Arrange
-            using var store = GetDocumentStore();
-            using var session = store.OpenAsyncSession();
-            var sut = GetInspectionService(session);
-            var fixture = new Fixture();
-
-            var inspection = fixture.DefaultEntity<Inspection>()
-                .Create();
-
-            await session.StoreAsync(inspection);
-
-            // Act
-            Func<Task> action =async ()=> await sut.DeleteInspection(inspection.Id);
-            
-            // Assert
-            await action.Should().ThrowAsync<InvalidOperationException>().WithMessage("Cannot delete an inspection if it has already been moved to stock");
         }
 
         [Fact]
@@ -313,9 +345,10 @@ namespace Tests
                 Location = "Bouake warehouse",
                 Analyses = analyses,
                 Origin = "Firkei",
-                Price=340,
+                Price = 340,
                 WarehouseId = "customers/1-A",
-                Fiche = "00123"
+                Fiche = "00123",
+                BuyerId = "customers/3-A"
             };
 
             // Act
@@ -334,6 +367,7 @@ namespace Tests
             actual.Price.Should().Be(340);
             actual.Fiche.Should().Be("00123");
             actual.TruckPlate.Should().Be("AA BB CC");
+            actual.BuyerId.Should().Be("customers/3-A");
         }
     }
 }

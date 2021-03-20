@@ -93,6 +93,7 @@ export const initialState: IState = {
       origin: undefined!,
       price: undefined!,
       warehouseId: undefined!,
+      buyerId: undefined!,      
       fiche: undefined,
       analysisResult: {
         count: 0,

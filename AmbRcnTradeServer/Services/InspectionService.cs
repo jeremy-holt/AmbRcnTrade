@@ -53,7 +53,7 @@ namespace AmbRcnTradeServer.Services
 
         public async Task<List<InspectionListItem>> LoadList(InspectionQueryParams prms)
         {
-            var query = _session.Query<Inspection>().Include(c => c.SupplierId)
+            var query = _session.Query<Inspection>().Include(c => c.SupplierId).Include(c=>c.BuyerId)
                 .Where(c => c.CompanyId == prms.CompanyId);
 
             if (prms.Approved != null)
@@ -69,6 +69,11 @@ namespace AmbRcnTradeServer.Services
             if (prms.SupplierId.IsNotNullOrEmpty())
             {
                 query = query.Where(c => c.SupplierId == prms.SupplierId);
+            }
+
+            if (prms.BuyerId.IsNotNullOrEmpty())
+            {
+                query = query.Where(c => c.BuyerId == prms.BuyerId);
             }
 
             var list = await query.OrderBy(c => c.InspectionDate).ThenBy(c=>c.Id)
@@ -94,7 +99,8 @@ namespace AmbRcnTradeServer.Services
                     Price = c.Price,
                     WarehouseId = c.WarehouseId,
                     Fiche = c.Fiche,
-                    Origin=c.Origin
+                    Origin=c.Origin,
+                    BuyerId = c.BuyerId
                 })
                 .ToListAsync();
 
@@ -104,13 +110,14 @@ namespace AmbRcnTradeServer.Services
                 item.UnallocatedWeightKg = item.WeightKg - item.StockReferences.Sum(x => x.WeightKg);
             }
 
-            var lookupCustomers = list.Select(x => x.SupplierId).Concat(list.Select(x => x.WarehouseId));
+            var lookupCustomers = list.Select(x => x.SupplierId).Concat(list.Select(x=>x.BuyerId)).Concat(list.Select(x => x.WarehouseId));
             var customers = await _session.Query<Customer>().Where(c => c.Id.In(lookupCustomers)).ToListAsync();
 
             foreach (var item in list)
             {
                 item.SupplierName = customers.FirstOrDefault(x => x.Id == item.SupplierId)?.Name;
                 item.WarehouseName = customers.FirstOrDefault(x => x.Id == item.WarehouseId)?.Name;
+                item.BuyerName = customers.FirstOrDefault(x => x.Id == item.BuyerId)?.Name;
             }
 
             return list;

@@ -28,4 +28,6 @@ export interface IInspectionListItem {
   warehouseId: string;
   fiche: string;
   origin: string;
+  buyerId: string;
+  buyerName: string;
 }

@@ -4,4 +4,5 @@ export interface IInspectionQueryParams {
     approved: Approval | null;
     warehouseId: string;
     supplierId: string;
+    buyerId: string;
 }
