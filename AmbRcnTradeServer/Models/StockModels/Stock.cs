@@ -28,7 +28,7 @@ namespace AmbRcnTradeServer.Models.StockModels
         public string CompanyId { get; set; }
         public string Id { get; set; }
         public string Name { get; set; }
-        public string Fiche { get; set; }
+        public int Fiche { get; set; }
         public double Price { get; set; }
 
         public override string ToString()

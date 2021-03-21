@@ -95,6 +95,7 @@ export const initialState: IState = {
       warehouseId: undefined!,
       buyerId: undefined!,      
       fiche: undefined,
+      userName: undefined,
       analysisResult: {
         count: 0,
         moisture: 0,

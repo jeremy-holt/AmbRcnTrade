@@ -16,7 +16,7 @@ namespace AmbRcnTradeServer.Models.StockManagementModels
         public string LocationId { get; set; }
         public long LotNo { get; set; }
         public string Origin { get; set; }
-        public string Fiche { get; set; }
+        public int Fiche { get; set; }
         public double Price { get; set; }
     }
 }

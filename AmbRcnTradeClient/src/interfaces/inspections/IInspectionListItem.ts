@@ -26,8 +26,9 @@ export interface IInspectionListItem {
   price: number;
   warehouseName: string;
   warehouseId: string;
-  fiche: string;
+  fiche: number;
   origin: string;
   buyerId: string;
   buyerName: string;
+  userName: string;
 }

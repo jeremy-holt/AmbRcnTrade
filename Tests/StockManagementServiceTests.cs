@@ -251,7 +251,7 @@ namespace Tests
                 .With(c => c.Bags, 500)
                 .With(c => c.AnalysisResult, analysisResult)
                 .With(c=>c.Price,340)
-                .With(c=>c.Fiche,"00123")
+                .With(c=>c.Fiche,00123)
                 .With(c=>c.TruckPlate,"ABC")
                 .Without(c => c.StockReferences)
                 .Create();
@@ -278,7 +278,7 @@ namespace Tests
             actualStock.Price.Should().Be(340);
             actualStock.InspectionId.Should().Be(inspection.Id);
             actualStock.Origin.Should().Be("Firkei");
-            actualStock.Fiche.Should().Be("00123");
+            actualStock.Fiche.Should().Be(00123);
 
             var listStocks = await session.Query<Stock>().ToListAsync();
             listStocks.Should().HaveCount(1);
@@ -329,7 +329,7 @@ namespace Tests
             const double bags = 400;
             const double weightKg = 0;
 
-            var response = await sut.MoveInspectionToStock(inspection.Id, bags, weightKg, new DateTime(2013, 1, 1), 17, location.Id, "Siguella", "fiche",99);
+            var response = await sut.MoveInspectionToStock(inspection.Id, bags, weightKg, new DateTime(2013, 1, 1), 17, location.Id, "Siguella", 123,99);
             await session.SaveChangesAsync();
 
             // Assert

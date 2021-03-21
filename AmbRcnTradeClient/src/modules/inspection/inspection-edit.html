@@ -12,6 +12,7 @@
     <div class="card-header">
       <div class="d-flex justify-content-between">
         <h4 class="card-title">Inspection #${getInspectionNumber(model.id)}</h4>
+        <h6 if.bind="userName">Edited by ${userName}</h6>
       </div>
     </div>
     <div class="card-body border-0">
@@ -35,11 +36,11 @@
 
       <div class="row">
         <div class="col-md-6">
-          <number-input value.bind="model.bags" required="true"
+          <number-input value.bind="model.bags" 
             label="Number bags in lot. (${remainingBagsToAllocate} that can be allocated)"></number-input>
         </div>
         <div class="col">
-          <number-input value.bind="model.weightKg" required="true"
+          <number-input value.bind="model.weightKg" 
             label="Weight kg in lot (${remainingKgToAllocate | numberFormat:'0,0'} that can be allocated)">
           </number-input>
         </div>
@@ -69,7 +70,7 @@
 
       <div class="row d-flex align-items-end">
         <div class="col-md-6">
-          <text-input value.bind="model.fiche" label="Fiche de transfert"></text-input>
+          <number-input value.bind="model.fiche" label="Fiche de transfert"></number-input>
         </div>
         <div class="col">
           <select-input source.bind="suppliers | customerFilter:'supplier'" value.bind="model.supplierId"

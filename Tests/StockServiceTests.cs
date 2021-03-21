@@ -305,7 +305,7 @@ namespace Tests
                 .Without(c => c.StockOutDate)
                 .Without(c => c.InspectionId)
                 .Without(c => c.LocationId)
-                .With(c=>c.Fiche, "Fiche de transfert")
+                .With(c=>c.Fiche, 123)
                 .With(c => c.SupplierId, supplier.Id)
                 .Create();
             await sut.Save(stockIn1);
@@ -315,7 +315,7 @@ namespace Tests
                 .With(c => c.InspectionId, inspections[0].Id)
                 .With(c => c.LocationId, location.Id)
                 .With(c => c.SupplierId, supplier.Id)
-                .With(c=>c.Fiche, "Fiche de transfert")
+                .With(c=>c.Fiche, 123)
                 .Create();
             await sut.Save(stockIn2);
 
@@ -333,7 +333,7 @@ namespace Tests
                 .Without(c => c.InspectionId)
                 .Without(c => c.LocationId)
                 .With(c => c.SupplierId, supplier.Id)
-                .With(c=>c.Fiche, "Fiche de transfert")
+                .With(c=>c.Fiche, 123)
                 .Create();
             await sut.Save(stockIn3);
 
@@ -360,7 +360,7 @@ namespace Tests
             actual.InspectionId.Should().Be(stockIn2.InspectionId);
             actual.WeightKgIn.Should().Be(stockIn2.WeightKg);
             actual.AvgBagWeightKg.Should().Be(stockIn2.WeightKg / stockIn2.Bags);
-            actual.Fiche.Should().Contain("Fiche de transfert");
+            actual.Fiche.Should().Be(123);
         }
 
         [Fact]
@@ -528,7 +528,7 @@ namespace Tests
             var stock = fixture.DefaultEntity<Stock>()
                 .Without(c => c.StockOutDate)
                 .With(c => c.InspectionId, inspection.Id)
-                .With(c=>c.Fiche,"12345")
+                .With(c=>c.Fiche,12345)
                 .With(c => c.Id, "stocks/1-A")
                 .With(c => c.LotNo, 45)
                 .Create();

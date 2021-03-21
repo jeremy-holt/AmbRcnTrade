@@ -203,9 +203,10 @@ namespace Tests
                 .With(c => c.WeightKg, 5000)
                 .With(c => c.WarehouseId, warehouse.Id)
                 .With(c => c.Price, 340)
-                .With(c => c.Fiche, "00123")
+                .With(c => c.Fiche, 00123)
                 .With(c => c.Origin, "Bouake")
                 .With(c => c.BuyerId, broker.Id)
+                .With(c=>c.UserName,"Fred")
                 .CreateMany()
                 .ToList();
             inspections[0].AnalysisResult = analysisResult1;
@@ -250,10 +251,11 @@ namespace Tests
             actual.AvgBagWeightKg.Should().Be(expected.AvgBagWeightKg);
             actual.Price.Should().Be(expected.Price);
             actual.WarehouseName.Should().Be(warehouse.Name);
-            actual.Fiche.Should().Be("00123");
+            actual.Fiche.Should().Be(00123);
             actual.Origin.Should().Be("Bouake");
             actual.BuyerId.Should().Be(broker.Id);
             actual.BuyerName.Should().Be(broker.Name);
+            actual.UserName.Should().Be("Fred");
         }
 
         [Fact]
@@ -298,19 +300,18 @@ namespace Tests
             await session.StoreAsync(buyer);
 
             var inspections = fixture.DefaultEntity<Inspection>()
-                .Without(c=>c.BuyerId)
+                .Without(c => c.BuyerId)
                 .CreateMany().ToList();
             inspections[0].BuyerId = buyer.Id;
             await inspections.SaveList(session);
             WaitForIndexing(store);
-            
+
             // Act
             var prms = new InspectionQueryParams() {CompanyId = COMPANY_ID, BuyerId = buyer.Id};
             var actual = await sut.LoadList(prms);
-            
+
             // Assert
             actual.Should().HaveCount(1).And.OnlyContain(c => c.BuyerId == buyer.Id);
-
         }
 
         [Fact]
@@ -347,8 +348,9 @@ namespace Tests
                 Origin = "Firkei",
                 Price = 340,
                 WarehouseId = "customers/1-A",
-                Fiche = "00123",
-                BuyerId = "customers/3-A"
+                Fiche = 00123,
+                BuyerId = "customers/3-A",
+                UserName="Christian"
             };
 
             // Act
@@ -365,9 +367,37 @@ namespace Tests
             actual.WeightKg.Should().Be(29_999);
             actual.AvgBagWeightKg.Should().Be(inspection.WeightKg / inspection.Bags);
             actual.Price.Should().Be(340);
-            actual.Fiche.Should().Be("00123");
+            actual.Fiche.Should().Be(00123);
             actual.TruckPlate.Should().Be("AA BB CC");
             actual.BuyerId.Should().Be("customers/3-A");
+            actual.UserName.Should().Be("Christian");
         }
+
+        // [Fact]
+        // public async Task SaveShouldThrowExceptionIfFicheAlreadyExists()
+        // {
+        //     // Arrange
+        //     using var store = GetDocumentStore();
+        //     await InitializeIndexes(store);
+        //     using var session = store.OpenAsyncSession();
+        //     var sut = GetInspectionService(session);
+        //     var fixture = new Fixture();
+        //
+        //     var inspection = fixture.DefaultEntity<Inspection>()
+        //         .With(c => c.Fiche, 123)
+        //         .Create();
+        //     await session.StoreAsync(inspection);
+        //     await session.SaveChangesAsync();
+        //     
+        //     var test = fixture.DefaultEntity<Inspection>()
+        //         .With(c => c.Fiche, 123)
+        //         .Create();
+        //
+        //     // Act
+        //     Func<Task> act = async () => await sut.Save(test);
+        //
+        //     // Assert
+        //     act.Should().Throw<InvalidOperationException>().WithMessage("There is already an inspection in the system with fiche de transfer 123");
+        // }
     }
 }

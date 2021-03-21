@@ -97,16 +97,17 @@ export class InspectionList {
   }
 
   protected setTotals() {
-    const bags = this.list.reduce((a, b) => a += b.bags, 0);
-    const weightKg = this.list.reduce((a, b) => a += b.weightKg, 0);
-    const items = this.list.length;
+    const list = this.list.filter(c => c.price > 0 && c.bags > 0);
+    const bags = list.reduce((a, b) => a += b.bags, 0);
+    const weightKg = list.reduce((a, b) => a += b.weightKg, 0);
+    const items = list.length;
 
-    const listWithNonZeroPrice = this.list.filter(c => c.price > 0);
-    const weightWithPriceKg = listWithNonZeroPrice.reduce((a, b) => a += b.weightKg, 0);
-    const averagePrice = weightKg > 0 ? listWithNonZeroPrice.reduce((a, b) => a += (b.weightKg * b.price), 0) / weightWithPriceKg : 0;
-    const averageKor = weightKg > 0 ? this.list.reduce((a, b) => a += (b.weightKg * b.kor), 0) / weightKg : 0;
-    const averageMoisture = weightKg > 0 ? this.list.reduce((a, b) => a += (b.weightKg * b.moisture), 0) / weightKg / 100 : 0;
-    const averageCount = weightKg > 0 ? this.list.reduce((a, b) => a += (b.weightKg * b.count), 0) / weightKg : 0;
+    // const listWithNonZeroPrice = this.list.filter(c => c.price > 0 && c.bags > 0);
+    // const weightWithPriceKg = listWithNonZeroPrice.reduce((a, b) => a += b.weightKg, 0);
+    const averagePrice = weightKg > 0 ? list.reduce((a, b) => a += (b.weightKg * b.price), 0) / weightKg : 0;
+    const averageKor = weightKg > 0 ? list.reduce((a, b) => a += (b.weightKg * b.kor), 0) / weightKg : 0;
+    const averageMoisture = weightKg > 0 ? list.reduce((a, b) => a += (b.weightKg * b.moisture), 0) / weightKg / 100 : 0;
+    const averageCount = weightKg > 0 ? list.reduce((a, b) => a += (b.weightKg * b.count), 0) / weightKg : 0;
 
     this.totals = { bags, weightKg, items, averagePrice, averageKor, averageMoisture, averageCount };
   }

@@ -29,7 +29,7 @@
           <tr>
             <th>Inspection date</th>
             <th>Supplier</th>
-            <th>Fiche</th>
+            <th class="text-right">Fiche</th>
             <th>Truck</th>
             <th>Price</th>
             <th>Bags / kg</th>
@@ -49,16 +49,17 @@
               <a class="with-decoration" route-href="inspectionEdit; params.bind:{id: encode(item.id)}">
                 Inspection: ${getInspectionNumber(item.id)} ${item.inspectionDate | dateFormat: "DD/MM/YYYY"}<br>
                 ${item.warehouseName}/${item.inspector}
+                <i class="fas fa-user" title="${item.userName}"></i>
               </a>
             </td>
             <td class="${!item.buyerName ? 'bg-danger text-white' : ''}">
               <span class="font-weight-bold">${item.buyerName}</span><br>              
               <span class="${item.supplierName.includes('Missing') ? 'text-danger font-weight-bold' : ''}">${item.supplierName}</span> (${item.origin})
             </td>
-            <td>${item.fiche}</td>
+            <td class="text-right">${item.fiche.toString().padStart(7,"0")}</td>
             <td>${item.truckPlate}</td>
-            <td>${item.price}</td>
-            <td class="text-nowrap">${item.bags} / ${item.weightKg | numberFormat:"0,0"}</td>
+            <td class="${item.price == 0 ? 'bg-danger text-white' : ''}">${item.price}</td>
+            <td class="text-nowrap ${item.bags == 0 ? 'bg-danger text-white' : ''}">${item.bags} / ${item.weightKg | numberFormat:"0,0"}</td>
             <td class="text-right">${item.avgBagWeightKg | numberFormat: "0,0.00"}</td>
             <td>
               <div if.bind="item.stockAllocations == 0">

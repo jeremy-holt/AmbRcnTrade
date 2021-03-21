@@ -6,6 +6,6 @@ export interface IMoveInspectionToStockRequest {
   locationId: string;
   lotNo: number;
   origin: string;
-  fiche: string;
+  fiche: number;
   price: number;
 }

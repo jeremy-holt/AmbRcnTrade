@@ -39,6 +39,10 @@ namespace AmbRcnTradeServer.Services
             inspection.AvgBagWeightKg = inspection.Bags > 0 ? inspection.WeightKg / inspection.Bags : 0;
             inspection.TruckPlate = inspection.TruckPlate?.ToUpper();
 
+            // var existsFiche = await _session.Query<Inspection>().Where(c => c.Fiche == inspection.Fiche).CountAsync();
+            // if (existsFiche > 0)
+            //     throw new InvalidOperationException($"There is already an inspection in the system with fiche de transfer {inspection.Fiche}");
+            
             await _session.StoreAsync(inspection);
             await _session.SaveChangesAsync();
             inspection.AnalysisResult = await GetAnalysisResult(inspection.Id);
@@ -100,7 +104,8 @@ namespace AmbRcnTradeServer.Services
                     WarehouseId = c.WarehouseId,
                     Fiche = c.Fiche,
                     Origin=c.Origin,
-                    BuyerId = c.BuyerId
+                    BuyerId = c.BuyerId,
+                    UserName = c.UserName
                 })
                 .ToListAsync();
 

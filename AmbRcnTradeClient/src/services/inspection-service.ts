@@ -32,14 +32,17 @@ export class InspectionService extends FetchService {
   }
 
   public async save(model: IInspection) {
-    model.inspectionDate = fixAspNetCoreDate(model.inspectionDate, false);
-
+    model.inspectionDate = fixAspNetCoreDate(model.inspectionDate, false);    
     return await super.post(model, "save", inspectionEditAction);
+  }
+
+  public existsFiche(model: IInspection, list: IInspectionListItem[]) {    
+    return model.id === undefined ? list.filter(c => c.fiche === model.fiche).length === 1 : false;
   }
 
   public async exportInspections(inspections: IInspectionListItem[]) {
     const url = this.url(null, "exportInspections");
-    
+
     const response = await this.http.fetch(url, {
       method: "POST", body: json(inspections)
     });

@@ -22,5 +22,6 @@ export interface IInspection extends IEntityCompany {
   avgBagWeightKg:number;
   price: number;
   warehouseId: string;
-  fiche: string;
+  fiche: number;
+  userName: string;
 }

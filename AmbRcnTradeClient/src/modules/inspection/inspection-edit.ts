@@ -1,3 +1,4 @@
+import { InfoDialog } from "./../../dialogs/info-dialog";
 import { BillLadingUploadDialog } from "./../billLadingUploadDialog/billLading-upload-dialog";
 import { DialogService } from "aurelia-dialog";
 import { Subscription } from "aurelia-event-aggregator";
@@ -46,7 +47,7 @@ export class InspectionEdit {
   protected stateChanged(state: IState) {
     this.model = _.cloneDeep(state.inspection.current);
     this.suppliers = _.cloneDeep(state.userFilteredCustomers);
-    this.suppliers.unshift({ id: null, name: "[Select]", filter: null } as ICustomerListItem);    
+    this.suppliers.unshift({ id: null, name: "[Select]", filter: null } as ICustomerListItem);
 
     if (this.model) {
       this.approvalChecked = this.model?.analysisResult.approved === Approval.Approved;
@@ -68,12 +69,20 @@ export class InspectionEdit {
   }
 
   protected get canSave() {
-    return this.canAddAnalysis && this.model?.analyses?.length > 0 && this.canSaveAnalysis && !this.isDeleting && this.model?.supplierId?.length > 0 && this.model.bags > 0 && this.avgBagWeightKg > 70;
+    return this.canAddAnalysis && this.model?.analyses?.length > 0 && this.canSaveAnalysis && !this.isDeleting && this.model?.supplierId?.length > 0;
   }
 
   protected async save() {
     if (this.canSave) {
-      await this.inspectionService.save(this.model);
+      if (this.inspectionService.existsFiche(this.model, this.state.inspection.list)) {
+        this.dialogService.open({
+          viewModel: InfoDialog,
+          model: { header: "Duplicate Inspection", body: `There already exists an Inspection with fiche ${this.model.fiche}` }
+        });
+      } else {
+        this.model.userName = this.state.user.firstName;
+        await this.inspectionService.save(this.model);
+      }
     }
   }
 
@@ -87,7 +96,7 @@ export class InspectionEdit {
   }
 
   protected get canAddAnalysis() {
-    return this.model?.inspectionDate && this.model?.inspector && this.model?.bags > 0 && this.canSaveAnalysis;
+    return this.model?.inspectionDate && this.model?.inspector && this.canSaveAnalysis;
   }
 
   protected addAnalysis() {
@@ -199,6 +208,10 @@ export class InspectionEdit {
       viewModel: BillLadingUploadDialog,
       model: { billLadingId: this.model.id }
     });
+  }
+
+  protected get userName(){
+    return this.state?.user.name;
   }
 
   protected async downloadDocuments() {
