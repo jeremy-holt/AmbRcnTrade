@@ -1,0 +1,108 @@
+<template>
+  <require from="../../custom-elements/countries/countries-list-custom-element"></require>
+  
+  <toolbar type="menu" caption.bind="caption" disabled-save.bind="!canSave" save.call="save()">
+    <toolbar-item icon="fa fa-plus" label="Add" click.call="addNewCustomer()"></toolbar-item>
+  </toolbar>
+
+  <div class="row">
+    <div class="col-3" style="max-height: 800px; overflow-x: auto;">
+      <ul class="list-unstyled mt-3">
+        <li class="mb-3">
+          <button type="button" class="btn btn-primary" click.delegate="addNewCustomer()">Add new customer</button>
+        </li>
+        <li repeat.for="item of list" class="mb-2">
+          <a href="#" class="with-decoration" click.delegate="selectCustomer(item)">${item.name} (<span class="small font-italic">${item.filter}</span>)</a>
+        </li>
+      </ul>
+    </div>
+    <div class="col">
+      <div class="card">
+        <div class="card-header ${!model.id ? 'bg-success text-white' : ''}">
+          <h4>${cardCaption}</h4>
+
+        </div>
+      
+        <div class="card-body">
+          <div class="row">
+            <div class="col-4">
+              <text-input value.bind="model.name" maxlength="32"  label="Short name"></text-input>
+            </div>
+          
+            <div class="col">
+              <text-input value.bind="model.companyName" maxlength="32" label="Company"></text-input>
+            </div>
+          </div>
+    
+          <div class="row">
+            <div class="col-6">
+              <select-input source.bind="customerGroups" value.bind="model.filter" use-model-id="true" label="Groups"></select-input>
+            </div>
+          </div>
+        
+          <div class="form-group">
+            <text-input value.bind="model.address.street1" maxlength="32"  label="Street 1"></text-input>
+          </div>
+        
+          <div class="form-group">
+            <text-input value.bind="model.address.street2" maxlength="32"  label="Street 2"></text-input>
+          </div>
+          
+          <div class="form-group">
+            <text-input value.bind="model.address.street3" maxlength="32"  label="Street 3"></text-input>
+          </div>
+    
+          <div class="form-group">
+            <text-input value.bind="model.address.street4" maxlength="32"  label="Street 4"></text-input>
+          </div>
+        
+        
+          <div class="row mt-2">
+            <div class="col">
+              <text-input value.bind="model.address.city" maxlength="32"  label="City"></text-input>
+            </div>
+            <div class="col">
+              <text-input value.bind="model.address.postCode" maxlength="32"  label="Post code"></text-input>
+            </div>
+          </div>
+        
+          <div class="row mt-2">
+            <div class="col">
+              <text-input value.bind="model.address.state" maxlength="32"  label="State"></text-input>
+            </div>
+          
+            <div class="col">
+              <countries-list value.bind="model.address.country" label="Country"></countries-list>
+            </div>
+          </div>
+    
+          <div class="row mt-2">
+            <div class="col">
+              <text-input value.bind="model.reference2" maxlength="32" label="Reference 1"></text-input>
+            </div>
+            <div class="col">
+              <text-input value.bind="model.reference1" maxlength="32" label="Reference 2"></text-input>
+            </div>
+          </div>
+    
+          <div class="row mt-2">
+            <div class="col">
+              <text-input value.bind="model.email" label="Email"></text-input>
+            </div>        
+          </div>
+        
+          <div class="form-group">
+            <text-area-input value.bind="model.notes" label="Notes"></text-area-input>
+          </div>
+        
+          <div class="row small" if.bind="selectedCustomer.id">
+            <div class="col" style="white-space: pre-wrap">${customerBlock} </div>
+            <div class="col">${customerInLine}</div>
+          </div>
+        </div>
+      </div>
+      
+ 
+    </div>
+  </div>
+</template>

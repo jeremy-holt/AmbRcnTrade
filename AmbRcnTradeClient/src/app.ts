@@ -88,7 +88,8 @@ export class App {
         { route: "payment/edit/:id?/:supplierId?", name: "paymentEdit", title: "Payment", moduleId: "modules/payments/payment-edit", roles: ["admin", "user"] },
 
         // Dictionary items       
-        { route: "dictionary/customer/edit", name: "customerEdit", title: "Address book", nav: true, moduleId: "modules/customer/customer-edit", roles: ["admin", "user"] },
+        // { route: "dictionary/customer/edit", name: "customerEdit", title: "Address book", nav: true, moduleId: "modules/customer/customer-edit", roles: ["admin", "user"] },
+        { route: "dictionary/customer/edit", name: "customerEdit", title: "Address book", nav: true, moduleId: "modules/customer/address-book", roles: ["admin", "user"] },
         { route: "dictionary/port/edit", name: "portEdit", title: "Ports", nav: true, moduleId: "modules/dictionary/port/port-edit", roles: ["admin", "user"] },
 
         // Admin
