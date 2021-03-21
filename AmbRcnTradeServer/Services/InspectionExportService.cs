@@ -51,17 +51,18 @@ namespace AmbRcnTradeServer.Services
                 currentRow.Cells[0].SetValue($"Inspection {ExtractIdNumber(inspection.Id)}");
                 currentRow.Cells[1].SetValue($"{inspection.InspectionDate:dd/MM/yyyy}");
                 currentRow.Cells[2].SetValue(inspection.WarehouseName);
-                currentRow.Cells[3].SetValue(inspection.SupplierName);
-                currentRow.Cells[4].SetValue(inspection.Fiche);
-                currentRow.Cells[5].SetValue(inspection.TruckPlate);
-                currentRow.Cells[6].SetValue(inspection.Price);
-                currentRow.Cells[7].SetValue(inspection.Bags);
-                currentRow.Cells[8].SetValue(inspection.WeightKg);
+                currentRow.Cells[3].SetValue(inspection.BuyerName);
+                currentRow.Cells[4].SetValue(inspection.SupplierName);
+                currentRow.Cells[5].SetValue(inspection.Fiche);
+                currentRow.Cells[6].SetValue(inspection.TruckPlate);
+                currentRow.Cells[7].SetValue(inspection.Price);
+                currentRow.Cells[8].SetValue(inspection.Bags);
+                currentRow.Cells[9].SetValue(inspection.WeightKg);
                 
-                currentRow.Cells[11].SetValue(Math.Round(inspection.Kor, 2));
-                currentRow.Cells[12].SetValue(inspection.Count);
-                currentRow.Cells[13].SetValue(inspection.Moisture/100);
-                currentRow.Cells[14].SetValue(inspection.RejectsPct);
+                currentRow.Cells[12].SetValue(Math.Round(inspection.Kor, 2));
+                currentRow.Cells[13].SetValue(inspection.Count);
+                currentRow.Cells[14].SetValue(inspection.Moisture/100);
+                currentRow.Cells[15].SetValue(inspection.RejectsPct);
             }
 
             return workbook;
