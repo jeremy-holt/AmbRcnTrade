@@ -86,7 +86,9 @@
               ${totals.items} items, ${totals.bags | numberFormat: "0,0"} bags, ${totals.weightKg | numberFormat: "0,0"}
               kg, Avg price: CFA ${totals.averagePrice | numberFormat: "0,0.0"} per kg, Avg KOR: ${totals.averageKor |
               numberFormat: "0,0.00"}, Avg Moisture: ${totals.averageMoisture | numberFormat: "0.00%"}, Avg Count:
-              ${totals.averageCount | numberFormat:"0,0.0"}
+              ${totals.averageCount | numberFormat:"0,0.0"}<br>
+              Weights without prices - ${totals.bagsWithoutPrice | numberFormat:"0,0"} bags, ${totals.weightKgWithoutPrice | numberFormat: "0,0"} kg (${totals.itemsWithoutPrice} items)<br>
+              Total weight: ${totals.totalWeightKg | numberFormat: "0,0"} kg
             </th>
           </tr>
         </tfoot>

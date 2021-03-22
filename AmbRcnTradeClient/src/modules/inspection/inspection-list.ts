@@ -25,7 +25,7 @@ export class InspectionList {
   @observable protected selectedWarehouse: ICustomerListItem = undefined!;
   @observable protected selectedSupplier: ICustomerListItem = undefined;
   @observable protected selectedBuyer: ICustomerListItem = undefined;
-  public totals: { bags: number, weightKg: number, items: number, averagePrice: number, averageKor: number, averageMoisture: number, averageCount: number } = undefined!;
+  public totals: { bags: number, weightKg: number, items: number, averagePrice: number, averageKor: number, averageMoisture: number, averageCount: number, bagsWithoutPrice: number, weightKgWithoutPrice: number, itemsWithoutPrice: number, totalWeightKg: number } = undefined!;
 
   constructor(
     private inspectionService: InspectionService,
@@ -102,14 +102,16 @@ export class InspectionList {
     const weightKg = list.reduce((a, b) => a += b.weightKg, 0);
     const items = list.length;
 
-    // const listWithNonZeroPrice = this.list.filter(c => c.price > 0 && c.bags > 0);
-    // const weightWithPriceKg = listWithNonZeroPrice.reduce((a, b) => a += b.weightKg, 0);
     const averagePrice = weightKg > 0 ? list.reduce((a, b) => a += (b.weightKg * b.price), 0) / weightKg : 0;
     const averageKor = weightKg > 0 ? list.reduce((a, b) => a += (b.weightKg * b.kor), 0) / weightKg : 0;
     const averageMoisture = weightKg > 0 ? list.reduce((a, b) => a += (b.weightKg * b.moisture), 0) / weightKg / 100 : 0;
     const averageCount = weightKg > 0 ? list.reduce((a, b) => a += (b.weightKg * b.count), 0) / weightKg : 0;
 
-    this.totals = { bags, weightKg, items, averagePrice, averageKor, averageMoisture, averageCount };
+    const bagsWithoutPrice = this.list.filter(c => c.price === 0).reduce((a, b) => a += b.bags, 0);
+    const weightKgWithoutPrice = this.list.filter(c => c.price === 0).reduce((a, b) => a += b.weightKg, 0);
+    const itemsWithoutPrice = this.list.filter(c => c.price === 0).length;
+
+    this.totals = { bags, weightKg, items, averagePrice, averageKor, averageMoisture, averageCount, bagsWithoutPrice, weightKgWithoutPrice, itemsWithoutPrice, totalWeightKg: weightKgWithoutPrice + weightKg };
   }
 
   private async loadList() {
