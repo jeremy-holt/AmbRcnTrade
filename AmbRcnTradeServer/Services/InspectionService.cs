@@ -105,7 +105,8 @@ namespace AmbRcnTradeServer.Services
                     Fiche = c.Fiche,
                     Origin=c.Origin,
                     BuyerId = c.BuyerId,
-                    UserName = c.UserName
+                    UserName = c.UserName,
+                    PricePerKor = c.Price/c.AnalysisResult.Kor
                 })
                 .ToListAsync();
 

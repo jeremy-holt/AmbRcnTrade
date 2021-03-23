@@ -256,6 +256,7 @@ namespace Tests
             actual.BuyerId.Should().Be(broker.Id);
             actual.BuyerName.Should().Be(broker.Name);
             actual.UserName.Should().Be("Fred");
+            actual.PricePerKor.Should().Be(expected.Price / expected.AnalysisResult.Kor);
         }
 
         [Fact]

@@ -39,5 +39,6 @@ namespace AmbRcnTradeServer.Models.InspectionModels
         public string BuyerId { get; set; }
         public string BuyerName { get; set; }
         public string UserName { get; set; }
+        public double PricePerKor { get; set; }
     }
 }

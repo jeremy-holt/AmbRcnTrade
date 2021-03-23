@@ -31,4 +31,5 @@ export interface IInspectionListItem {
   buyerId: string;
   buyerName: string;
   userName: string;
+  pricePerKor: number;
 }
