@@ -72,6 +72,10 @@ export class App {
         { route: "container/list", name: "containerList", title: "Containers", nav: true, moduleId: "modules/container/container-list", roles: ["admin", "user", "warehouseManager"] },
         { route: "container/edit/:id?", name: "containerEdit", title: "Container", moduleId: "modules/container/container-edit", roles: ["admin", "user", "warehouseManager"] },
 
+        // Packing List
+        { route: "packingList/list", name: "packingListList", title: "Packing Lists", nav: true, moduleId: "modules/packingList/packing-list-list", roles: ["admin", "user", "warehouseManager"] },
+        { route: "packingList/edit/:id?", name: "packingListEdit", title: "Packing List", moduleId: "modules/packingList/packing-list-edit", roles: ["admin", "user", "warehouseManager"] },
+
         // Vessel
         { route: "vessel/list", name: "vesselList", title: "Vessels", nav: true, moduleId: "modules/vessel/vessel-list", roles: ["admin", "user", "warehouseManager"] },
         { route: "vessel/edit/:id?", name: "vesselEdit", title: "Vessel", moduleId: "modules/vessel/vessel-edit", roles: ["admin", "user", "warehouseManager"] },

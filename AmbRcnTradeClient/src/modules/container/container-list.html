@@ -1,6 +1,7 @@
 <template>
   <require from="./container-status-formatter-valueconverter"></require>
   <require from="./teu-formatter-valueconverter"></require>
+  <require from="./container-list-filter-valueconverter"></require>
 
   <toolbar type="menu" caption="Containers">
     <toolbar-item icon="fas fa-plus" click.call="addContainer()"></toolbar-item>
@@ -29,13 +30,18 @@
           <select-input source.bind="containerStatusList" value.bind="selectedContainerStatus"
             label="Filter by container status" warn-null="false"></select-input>
         </div>
+
+        <div class="col">
+          <select-input source.bind="warehouses" value.bind="selectedWarehouse" label="Filter by warehouse" warn-null="false">
+          </select-input>
+        </div>
       </div>
 
       <table class="table table-sm table-bordered small">
         <thead>
           <tr>
             <th>Status</th>
-            <th>Kor</th>
+            <th>Kor</th>            
             <th>Container number </th>
             <th>Seal number</th>
             <th>Booking number</th>
@@ -45,13 +51,14 @@
             <th class="text-right">Stuffing<br>weight kg</th>
             <th class="text-right">Weighbridge<br> weight kg</th>
             <th class="text-right">Nett<br>weight kg</th>
-            <th>TEU</th>
+            <th>Packing list Id</th>
+            <!-- <th>TEU</th> -->
           </tr>
         </thead>
         <tbody>
-          <tr repeat.for="item of list">
-            <td>${item.status | containerStatusFormatter}</td>
-            <td>${item.incomingStocks[0].kor | numberFormat: "0,0.00"}</td>
+          <tr repeat.for="item of list | containerListFilter: selectedWarehouse.id">
+            <td>${item.status | containerStatusFormatter}<br>${item.warehouseName}</td>
+            <td>${item.incomingStocks[0].kor | numberFormat: "0,0.00"}</td>            
             <td>
               <div if.bind="item.vesselName" class="small font-italic">
                 ${item.vesselName}
@@ -68,7 +75,10 @@
             <td class="text-right">${item.stuffingWeightKg | numberFormat: "0,0"}</td>
             <td class="text-right">${item.weighbridgeWeightKg | numberFormat: "0,0"}</td>
             <td class="text-right">${item.nettWeightKg | numberFormat: "0,0"}</td>
-            <td>${item.teu | teuFormatter}</td>
+            <!-- <td>${item.teu | teuFormatter}</td> -->
+            <td class="text-right">
+              <a if.bind="item.packingListId" route-href="packingListEdit; params.bind:{id:encode(item.packingListId)}" class="with-decoration">#${getRavenRootId(item.packingListId)}</a>
+            </td>
           </tr>
         </tbody>
       </table>

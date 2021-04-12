@@ -1,3 +1,4 @@
+import { IPackingList } from "./../interfaces/shipping/IPackingList";
 import { IBillLading } from "./../interfaces/shipping/IBillLading";
 import { IVesselListItem } from "./../interfaces/shipping/IVesselListItem";
 import { IAvailableContainer } from "./../interfaces/stockManagement/IAvailableContainerItem";
@@ -63,4 +64,5 @@ export interface IState {
   vessel: { current: IVessel; list: IVesselListItem[]; notLoadedContainers: IContainer[]; }
   billLading: {current: IBillLading; list: IBillLadingListItem[];}  
   payment: {current: IPayment, paymentDto: IPaymentDto, list: IPaymentListItem[]}
+  packingList: {current: IPackingList; list: IPackingList[]; unallocatedContainers:IContainer[]}
 }

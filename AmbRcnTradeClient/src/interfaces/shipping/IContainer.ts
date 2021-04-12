@@ -21,5 +21,8 @@ export interface IContainer extends IEntityCompany {
   teu: Teu;
   vesselId: string;
   vesselName?: string;
+  packingListId: string;
+  warehouseId: string;
+  warehouseName: string;
   selected?: boolean;
 }

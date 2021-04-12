@@ -32,6 +32,7 @@ namespace AmbRcnTradeServer.Startup_Config
             services.AddScoped<IDraftBillLadingService, DraftBillLadingService>();
             services.AddScoped<IBagDeliveryService, BagDeliveryService>();
             services.AddScoped<IInspectionExportService, InspectionExportService>();
+            services.AddScoped<IPackingListService, PackingListService>();
 
             Log.Logger.Information("Successfully ran DependencyInjection.Configure()");
         }

@@ -6,6 +6,7 @@ using AmberwoodCore.Extensions;
 using AmberwoodCore.Responses;
 using AmbRcnTradeServer.Constants;
 using AmbRcnTradeServer.Models.ContainerModels;
+using AmbRcnTradeServer.Models.DictionaryModels;
 using AmbRcnTradeServer.Models.StockModels;
 using AmbRcnTradeServer.Models.VesselModels;
 using Raven.Client.Documents;
@@ -54,6 +55,7 @@ namespace AmbRcnTradeServer.Services
         {
             var query = _session.Query<Container>()
                 .Include(c=>c.VesselId)
+                .Include(c=>c.WarehouseId)
                 .Where(c => c.CompanyId == companyId);
             
             if (status != null)
@@ -62,12 +64,14 @@ namespace AmbRcnTradeServer.Services
             var list = await query.ToListAsync();
 
             var vessels = await _session.LoadListFromMultipleIdsAsync<Vessel>(list.GetPropertyFromList(c => c.VesselId));
+            var warehouses = await _session.LoadListFromMultipleIdsAsync<Customer>(list.GetPropertyFromList(c => c.WarehouseId));
 
             foreach (var container in list)
             {
                 container.StuffingDate = container.IncomingStocks.FirstOrDefault()?.StuffingDate;
                 var vessel = vessels.FirstOrDefault(c => c.Id == container.VesselId);
                 container.VesselName = $"{vessel?.VesselName} {vessel?.VoyageNumber}";
+                container.WarehouseName = warehouses.FirstOrDefault(c => c.Id == container.WarehouseId)?.Name;
             }
 
             return list

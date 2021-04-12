@@ -48,7 +48,9 @@
       </div>
 
       <div class="row">
-        <div class="col"></div>
+        <div class="col">
+          <select-input source.bind="warehouses" value.bind="model.warehouseId" use-model-id="true" label="Warehouse" warn-null="false"></select-input>
+        </div>
         <div class="col">
           <text-input value.bind="model.sealNumber" disabled.bind="!canEditContainer" label="Customs seal number"></text-input>
         </div>

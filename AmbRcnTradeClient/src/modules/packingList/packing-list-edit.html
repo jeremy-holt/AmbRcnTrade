@@ -1,0 +1,78 @@
+<template>
+  <toolbar caption="Packing List" list-route="packingListList" disabled-save.bind="!canSave" save.call="save()">
+    <toolbar-item icon="fas fa-plus" click.call="addPackingList()"></toolbar-item>
+    <toolbar-item icon="fas fa-trash" disabled-bind="!canDelete" click.call="delete()"></toolbar-item>
+  </toolbar>
+
+  <div class="card">
+    <div class="card-header">
+      <h4>${caption}</h4>
+    </div>
+
+    <div class="card-body">
+      <div class="row">
+        <div class="col">
+          <date-input value.bind="model.date" label="Date"></date-input>
+        </div>
+        <div class="col">
+          <text-input value.bind="model.bookingNumber" label="Booking number" required="true"></text-input>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col">
+          <text-area-input value.bind="model.notes" label="Notes"></text-area-input>
+        </div>
+      </div>
+
+      <div class="row mt-2">
+        <div class="col border-right">
+          <labelled-text label="Containers in this packing list"></labelled-text>
+          <ul if.bind="model.containers.length > 0" class="list-unstyled">
+            <li class="" repeat.for="item of model.containers">
+              <div class="row mb-2">
+                <div class="col">
+                  <a route-href="containerEdit; params.bind:{id: encode(item.id)}" class="with-decoration">${item.containerNumber}</a>
+                </div>
+                <div class="col">
+                  ${item.warehouseName}
+                </div>
+                <div class="col text-right">
+                  <button type="button" class="btn btn-sm btn-danger" click.delegate="removeContainer(item)" title="Remove from packing list">
+                    <i class="fas fa-trash"></i>
+                  </button>
+                </div>
+              </div>
+            </li>
+          </ul>
+          <div else class="alert alert-warning">
+            No containers have been added to this packing list yet
+          </div>
+        </div>
+
+        <div class="col">
+          <labelled-text label="Containers not on any packing lists"></labelled-text>
+          <ul class="list-unstyled">
+            <li class="" repeat.for="item of unallocatedContainers">
+              <div class="row mb-2">
+                <div class="col">
+                  ${item.containerNumber}
+                </div>
+                <div class="col">
+                  ${item.warehouseName}
+                </div>
+                <div class="col text-right">
+                  <button type="button" class="btn btn-sm btn-primary" click.delegate="addContainer(item)" title="Add to packing list">
+                    <i class="fas fa-plus"></i>
+                  </button>
+
+                </div>
+              </div>
+
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>

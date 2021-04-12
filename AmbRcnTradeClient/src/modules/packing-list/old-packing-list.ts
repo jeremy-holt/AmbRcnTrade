@@ -3,11 +3,11 @@ import { connectTo } from "aurelia-store";
 import { IBillLading } from "interfaces/shipping/IBillLading";
 import { VesselService } from "services/vessel-service";
 import { IState } from "store/state";
-import { ICustomer } from "./../../interfaces/ICustomer";
-import { IVessel } from "./../../interfaces/shipping/IVessel";
-import { BillLadingService } from "./../../services/bill-lading-service";
-import { CustomerService } from "./../../services/customer-service";
-import { PortService } from "./../../services/port-service";
+import { ICustomer } from "../../interfaces/ICustomer";
+import { IVessel } from "../../interfaces/shipping/IVessel";
+import { BillLadingService } from "../../services/bill-lading-service";
+import { CustomerService } from "../../services/customer-service";
+import { PortService } from "../../services/port-service";
 
 @autoinject
 @connectTo()

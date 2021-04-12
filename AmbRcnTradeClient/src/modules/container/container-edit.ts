@@ -1,4 +1,3 @@
-import { encodeParams } from "./../../core/helpers";
 import { DialogService } from "aurelia-dialog";
 import { autoinject, observable } from "aurelia-framework";
 import { Router } from "aurelia-router";
@@ -6,13 +5,14 @@ import { connectTo } from "aurelia-store";
 import { IParamsId } from "interfaces/IParamsId";
 import { IContainer } from "interfaces/shipping/IContainer";
 import _ from "lodash";
+import { CustomerService } from "services/customer-service";
 import { IState } from "store/state";
-import { CONTAINER_STATUS_LIST, IContainerStatus, TEU_LIST } from "./../../constants/app-constants";
+import { CONTAINER_STATUS_LIST, CustomerGroup, IContainerStatus, TEU_LIST } from "./../../constants/app-constants";
+import { encodeParams } from "./../../core/helpers";
 import { DeleteDialog } from "./../../dialogs/delete-dialog";
-import { IVessel } from "./../../interfaces/shipping/IVessel";
+import { ICustomerListItem } from "./../../interfaces/ICustomerListItem";
 import { ContainerService } from "./../../services/container-service";
 import { isInRole } from "./../../services/role-service";
-import { VesselService } from "./../../services/vessel-service";
 import { UnstuffContainerDialog } from "./unstuff-container-dialog";
 
 @autoinject
@@ -22,15 +22,19 @@ export class ContainerEdit {
   protected model: IContainer = undefined!;
   protected containerStatusList = CONTAINER_STATUS_LIST;
   protected teuList = TEU_LIST;
+  protected warehouses: ICustomerListItem[] = [];
   @observable protected selectedContainerStatus: IContainerStatus = undefined;
 
   constructor(
     private containerService: ContainerService,
     private dialogService: DialogService,
-    private router: Router
+    private router: Router,
+    private customerService: CustomerService,
   ) { }
 
   protected async activate(prms: IParamsId) {
+    await this.customerService.loadCustomersForAppUserList();
+
     if (prms?.id) {
       await this.containerService.load(prms.id);
     } else {
@@ -43,6 +47,9 @@ export class ContainerEdit {
 
     this.teuList = _.cloneDeep(TEU_LIST);
     this.teuList.unshift({ id: null, name: "[Select]" });
+
+    this.warehouses = _.cloneDeep(state.userFilteredCustomers.filter(c => c.filter === CustomerGroup.Warehouse));
+    this.warehouses.unshift({ id: null, name: "[Select]" } as ICustomerListItem);
   }
 
   protected async bind() {

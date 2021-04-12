@@ -1,0 +1,48 @@
+<template>
+  <toolbar caption="Packing Lists">
+    <toolbar-item icon="fas fa-plus" click.call="addPackingList()"></toolbar-item>
+  </toolbar>
+
+  <div class="card">
+    <div class="card-header">
+      <h4>Packing Lists</h4>
+    </div>
+    <div class="card-body">
+      <table class="table table-sm">
+        <thead>
+          <tr>
+            <th>Packing List Id</th>
+            <th>Date</th>
+            <th>Booking number</th>
+            <th>Container number(s)</th>
+            <th>Notes</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr repeat.for="item of list">
+            <td><a class="with-decoration"
+                route-href="packingListEdit; params.bind:{id: encode(item.id)}">#${getRavenRootId(item.id)}</a></td>
+            <td>${item.date | dateFormat: "DD/MM/YYYY"}</td>
+            <td>${item.bookingNumber}</td>
+            <td>
+              <ul class="list-unstyled">
+                <li class="" repeat.for="container of item.containers">
+                  <div class="row">
+                    <div class="col">
+                      ${container.containerNumber}
+                    </div>
+                    <div class="col">
+                      ${container.warehouseName}
+                    </div>
+                  </div>
+
+                </li>
+              </ul>
+            </td>
+            <td>${item.notes}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</template>

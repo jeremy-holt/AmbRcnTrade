@@ -76,6 +76,12 @@ export class Sidenav {
     }
   }
 
+  protected packingListRoutes(){
+    if(isInRole(["admin","user","warehouseManager"],this.state)){
+      return this.router.navigation.filter(row=>this.isInRoute(row,"packingList"));
+    }
+  }
+
   protected paymentRoutes() {
     if (isInRole(["admin", "user"], this.state)) {
       return this.router.navigation.filter(row => this.isInRoute(row, "payment"));

@@ -245,5 +245,19 @@ export const initialState: IState = {
       paymentValueUsd: undefined!
     },
     list: []
+  },
+  packingList:{
+    current:{
+      id: undefined!,
+      name: undefined!,
+      companyId:undefined!,
+      containerIds:[],
+      bookingNumber:undefined!,
+      date: undefined!,
+      notes:undefined,
+      containers:[]
+    },
+    list:[],
+    unallocatedContainers:[]
   }
 };

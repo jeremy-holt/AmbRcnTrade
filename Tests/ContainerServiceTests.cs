@@ -6,6 +6,7 @@ using AmberwoodCore.Extensions;
 using AmberwoodCore.Responses;
 using AmbRcnTradeServer.Constants;
 using AmbRcnTradeServer.Models.ContainerModels;
+using AmbRcnTradeServer.Models.DictionaryModels;
 using AmbRcnTradeServer.Models.StockModels;
 using AmbRcnTradeServer.Models.VesselModels;
 using AutoFixture;
@@ -82,7 +83,7 @@ namespace Tests
         }
 
         [Fact]
-        public async Task LoadList_ShouldLoadVesselName()
+        public async Task LoadList_ShouldLoadVesselNameAndWarehouseName()
         {
             // Arrange
             using var store = GetDocumentStore();
@@ -92,8 +93,13 @@ namespace Tests
 
             var vessel = await new Vessel().CreateAndStore(session);
 
+            var warehouse = fixture.DefaultEntity<Customer>().Create();
+            await session.StoreAsync(warehouse);
+
             var containers = fixture.DefaultEntity<Container>()
                 .With(c => c.VesselId, vessel.Id)
+                .With(c=>c.WarehouseId,warehouse.Id)
+                .With(c=>c.PackingListId,"packingLists/1-A")
                 .Without(c => c.VesselName)
                 .CreateMany()
                 .ToList();
@@ -106,6 +112,9 @@ namespace Tests
             // Assert
             var actual = list[0];
             actual.VesselName.Should().Be(vessel.VesselName + " " + vessel.VoyageNumber);
+            actual.WarehouseId.Should().Be(warehouse.Id);
+            actual.WarehouseName.Should().Be(warehouse.Name);
+            actual.PackingListId.Should().Be("packingLists/1-A");
         }
 
 
@@ -125,6 +134,7 @@ namespace Tests
                 .With(c => c.VgmTicketNumber, "1234")
                 .With(c=>c.ExporterSealNumber, "Mangro")
                 .With(c => c.Teu, Teu.Teu40)
+                .With(c=>c.WarehouseId,"customers/1-A")
                 .Create();
 
             // Act
@@ -138,6 +148,7 @@ namespace Tests
             actual.WeighbridgeWeightKg.Should().Be(container.WeighbridgeWeightKg);
             actual.Teu.Should().Be(Teu.Teu40);
             actual.ExporterSealNumber.Should().Be("Mangro");
+            actual.WarehouseId.Should().Be("customers/1-A");
         }
 
 
