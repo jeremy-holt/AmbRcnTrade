@@ -154,9 +154,9 @@ export class BillLadingEdit {
     return isInRole(["admin", "user"], this.state);
   }
 
-  protected get canPrintPackingList() {
-    return isInRole(["admin", "user"], this.state);
-  }
+  // protected get canPrintPackingList() {
+  //   return isInRole(["admin", "user"], this.state);
+  // }
 
   protected get canEditBillLading() {
     return isInRole(["admin", "user"], this.state);

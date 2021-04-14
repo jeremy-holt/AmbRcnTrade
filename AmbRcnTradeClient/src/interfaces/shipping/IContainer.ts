@@ -24,5 +24,6 @@ export interface IContainer extends IEntityCompany {
   packingListId: string;
   warehouseId: string;
   warehouseName: string;
+  tareKg: number;
   selected?: boolean;
 }

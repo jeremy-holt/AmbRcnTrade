@@ -1,9 +1,11 @@
 <template>
   <toolbar caption="Packing List" list-route="packingListList" disabled-save.bind="!canSave" save.call="save()">
     <toolbar-item icon="fas fa-plus" click.call="addPackingList()"></toolbar-item>
-    <toolbar-item icon="fas fa-trash" disabled-bind="!canDelete" click.call="delete()"></toolbar-item>
+    <toolbar-item icon="fas fa-trash" disabled.bind="!canDelete" click.call="delete()"></toolbar-item>
+    <toolbar-item icon="fas fa-print" disabled.bind="!canSave" click.call="printPackingList()"></toolbar-item>
   </toolbar>
 
+  </debug-console>
   <div class="card">
     <div class="card-header">
       <h4>${caption}</h4>
@@ -12,10 +14,75 @@
     <div class="card-body">
       <div class="row">
         <div class="col">
+          <text-input value.bind="model.packingListNumber" label="Packing list no"></text-input>
+        </div>
+        <div class="col"></div>
+      </div>
+      <div class="row">
+        <div class="col">
           <date-input value.bind="model.date" label="Date"></date-input>
         </div>
         <div class="col">
           <text-input value.bind="model.bookingNumber" label="Booking number" required="true"></text-input>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col">
+          <text-input value.bind="model.contractNumber" label="Contract No" required="true"></text-input>
+        </div>
+        <div class="col">
+          <text-input value.bind="model.amqNo" label="AMQ No"></text-input>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col">
+          <text-input value.bind="model.representative" label="Representant"></text-input>
+        </div>
+        <div class="col">
+          <text-input value.bind="model.otNo" label="OT no"></text-input>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col">
+          <text-input value.bind="model.vesselName" label="Vessel" required="true"></text-input>
+        </div>
+        <div class="col">
+          <select-input source.bind="customers" value.bind="model.customerId" required="true" use-model-id="true"
+            label="Final buyer"></select-input>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col">
+          <select-input source.bind="warehouses" value.bind="model.warehouseId" required="true" use-model-id="true"
+            label="Warehouse"></select-input>
+        </div>
+        <div class="col">
+          <select-input source.bind="ports" value.bind="model.destinationId" required="true" use-model-id="true"
+            label="Destination"></select-input>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col">
+          <select-input source.bind="shippers" value.bind="model.shipperId" required="true" use-model-id="true"
+            label="Exporter"></select-input>
+        </div>
+        <div class="col">
+          <select-input source.bind="freightForwarders" value.bind="model.freightForwarderId" required="true"
+            use-model-id="true" label="Freight forwarder"></select-input>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col">
+          <date-input value.bind="model.dateStart" label="Date started">
+        </div>
+        <div class="col">
+          <date-input value.bind="model.dateEnd" label="Date finished"></date-input>
         </div>
       </div>
 
@@ -32,13 +99,15 @@
             <li class="" repeat.for="item of model.containers">
               <div class="row mb-2">
                 <div class="col">
-                  <a route-href="containerEdit; params.bind:{id: encode(item.id)}" class="with-decoration">${item.containerNumber}</a>
+                  <a route-href="containerEdit; params.bind:{id: encode(item.id)}"
+                    class="with-decoration">${item.containerNumber}</a>
                 </div>
                 <div class="col">
                   ${item.warehouseName}
                 </div>
                 <div class="col text-right">
-                  <button type="button" class="btn btn-sm btn-danger" click.delegate="removeContainer(item)" title="Remove from packing list">
+                  <button type="button" class="btn btn-sm btn-danger" click.delegate="removeContainer(item)"
+                    title="Remove from packing list">
                     <i class="fas fa-trash"></i>
                   </button>
                 </div>
@@ -62,7 +131,8 @@
                   ${item.warehouseName}
                 </div>
                 <div class="col text-right">
-                  <button type="button" class="btn btn-sm btn-primary" click.delegate="addContainer(item)" title="Add to packing list">
+                  <button type="button" class="btn btn-sm btn-primary" click.delegate="addContainer(item)"
+                    title="Add to packing list">
                     <i class="fas fa-plus"></i>
                   </button>
 

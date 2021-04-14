@@ -55,6 +55,8 @@ export class PackingListService extends FetchService {
 
 export function packingListEditAction(state: IState, packingList: IPackingList) {
   packingList.date = fixAspNetCoreDate(packingList.date, false);
+  packingList.dateStart = fixAspNetCoreDate(packingList?.dateStart, false);
+  packingList.dateEnd = fixAspNetCoreDate(packingList?.dateEnd, false);
 
   const newState = _.cloneDeep(state);
   newState.packingList.current = packingList;

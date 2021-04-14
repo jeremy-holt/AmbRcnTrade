@@ -100,6 +100,7 @@ namespace Tests
                 .With(c => c.VesselId, vessel.Id)
                 .With(c=>c.WarehouseId,warehouse.Id)
                 .With(c=>c.PackingListId,"packingLists/1-A")
+                .With(c=>c.TareKg,3900)
                 .Without(c => c.VesselName)
                 .CreateMany()
                 .ToList();
@@ -115,6 +116,7 @@ namespace Tests
             actual.WarehouseId.Should().Be(warehouse.Id);
             actual.WarehouseName.Should().Be(warehouse.Name);
             actual.PackingListId.Should().Be("packingLists/1-A");
+            actual.TareKg.Should().Be(3900);
         }
 
 

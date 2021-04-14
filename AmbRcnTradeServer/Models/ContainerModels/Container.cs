@@ -35,6 +35,7 @@ namespace AmbRcnTradeServer.Models.ContainerModels
         public string PackingListId { get; set; }
         public string WarehouseId { get; set; }
         public string WarehouseName { get; set; }
+        public int TareKg { get; set; }
 
         public override string ToString()
         {

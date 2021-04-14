@@ -255,7 +255,22 @@ export const initialState: IState = {
       bookingNumber:undefined!,
       date: undefined!,
       notes:undefined,
-      containers:[]
+      containers:[],
+      shipperId:undefined!,
+      freightForwarderId:undefined!,
+      warehouseId:undefined!,
+      otNo:undefined!,
+      dateStart:undefined!,
+      dateEnd: undefined!,
+      contractNumber: undefined!,
+      amqNo: undefined!,
+      numberContainers: undefined!,
+      vesselName: undefined!,
+      customerId:undefined!,
+      destinationCountry: undefined!,
+      destinationId: undefined!,
+      packingListNumber: undefined!,
+      representative: undefined!
     },
     list:[],
     unallocatedContainers:[]

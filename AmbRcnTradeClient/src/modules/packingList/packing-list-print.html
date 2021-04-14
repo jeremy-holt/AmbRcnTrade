@@ -1,0 +1,139 @@
+<template>
+  <require from="../container/teu-formatter-valueconverter"></require>
+
+  <div class="row">
+    <div class="col">
+      <img src="images/mangro logo.png" style="width: 50%;">
+    </div>
+    <div class="col d-flex justify-content-end small">
+      <div>
+        <p>Abidjan, le ${model.date | dateFormat:"DD/MM/YYYY"}</p>
+        <strong>ACE - CI<br>
+          Service CAJOU
+        </strong>
+        <div>Tel: 20 25 48 50<br>Fax: 20 33 72 66<br>
+          servicecajou@gmail.com<br>
+          Berthe.fatoumata@aceglobaldepository.com<br>
+          noumouke.konate@aceglobaldepository.com
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row mt-7 mb-3 text-center">
+    <div class="col">
+      <h5>PACKING LIST No: ${model.packingListNumber} / NOIX DE CAJOU BRUTES</h5>
+    </div>
+  </div>
+
+  <div class="row">
+    <table class="table table-bordered table-sm">
+      <tbody>
+        <tr>
+          <th>Exportateur</th>
+          <td>${exporter}</td>
+          <th>Contrat &numero;</th>
+          <td>${model.contractNumber}</td>
+        </tr>
+        <tr>
+          <th>Transitaire</th>
+          <td>${freightForwarder}</td>
+          <th>AMQ &numero;</th>
+          <td>${model.amqNo}</td>
+        </tr>
+        <tr>
+          <th>Booking &numero;</th>
+          <td>${model.bookingNumber}</td>
+          <th>Number containers</th>
+          <td>
+            <div class="d-flex justify-content-between">
+              <div>${model.containers.length} x 40'</div>
+              <div class="text-right font-weight-bold">APMT</div>
+            </div>
+          </td>          
+        </tr>
+        <tr>
+          <th>OT No</th>
+          <td>${model.otNo}</td>
+          <th>Navire</th>
+          <td>${model.vesselName}</td>
+        </tr>
+        <tr>
+          <th>Magasin/Site Empotage</th>
+          <td>${warehouseName}</td>
+          <th>Client Final</th>
+          <td>${customerName}</td>
+        </tr>
+        <tr>
+          <th>Date e Heure Debut</th>
+          <td>${model.dateStart | dateFormat: "DD/MM/YYYY"} a 8H</td>
+          <th>Port</th>
+          <td>${destination.portName}</td>          
+        </tr>
+        <tr>
+          <th>Date e Heure Final</th>
+          <td>${model.dateEnd | dateFormat: "DD/MM/YYYY"} a 16H</td>
+          <th>Pays</th>
+          <td>${destination.country}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>  
+
+  <div class="row mt-5">
+    <div class="col">
+      <table class="table table-bordered table-sm small">
+        <thead>
+          <tr>
+            <th>&numero;</th>
+            <th>Conteneur</th>
+            <th>&numero; Plomb</th>
+            <th class="text-right">Type de TC</th>
+            <th class="text-right">Poids Brute (kg)</th>
+            <th class="text-right">Tare Conteneur (kg)</th>
+            <th class="text-right">Nombre de sacs</th>
+            <th class="text-right">Poids Théorique (kg)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr repeat.for="item of model.containers">
+            <td>${$index + 1}</td>
+            <td>${item.containerNumber}</td>
+            <td>${item.sealNumber}</td>
+            <td>${item.teu | teuFormatter}</td>
+            <td class="text-right">${item.weighbridgeWeightKg}</td>
+            <td class="text-right">${item.tareKg}</td>
+            <td class="text-right">${item.bags}</td>
+            <td class="text-right">25000</td>
+          </tr>
+        </tbody>
+        <tfoot>
+          <tr>
+            <th colspan="3"></th>
+            <th>TOTAL</th>
+            <th class="text-right">${totals.weighbridgeWeightKg}</th>
+            <th class="text-right"></th>
+            <th class="text-right">${totals.bags}</th>
+            <th class="text-right">${model.containers.length * 25000}</th>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col">
+      <div class="d-flex justify-content-between">
+        <div class="font-weight-bold small"><u>Nom et Contact du Representaant de l'Exportateur</u></div>
+        <div class="">
+          <div class="font-weight-bold small"><u>Signature et cachet de l'Exportatateur</u></div>
+          <div><img src="images/mangro-sig.png"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col">${model.representative}</div>
+  </div>
+</template>

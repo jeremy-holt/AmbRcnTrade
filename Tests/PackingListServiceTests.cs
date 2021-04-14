@@ -86,6 +86,21 @@ namespace Tests
                 .With(c => c.BookingNumber, "Booking")
                 .With(c => c.Date, new DateTime(2013, 1, 1))
                 .With(c => c.Notes, "Notes")
+                .With(c=>c.ShipperId, "customers/1-A")
+                .With(c=>c.FreightForwarderId,"customers/2-A")
+                .With(c=>c.WarehouseId, "customers/3-A")
+                .With(c=>c.OtNo,7)
+                .With(c=>c.DateStart,new DateTime(2013,1,1,08,00,00))
+                .With(c=>c.DateEnd,new DateTime(2013,1,1,16,0,0))
+                .With(c=>c.ContractNumber,"CTA")
+                .With(c=>c.AmqNo,"2949")
+                .With(c=>c.NumberContainers,10)
+                .With(c=>c.VesselName,"CGM Mozart")
+                .With(c=>c.CustomerId,"customers/4-A")
+                .With(c=>c.DestinationId,"ports/1-A")
+                .With(c=>c.DestinationCountry,"Vietnam")
+                .With(c=>c.PackingListNumber,"07: 2021/Noix")
+                .With(c=>c.Representative,"Dede")
                 .Create();
 
             // Act
@@ -98,6 +113,8 @@ namespace Tests
             actual.Notes.Should().Be("Notes");
             actual.BookingNumber.Should().Be("Booking");
             actual.ContainerIds.Should().HaveCount(0);
+            actual.AmqNo.Should().Be("2949");
+            actual.Representative.Should().Be("Dede");
         }
 
         [Fact]

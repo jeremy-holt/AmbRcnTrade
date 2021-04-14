@@ -17,12 +17,12 @@
     <div class="card-body">
 
       <div if.bind="model.id" class="row mb-2">
-        <div class="col-3">
+        <!-- <div class="col-3">
           <a class="btn btn-primary" disabled.bind="!canPrintPackingList"
             route-href="packingList; params.bind:{vesselId: encode(vessel.id), billLadingId: encode(model.id)}">
             <i class="fas fa-fw fa-print"></i>
             Print packing list</a>
-        </div>
+        </div> -->
         <div class="col-3">
           <button type="button" class="btn btn-primary" disabled.bind="!canPrintBillLading"
             click.delegate="printBillLading()">

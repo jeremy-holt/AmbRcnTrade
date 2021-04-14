@@ -75,12 +75,13 @@ export class App {
         // Packing List
         { route: "packingList/list", name: "packingListList", title: "Packing Lists", nav: true, moduleId: "modules/packingList/packing-list-list", roles: ["admin", "user", "warehouseManager"] },
         { route: "packingList/edit/:id?", name: "packingListEdit", title: "Packing List", moduleId: "modules/packingList/packing-list-edit", roles: ["admin", "user", "warehouseManager"] },
+        { route: "packingList/print/:id?", name: "packingListPrint", title: "Print packing List", moduleId: "modules/packingList/packing-list-print", roles: ["admin", "user", "warehouseManager"] },
 
         // Vessel
         { route: "vessel/list", name: "vesselList", title: "Vessels", nav: true, moduleId: "modules/vessel/vessel-list", roles: ["admin", "user", "warehouseManager"] },
         { route: "vessel/edit/:id?", name: "vesselEdit", title: "Vessel", moduleId: "modules/vessel/vessel-edit", roles: ["admin", "user", "warehouseManager"] },
         { route: "vessel/billLading/edit/:vesselId/:billLadingId?", name: "billLadingEdit", title: "Bill of Lading", moduleId: "modules/billLading/billLading-edit", roles: ["admin", "user"] },
-        { route: "vessel/billLading/packingList/:vesselId/:billLadingId", name: "packingList", title: "Packing list", moduleId: "modules/packing-list/packing-list", roles: ["admin", "user"] },
+        // { route: "vessel/billLading/packingList/:vesselId/:billLadingId", name: "packingList", title: "Packing list", moduleId: "modules/packing-list/packing-list", roles: ["admin", "user"] },
         { route: "vessel/billLading/document-viewer/:id", name: "billLadingDocumentViewer", title: "Document viewer", moduleId: "modules/document-viewer/document-viewer", roles: ["admin", "user"] },
 
         // Purchase

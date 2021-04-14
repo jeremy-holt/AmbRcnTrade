@@ -1,3 +1,8 @@
+import { encodeParams } from "core/helpers";
+import { PortService } from "./../../services/port-service";
+import { CustomerService } from "./../../services/customer-service";
+import { IPort } from "./../../interfaces/IPort";
+import { ICustomerListItem } from "./../../interfaces/ICustomerListItem";
 import { IContainer } from "interfaces/shipping/IContainer";
 import { getRavenRootId } from "./../../core/helpers";
 import { Router } from "aurelia-router";
@@ -10,26 +15,50 @@ import { IState } from "store/state";
 import { IParamsId } from "./../../interfaces/IParamsId";
 import { IPackingList } from "./../../interfaces/shipping/IPackingList";
 import { PackingListService } from "./../../services/packing-list-service";
+import { CustomerGroup } from "constants/app-constants";
 
 @autoinject
 @connectTo()
 export class PackingListEdit {
   public model: IPackingList;
   private unallocatedContainers: IContainer[] = [];
+  protected shippers: ICustomerListItem[] = [];
+  protected freightForwarders: ICustomerListItem[] = [];
+  protected warehouses: ICustomerListItem[] = [];
+  protected customers: ICustomerListItem[] = [];
+  protected ports: IPort[] = [];
 
   constructor(
     private packingListService: PackingListService,
     private dialogService: DialogService,
-    private router: Router
+    private router: Router,
+    private customerService: CustomerService,
+    private portService: PortService
   ) { }
 
   protected stateChanged(state: IState) {
     this.model = _.cloneDeep(state.packingList.current);
     this.unallocatedContainers = _.cloneDeep(state.packingList.unallocatedContainers);
+
+    this.shippers = _.cloneDeep(state.userFilteredCustomers.filter(c => c.filter === CustomerGroup.BillLading));
+    this.shippers.unshift({ id: null, name: "[Select]" } as ICustomerListItem);
+
+    this.freightForwarders = _.cloneDeep(state.userFilteredCustomers.filter(c => c.filter === CustomerGroup.LogisticsCompany));
+    this.freightForwarders.unshift({ id: null, name: "[Select]" } as ICustomerListItem);
+
+    this.warehouses = _.cloneDeep(state.userFilteredCustomers.filter(c => c.filter === CustomerGroup.Warehouse));
+    this.warehouses.unshift({ id: null, name: "[Select]" } as ICustomerListItem);
+
+    this.customers = _.cloneDeep(state.userFilteredCustomers.filter(c => c.filter === CustomerGroup.BillLading));
+    this.customers.unshift({ id: null, name: "[Select]" } as ICustomerListItem);
+
+    this.ports = _.cloneDeep(state.port.list);
+    this.ports.unshift({ id: null, name: "[Select]" } as IPort);
   }
 
   protected async activate(params: IParamsId) {
     await this.packingListService.getNonAllocatedContainers();
+    await this.portService.loadPortList();
 
     if (params?.id) {
       await this.packingListService.load(params.id);
@@ -43,7 +72,10 @@ export class PackingListEdit {
   }
 
   protected get canSave() {
-    return this.model?.containerIds.length > 0 && this.model?.bookingNumber?.length > 0;
+    return this.model?.containerIds.length > 0 && this.model?.bookingNumber?.length > 0 &&
+      this.model?.contractNumber?.length > 0 && this.model?.vesselName?.length > 0 && this.model?.customerId &&
+      this.model?.warehouseId && this.model?.destinationId && this.model?.shipperId &&
+      this.model?.freightForwarderId;
   }
 
   protected get canDelete() {
@@ -104,7 +136,11 @@ export class PackingListEdit {
     }
   }
 
-  protected async addPackingList(){
-    this.router.navigateToRoute("packingListEdit",{id: null});
+  protected async addPackingList() {
+    this.router.navigateToRoute("packingListEdit", { id: null });
   }
+
+  protected printPackingList() {
+    this.router.navigateToRoute("packingListPrint", { id: encodeParams(this.model.id) });
+  }  
 }
