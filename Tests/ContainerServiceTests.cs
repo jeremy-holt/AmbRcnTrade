@@ -153,6 +153,30 @@ namespace Tests
             actual.WarehouseId.Should().Be("customers/1-A");
         }
 
+        [Fact]
+        public async Task Save_ShouldUpdateNettWeight()
+        {
+            // Arrange
+            using var store = GetDocumentStore();
+            using var session = store.OpenAsyncSession();
+            var sut = GetContainerService(session);
+            var fixture = new Fixture();
+
+            var container = fixture.DefaultEntity<Container>()
+                .With(c => c.WeighbridgeWeightKg, 10000)
+                .With(c => c.TareKg, 500)
+                .Without(c => c.NettWeightKg)
+                .Create();
+            
+            // Act
+            await sut.Save(container);
+            
+            // Assert
+            var actual = await session.LoadAsync<Container>(container.Id);
+            actual.NettWeightKg.Should().Be(10_000 - 500);
+
+        }
+
 
         [Fact]
         public async Task UnStuffContainer_ShouldRemoveItFromTheContainer()

@@ -38,6 +38,7 @@ namespace AmbRcnTradeServer.Services
         {
             container.Bags = container.IncomingStocks.Sum(c => c.Bags);
             container.StuffingWeightKg = container.IncomingStocks.Sum(c => c.WeightKg);
+            container.NettWeightKg = container.WeighbridgeWeightKg - container.TareKg;
 
             await _session.StoreAsync(container);
             return new ServerResponse<Container>(container, "Saved");
@@ -45,7 +46,7 @@ namespace AmbRcnTradeServer.Services
 
         public async Task<Container> Load(string id)
         {
-            var container = await _session.Include<Container>(c=>c.VesselId).LoadAsync<Container>(id);
+            var container = await _session.Include<Container>(c => c.VesselId).LoadAsync<Container>(id);
             var vessel = await _session.LoadAsync<Vessel>(container.VesselId);
             container.VesselName = $"{vessel?.VesselName} {vessel?.VoyageNumber}";
             return container;
@@ -54,10 +55,10 @@ namespace AmbRcnTradeServer.Services
         public async Task<List<Container>> LoadList(string companyId, ContainerStatus? status)
         {
             var query = _session.Query<Container>()
-                .Include(c=>c.VesselId)
-                .Include(c=>c.WarehouseId)
+                .Include(c => c.VesselId)
+                .Include(c => c.WarehouseId)
                 .Where(c => c.CompanyId == companyId);
-            
+
             if (status != null)
                 query = query.Where(c => c.Status == status);
 
@@ -76,7 +77,8 @@ namespace AmbRcnTradeServer.Services
 
             return list
                 .OrderBy(c => Enum.GetName(typeof(ContainerStatus), c.Status))
-                .ThenBy(c => c.IncomingStocks.OrderBy(incomingStock => incomingStock.StuffingDate).FirstOrDefault()?.StuffingDate).ToList();
+                .ThenBy(c => c.Id).ToList();
+            // .ThenBy(c => c.IncomingStocks.OrderBy(incomingStock => incomingStock.StuffingDate).FirstOrDefault()?.StuffingDate).ToList();
         }
 
         public async Task<ServerResponse> UnStuffContainer(string containerId)
@@ -86,7 +88,7 @@ namespace AmbRcnTradeServer.Services
                 .LoadAsync<Container>(containerId);
 
             var stocks = await _session.LoadListFromMultipleIdsAsync<Stock>(container.IncomingStocks.SelectMany(stock => stock.StockIds.Select(stockItem => stockItem.StockId)));
-            var stockOuts = stocks.Where(c => !c.IsStockIn && containerId.In(c.StuffingRecords.GetPropertyFromList(x=>x.ContainerId))).ToList();
+            var stockOuts = stocks.Where(c => !c.IsStockIn && containerId.In(c.StuffingRecords.GetPropertyFromList(x => x.ContainerId))).ToList();
 
             var removableStatus = new[] {ContainerStatus.Cancelled, ContainerStatus.Empty, ContainerStatus.Stuffing, ContainerStatus.StuffingComplete};
 

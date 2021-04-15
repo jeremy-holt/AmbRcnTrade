@@ -73,15 +73,14 @@
             label="Weighbridge weight kg"></number-input>
         </div>
         <div class="col">
-          <number-input value.bind="model.nettWeightKg" disabled.bind="!canEditContainer" label="Container nett weight">
-          </number-input>
+          <number-input value.bind="model.tareKg" disabled.bind="!canEditContainer" label="Tare kg"></number-input>
         </div>
       </div>
 
-      <div class="row">
-        <div class="col"></div>
+      <div class="row mt-1">
+        <div class="col">        </div>
         <div class="col">
-          <number-input value.bind="model.tareKg" disabled.bind="!canEditContainer" label="Tare kg"></number-input>
+          Nett weight: ${model.weighbridgeWeightKg - model.tareKg | numberFormat:"0,0"} kg
         </div>
       </div>
 

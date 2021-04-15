@@ -32,7 +32,8 @@
         </div>
 
         <div class="col">
-          <select-input source.bind="warehouses" value.bind="selectedWarehouse" label="Filter by warehouse" warn-null="false">
+          <select-input source.bind="warehouses" value.bind="selectedWarehouse" label="Filter by warehouse"
+            warn-null="false">
           </select-input>
         </div>
       </div>
@@ -40,8 +41,9 @@
       <table class="table table-sm table-bordered small">
         <thead>
           <tr>
+            <th>Id</th>
             <th>Status</th>
-            <th>Kor</th>            
+            <th>Kor</th>
             <th>Container number </th>
             <th>Seal number</th>
             <th>Booking number</th>
@@ -50,6 +52,7 @@
             <th class="text-right">Bags</th>
             <th class="text-right">Stuffing<br>weight kg</th>
             <th class="text-right">Weighbridge<br> weight kg</th>
+            <th class="text-right">Tare kg</th>
             <th class="text-right">Nett<br>weight kg</th>
             <th>Packing list Id</th>
             <!-- <th>TEU</th> -->
@@ -57,27 +60,33 @@
         </thead>
         <tbody>
           <tr repeat.for="item of list | containerListFilter: selectedWarehouse.id">
+            <td><a route-href="containerEdit; params.bind:{id: encode(item.id)}"
+                class="with-decoration">#${getRavenRootId(item.id)}</a></td>
             <td>${item.status | containerStatusFormatter}<br>${item.warehouseName}</td>
-            <td>${item.incomingStocks[0].kor | numberFormat: "0,0.00"}</td>            
+            <td>${item.incomingStocks[0].kor | numberFormat: "0,0.00"}</td>
             <td>
               <div if.bind="item.vesselName" class="small font-italic">
                 ${item.vesselName}
               </div>
               <a route-href="containerEdit; params.bind:{id: encode(item.id)}"
-                class="with-decoration">${item.containerNumber}
+                class="with-decoration text-nowrap">${item.containerNumber}
               </a>
             </td>
-            <td>${item.sealNumber}</td>
+            <td class="text-nowrap">${item.sealNumber}</td>
             <td>${item.bookingNumber}</td>
             <td>${item.stuffingDate | dateFormat: "DD/MM/YYYY"}</td>
             <td>${item.dispatchDate | dateFormat: "DD/MM/YYYY"}</td>
             <td class="text-right">${item.bags | numberFormat: "0,0"}</td>
             <td class="text-right">${item.stuffingWeightKg | numberFormat: "0,0"}</td>
-            <td class="text-right">${item.weighbridgeWeightKg | numberFormat: "0,0"}</td>
-            <td class="text-right">${item.nettWeightKg | numberFormat: "0,0"}</td>
+            <td
+              class="text-right  ${item.weighbridgeWeightKg == 0 && (item.status == 'stuffingComplete' || item.status == 'gated' || item.status == 'onBoardVessel' || item.status == 'shipped')  ? 'bg-danger text-white' : ''}">
+              ${item.weighbridgeWeightKg | numberFormat: "0,0"}</td>
+            <td class="text-right">${item.tareKg | numberFormat: "0,0"}</td>
+            <td class="text-right"><span if.bind="item.nettWeightKg > 0">${item.nettWeightKg | numberFormat: "0,0"}</span></td>
             <!-- <td>${item.teu | teuFormatter}</td> -->
             <td class="text-right">
-              <a if.bind="item.packingListId" route-href="packingListEdit; params.bind:{id:encode(item.packingListId)}" class="with-decoration">#${getRavenRootId(item.packingListId)}</a>
+              <a if.bind="item.packingListId" route-href="packingListEdit; params.bind:{id:encode(item.packingListId)}"
+                class="with-decoration">#${getRavenRootId(item.packingListId)}</a>
             </td>
           </tr>
         </tbody>
