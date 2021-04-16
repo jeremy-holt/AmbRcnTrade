@@ -17,7 +17,7 @@ export class StockList {
   @observable state: IState = undefined!;
   public list: IStockListItem[] = [];
   private prmLocationId = "";
-
+  
   public locations: IListItem[] = [];
   @observable selectedLocation: IListItem = undefined!
   protected lotNoList: { id: string | number, name: string }[] = [];
@@ -31,7 +31,8 @@ export class StockList {
   ) { }
 
   protected stateChanged(state: IState) {
-    this.list = state.stock.list;
+    this.list = _.cloneDeep( state.stock.list);
+    this.list.forEach(c=>c.selected= this.filterLotNo === c.lotNo);
 
     this.locations = _.cloneDeep(state.userFilteredCustomers);
     this.locations.unshift({ id: null, name: "[All]" });

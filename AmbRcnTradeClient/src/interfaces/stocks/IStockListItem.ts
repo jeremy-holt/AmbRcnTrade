@@ -21,5 +21,5 @@ export interface IStockListItem {
   weightKgIn: number;
   weightKgOut: number;
   avgBagWeightKg: number;
-  fiche: number;
+  fiche: number;  
 }
