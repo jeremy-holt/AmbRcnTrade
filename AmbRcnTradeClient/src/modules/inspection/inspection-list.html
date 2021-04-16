@@ -45,9 +45,9 @@
           </tr>
         </thead>
         <tbody>
-          <tr repeat.for="item of list">
+          <tr repeat.for="item of list" class="${item.selected ? 'bg-highlight' : ''}">
             <td>
-              <a class="with-decoration" route-href="inspectionEdit; params.bind:{id: encode(item.id)}">
+              <a href="#" click.delegate="goToInspectionEdit(item)" class="with-decoration" >
                 #${getInspectionNumber(item.id)} ${item.inspectionDate | dateFormat: "DD/MM/YYYY"}<br>
                 ${item.warehouseName}
                 <i class="fas fa-user" title="${item.userName}"></i>

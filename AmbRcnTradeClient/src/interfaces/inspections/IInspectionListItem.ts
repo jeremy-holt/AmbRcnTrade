@@ -32,4 +32,5 @@ export interface IInspectionListItem {
   buyerName: string;
   userName: string;
   pricePerKor: number;
+  selected?: boolean;
 }

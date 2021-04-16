@@ -1,3 +1,4 @@
+import { IParamsId } from "./../../interfaces/IParamsId";
 import { DialogService } from "aurelia-dialog";
 import { autoinject, observable } from "aurelia-framework";
 import { Router } from "aurelia-router";
@@ -26,6 +27,7 @@ export class InspectionList {
   @observable protected selectedSupplier: ICustomerListItem = undefined;
   @observable protected selectedBuyer: ICustomerListItem = undefined;
   public totals: { bags: number, weightKg: number, items: number, averagePrice: number, averageKor: number, averageMoisture: number, averageCount: number, bagsWithoutPrice: number, weightKgWithoutPrice: number, itemsWithoutPrice: number, totalWeightKg: number } = undefined!;
+  private currentInspectionId: string = undefined!;
 
   constructor(
     private inspectionService: InspectionService,
@@ -36,12 +38,15 @@ export class InspectionList {
 
   }
 
-  protected async activate() {
+  protected async activate(params: IParamsId) {
+    this.currentInspectionId = params?.id;    
     await this.customerService.loadCustomersForAppUserList();
   }
 
   protected stateChanged(state: IState) {
     this.list = _.cloneDeep(state.inspection.list);
+    this.list.forEach(c => c.selected = encodeParams(c.id) === this.currentInspectionId);
+
     this.customersList = state.userFilteredCustomers;
     this.warehouseList = _.cloneDeep(this.customersList.filter(c => c.filter === CustomerGroup.Warehouse));
     this.suppliersList = _.cloneDeep(this.customersList.filter(c => c.filter === CustomerGroup.Supplier));
@@ -125,5 +130,10 @@ export class InspectionList {
     await this.inspectionService.loadList(prms);
 
     this.setTotals();
+  }
+
+  protected goToInspectionEdit(item: IInspectionListItem){
+    this.router.navigateToRoute("inspectionList",{id: encodeParams(item.id)},{replace:false, trigger: false});
+    this.router.navigateToRoute("inspectionEdit",{id: encodeParams(item.id)});
   }
 }

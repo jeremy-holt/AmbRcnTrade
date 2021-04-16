@@ -58,7 +58,7 @@ export class App {
 
 
         // Inspections
-        { route: "inspections/list/:approval?", href: "inspections/list", name: "inspectionList", title: "Inspections", nav: true, moduleId: "modules/inspection/inspection-list", roles: ["admin", "user", "inspector", "warehouseManager"] },
+        { route: "inspections/list/:id?", href: "inspections/list", name: "inspectionList", title: "Inspections", nav: true, moduleId: "modules/inspection/inspection-list", roles: ["admin", "user", "inspector", "warehouseManager"] },
         { route: "inspections/edit/:id?", name: "inspectionEdit", title: "Inspection", moduleId: "modules/inspection/inspection-edit", roles: ["admin", "user", "inspector", "warehouseManager"] },
         // { route: "inspections/upload", name: "inspectionImageUpload", moduleId: "modules/inspection/file-manager/file-manager",roles: ["admin", "user", "inspector"] },
         // { route: "inspections/print/:id", name: "inspectionPrint", title: "Print", moduleId: "modules/inspection/inspection-print", roles: ["admin", "user", "inspector"] },
