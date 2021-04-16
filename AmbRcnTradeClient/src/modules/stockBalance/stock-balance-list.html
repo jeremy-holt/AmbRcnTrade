@@ -26,10 +26,10 @@
         </thead>
 
         <tbody>
-          <tr repeat.for="item of list">
+          <tr repeat.for="item of list" class="${item.selected ? 'bg-highlight' : ''}">
             <td>
               <div>
-                <a route-href="stockList; params.bind:{lotNo:item.lotNo, locationId:''}" class="with-decoration"><i
+                  <a click.delegate="goToStockList(item)" href="#" class="with-decoration"><i
                     class="fas fa-fw fa-list mr-2"></i>Lot no
                   ${item.lotNo}</a>
               </div>

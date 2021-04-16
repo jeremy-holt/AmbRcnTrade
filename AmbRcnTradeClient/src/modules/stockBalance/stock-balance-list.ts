@@ -32,11 +32,12 @@ export class StockBalanceList {
   public async activate(prms: { lotNo: number, locationId: string }) {
     await this.stockManagementService.getAvailableContainers();
     await this.stockService.loadStockBalanceList(prms?.locationId);
-    this.currentLotNo = prms?.lotNo;
+    this.currentLotNo = +prms?.lotNo;
   }
 
   protected stateChanged(state: IState) {
     this.list = _.cloneDeep(state.stock.stockBalanceList);
+    this.list.forEach(c => c.selected = c.lotNo === this.currentLotNo);
     this.availableContainersList = _.cloneDeep(state.stockManagement.availableContainers);
     this.numberEmptyContainers = this.availableContainersList.filter(c => c.status === ContainerStatus.Empty).length;
   }
@@ -72,6 +73,12 @@ export class StockBalanceList {
     return {
       bags: this.list.reduce((a, b) => a += b.balance, 0),
       weightKg: this.list.reduce((a, b) => a += b.balanceWeightKg, 0)
-    }
+    };
+  }
+
+  protected goToStockList(item: IStockBalance){
+    this.currentLotNo = item.lotNo;
+    this.router.navigateToRoute("stockBalanceList", { lotNo: item.lotNo }, { trigger: false, replace: true });
+    this.router.navigateToRoute("stockList",{lotNo: item.lotNo, locationId: ""});
   }
 }
