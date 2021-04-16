@@ -69,7 +69,7 @@ export class App {
         { route: "stock/stockbalance/:lotNo?", href: "stock/stockbalance", name: "stockBalanceList", title: "Stock balances", nav: true, moduleId: "modules/stockBalance/stock-balance-list", roles: ["admin", "user", "warehouseManager"] },
 
         // Container
-        { route: "container/list", name: "containerList", title: "Containers", nav: true, moduleId: "modules/container/container-list", roles: ["admin", "user", "warehouseManager"] },
+        { route: "container/list/:containerNumber?", href:"container/list", name: "containerList", title: "Containers", nav: true, moduleId: "modules/container/container-list", roles: ["admin", "user", "warehouseManager"] },
         { route: "container/edit/:id?", name: "containerEdit", title: "Container", moduleId: "modules/container/container-edit", roles: ["admin", "user", "warehouseManager"] },
 
         // Packing List

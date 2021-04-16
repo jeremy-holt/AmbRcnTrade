@@ -8,7 +8,7 @@ import _ from "lodash";
 import { CustomerService } from "services/customer-service";
 import { IState } from "store/state";
 import { CONTAINER_STATUS_LIST, CustomerGroup, IContainerStatus, TEU_LIST } from "./../../constants/app-constants";
-import { encodeParams } from "./../../core/helpers";
+import { encodeParams, getRavenRootId } from "./../../core/helpers";
 import { DeleteDialog } from "./../../dialogs/delete-dialog";
 import { ICustomerListItem } from "./../../interfaces/ICustomerListItem";
 import { ContainerService } from "./../../services/container-service";
@@ -115,5 +115,9 @@ export class ContainerEdit {
 
   protected encode(value: string) {
     return encodeParams(value);
+  }
+
+  protected get caption(){
+    return this.model?.id ? `Container #${getRavenRootId(this.model.id)}` : "New container";
   }
 }

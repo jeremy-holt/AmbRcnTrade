@@ -1,3 +1,4 @@
+import { IParamsId } from "./../../interfaces/IParamsId";
 import { getRavenRootId } from "./../../core/helpers";
 import { CustomerService } from "./../../services/customer-service";
 import { ICustomerListItem } from "./../../interfaces/ICustomerListItem";
@@ -22,6 +23,7 @@ export class ContainerList {
   @observable protected selectedContainerStatus: IContainerStatus = undefined!;
   protected containerSummary: { name: string, count: number }[] = [];
   protected warehouses: ICustomerListItem[] = [];
+  private currentContainerNumber: string = undefined!;
 
   constructor(
     private containerService: ContainerService,
@@ -30,9 +32,10 @@ export class ContainerList {
     private customerService: CustomerService
   ) { }
 
-  protected async activate() {
+  protected async activate(params: { containerNumber: string }) {
     await this.customerService.loadCustomersForAppUserList();
     this.containerStatusList.unshift({ id: null, name: "[All]" });
+    this.currentContainerNumber = params.containerNumber;
   }
 
   protected stateChanged(state: IState) {
@@ -40,6 +43,7 @@ export class ContainerList {
     this.warehouses.unshift({ id: null, name: "[All]" } as ICustomerListItem);
 
     this.list = _.cloneDeep(state.container.list);
+    this.list.forEach(c => c.selected = this.currentContainerNumber === c.containerNumber);
 
     this.setContainersSummary();
   }
@@ -81,7 +85,13 @@ export class ContainerList {
     this.router.navigateToRoute("vesselList");
   }
 
-  protected getRavenRootId(id: string){
+  protected getRavenRootId(id: string) {
     return getRavenRootId(id);
+  }
+
+  protected goToContainerEdit(item: IContainer) {
+    this.currentContainerNumber = item?.containerNumber;
+    this.router.navigateToRoute("containerList", { containerNumber: this.currentContainerNumber }, { replace: false, trigger: false });
+    this.router.navigateToRoute("containerEdit", { id: this.encode(item.id) });
   }
 }

@@ -1,5 +1,5 @@
 <template>
-  <toolbar type="menu" caption="Container" disabled-save.bind="!canSave" save.call="save()" list-route="containerList">
+  <toolbar type="menu" caption.bind="caption" disabled-save.bind="!canSave" save.call="save()" list-route="containerList">
     <toolbar-item icon="fa fa-plus" click.call="addContainer()"></toolbar-item>
   </toolbar>
 

@@ -59,18 +59,17 @@
           </tr>
         </thead>
         <tbody>
-          <tr repeat.for="item of list | containerListFilter: selectedWarehouse.id">
-            <td><a route-href="containerEdit; params.bind:{id: encode(item.id)}"
-                class="with-decoration">#${getRavenRootId(item.id)}</a></td>
+          <tr repeat.for="item of list | containerListFilter: selectedWarehouse.id" class="${item.selected ? 'bg-highlight' : ''}">
+            <td>     
+                <a href="#" click.delegate="goToContainerEdit(item)" class="with-decoration">#${getRavenRootId(item.id)}</a>
+              </td>
             <td>${item.status | containerStatusFormatter}<br>${item.warehouseName}</td>
             <td>${item.incomingStocks[0].kor | numberFormat: "0,0.00"}</td>
             <td>
               <div if.bind="item.vesselName" class="small font-italic">
                 ${item.vesselName}
               </div>
-              <a route-href="containerEdit; params.bind:{id: encode(item.id)}"
-                class="with-decoration text-nowrap">${item.containerNumber}
-              </a>
+              <a href="#" click.delegate="goToContainerEdit(item)" class="with-decoration text-nowrap">${item.containerNumber}</a>
             </td>
             <td class="text-nowrap">${item.sealNumber}</td>
             <td>${item.bookingNumber}</td>
