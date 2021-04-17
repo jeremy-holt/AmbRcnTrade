@@ -35,11 +35,12 @@ export class StockBalanceList {
     this.currentLotNo = +prms?.lotNo;
   }
 
+
   protected stateChanged(state: IState) {
     this.list = _.cloneDeep(state.stock.stockBalanceList);
     this.list.forEach(c => c.selected = c.lotNo === this.currentLotNo);
     this.availableContainersList = _.cloneDeep(state.stockManagement.availableContainers);
-    this.numberEmptyContainers = this.availableContainersList.filter(c => c.status === ContainerStatus.Empty).length;
+    this.numberEmptyContainers = this.availableContainersList.filter(c => c.status === ContainerStatus.Empty).length;    
   }
 
   protected encode(value: string) {
@@ -76,9 +77,9 @@ export class StockBalanceList {
     };
   }
 
-  protected goToStockList(item: IStockBalance){
+  protected goToStockList(item: IStockBalance) {
     this.currentLotNo = item.lotNo;
     this.router.navigateToRoute("stockBalanceList", { lotNo: item.lotNo }, { trigger: false, replace: true });
-    this.router.navigateToRoute("stockList",{lotNo: item.lotNo, locationId: ""});
+    this.router.navigateToRoute("stockList", { lotNo: item.lotNo, locationId: "" });
   }
 }

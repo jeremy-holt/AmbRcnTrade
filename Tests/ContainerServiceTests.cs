@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AmberwoodCore.Extensions;
-using AmberwoodCore.Responses;
 using AmbRcnTradeServer.Constants;
 using AmbRcnTradeServer.Models.ContainerModels;
 using AmbRcnTradeServer.Models.DictionaryModels;
@@ -23,6 +22,96 @@ namespace Tests
     public class ContainerServiceTests : TestBaseContainer
     {
         public ContainerServiceTests(ITestOutputHelper output) : base(output) { }
+
+        [Fact]
+        public async Task DeleteContainer_ShouldDeleteAAContainer()
+        {
+            // Arrange
+            using var store = GetDocumentStore();
+            using var session = store.OpenAsyncSession();
+            var sut = GetContainerService(session);
+            var fixture = new Fixture();
+
+            var containers = fixture.DefaultEntity<Container>()
+                .Without(c => c.IncomingStocks)
+                .CreateMany().ToList();
+            await containers.SaveList(session);
+
+            var billLading = fixture.DefaultEntity<BillLading>()
+                .With(c => c.ContainerIds, containers.GetPropertyFromList(c => c.Id))
+                .Create();
+            await session.StoreAsync(billLading);
+
+            await session.SaveChangesAsync();
+            WaitForIndexing(store);
+
+            // Act
+            var response = await sut.DeleteContainer(containers[1].Id);
+
+            // Assert
+            response.Message.Should().Be("Deleted container");
+            var actualContainer = await session.LoadAsync<Container>(containers[1].Id);
+            actualContainer.Should().BeNull();
+
+            var actualBillLading = await session.LoadAsync<BillLading>(billLading.Id);
+            actualBillLading.ContainerIds.Should().NotContain(containers[1].Id);
+        }
+
+        [Fact]
+        public async Task DeleteContainer_ShouldDeleteANonBoardedContainer()
+        {
+            // Arrange
+            using var store = GetDocumentStore();
+            using var session = store.OpenAsyncSession();
+            var sut = GetContainerService(session);
+            var fixture = new Fixture();
+
+            var containers = fixture.DefaultEntity<Container>()
+                .Without(c => c.IncomingStocks)
+                .CreateMany().ToList();
+            await containers.SaveList(session);
+
+            var billLading = fixture.DefaultEntity<BillLading>()
+                .With(c => c.ContainerIds, containers.GetPropertyFromList(c => c.Id))
+                .Create();
+            billLading.ContainerIds.RemoveAll(c => c == containers[0].Id);
+            await session.StoreAsync(billLading);
+
+            // Act
+            await sut.DeleteContainer(containers[0].Id);
+
+            // Assert
+            var actual = await session.LoadAsync<Container>(containers[0].Id);
+            actual.Should().BeNull();
+        }
+
+        [Fact]
+        public async Task DeleteContainer_ShouldThrowExceptionIfHasAlreadyBeenStuffed()
+        {
+            // Arrange
+            using var store = GetDocumentStore();
+            using var session = store.OpenAsyncSession();
+            var sut = GetContainerService(session);
+            var fixture = new Fixture();
+
+            var containers = fixture.DefaultEntity<Container>()
+                .CreateMany().ToList();
+            await containers.SaveList(session);
+
+            var billLading = fixture.DefaultEntity<BillLading>()
+                .With(c => c.ContainerIds, containers.GetPropertyFromList(c => c.Id))
+                .Create();
+            await session.StoreAsync(billLading);
+
+            await session.SaveChangesAsync();
+            WaitForIndexing(store);
+
+            // Act
+            Func<Task> action = async () => await sut.DeleteContainer(containers[1].Id);
+
+            // Assert
+            await action.Should().ThrowAsync<InvalidOperationException>().WithMessage("Cannot delete a container that has already been stuffed");
+        }
 
 
         [Fact]
@@ -98,9 +187,9 @@ namespace Tests
 
             var containers = fixture.DefaultEntity<Container>()
                 .With(c => c.VesselId, vessel.Id)
-                .With(c=>c.WarehouseId,warehouse.Id)
-                .With(c=>c.PackingListId,"packingLists/1-A")
-                .With(c=>c.TareKg,3900)
+                .With(c => c.WarehouseId, warehouse.Id)
+                .With(c => c.PackingListId, "packingLists/1-A")
+                .With(c => c.TareKg, 3900)
                 .Without(c => c.VesselName)
                 .CreateMany()
                 .ToList();
@@ -134,9 +223,9 @@ namespace Tests
                 .Without(c => c.Bags)
                 .Without(c => c.NettWeightKg)
                 .With(c => c.VgmTicketNumber, "1234")
-                .With(c=>c.ExporterSealNumber, "Mangro")
+                .With(c => c.ExporterSealNumber, "Mangro")
                 .With(c => c.Teu, Teu.Teu40)
-                .With(c=>c.WarehouseId,"customers/1-A")
+                .With(c => c.WarehouseId, "customers/1-A")
                 .Create();
 
             // Act
@@ -167,16 +256,14 @@ namespace Tests
                 .With(c => c.TareKg, 500)
                 .Without(c => c.NettWeightKg)
                 .Create();
-            
+
             // Act
             await sut.Save(container);
-            
+
             // Assert
             var actual = await session.LoadAsync<Container>(container.Id);
             actual.NettWeightKg.Should().Be(10_000 - 500);
-
         }
-
 
         [Fact]
         public async Task UnStuffContainer_ShouldRemoveItFromTheContainer()
@@ -215,33 +302,33 @@ namespace Tests
                 .With(c => c.IncomingStocks, incomingStocks)
                 .Create();
             await session.StoreAsync(container1);
-            
+
             var container2 = fixture.DefaultEntity<Container>()
                 .With(c => c.Bags, 100)
                 .With(c => c.StuffingWeightKg, 8000)
                 .With(c => c.IncomingStocks, incomingStocks)
                 .Create();
             await session.StoreAsync(container2);
-            
+
             var container3 = fixture.DefaultEntity<Container>()
                 .With(c => c.Bags, 100)
                 .With(c => c.StuffingWeightKg, 8000)
                 .With(c => c.IncomingStocks, incomingStocks)
                 .Create();
             await session.StoreAsync(container3);
-            
+
 
             var stuffingRecords1 = new List<StuffingRecord>
             {
                 new() {ContainerId = container1.Id, ContainerNumber = container1.ContainerNumber},
-                new (){ContainerId = container2.Id,ContainerNumber = container2.ContainerNumber}
+                new() {ContainerId = container2.Id, ContainerNumber = container2.ContainerNumber}
             };
-            
+
             var stuffingRecords2 = new List<StuffingRecord>
             {
-                new (){ContainerId = container3.Id,ContainerNumber = container3.ContainerNumber}
+                new() {ContainerId = container3.Id, ContainerNumber = container3.ContainerNumber}
             };
-            
+
             var stockIn1 = fixture.DefaultEntity<Stock>()
                 .With(c => c.Id, stockId1)
                 .With(c => c.Bags, 500)
@@ -250,7 +337,7 @@ namespace Tests
                 .With(c => c.IsStockIn, true)
                 .With(c => c.StuffingRecords, stuffingRecords1)
                 .Create();
-            
+
             var stockIn2 = fixture.DefaultEntity<Stock>()
                 .With(c => c.Id, stockId2)
                 .With(c => c.Bags, 50)
@@ -259,34 +346,34 @@ namespace Tests
                 .With(c => c.IsStockIn, true)
                 .With(c => c.StuffingRecords, stuffingRecords2)
                 .Create();
-            
+
             var stockOut1 = fixture.DefaultEntity<Stock>()
                 .With(c => c.Id, stockOut1Id)
                 .With(c => c.Bags, 110)
                 .With(c => c.WeightKg, 3_0000)
                 .With(c => c.IsStockIn, false)
-                .With(c => c.StuffingRecords, new List<StuffingRecord>(){new(){ContainerId = container1.Id,ContainerNumber = container1.ContainerNumber}})
+                .With(c => c.StuffingRecords, new List<StuffingRecord> {new() {ContainerId = container1.Id, ContainerNumber = container1.ContainerNumber}})
                 .Create();
-            
+
             var stockOut2 = fixture.DefaultEntity<Stock>()
                 .With(c => c.Id, stockOut2Id)
                 .With(c => c.Bags, 70)
                 .With(c => c.WeightKg, 5600)
                 .With(c => c.IsStockIn, false)
-                .With(c => c.StuffingRecords, new List<StuffingRecord>(){new(){ContainerId = container2.Id,ContainerNumber = container2.ContainerNumber}})
+                .With(c => c.StuffingRecords, new List<StuffingRecord> {new() {ContainerId = container2.Id, ContainerNumber = container2.ContainerNumber}})
                 .Create();
-            
+
             var stockOut3 = fixture.DefaultEntity<Stock>()
                 .With(c => c.Id, stockOut3Id)
                 .With(c => c.Bags, 50)
                 .With(c => c.WeightKg, 400)
                 .With(c => c.IsStockIn, false)
-                .With(c => c.StuffingRecords, new List<StuffingRecord>(){new(){ContainerId = container3.Id, ContainerNumber = container3.ContainerNumber}})
+                .With(c => c.StuffingRecords, new List<StuffingRecord> {new() {ContainerId = container3.Id, ContainerNumber = container3.ContainerNumber}})
                 .Create();
-            
-            var stocks = new[] {stockIn1, stockIn2,stockOut1, stockOut2, stockOut3};
+
+            var stocks = new[] {stockIn1, stockIn2, stockOut1, stockOut2, stockOut3};
             await stocks.SaveList(session);
-            
+
 
             // Act
             var response = await sut.UnStuffContainer(container1.Id);
@@ -294,7 +381,7 @@ namespace Tests
 
             var actualStock1 = await session.LoadAsync<Stock>(stockId1);
             var actualStock2 = await session.LoadAsync<Stock>(stockId2);
-            
+
             var actualStockOut1 = await session.LoadAsync<Stock>(stockOut1Id);
             var actualStockOut2 = await session.LoadAsync<Stock>(stockOut2Id);
             var actualStockOut3 = await session.LoadAsync<Stock>(stockOut3Id);
@@ -345,93 +432,104 @@ namespace Tests
         }
 
         [Fact]
-        public async Task DeleteContainer_ShouldDeleteAAContainer()
+        public async Task UnstuffContainer_ShouldUnstuffRealData()
         {
             // Arrange
             using var store = GetDocumentStore();
             using var session = store.OpenAsyncSession();
             var sut = GetContainerService(session);
-            var fixture = new Fixture();
 
-            var containers = fixture.DefaultEntity<Container>()
-                .Without(c => c.IncomingStocks)
-                .CreateMany().ToList();
-            await containers.SaveList(session);
+            var container = new Container
+            {
+                Id = "containers/242-A",
+                ContainerNumber = "PONU 1927533",
+                Bags = 345,
+                WeighbridgeWeightKg = 27950,
+                Status = ContainerStatus.StuffingComplete,
+                StuffingWeightKg = 31886,
+                IncomingStocks = new List<IncomingStock>
+                {
+                    new()
+                    {
+                        Bags = 18, WeightKg = 1539.75, LotNo = 46, StuffingDate = new DateTime(2021, 4, 14), Kor = 47.26,
+                        StockIds = new List<IncomingStockItem>
+                        {
+                            new() {StockId = "stocks/338-A", IsStockIn = true},
+                            new() {StockId = "stocks/574-A", IsStockIn = false}
+                        }
+                    },
+                    new()
+                    {
+                        Bags = 204, WeightKg = 19251, LotNo = 47, StuffingDate = new DateTime(2021, 4, 14), Kor = 45,
+                        StockIds = new List<IncomingStockItem>
+                        {
+                            new() {StockId = "stocks/339-A", IsStockIn = true},
+                            new() {StockId = "stocks/575-A", IsStockIn = false}
+                        }
+                    },
+                    new()
+                    {
+                        Bags = 123, WeightKg = 11096, LotNo = 49, StuffingDate = new DateTime(2021, 4, 14), Kor = 47.26,
+                        StockIds = new List<IncomingStockItem>
+                        {
+                            new() {StockId = "stocks/354-A", IsStockIn = true},
+                            new() {StockId = "stocks/576-A", IsStockIn = false}
+                        }
+                    }
+                },
+                NettWeightKg = 24140,
+                StuffingDate = new DateTime(2014, 4, 14),
+                CompanyId = "companies/1-A",
+                WarehouseId = "customers/4-A",
+                WarehouseName = "BOUAKE",
+                TareKg = 3810
+            };
 
-            var billLading = fixture.DefaultEntity<BillLading>()
-                .With(c => c.ContainerIds, containers.GetPropertyFromList(c => c.Id))
-                .Create();
-            await session.StoreAsync(billLading);
-
+            await session.StoreAsync(container);
+            
+            var stocks = await "ContainerServiceData.json".JsonFileToClassAsync<List<Stock>>();
+            await stocks.SaveList(session);
             await session.SaveChangesAsync();
-            WaitForIndexing(store);
+            
+            WaitForUserToContinueTheTest(store);
 
             // Act
-            ServerResponse response = await sut.DeleteContainer(containers[1].Id);
+            await sut.UnStuffContainer(container.Id);
+
+            var stock1 = await session.LoadAsync<Stock>("stocks/338-A"); // Stock In
+            var stock2 = await session.LoadAsync<Stock>("stocks/574-A"); // Stock Out
+            var stock3 = await session.LoadAsync<Stock>("stocks/339-A"); // Stock In
+            var stock4 = await session.LoadAsync<Stock>("stocks/575-A"); // Stock Out
+            var stock5 = await session.LoadAsync<Stock>("stocks/354-A"); // Stock In
+            var stock6 = await session.LoadAsync<Stock>("stocks/576-A"); // Stock Out
+
+            var actualStocks = new List<Stock> {stock1, stock2, stock3, stock4, stock5, stock6};
+
+            stock2.Should().BeNull();
+            stock4.Should().BeNull();
+            stock6.Should().BeNull();
+
+            var actualContainer = await session.LoadAsync<Container>(container.Id);
+
+            
 
             // Assert
-            response.Message.Should().Be("Deleted container");
-            var actualContainer = await session.LoadAsync<Container>(containers[1].Id);
-            actualContainer.Should().BeNull();
+            foreach (var stock in actualStocks.Where(c=>c.IsStockIn))
+            {
+                stock.StuffingRecords.Should().OnlyContain(c => c.ContainerId.IsNullOrEmpty());
+                stock.StuffingRecords.Should().OnlyContain(c => c.ContainerNumber.IsNullOrEmpty());
+                stock.StuffingRecords.Should().OnlyContain(c => c.StuffingDate == null);
+            }
 
-            var actualBillLading = await session.LoadAsync<BillLading>(billLading.Id);
-            actualBillLading.ContainerIds.Should().NotContain(containers[1].Id);
-        }
+            stock1.Bags.Should().Be(18);
+            stock1.WeightKg.Should().Be(1539.75);
+            stock1.LotNo.Should().Be(46);
+            stock1.IsStockIn.Should().BeTrue();
 
-        [Fact]
-        public async Task DeleteContainer_ShouldDeleteANonBoardedContainer()
-        {
-            // Arrange
-            using var store = GetDocumentStore();
-            using var session = store.OpenAsyncSession();
-            var sut = GetContainerService(session);
-            var fixture = new Fixture();
-
-            var containers = fixture.DefaultEntity<Container>()
-                .Without(c => c.IncomingStocks)
-                .CreateMany().ToList();
-            await containers.SaveList(session);
-
-            var billLading = fixture.DefaultEntity<BillLading>()
-                .With(c => c.ContainerIds, containers.GetPropertyFromList(c => c.Id))
-                .Create();
-            billLading.ContainerIds.RemoveAll(c => c == containers[0].Id);
-            await session.StoreAsync(billLading);
-
-            // Act
-            await sut.DeleteContainer(containers[0].Id);
-
-            // Assert
-            var actual = await session.LoadAsync<Container>(containers[0].Id);
-            actual.Should().BeNull();
-        }
-
-        [Fact]
-        public async Task DeleteContainer_ShouldThrowExceptionIfHasAlreadyBeenStuffed()
-        {
-            // Arrange
-            using var store = GetDocumentStore();
-            using var session = store.OpenAsyncSession();
-            var sut = GetContainerService(session);
-            var fixture = new Fixture();
-
-            var containers = fixture.DefaultEntity<Container>()
-                .CreateMany().ToList();
-            await containers.SaveList(session);
-
-            var billLading = fixture.DefaultEntity<BillLading>()
-                .With(c => c.ContainerIds, containers.GetPropertyFromList(c => c.Id))
-                .Create();
-            await session.StoreAsync(billLading);
-
-            await session.SaveChangesAsync();
-            WaitForIndexing(store);
-
-            // Act
-            Func<Task> action = async () => await sut.DeleteContainer(containers[1].Id);
-
-            // Assert
-            await action.Should().ThrowAsync<InvalidOperationException>().WithMessage("Cannot delete a container that has already been stuffed");
+            actualContainer.Bags.Should().Be(0);
+            actualContainer.StuffingWeightKg.Should().Be(0);
+            actualContainer.IncomingStocks.Should().HaveCount(0);
+            actualContainer.Status.Should().Be(ContainerStatus.Empty);
         }
     }
 }

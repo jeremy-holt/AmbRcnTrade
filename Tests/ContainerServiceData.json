@@ -1,0 +1,240 @@
+﻿[
+{
+  "LocationId": "customers/4-A",
+  "IsStockIn": true,
+  "StockInDate": "2021-03-17T00:00:00.0000000",
+  "StockOutDate": null,
+  "Bags": 480,
+  "WeightKg": 41060,
+  "LotNo": 46,
+  "InspectionId": "inspections/328-A",
+  "Origin": "bouafle/kone",
+  "SupplierId": "customers/194-A",
+  "StuffingRecords": [
+    {
+      "ContainerId": "containers/241-A",
+      "ContainerNumber": "MRKU 3438078",
+      "StuffingDate": "2021-04-14T00:00:00.0000000"
+    },
+    {
+      "ContainerId": "containers/241-A",
+      "ContainerNumber": "MRKU 3438078",
+      "StuffingDate": "2021-04-14T00:00:00.0000000"
+    },
+    {
+      "ContainerId": "containers/245-A",
+      "ContainerNumber": "PONU 1743876",
+      "StuffingDate": "2021-04-14T00:00:00.0000000"
+    },
+    {
+      "ContainerId": "containers/242-A",
+      "ContainerNumber": "PONU 1937533",
+      "StuffingDate": "2021-04-14T00:00:00.0000000"
+    }
+  ],
+  "AnalysisResult": {
+    "Moisture": 5.8,
+    "Count": 190,
+    "SpottedPct": 0.01,
+    "SoundPct": 0.263,
+    "RejectsPct": 0.09,
+    "Kor": 47.267052799999995,
+    "Approved": 1,
+    "InspectionId": "inspections/328-A"
+  },
+  "CompanyId": "companies/1-A",
+  "Name": null,
+  "Fiche": 13071,
+  "Price": 357.77,
+},
+  {
+    "LocationId": "customers/4-A",
+    "IsStockIn": false,
+    "StockInDate": null,
+    "StockOutDate": "2021-04-14T00:00:00.0000000",
+    "Bags": 18,
+    "WeightKg": 1539.75,
+    "LotNo": 46,
+    "InspectionId": null,
+    "Origin": "bouafle/kone",
+    "SupplierId": "customers/194-A",
+    "StuffingRecords": [
+      {
+        "ContainerId": "containers/242-A",
+        "ContainerNumber": "PONU 1937533",
+        "StuffingDate": "2021-04-14T00:00:00.0000000"
+      }
+    ],
+    "AnalysisResult": {
+      "Moisture": 5.8,
+      "Count": 190,
+      "SpottedPct": 0.01,
+      "SoundPct": 0.263,
+      "RejectsPct": 0.09,
+      "Kor": 47.267052799999995,
+      "Approved": 1,
+      "InspectionId": null
+    },
+    "CompanyId": "companies/1-A",
+    "Name": null,
+    "Fiche": 0,
+    "Price": 0,
+    "@metadata": {
+      "@collection": "Stocks",
+      "Raven-Clr-Type": "AmbRcnTradeServer.Models.StockModels.Stock, AmbRcnTradeServer"
+    }
+  },
+  {
+    "LocationId": "customers/4-A",
+    "IsStockIn": true,
+    "StockInDate": "2021-03-18T00:00:00.0000000",
+    "StockOutDate": null,
+    "Bags": 204,
+    "WeightKg": 19251,
+    "LotNo": 47,
+    "InspectionId": "inspections/333-A",
+    "Origin": "bouake/scoop wobeh",
+    "SupplierId": "customers/193-A",
+    "StuffingRecords": [
+      {
+        "ContainerId": "containers/242-A",
+        "ContainerNumber": "PONU 1937533",
+        "StuffingDate": "2021-04-14T00:00:00.0000000"
+      }
+    ],
+    "AnalysisResult": {
+      "Moisture": 6.9,
+      "Count": 210,
+      "SpottedPct": 0.008,
+      "SoundPct": 0.255,
+      "RejectsPct": 0.083,
+      "Kor": 45.6797264,
+      "Approved": 1,
+      "InspectionId": "inspections/333-A"
+    },
+    "CompanyId": "companies/1-A",
+    "Name": null,
+    "Fiche": 6563,
+    "Price": 335,
+    "@metadata": {
+      "@collection": "Stocks",
+      "Raven-Clr-Type": "AmbRcnTradeServer.Models.StockModels.Stock, AmbRcnTradeServer"
+    }
+  },
+  {
+    "LocationId": "customers/4-A",
+    "IsStockIn": false,
+    "StockInDate": null,
+    "StockOutDate": "2021-04-14T00:00:00.0000000",
+    "Bags": 204,
+    "WeightKg": 19251,
+    "LotNo": 47,
+    "InspectionId": null,
+    "Origin": "bouake/scoop wobeh",
+    "SupplierId": "customers/193-A",
+    "StuffingRecords": [
+      {
+        "ContainerId": "containers/242-A",
+        "ContainerNumber": "PONU 1937533",
+        "StuffingDate": "2021-04-14T00:00:00.0000000"
+      }
+    ],
+    "AnalysisResult": {
+      "Moisture": 6.9,
+      "Count": 210,
+      "SpottedPct": 0.008,
+      "SoundPct": 0.255,
+      "RejectsPct": 0.083,
+      "Kor": 45.6797264,
+      "Approved": 1,
+      "InspectionId": null
+    },
+    "CompanyId": "companies/1-A",
+    "Name": null,
+    "Fiche": 0,
+    "Price": 0,
+    "@metadata": {
+      "@collection": "Stocks",
+      "Raven-Clr-Type": "AmbRcnTradeServer.Models.StockModels.Stock, AmbRcnTradeServer"
+    }
+  },
+  {
+    "LocationId": "customers/4-A",
+    "IsStockIn": true,
+    "StockInDate": "2021-03-19T00:00:00.0000000",
+    "StockOutDate": null,
+    "Bags": 269,
+    "WeightKg": 24267,
+    "LotNo": 49,
+    "InspectionId": "inspections/353-A",
+    "Origin": "bouake/kone",
+    "SupplierId": "customers/194-A",
+    "StuffingRecords": [
+      {
+        "ContainerId": "containers/242-A",
+        "ContainerNumber": "PONU 1937533",
+        "StuffingDate": "2021-04-14T00:00:00.0000000"
+      },
+      {
+        "ContainerId": "containers/240-A",
+        "ContainerNumber": "MRKU 0928940",
+        "StuffingDate": "2021-04-14T00:00:00.0000000"
+      }
+    ],
+    "AnalysisResult": {
+      "Moisture": 5,
+      "Count": 194,
+      "SpottedPct": 0.022,
+      "SoundPct": 0.256,
+      "RejectsPct": 0.0048,
+      "Kor": 47.090683199999994,
+      "Approved": 1,
+      "InspectionId": "inspections/353-A"
+    },
+    "CompanyId": "companies/1-A",
+    "Name": null,
+    "Fiche": 13066,
+    "Price": 370,
+    "@metadata": {
+      "@collection": "Stocks",
+      "Raven-Clr-Type": "AmbRcnTradeServer.Models.StockModels.Stock, AmbRcnTradeServer"
+    }
+  },
+  {
+    "LocationId": "customers/4-A",
+    "IsStockIn": false,
+    "StockInDate": null,
+    "StockOutDate": "2021-04-14T00:00:00.0000000",
+    "Bags": 123,
+    "WeightKg": 11096.06,
+    "LotNo": 49,
+    "InspectionId": null,
+    "Origin": "bouake/kone",
+    "SupplierId": "customers/194-A",
+    "StuffingRecords": [
+      {
+        "ContainerId": "containers/242-A",
+        "ContainerNumber": "PONU 1937533",
+        "StuffingDate": "2021-04-14T00:00:00.0000000"
+      }
+    ],
+    "AnalysisResult": {
+      "Moisture": 5,
+      "Count": 194,
+      "SpottedPct": 0.022,
+      "SoundPct": 0.256,
+      "RejectsPct": 0.0048,
+      "Kor": 47.090683199999994,
+      "Approved": 1,
+      "InspectionId": null
+    },
+    "CompanyId": "companies/1-A",
+    "Name": null,
+    "Fiche": 0,
+    "Price": 0,
+    "@metadata": {
+      "@collection": "Stocks",
+      "Raven-Clr-Type": "AmbRcnTradeServer.Models.StockModels.Stock, AmbRcnTradeServer"
+    }
+  }
+  ]
