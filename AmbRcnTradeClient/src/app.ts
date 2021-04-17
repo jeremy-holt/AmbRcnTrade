@@ -60,11 +60,9 @@ export class App {
         // Inspections
         { route: "inspections/list/:id?", href: "inspections/list", name: "inspectionList", title: "Inspections", nav: true, moduleId: "modules/inspection/inspection-list", roles: ["admin", "user", "inspector", "warehouseManager"] },
         { route: "inspections/edit/:id?", name: "inspectionEdit", title: "Inspection", moduleId: "modules/inspection/inspection-edit", roles: ["admin", "user", "inspector", "warehouseManager"] },
-        // { route: "inspections/upload", name: "inspectionImageUpload", moduleId: "modules/inspection/file-manager/file-manager",roles: ["admin", "user", "inspector"] },
-        // { route: "inspections/print/:id", name: "inspectionPrint", title: "Print", moduleId: "modules/inspection/inspection-print", roles: ["admin", "user", "inspector"] },
 
         // Stocks
-        { route: "stock/list/:lotNo?/:locationId?", href: "stock/list", name: "stockList", title: "Stocks", nav: true, moduleId: "modules/stock/stock-list", roles: ["admin", "user", "warehouseManager"] },
+        { route: "stock/list/:lotNo?", href: "stock/list", name: "stockList", title: "Stocks", nav: true, moduleId: "modules/stock/stock-list", roles: ["admin", "user", "warehouseManager"] },
         { route: "stock/edit/:id?", name: "stockEdit", title: "Stock", moduleId: "modules/stock/stock-edit", roles: ["admin", "user", "warehouseManager"] },
         { route: "stock/stockbalance/:lotNo?", href: "stock/stockbalance", name: "stockBalanceList", title: "Stock balances", nav: true, moduleId: "modules/stockBalance/stock-balance-list", roles: ["admin", "user", "warehouseManager"] },
 

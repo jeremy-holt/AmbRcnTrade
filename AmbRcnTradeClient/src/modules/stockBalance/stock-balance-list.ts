@@ -6,7 +6,7 @@ import { encodeParams } from "core/helpers";
 import _ from "lodash";
 import { StockManagementService } from "services/stock-management-service";
 import { IState } from "store/state";
-import { ContainerStatus } from "./../../constants/app-constants";
+import { ContainerStatus, IStockBalanceFilterItem, StockBalanceFilter, STOCK_BALANCE_FILTER_LIST } from "./../../constants/app-constants";
 import { IAvailableContainer } from "./../../interfaces/stockManagement/IAvailableContainerItem";
 import { IStockBalance } from "./../../interfaces/stocks/IStockBalance";
 import { isInRole } from "./../../services/role-service";
@@ -21,6 +21,9 @@ export class StockBalanceList {
   protected availableContainersList: IAvailableContainer[] = [];
   protected numberEmptyContainers = 0;
   private currentLotNo: number = undefined!;
+
+  public stocksFilter = STOCK_BALANCE_FILTER_LIST;
+  protected selectedStocksFilter: IStockBalanceFilterItem = this.stocksFilter.find(c => c.id === StockBalanceFilter.WithStockBalance);
 
   constructor(
     private stockService: StockService,
@@ -40,7 +43,7 @@ export class StockBalanceList {
     this.list = _.cloneDeep(state.stock.stockBalanceList);
     this.list.forEach(c => c.selected = c.lotNo === this.currentLotNo);
     this.availableContainersList = _.cloneDeep(state.stockManagement.availableContainers);
-    this.numberEmptyContainers = this.availableContainersList.filter(c => c.status === ContainerStatus.Empty).length;    
+    this.numberEmptyContainers = this.availableContainersList.filter(c => c.status === ContainerStatus.Empty).length;
   }
 
   protected encode(value: string) {
@@ -80,6 +83,6 @@ export class StockBalanceList {
   protected goToStockList(item: IStockBalance) {
     this.currentLotNo = item.lotNo;
     this.router.navigateToRoute("stockBalanceList", { lotNo: item.lotNo }, { trigger: false, replace: true });
-    this.router.navigateToRoute("stockList", { lotNo: item.lotNo, locationId: "" });
+    this.router.navigateToRoute("stockList", { lotNo: item.lotNo });
   }
 }

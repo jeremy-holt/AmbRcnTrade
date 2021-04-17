@@ -50,9 +50,10 @@ export class StuffContainerDialog {
     return this.list?.filter(c => c.selected).length > 0 && this.bags > 0;
   }
 
-  protected selectRow(index: number) {
+  protected selectRow(item: IAvailableContainer) {
     this.list.forEach(c => c.selected = false);
-    this.list[index].selected = !this.list[index].selected;
+    item.selected = !item.selected;
+    // this.list[index].selected = !this.list[index].selected;
   }
 
   protected selectedContainer(): IAvailableContainer {

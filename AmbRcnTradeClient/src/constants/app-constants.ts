@@ -118,6 +118,19 @@ export enum ShipmentOption {
   BuyersCall = "buyersCall"
 }
 
+export interface IStockBalanceFilterItem { id: StockBalanceFilter, name: string }
+
+export enum StockBalanceFilter {
+  WithStockBalance = 2,
+  NoStocks = 3
+}
+
+export const STOCK_BALANCE_FILTER_LIST:IStockBalanceFilterItem[] = [
+  { id: null, name: "[All]" },
+  { id: StockBalanceFilter.WithStockBalance, name: "With stock balance" },
+  { id: StockBalanceFilter.NoStocks, name: "No stocks" }
+];
+
 
 export const CURRENCIES_LIST: ICurrency[] = [
   { id: Currency.USD, name: "USD" },

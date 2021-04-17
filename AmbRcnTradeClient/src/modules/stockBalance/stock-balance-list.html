@@ -1,4 +1,6 @@
 <template>
+  <require from="./stock-balance-filter-valueConverter"></require>
+
   <toolbar type="menu" caption="Stock Balances" list-route="stockList">
     <toolbar-item icon="fas fa-container-storage" click.call="navigateToContainerList()"></toolbar-item>
   </toolbar>
@@ -13,6 +15,12 @@
     </div>
 
     <div class="card-body">
+      <div class="row mb-5">
+        <div class="col">
+          <select-input source.bind="stocksFilter" value.bind="selectedStocksFilter" label="Filter stocks by balances" warn-null="false"></select-input>
+        </div>
+      </div>
+
       <table class="table table-bordered table-sm small">
         <thead>
           <tr>
@@ -26,7 +34,7 @@
         </thead>
 
         <tbody>
-          <tr repeat.for="item of list" class="${item.selected ? 'bg-highlight' : ''}">
+          <tr repeat.for="item of list | stockBalanceFilter : selectedStocksFilter" class="${item.selected ? 'bg-highlight' : ''}">
             <td>
               <div>
                   <a click.delegate="goToStockList(item)" href="#" class="with-decoration"><i
@@ -42,7 +50,7 @@
             </td>
             <td>
               <a class="with-decoration text-nowrap"
-                route-href="stockList; params.bind:{lotNo:item.lotNo, locationId:encode(item.locationId)}"><i
+                route-href="stockList; params.bind:{lotNo:item.lotNo}"><i
                   class="fas fa-fw fa-warehouse mr-2"></i>${item.locationName}/<br>
                 <i class="fas fa-fw fa-user-cowboy mr-2"></i>${item.supplierName}</a>
             </td>
