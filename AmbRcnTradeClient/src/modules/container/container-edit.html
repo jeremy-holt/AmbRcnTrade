@@ -80,7 +80,7 @@
       <div class="row mt-1">
         <div class="col">        </div>
         <div class="col">
-          Nett weight: ${model.weighbridgeWeightKg - model.tareKg | numberFormat:"0,0"} kg
+          <div if.bind="model.weighbridgeWeightKg > 0">Nett weight: ${model.weighbridgeWeightKg - model.tareKg | numberFormat:"0,0"} kg</div>
         </div>
       </div>
 

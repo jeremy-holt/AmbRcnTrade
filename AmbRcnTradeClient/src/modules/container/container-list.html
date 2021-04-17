@@ -48,7 +48,7 @@
             <th>Seal number</th>
             <th>Booking number</th>
             <th>Stuffing date</th>
-            <th>Dispatch date</th>
+            <!-- <th>Dispatch date</th> -->
             <th class="text-right">Bags</th>
             <th class="text-right">Stuffing<br>weight kg</th>
             <th class="text-right">Weighbridge<br> weight kg</th>
@@ -63,7 +63,9 @@
             <td>     
                 <a href="#" click.delegate="goToContainerEdit(item)" class="with-decoration">#${getRavenRootId(item.id)}</a>
               </td>
-            <td>${item.status | containerStatusFormatter}<br>${item.warehouseName}</td>
+            <td>${item.status | containerStatusFormatter}<br><span if.bind="item.warehouseName">${item.warehouseName}</span>
+              <span else class="bg-danger text-white">MISSING WAREHOUSE</span>
+            </td>
             <td>${item.incomingStocks[0].kor | numberFormat: "0,0.00"}</td>
             <td>
               <div if.bind="item.vesselName" class="small font-italic">
@@ -74,13 +76,13 @@
             <td class="text-nowrap">${item.sealNumber}</td>
             <td>${item.bookingNumber}</td>
             <td>${item.stuffingDate | dateFormat: "DD/MM/YYYY"}</td>
-            <td>${item.dispatchDate | dateFormat: "DD/MM/YYYY"}</td>
+            <!-- <td>${item.dispatchDate | dateFormat: "DD/MM/YYYY"}</td> -->
             <td class="text-right">${item.bags | numberFormat: "0,0"}</td>
             <td class="text-right">${item.stuffingWeightKg | numberFormat: "0,0"}</td>
             <td
               class="text-right  ${item.weighbridgeWeightKg == 0 && (item.status == 'stuffingComplete' || item.status == 'gated' || item.status == 'onBoardVessel' || item.status == 'shipped')  ? 'bg-danger text-white' : ''}">
               ${item.weighbridgeWeightKg | numberFormat: "0,0"}</td>
-            <td class="text-right">${item.tareKg | numberFormat: "0,0"}</td>
+            <td class="text-right ${item.tareKg == 0 ? 'bg-danger text-white' : ''}">${item.tareKg | numberFormat: "0,0"}</td>
             <td class="text-right"><span if.bind="item.nettWeightKg > 0">${item.nettWeightKg | numberFormat: "0,0"}</span></td>
             <!-- <td>${item.teu | teuFormatter}</td> -->
             <td class="text-right">

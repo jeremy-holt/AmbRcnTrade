@@ -486,11 +486,11 @@ namespace Tests
             };
 
             await session.StoreAsync(container);
-            
-            var stocks = await "ContainerServiceData.json".JsonFileToClassAsync<List<Stock>>();
+
+            var stocks = await "ContainerServiceData-Stocks.json".JsonFileToClassAsync<List<Stock>>();
             await stocks.SaveList(session);
             await session.SaveChangesAsync();
-            
+
             WaitForUserToContinueTheTest(store);
 
             // Act
@@ -503,7 +503,7 @@ namespace Tests
             var stock5 = await session.LoadAsync<Stock>("stocks/354-A"); // Stock In
             var stock6 = await session.LoadAsync<Stock>("stocks/576-A"); // Stock Out
 
-            var actualStocks = new List<Stock> {stock1, stock2, stock3, stock4, stock5, stock6};
+            var actualStocksIn = new List<Stock> {stock1, stock3, stock5};
 
             stock2.Should().BeNull();
             stock4.Should().BeNull();
@@ -511,18 +511,17 @@ namespace Tests
 
             var actualContainer = await session.LoadAsync<Container>(container.Id);
 
-            
 
             // Assert
-            foreach (var stock in actualStocks.Where(c=>c.IsStockIn))
+            foreach (var stock in actualStocksIn)
             {
-                stock.StuffingRecords.Should().OnlyContain(c => c.ContainerId.IsNullOrEmpty());
-                stock.StuffingRecords.Should().OnlyContain(c => c.ContainerNumber.IsNullOrEmpty());
-                stock.StuffingRecords.Should().OnlyContain(c => c.StuffingDate == null);
+                stock.StuffingRecords.Should().NotContain(c => c.ContainerId == container.Id);
+                stock.StuffingRecords.Should().NotContain(c => c.ContainerNumber == container.ContainerNumber);
+                stock.StuffingRecords.Should().NotContain(c => c.StuffingDate == container.StuffingDate);
             }
 
-            stock1.Bags.Should().Be(18);
-            stock1.WeightKg.Should().Be(1539.75);
+            stock1.Bags.Should().Be(480);
+            stock1.WeightKg.Should().Be(41060);
             stock1.LotNo.Should().Be(46);
             stock1.IsStockIn.Should().BeTrue();
 

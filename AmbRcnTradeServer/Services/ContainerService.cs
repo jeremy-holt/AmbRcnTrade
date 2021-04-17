@@ -78,7 +78,6 @@ namespace AmbRcnTradeServer.Services
             return list
                 .OrderBy(c => Enum.GetName(typeof(ContainerStatus), c.Status))
                 .ThenBy(c => c.Id).ToList();
-            // .ThenBy(c => c.IncomingStocks.OrderBy(incomingStock => incomingStock.StuffingDate).FirstOrDefault()?.StuffingDate).ToList();
         }
 
         public async Task<ServerResponse> UnStuffContainer(string containerId)
@@ -96,20 +95,18 @@ namespace AmbRcnTradeServer.Services
                 throw new InvalidOperationException("Cannot remove stock from a container that is no longer in the warehouse");
 
             foreach (var stock in stocks)
-            {
                 stock.StuffingRecords.RemoveAll(c => c.ContainerId == containerId);
-            }
 
-            // var stockOuts = stocks.Where(c => !c.IsStockIn);
             foreach (var stockOut in stockOuts)
-            {
                 _session.Delete(stockOut);
-            }
 
             container.IncomingStocks = new List<IncomingStock>();
             container.Bags = 0;
             container.StuffingWeightKg = 0;
             container.Status = ContainerStatus.Empty;
+            container.StuffingDate = null;
+            container.NettWeightKg = 0;
+            container.WeighbridgeWeightKg = 0;
 
             return new ServerResponse("Unstuffed container");
         }

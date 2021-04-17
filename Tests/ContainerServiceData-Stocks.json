@@ -1,5 +1,6 @@
 ﻿[
 {
+  "Id":"stocks/338-A",
   "LocationId": "customers/4-A",
   "IsStockIn": true,
   "StockInDate": "2021-03-17T00:00:00.0000000",
@@ -48,6 +49,7 @@
   "Price": 357.77,
 },
   {
+    "Id":"stocks/574-A",
     "LocationId": "customers/4-A",
     "IsStockIn": false,
     "StockInDate": null,
@@ -85,6 +87,7 @@
     }
   },
   {
+    "Id":"stocks/339-A",
     "LocationId": "customers/4-A",
     "IsStockIn": true,
     "StockInDate": "2021-03-18T00:00:00.0000000",
@@ -122,6 +125,7 @@
     }
   },
   {
+    "Id":"stocks/575-A",
     "LocationId": "customers/4-A",
     "IsStockIn": false,
     "StockInDate": null,
@@ -159,6 +163,7 @@
     }
   },
   {
+    "Id":"stocks/354-A",
     "LocationId": "customers/4-A",
     "IsStockIn": true,
     "StockInDate": "2021-03-19T00:00:00.0000000",
@@ -201,6 +206,7 @@
     }
   },
   {
+    "Id":"stocks/576-A",
     "LocationId": "customers/4-A",
     "IsStockIn": false,
     "StockInDate": null,
