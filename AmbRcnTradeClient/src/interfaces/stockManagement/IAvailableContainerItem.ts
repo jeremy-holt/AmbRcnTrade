@@ -7,6 +7,6 @@ export interface IAvailableContainer {
     stockWeightKg: number;
     id: string;
     isOverweight: boolean;
-
+    warehouseId: string;
     selected?:boolean;
 }

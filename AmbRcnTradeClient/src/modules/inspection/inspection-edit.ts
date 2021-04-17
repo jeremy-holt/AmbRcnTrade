@@ -1,3 +1,4 @@
+import { DeleteDialog } from "./../../dialogs/delete-dialog";
 import { InfoDialog } from "./../../dialogs/info-dialog";
 import { BillLadingUploadDialog } from "./../billLadingUploadDialog/billLading-upload-dialog";
 import { DialogService } from "aurelia-dialog";
@@ -143,8 +144,15 @@ export class InspectionEdit {
 
   protected async deleteInspection() {
     this.isDeleting = true;
-    await this.inspectionService.deleteInspection(this.model.id);
-    this.router.navigateToRoute("inspectionList");
+    this.dialogService.open({
+      viewModel: DeleteDialog,
+      model: { header: "Delete inspection", body: "Are you sure you wish to delete this inspection?" }
+    }).whenClosed(async result => {
+      if (!result.wasCancelled) {
+        await this.inspectionService.deleteInspection(this.model.id);
+        this.router.navigateToRoute("inspectionList");
+      }
+    });
   }
 
   protected get canDeleteInspection() {
@@ -210,7 +218,7 @@ export class InspectionEdit {
     });
   }
 
-  protected get userName(){
+  protected get userName() {
     return this.state?.user.name;
   }
 

@@ -96,12 +96,12 @@ export enum ContainerStatus {
 export interface IContainerStatus { id: ContainerStatus; name: string; }
 
 export const CONTAINER_STATUS_LIST: IContainerStatus[] = [
-  { id: ContainerStatus.Empty, name: "Empty container" },
-  { id: ContainerStatus.Stuffing, name: "Container is being stuffed" },
+  { id: ContainerStatus.Empty, name: "Empty" },
+  { id: ContainerStatus.Stuffing, name: "Stuffing" },
   { id: ContainerStatus.StuffingComplete, name: "Stuffing complete" },
   { id: ContainerStatus.OnWayToPort, name: "On way to port" },
   { id: ContainerStatus.Gated, name: "Gated" },
-  { id: ContainerStatus.OnBoardVessel, name: "On board the vessel" },
+  { id: ContainerStatus.OnBoardVessel, name: "On board vessel" },
   { id: ContainerStatus.Shipped, name: "Shipped" },
   { id: ContainerStatus.Cancelled, name: "Cancelled" }
 ];

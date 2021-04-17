@@ -16,5 +16,6 @@ namespace AmbRcnTradeServer.Models.ContainerModels
         public double StockWeightKg { get; set; }
         public string Id { get; set; }
         public bool IsOverweight { get; set; }
+        public string WarehouseId { get; set; }
     }
 }

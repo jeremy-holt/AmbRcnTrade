@@ -76,7 +76,6 @@ export class ContainerEdit {
       }
     ).whenClosed(async result => {
       if (!result.wasCancelled) {
-        // alert("Will unstuff container - not working at the moment");
         await this.containerService.unstuffContainer({ containerId: this.model.id });
         await this.containerService.load(this.model.id);
       }

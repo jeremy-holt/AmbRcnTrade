@@ -65,7 +65,7 @@
                 Balance: Lot ${item.lotNo}</a>
               <span else>Stock: Lot ${item.lotNo}</span>
               <br>
-              <a if.bind="item.isStockIn" route-href="inspectionEdit; params.bind:{id: encode(item.inspectionId)}"
+              <a class="${!item.inspectionDate ? 'bg-danger text-white' : ''}" if.bind="item.isStockIn" route-href="inspectionEdit; params.bind:{id: encode(item.inspectionId)}"
                 class="with-decoration"> <i class="fas fa-arrow-alt-circle-right"></i> Inspection: #${getInspectionNumber(item.inspectionId)}
                 ${item.inspectionDate | dateFormat: "DD/MM/YYYY"}</a>
             </td>

@@ -60,7 +60,7 @@ namespace AmbRcnTradeServer.Controllers
 
         [Authorize]
         [HttpGet("[action]")]
-        public async Task<ActionResult<List<AvailableContainer>>> GetAvailableContainers(string companyId)
+        public async Task<ActionResult<List<AvailableContainer>>> GetAvailableContainers(string companyId, string warehouseId)
         {
             return await _service.GetAvailableContainers(companyId);
         }
