@@ -621,5 +621,55 @@ namespace Tests
             var incomingStocksIds = actualContainer.IncomingStocks.SelectMany(c => c.StockIds).Select(x => x.StockId).ToList();
             incomingStocksIds.Should().Contain(new[] {stock1.Id, stock2.Id, stockOut.Id});
         }
+
+        [Fact]
+        public async Task BlendStocks_ShouldCreateStockOutAndNewStockIn()
+        {
+            // Arrange
+            using var store = GetDocumentStore();
+            using var session = store.OpenAsyncSession();
+            var sut = GetStockManagementService(session);
+            var fixture = new Fixture();
+
+            var stocks = await "ContainerServiceData-Stocks.json".JsonFileToClassAsync<List<Stock>>();
+            await stocks.SaveList(session);
+
+            stocks[0].Bags.Should().Be(480);
+            stocks[0].IsStockIn.Should().BeTrue();
+            stocks[0].LotNo.Should().Be(46);
+
+            stocks[1].Bags.Should().Be(18);
+            stocks[1].IsStockIn.Should().BeFalse();
+            stocks[1].LotNo.Should().Be(46);
+
+            stocks[2].Bags.Should().Be(204);
+            stocks[2].IsStockIn.Should().BeTrue();
+            stocks[2].LotNo.Should().Be(47);
+
+            stocks[3].Bags.Should().Be(204);
+            stocks[3].IsStockIn.Should().BeFalse();
+            stocks[3].LotNo.Should().Be(47);
+
+            var balance1 = new StockBalance()
+            {
+                Balance = 480 - 18,
+                BalanceWeightKg = stocks[0].WeightKg - stocks[1].WeightKg,
+                LotNo = 46,
+                BagsIn = 480,
+                BagsOut = 18,
+                AvgBagWeightKg = 90,
+                LocationId = stocks[0].LocationId,
+                LocationName = "Bouake",
+                SupplierId = stocks[0].SupplierId,
+                WeightKgIn = stocks[0].WeightKg,
+                WeightKgOut = stocks[1].WeightKg,
+                SupplierName = "Dede",
+                Count = stocks[0].AnalysisResult.Count,
+                Kor = stocks[0].AnalysisResult.Kor,
+                AnalysisResults = new List<AnalysisResult>() {stocks[0].AnalysisResult},
+                Moisture = stocks[0].AnalysisResult.Moisture
+            };
+
+        }
     }
 }

@@ -19,6 +19,9 @@
         <div class="col">
           <select-input source.bind="stocksFilter" value.bind="selectedStocksFilter" label="Filter stocks by balances" warn-null="false"></select-input>
         </div>
+        <div class="col">
+          <select-input source.bind="warehouses" value.bind="selectedWarehouse" label="Filter by warehouse" warn-null="false"></select-input>
+        </div>
       </div>
 
       <table class="table table-bordered table-sm small">
@@ -34,7 +37,7 @@
         </thead>
 
         <tbody>
-          <tr repeat.for="item of list | stockBalanceFilter : selectedStocksFilter" class="${item.selected ? 'bg-highlight' : ''}">
+          <tr repeat.for="item of list | stockBalanceFilter : selectedStocksFilter:selectedWarehouse" class="${item.selected ? 'bg-highlight' : ''}">
             <td>
               <div>
                   <a click.delegate="goToStockList(item)" href="#" class="with-decoration"><i

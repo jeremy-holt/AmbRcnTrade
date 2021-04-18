@@ -1,3 +1,4 @@
+import { ICustomerListItem } from "./../../interfaces/ICustomerListItem";
 import { DialogService } from "aurelia-dialog";
 import { autoinject, observable } from "aurelia-framework";
 import { Router } from "aurelia-router";
@@ -6,12 +7,13 @@ import { encodeParams } from "core/helpers";
 import _ from "lodash";
 import { StockManagementService } from "services/stock-management-service";
 import { IState } from "store/state";
-import { ContainerStatus, IStockBalanceFilterItem, StockBalanceFilter, STOCK_BALANCE_FILTER_LIST } from "./../../constants/app-constants";
+import { ContainerStatus, CustomerGroup, IStockBalanceFilterItem, StockBalanceFilter, STOCK_BALANCE_FILTER_LIST } from "./../../constants/app-constants";
 import { IAvailableContainer } from "./../../interfaces/stockManagement/IAvailableContainerItem";
 import { IStockBalance } from "./../../interfaces/stocks/IStockBalance";
 import { isInRole } from "./../../services/role-service";
 import { StockService } from "./../../services/stock-service";
 import { StuffContainerDialog } from "./stuff-container-dialog";
+import { CustomerService } from "services/customer-service";
 
 @autoinject
 @connectTo()
@@ -22,6 +24,9 @@ export class StockBalanceList {
   protected numberEmptyContainers = 0;
   private currentLotNo: number = undefined!;
 
+  protected warehouses: ICustomerListItem[] = [];
+  protected selectedWarehouse: ICustomerListItem = undefined!;
+
   public stocksFilter = STOCK_BALANCE_FILTER_LIST;
   protected selectedStocksFilter: IStockBalanceFilterItem = this.stocksFilter.find(c => c.id === StockBalanceFilter.WithStockBalance);
 
@@ -29,12 +34,14 @@ export class StockBalanceList {
     private stockService: StockService,
     private dialogService: DialogService,
     private stockManagementService: StockManagementService,
+    private customerService: CustomerService,
     private router: Router
   ) { }
 
   public async activate(prms: { lotNo: number, locationId: string }) {
     await this.stockManagementService.getAvailableContainers();
     await this.stockService.loadStockBalanceList(prms?.locationId);
+    await this.customerService.loadCustomersForAppUserList();
     this.currentLotNo = +prms?.lotNo;
   }
 
@@ -44,6 +51,9 @@ export class StockBalanceList {
     this.list.forEach(c => c.selected = c.lotNo === this.currentLotNo);
     this.availableContainersList = _.cloneDeep(state.stockManagement.availableContainers);
     this.numberEmptyContainers = this.availableContainersList.filter(c => c.status === ContainerStatus.Empty).length;
+
+    this.warehouses = _.cloneDeep(state.userFilteredCustomers).filter(c => c.filter === CustomerGroup.Warehouse);
+    this.warehouses.unshift({ id: null, name: "[All]" } as ICustomerListItem);
   }
 
   protected encode(value: string) {
