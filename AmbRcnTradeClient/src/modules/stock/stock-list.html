@@ -19,6 +19,10 @@
     <div class="card-body">
       <div class="mb-4 d-flex justify-content-between align-items-end">
         <div class="mr-2 w-100">
+          <select-input source.bind="stocksFilter" value.bind="selectedStocksFilter" label="Filter stocks by balances" warn-null="false"></select-input>
+        </div>
+
+        <div class="mr-2 w-100">
           <select-input source.bind="locations | customerFilter:'warehouse' " value.bind="selectedLocation"
             label="Select warehouse location" warn-null="false">
           </select-input>
@@ -48,66 +52,82 @@
             <th>Origin</th>
             <th>Stock in</th>
             <th>Stock out</th>
-            <th>Avg. quality</th>
+            <!-- <th>Avg. quality</th> -->
             <th>Container details</th>
           </tr>
         </thead>
         <tbody>
-          <tr repeat.for="item of list | lotNoFilter: filterLotNo" class="${!item.isStockIn ? 'bg-light' : ''}">
-            <td>
-              <a if.bind="canNavigateToStock" route-href="stockEdit; params.bind:{id: encode(item.stockId)}"
-                class="with-decoration">
-                <i class="fas fa-eye"></i>
-                Stock ${item.isStockIn ? "In" : "Out"}: Lot ${item.lotNo}<br>
-              </a>
-              <a if.bind="canNavigateToStock" route-href="stockBalanceList; params.bind:{lotNo: item.lotNo}" class="with-decoration">
-                <i class="fas fa-arrow-alt-circle-right"></i>
-                Balance: Lot ${item.lotNo}</a>
-              <span else>Stock: Lot ${item.lotNo}</span>
-              <br>
-              <a class="${!item.inspectionDate ? 'bg-danger text-white' : ''}" if.bind="item.isStockIn" route-href="inspectionEdit; params.bind:{id: encode(item.inspectionId)}"
-                class="with-decoration"> <i class="fas fa-arrow-alt-circle-right"></i> Inspection: #${getInspectionNumber(item.inspectionId)}
-                ${item.inspectionDate | dateFormat: "DD/MM/YYYY"}</a>
-            </td>
-            <td>${item.stockDate | dateFormat: "DD/MM/YYYY"}</td>
-            <td>${item.locationName}
-            </td>
-            <td>${item.supplierName}<span if.bind="item.fiche"><br>Fiche: ${item.fiche}</span></td>
-            <td>${item.origin}</td>
-            <td>
-              <div if.bind="item.bagsIn>0">${item.bagsIn | numberFormat: "0,0"} bags<br>
-                <span class="font-italic small">
-                  ${item.weightKgIn | numberFormat:"0,0"} kg<br>
-                  ${item.avgBagWeightKg | numberFormat: "0,0.00"} bag
-                </span>
+          <template repeat.for="item of list | lotNoFilter: filterLotNo : selectedStocksFilter">
+            <tr if.bind="item.origin != 'Stock balance'" class="${!item.isStockIn ? 'text-danger' : ''}">
+              <td>
+                <a if.bind="canNavigateToStock" route-href="stockEdit; params.bind:{id: encode(item.stockId)}"
+                  class="with-decoration ${item.isStockIn ? '' : 'text-danger'}">
+                  <i class="fas fa-eye"></i>
+                  Stock ${item.isStockIn ? "In" : "Out"}: Lot ${item.lotNo}<br>
+                </a>
+                <a if.bind="canNavigateToStock" route-href="stockBalanceList; params.bind:{lotNo: item.lotNo}"
+                  class="with-decoration ${item.isStockIn ? '' : 'text-danger'}">
+                  <i class="fas fa-arrow-alt-circle-right"></i>
+                  Balance: Lot ${item.lotNo}</a>
+                <span else>Stock: Lot ${item.lotNo}</span>
+                <br>
+                <a class="with-decoration ${!item.inspectionDate ? 'bg-danger text-white' : ''}" if.bind="item.isStockIn"
+                  route-href="inspectionEdit; params.bind:{id: encode(item.inspectionId)}" class="with-decoration"> <i
+                    class="fas fa-arrow-alt-circle-right"></i> Inspection: #${getInspectionNumber(item.inspectionId)}
+                  ${item.inspectionDate | dateFormat: "DD/MM/YYYY"}</a>
+              </td>
+              <td>${item.stockDate | dateFormat: "DD/MM/YYYY"}</td>
+              <td>${item.locationName}
+              </td>
+              <td>${item.supplierName}<span if.bind="item.fiche"><br>Fiche: ${item.fiche}</span></td>
+              <td>${item.origin}</td>
+              <td class="text-blue">
+                <div if.bind="item.bagsIn>0">${item.bagsIn | numberFormat: "0,0"} bags<br>
+                  <span class="font-italic small">
+                    ${item.weightKgIn | numberFormat:"0,0"} kg<br>
+                    ${item.avgBagWeightKg | numberFormat: "0,0.00"} bag
+                  </span>
+                </div>
+              </td>
+              <td class="text-danger">
+                <div if.bind="item.bagsOut > 0">
+                  ${-item.bagsOut | numberFormat: "0,0"} bags<br>${-item.weightKgOut | numberFormat:"0,0"} kg
+                </div>
+              </td>
+              <td>
+                <ul class="list-unstyled">
+                  <li repeat.for="sr of item.stuffingRecords">
+                    <a if.bind="canNavigateToContainer" class="with-decoration"
+                      route-href="containerEdit; params.bind:{id: encode(sr.containerId)}">
+                      ${sr.containerNumber}
+                    </a>
+                    <span else>${sr.containerNumber}</span>
+                  </li>
+                </ul>
+              </td>
+            </tr>
+            <template else>
+              <tr class="font-weight-bold bg-primary text-white">
+                <td>${item.locationName} Lot no ${item.lotNo}</td>
+                <td colspan="2"> Stock Balance at ${item.stockDate | dateFormat: "DD/MM/YYYY"}</td>
+                <td colspan="2"></td>
+                <td>${item.bagsIn | numberFormat: "0,0"} bags</td>
+                <td>${item.weightKgIn | numberFormat: "0,0"} kg</td>
+                <td colspan="1">
+                  KOR ${item.analysisResult.kor | numberFormat: "0,0.00"}<br>
+                  Count ${item.analysisResult.count | numberFormat: "0,0"}<br>
+                  Moisture ${item.analysisResult.moisture/100 | numberFormat: "0.00%"}
+                </td>
+              </tr>
+              <tr style="height: 20px;">
+                <td colspan="8"></td>
+              </tr>
+            </template>
 
-              </div>
-            </td>
-            <td class="text-success">
-              <div if.bind="item.bagsOut > 0">
-                ${item.bagsOut | numberFormat: "0,0"} bags<br>${item.weightKgOut | numberFormat:"0,0"} kg
-              </div>
-            </td>
-            <td>
-              KOR ${item.analysisResult.kor | numberFormat: "0,0.00"}<br>
-              Count ${item.analysisResult.count | numberFormat: "0,0"}<br>
-              Moisture ${item.analysisResult.moisture/100 | numberFormat: "0.00%"}
-            </td>
-            <td>
-              <ul class="list-unstyled">
-                <li repeat.for="sr of item.stuffingRecords">
-                  <a if.bind="canNavigateToContainer" class="with-decoration"
-                    route-href="containerEdit; params.bind:{id: encode(sr.containerId)}">
-                    ${sr.containerNumber}
-                  </a>
-                  <span else>${sr.containerNumber}</span>
-                </li>
-              </ul>
-            </td>
-          </tr>
+          </template>
         </tbody>
         <tfoot>
-          <tr>
+          <tr class="bg-secondary text-white">
             <th>Stock balance</th>
             <th>${stockBalance.bags | numberFormat: "0,0"} bags</th>
             <th class="font-italic">${stockBalance.weightKg | numberFormat: "0,0"} kg</th>

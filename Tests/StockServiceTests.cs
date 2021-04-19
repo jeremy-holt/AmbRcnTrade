@@ -276,6 +276,34 @@ namespace Tests
         }
 
         [Fact]
+        public async Task LoadStockList_ShouldInsertSummaryRows()
+        {
+            // Arrange
+            using var store = GetDocumentStore();
+            using var session = store.OpenAsyncSession();
+            await InitializeIndexes(store);
+            var sut = GetStockService(session);
+
+            var stocks = await "ContainerServiceData-Stocks.json".JsonFileToClassAsync<List<Stock>>();
+            await stocks.SaveList(session);
+
+            // Act
+            var list = await sut.LoadStockList(COMPANY_ID, (string) null);
+
+            // Assert
+            list[0].GroupedStockIndex.Should().Be(0);
+            var actualSubGroup = list.Where(x => x.GroupedStockIndex == 0).ToList();
+            var summaryRow = actualSubGroup.Last();
+            summaryRow.LotNo.Should().Be(list[0].LotNo);
+            summaryRow.LocationName.Should().Be(list[0].LocationName);
+            summaryRow.StockDate.Should().Be(DateTime.Today);
+            summaryRow.Origin.Should().Be("Stock balance");
+            summaryRow.BagsIn.Should().Be(actualSubGroup.Where(x => x.Origin != "Stock balance").Sum(c => c.BagsIn) - actualSubGroup.Where(x=>x.Origin!="Stock balance").Sum(c => c.BagsOut));
+            summaryRow.WeightKgIn.Should().Be(actualSubGroup.Where(x => x.Origin != "Stock balance").Sum(c => c.WeightKgIn) - actualSubGroup.Where(x => x.Origin != "Stock balance").Sum(c => c.WeightKgOut));
+            summaryRow.AnalysisResult.Should().Be(list[0].AnalysisResult);
+        }
+
+        [Fact]
         public async Task LoadStockList_ShouldLoadListOfStocks()
         {
             // Arrange
@@ -305,7 +333,7 @@ namespace Tests
                 .Without(c => c.StockOutDate)
                 .Without(c => c.InspectionId)
                 .Without(c => c.LocationId)
-                .With(c=>c.Fiche, 123)
+                .With(c => c.Fiche, 123)
                 .With(c => c.SupplierId, supplier.Id)
                 .Create();
             await sut.Save(stockIn1);
@@ -315,7 +343,7 @@ namespace Tests
                 .With(c => c.InspectionId, inspections[0].Id)
                 .With(c => c.LocationId, location.Id)
                 .With(c => c.SupplierId, supplier.Id)
-                .With(c=>c.Fiche, 123)
+                .With(c => c.Fiche, 123)
                 .Create();
             await sut.Save(stockIn2);
 
@@ -333,7 +361,7 @@ namespace Tests
                 .Without(c => c.InspectionId)
                 .Without(c => c.LocationId)
                 .With(c => c.SupplierId, supplier.Id)
-                .With(c=>c.Fiche, 123)
+                .With(c => c.Fiche, 123)
                 .Create();
             await sut.Save(stockIn3);
 
@@ -429,7 +457,7 @@ namespace Tests
             // Act
             var list = await sut.LoadStockList(COMPANY_ID, new List<string> {stockIn1.Id, stockIn2.Id});
             list.Should().BeInAscendingOrder(c => c.LotNo);
-            list.Should().HaveCount(2);
+            list.Should().HaveCount(4);
             list.Should().Contain(c => c.StockId == stockIn1.Id);
             list.Should().Contain(c => c.StockId == stockIn2.Id);
         }
@@ -528,7 +556,7 @@ namespace Tests
             var stock = fixture.DefaultEntity<Stock>()
                 .Without(c => c.StockOutDate)
                 .With(c => c.InspectionId, inspection.Id)
-                .With(c=>c.Fiche,12345)
+                .With(c => c.Fiche, 12345)
                 .With(c => c.Id, "stocks/1-A")
                 .With(c => c.LotNo, 45)
                 .Create();
@@ -605,6 +633,5 @@ namespace Tests
             // Assert
             await action.Should().ThrowAsync<InvalidOperationException>().WithMessage("A stock cannot have both a Stock In date and a Stock Out date");
         }
-
     }
 }

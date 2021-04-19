@@ -32,6 +32,7 @@ namespace AmbRcnTradeServer.Models.StockModels
         public List<StuffingRecord> StuffingRecords { get; set; } = new();
         public double AvgBagWeightKg { get; set; }
         public int Fiche { get; set; }
+        public int GroupedStockIndex { get; set; }
 
         public override string ToString()
         {

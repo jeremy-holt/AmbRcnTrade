@@ -138,7 +138,33 @@ namespace AmbRcnTradeServer.Services
                 .ProjectInto<StockListItem>()
                 .ToListAsync();
 
-            return stocks;
+            var uniqueLotNos = stocks.Select(c => c.LotNo).ToList().Distinct();
+
+            var counter = 0;
+            foreach (var uniqueLotNo in uniqueLotNos)
+            {
+                var filteredItems = stocks.Where(c => c.LotNo == uniqueLotNo).ToList();
+                foreach (var item in filteredItems)
+                {
+                    item.GroupedStockIndex = counter;
+                }
+
+                var summaryRow = new StockListItem
+                {
+                    GroupedStockIndex = counter,
+                    LotNo = filteredItems.First().LotNo,
+                    LocationName = filteredItems.First().LocationName,
+                    AnalysisResult=filteredItems.First().AnalysisResult,
+                    StockDate = DateTime.Today,
+                    Origin = "Stock balance",
+                    BagsIn = filteredItems.Sum(c => c.BagsIn) - filteredItems.Sum(c => c.BagsOut),
+                    WeightKgIn = filteredItems.Sum(c => c.WeightKgIn) - filteredItems.Sum(c => c.WeightKgOut)
+                };
+                counter++;
+                stocks.Add(summaryRow);
+            }
+
+            return stocks.OrderBy(c => c.LotNo).ThenBy(c => c.StockDate).ToList();
         }
     }
 }

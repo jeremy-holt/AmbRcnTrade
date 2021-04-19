@@ -1,6 +1,7 @@
 import { autoinject, observable } from "aurelia-framework";
 import { Router } from "aurelia-router";
 import { connectTo } from "aurelia-store";
+import { StockBalanceFilter, STOCK_BALANCE_FILTER_LIST } from "constants/app-constants";
 import { IListItem } from "interfaces/IEntity";
 import _ from "lodash";
 import { IState } from "store/state";
@@ -11,12 +12,15 @@ import { CustomerService } from "./../../services/customer-service";
 import { isInRole } from "./../../services/role-service";
 import { StockService } from "./../../services/stock-service";
 
+
 @autoinject
 @connectTo()
 export class StockList {
   @observable state: IState = undefined!;
   public list: IStockListItem[] = [];
   private prmLocationId = "";
+  public stocksFilter = STOCK_BALANCE_FILTER_LIST;
+  protected selectedStocksFilter = this.stocksFilter.find(c => c.id === StockBalanceFilter.WithStockBalance);
   
   public locations: IListItem[] = [];
   @observable selectedLocation: IListItem = undefined!
