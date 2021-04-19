@@ -152,7 +152,8 @@ export const initialState: IState = {
   },
   stockManagement: {
     stuffContainer: [],
-    availableContainers: []
+    availableContainers: [],
+    blendedStock: undefined!
   },
   container: { current: undefined!, list: [] },
   vessel: {

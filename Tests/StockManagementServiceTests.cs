@@ -34,6 +34,229 @@ namespace Tests
             await new Inspections_ByAnalysisResult().ExecuteAsync(store);
         }
 
+        [Fact]
+        public async Task BlendStocks_ShouldCreateSingleBlendedLot()
+        {
+            // Arrange
+            using var store = GetDocumentStore();
+            using var session = store.OpenAsyncSession();
+            await InitializeIndexes(store);
+            var sut = GetStockManagementService(session);
+            await new Company().CreateIdAndStore(session);
+
+            var stocks = await "ContainerServiceData-Stocks.json".JsonFileToClassAsync<List<Stock>>();
+            await stocks.SaveList(session);
+
+            var stockIn1 = stocks[0];
+            var averageBagWeightKg1 = stockIn1.WeightKg / stockIn1.Bags;
+
+            var stockIn2 = stocks[2];
+            var averageBagWeightKg2 = stockIn2.WeightKg / stockIn2.Bags;
+
+            var balance1 = new StockBalance
+            {
+                Balance = 480 - 18,
+                BalanceWeightKg = stockIn1.WeightKg - stocks[1].WeightKg,
+                LotNo = 46,
+                BagsIn = 480,
+                BagsOut = 18,
+                AvgBagWeightKg = averageBagWeightKg1,
+                LocationId = stockIn1.LocationId,
+                LocationName = "Bouake",
+                SupplierId = stockIn1.SupplierId,
+                WeightKgIn = stockIn1.WeightKg,
+                WeightKgOut = stocks[1].WeightKg,
+                SupplierName = "Dede",
+                Count = stockIn1.AnalysisResult.Count,
+                Kor = stockIn1.AnalysisResult.Kor,
+                AnalysisResults = new List<AnalysisResult> {stockIn1.AnalysisResult},
+                Moisture = stockIn1.AnalysisResult.Moisture
+            };
+            
+            var balance2 = new StockBalance
+            {
+                Balance = 204 - 10,
+                BalanceWeightKg = stockIn2.WeightKg - stocks[3].WeightKg,
+                LotNo = 47,
+                BagsIn = 204,
+                BagsOut = 10,
+                AvgBagWeightKg = averageBagWeightKg2,
+                LocationId = stockIn2.LocationId,
+                LocationName = "Bouake",
+                SupplierId = stockIn2.SupplierId,
+                WeightKgIn = stockIn2.WeightKg,
+                WeightKgOut = stocks[4].WeightKg,
+                SupplierName = "Dede",
+                Count = stockIn2.AnalysisResult.Count,
+                Kor = stockIn2.AnalysisResult.Kor,
+                AnalysisResults = new List<AnalysisResult> {stockIn2.AnalysisResult},
+                Moisture = stockIn2.AnalysisResult.Moisture
+            };
+
+            // Act
+            var response1 = await sut.BlendStock(balance1, 150, 0, new DateTime(2013, 1, 1));
+            await sut.BlendStock(balance2, 30, response1.Dto.LotNo, new DateTime(2013, 1, 6));
+            await session.SaveChangesAsync();
+            WaitForIndexing(store);
+            
+            // Assert
+            var actual = await session.Query<Stock>().Where(c => c.LotNo == response1.Dto.LotNo).ToListAsync();
+            actual.Should().HaveCount(2);
+            actual[0].Bags.Should().Be(150);
+            actual[0].WeightKg.Should().Be(150 * averageBagWeightKg1);
+            actual[0].IsStockIn.Should().BeTrue();
+
+            actual[1].Bags.Should().Be(30);
+            actual[1].WeightKg.Should().Be(30 * averageBagWeightKg2);
+            actual[1].IsStockIn.Should().BeTrue();
+        }
+
+        [Fact]
+        public async Task BlendStocks_ShouldThrowExceptionIfBalanceWouldBeLessThanZero()
+        {
+            // Arrange
+            using var store = GetDocumentStore();
+            using var session = store.OpenAsyncSession();
+            await InitializeIndexes(store);
+            var sut = GetStockManagementService(session);
+            
+            await new Company().CreateIdAndStore(session);
+
+            var stocks = await "ContainerServiceData-Stocks.json".JsonFileToClassAsync<List<Stock>>();
+            await stocks.SaveList(session);
+
+            var stockIn1 = stocks[0];
+            var averageBagWeightKg1 = stockIn1.WeightKg / stockIn1.Bags;
+            
+            var balance1 = new StockBalance
+            {
+                Balance = 20,
+                BalanceWeightKg = stockIn1.WeightKg - stocks[1].WeightKg,
+                LotNo = 46,
+                BagsIn = 480,
+                BagsOut = 460,
+                AvgBagWeightKg = averageBagWeightKg1,
+                LocationId = stockIn1.LocationId,
+                LocationName = "Bouake",
+                SupplierId = stockIn1.SupplierId,
+                WeightKgIn = stockIn1.WeightKg,
+                WeightKgOut = stocks[1].WeightKg,
+                SupplierName = "Dede",
+                Count = stockIn1.AnalysisResult.Count,
+                Kor = stockIn1.AnalysisResult.Kor,
+                AnalysisResults = new List<AnalysisResult> {stockIn1.AnalysisResult},
+                Moisture = stockIn1.AnalysisResult.Moisture
+            };
+            
+            // Act
+            Func<Task> action = async () => await sut.BlendStock(balance1, 30, 0, new DateTime(2013, 1, 1));
+            
+            // Assert
+            await action.Should().ThrowAsync<InvalidOperationException>().WithMessage("Removing this stock would bring the stock balance below zero.");
+        }
+        
+        [Fact]
+        public async Task BlendStocks_ShouldCreateStockOutAndNewStockIn()
+        {
+            // Arrange
+            using var store = GetDocumentStore();
+            using var session = store.OpenAsyncSession();
+            await InitializeIndexes(store);
+            var sut = GetStockManagementService(session);
+
+            await new Company().CreateIdAndStore(session);
+
+            var stocks = await "ContainerServiceData-Stocks.json".JsonFileToClassAsync<List<Stock>>();
+            await stocks.SaveList(session);
+
+            var stockIn = stocks[0];
+            var averageBagWeightKg = stockIn.WeightKg / stockIn.Bags;
+
+            var inspection = new Inspection
+            {
+                Id = "inspections/328-A",
+                Analyses = new List<Analysis>
+                {
+                    new()
+                    {
+                        Count = stockIn.AnalysisResult.Count, Kor = stockIn.AnalysisResult.Kor, Moisture = stockIn.AnalysisResult.Moisture,
+                        RejectsGm = stockIn.AnalysisResult.RejectsPct * 1000, SoundGm = stockIn.AnalysisResult.SoundPct * 1000, SpottedGm = stockIn.AnalysisResult.SpottedPct * 1000,
+                    }
+                },
+                AnalysisResult = new AnalysisResult(){Approved = Approval.Approved}
+            };
+            await session.StoreAsync(inspection);
+            await session.SaveChangesAsync();
+            WaitForIndexing(store);
+
+            var balance1 = new StockBalance
+            {
+                Balance = 480 - 18,
+                BalanceWeightKg = stockIn.WeightKg - stocks[1].WeightKg,
+                LotNo = 46,
+                BagsIn = 480,
+                BagsOut = 18,
+                AvgBagWeightKg = averageBagWeightKg,
+                LocationId = stockIn.LocationId,
+                LocationName = "Bouake",
+                SupplierId = stockIn.SupplierId,
+                WeightKgIn = stockIn.WeightKg,
+                WeightKgOut = stocks[1].WeightKg,
+                SupplierName = "Dede",
+                Count = stockIn.AnalysisResult.Count,
+                Kor = stockIn.AnalysisResult.Kor,
+                AnalysisResults = new List<AnalysisResult> {stockIn.AnalysisResult},
+                Moisture = stockIn.AnalysisResult.Moisture
+            };
+
+            // Act
+            const int bagsToBlend = 150;
+            const long lotNo = 0;
+            var stuffingDate = new DateTime(2013, 1, 1);
+
+            var response = await sut.BlendStock(balance1, bagsToBlend, lotNo, stuffingDate);
+
+            var actualStocks = await session.Query<Stock>().Where(c => c.LotNo == 46).ToListAsync();
+
+            // Assert
+            actualStocks.Should().HaveCount(3);
+
+            actualStocks[0].Bags.Should().Be(480);
+            actualStocks[0].IsStockIn.Should().BeTrue();
+            actualStocks[0].LotNo.Should().Be(46);
+
+            actualStocks[1].Bags.Should().Be(18);
+            actualStocks[1].IsStockIn.Should().BeFalse();
+            actualStocks[1].LotNo.Should().Be(46);
+
+            var stockOut = actualStocks[2];
+            stockOut.Bags.Should().Be(150);
+            stockOut.IsStockIn.Should().BeFalse();
+            stockOut.LotNo.Should().Be(46);
+            stockOut.StuffingRecords[0].StuffingDate.Should().Be(new DateTime(2013, 1, 1));
+            stockOut.StuffingRecords[0].ContainerNumber.Should().Be("Blended lot");
+            stockOut.StuffingRecords[0].ContainerId.Should().BeNullOrEmpty();
+            stockOut.InspectionId.Should().Be(stockIn.InspectionId);
+            stockOut.AnalysisResult.Should().BeEquivalentTo(stockIn.AnalysisResult);
+
+            var blendedStock = await session.LoadAsync<Stock>(response.Dto.StockId);
+            blendedStock.LotNo.Should().NotBe(46);
+            blendedStock.Bags.Should().Be(bagsToBlend);
+            blendedStock.StuffingRecords.Should().HaveCount(0);
+            blendedStock.WeightKg.Should().Be(150 * averageBagWeightKg);
+            blendedStock.Fiche.Should().Be(stockIn.Fiche);
+            blendedStock.Origin.Should().Be(stockIn.Origin);
+            blendedStock.Price.Should().Be(stockIn.Price);
+            blendedStock.CompanyId.Should().Be(stockIn.CompanyId);
+            blendedStock.InspectionId.Should().BeNullOrEmpty();
+            blendedStock.LocationId.Should().Be(stockIn.LocationId);
+            blendedStock.SupplierId.Should().Be(stockIn.SupplierId);
+            blendedStock.AnalysisResult.Should().BeEquivalentTo(new AnalysisResult());
+            blendedStock.IsStockIn.Should().BeTrue();
+            blendedStock.StockInDate.Should().Be(stuffingDate);
+            blendedStock.StockOutDate.Should().BeNull();
+        }
+
 
         [Fact]
         public async Task GetAvailableContainers_ShouldReturnEmptyOrStuffingContainers()
@@ -620,56 +843,6 @@ namespace Tests
 
             var incomingStocksIds = actualContainer.IncomingStocks.SelectMany(c => c.StockIds).Select(x => x.StockId).ToList();
             incomingStocksIds.Should().Contain(new[] {stock1.Id, stock2.Id, stockOut.Id});
-        }
-
-        [Fact]
-        public async Task BlendStocks_ShouldCreateStockOutAndNewStockIn()
-        {
-            // Arrange
-            using var store = GetDocumentStore();
-            using var session = store.OpenAsyncSession();
-            var sut = GetStockManagementService(session);
-            var fixture = new Fixture();
-
-            var stocks = await "ContainerServiceData-Stocks.json".JsonFileToClassAsync<List<Stock>>();
-            await stocks.SaveList(session);
-
-            stocks[0].Bags.Should().Be(480);
-            stocks[0].IsStockIn.Should().BeTrue();
-            stocks[0].LotNo.Should().Be(46);
-
-            stocks[1].Bags.Should().Be(18);
-            stocks[1].IsStockIn.Should().BeFalse();
-            stocks[1].LotNo.Should().Be(46);
-
-            stocks[2].Bags.Should().Be(204);
-            stocks[2].IsStockIn.Should().BeTrue();
-            stocks[2].LotNo.Should().Be(47);
-
-            stocks[3].Bags.Should().Be(204);
-            stocks[3].IsStockIn.Should().BeFalse();
-            stocks[3].LotNo.Should().Be(47);
-
-            var balance1 = new StockBalance()
-            {
-                Balance = 480 - 18,
-                BalanceWeightKg = stocks[0].WeightKg - stocks[1].WeightKg,
-                LotNo = 46,
-                BagsIn = 480,
-                BagsOut = 18,
-                AvgBagWeightKg = 90,
-                LocationId = stocks[0].LocationId,
-                LocationName = "Bouake",
-                SupplierId = stocks[0].SupplierId,
-                WeightKgIn = stocks[0].WeightKg,
-                WeightKgOut = stocks[1].WeightKg,
-                SupplierName = "Dede",
-                Count = stocks[0].AnalysisResult.Count,
-                Kor = stocks[0].AnalysisResult.Kor,
-                AnalysisResults = new List<AnalysisResult>() {stocks[0].AnalysisResult},
-                Moisture = stocks[0].AnalysisResult.Moisture
-            };
-
         }
     }
 }

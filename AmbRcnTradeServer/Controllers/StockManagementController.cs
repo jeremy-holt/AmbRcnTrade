@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AmberwoodCore.Controllers;
@@ -50,6 +51,14 @@ namespace AmbRcnTradeServer.Controllers
             await _auditingService.Log(Request, request.ContainerId);
             return await _service.StuffContainer(request.ContainerId, request.Status, request.StockBalance, request.Bags, request.WeightKg, request.StuffingDate);
         }
+        
+        [Authorize]
+        [HttpPost("[action]")]
+        public async Task<ActionResult<ServerResponse<BlendedStock>>>BlendStock(BlendStockRequest request)
+        {
+            await _auditingService.Log(Request, $"Blending lot no {request.LotNo}");
+            return await _service.BlendStock(request.StockBalance, request.BagsToBlend, request.LotNo, request.BlendingDate);
+        }
 
         [Authorize]
         [HttpGet("[action]")]
@@ -64,5 +73,13 @@ namespace AmbRcnTradeServer.Controllers
         {
             return await _service.GetAvailableContainers(companyId);
         }
+    }
+
+    public class BlendStockRequest
+    {
+        public StockBalance StockBalance { get; set; }
+        public long LotNo { get; set; }
+        public int BagsToBlend { get; set; }
+        public DateTime BlendingDate { get; set; }
     }
 }

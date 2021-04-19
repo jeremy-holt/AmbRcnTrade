@@ -1,3 +1,4 @@
+import { IBlendStockRequest } from "./../interfaces/stockManagement/IBlendStockRequest";
 import { HttpClient } from "aurelia-fetch-client";
 import { autoinject } from "aurelia-framework";
 import { Router } from "aurelia-router";
@@ -17,6 +18,7 @@ import { IStockBalance } from "./../interfaces/stocks/IStockBalance";
 import { IStockListItem } from "./../interfaces/stocks/IStockListItem";
 import { FetchService } from "./fetch-service";
 import { noOpAction } from "./no-op-action";
+import { IBlendedStock } from "interfaces/stockManagement/IBlendedStock";
 
 @autoinject
 export class StockManagementService extends FetchService {
@@ -32,6 +34,7 @@ export class StockManagementService extends FetchService {
     store.registerAction("nonCommittedStocksListAction", nonCommittedStocksListAction);
     store.registerAction("stuffContainerAction", stuffContainerAction);
     store.registerAction("availableContainersAction", availableContainersAction);
+    store.registerAction("blendStockAction",blendStockAction);
   }
 
   public async moveInspectionToStock(request: IMoveInspectionToStockRequest) {
@@ -60,6 +63,11 @@ export class StockManagementService extends FetchService {
     return await super.post(request, "stuffContainer", stuffContainerAction);
   }
 
+  public async blendStock(stockBalance: IStockBalance, bagsToBlend: number, lotNo: number, blendingDate: string) {
+    const request: IBlendStockRequest = { stockBalance, bagsToBlend, lotNo, blendingDate };
+    return await super.post(request, "blendStock", blendStockAction);
+  }
+
   public async getAvailableContainers() {
     return await super.get<IAvailableContainer[]>([super.currentCompanyIdQuery()], "getAvailableContainers", availableContainersAction);
   }
@@ -81,6 +89,12 @@ export function nonCommittedStocksListAction(state: IState, stocks: IStockListIt
 export function stuffContainerAction(state: IState, result: IOutgoingStock[]) {
   const newState = _.cloneDeep(state);
   newState.stockManagement.stuffContainer = result;
+  return newState;
+}
+
+export function blendStockAction(state: IState, result: IBlendedStock){
+  const newState = _.cloneDeep(state);
+  newState.stockManagement.blendedStock = result;
   return newState;
 }
 

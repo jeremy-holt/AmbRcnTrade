@@ -46,6 +46,12 @@ namespace AmbRcnTradeServer.Models.ContainerModels
         }
     }
 
+    public class BlendedStock
+    {
+        public string StockId { get; set; }
+        public long LotNo { get; set; }
+    }
+
     public class IncomingStockItem
     {
         public IncomingStockItem(string stockId, bool isStockIn)

@@ -1,3 +1,4 @@
+import { IBlendedStock } from "./../interfaces/stockManagement/IBlendedStock";
 import { IPackingList } from "./../interfaces/shipping/IPackingList";
 import { IBillLading } from "./../interfaces/shipping/IBillLading";
 import { IVesselListItem } from "./../interfaces/shipping/IVesselListItem";
@@ -59,7 +60,7 @@ export interface IState {
   inspection: { current: IInspection, list: IInspectionListItem[], movedToStockId: string; };
   stock: { current: IStock, list: IStockListItem[], stockBalanceList: IStockBalance[] };
   purchase: { current: IPurchase, list: IPurchaseListItem[], nonCommittedStocksList: IStockListItem[] };
-  stockManagement: { stuffContainer: IOutgoingStock[], availableContainers: IAvailableContainer[] };
+  stockManagement: { stuffContainer: IOutgoingStock[], availableContainers: IAvailableContainer[], blendedStock: IBlendedStock };
   container: { current: IContainer; list: IContainer[] };
   vessel: { current: IVessel; list: IVesselListItem[]; notLoadedContainers: IContainer[]; }
   billLading: {current: IBillLading; list: IBillLadingListItem[];}  

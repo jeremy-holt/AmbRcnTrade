@@ -29,6 +29,8 @@ namespace AmbRcnTradeServer.Services
 
         Task<ServerResponse<OutgoingStock>> StuffContainer(string containerId, ContainerStatus status, StockBalance stockBalance, double bags, double weightKg,
             DateTime stuffingDate);
+
+        Task<ServerResponse<BlendedStock>> BlendStock(StockBalance stockBalance, int bagsToBlend, long lotNo, DateTime blendingDate);
     }
 
     public class StockManagementService : IStockManagementService
@@ -203,6 +205,48 @@ namespace AmbRcnTradeServer.Services
             incomingStock.StockIds.Add(new IncomingStockItem(stockOut.Id, false));
 
             return new ServerResponse<OutgoingStock>(new OutgoingStock {StockId = stockOut.Id}, "Stuffed container");
+        }
+        
+        public async Task<ServerResponse<BlendedStock>> BlendStock(StockBalance stockBalance, int bagsToBlend, long lotNo, DateTime blendingDate)
+        {
+            if(stockBalance.Balance-bagsToBlend<=0)
+                throw new InvalidOperationException("Removing this stock would bring the stock balance below zero.");
+                    
+            var stockIn = await _session.Query<Stock>().Where(c => c.LotNo == stockBalance.LotNo && c.IsStockIn).FirstOrDefaultAsync();
+            var averageBagWeightKg = stockIn.WeightKg / stockIn.Bags;
+
+            var stockOut = new Stock
+            {
+                LotNo = stockIn.LotNo,
+                Bags = bagsToBlend,
+                Fiche = stockIn.Fiche,
+                SupplierId = stockIn.SupplierId,
+                Origin = stockIn.Origin,
+                CompanyId = stockIn.CompanyId,
+                Price = stockIn.Price,
+                LocationId = stockIn.LocationId,
+                IsStockIn = false,
+                StockInDate = null,
+                StockOutDate = blendingDate,
+                WeightKg = bagsToBlend * averageBagWeightKg,
+                AnalysisResult = stockIn.AnalysisResult,
+                InspectionId = stockIn.InspectionId,
+                StuffingRecords = new List<StuffingRecord>() {new() {ContainerId = null, ContainerNumber = "Blended lot", StuffingDate = blendingDate}}
+            };
+
+            var blended = stockOut.DeepClone();
+            blended.LotNo = lotNo;
+            blended.IsStockIn = true;
+            blended.StockInDate = blendingDate;
+            blended.StockOutDate = null;
+            blended.StuffingRecords = new List<StuffingRecord>();
+            blended.AnalysisResult = new AnalysisResult();
+            blended.InspectionId = null;
+
+            await _stockService.Save(stockOut);
+            var response = await _stockService.Save(blended);
+
+            return new ServerResponse<BlendedStock>(new BlendedStock {StockId = response.Id, LotNo = blended.LotNo} ,"Blended lot");
         }
     }
 }
