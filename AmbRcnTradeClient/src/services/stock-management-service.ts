@@ -34,7 +34,7 @@ export class StockManagementService extends FetchService {
     store.registerAction("nonCommittedStocksListAction", nonCommittedStocksListAction);
     store.registerAction("stuffContainerAction", stuffContainerAction);
     store.registerAction("availableContainersAction", availableContainersAction);
-    store.registerAction("blendStockAction",blendStockAction);
+    store.registerAction("blendStockAction", blendStockAction);
   }
 
   public async moveInspectionToStock(request: IMoveInspectionToStockRequest) {
@@ -92,7 +92,7 @@ export function stuffContainerAction(state: IState, result: IOutgoingStock[]) {
   return newState;
 }
 
-export function blendStockAction(state: IState, result: IBlendedStock){
+export function blendStockAction(state: IState, result: IBlendedStock) {
   const newState = _.cloneDeep(state);
   newState.stockManagement.blendedStock = result;
   return newState;

@@ -14,6 +14,7 @@ import { isInRole } from "./../../services/role-service";
 import { StockService } from "./../../services/stock-service";
 import { StuffContainerDialog } from "./stuff-container-dialog";
 import { CustomerService } from "services/customer-service";
+import { StockBalanceFilterValueConverter } from "./stock-balance-filter-valueConverter";
 
 @autoinject
 @connectTo()
@@ -35,7 +36,8 @@ export class StockBalanceList {
     private dialogService: DialogService,
     private stockManagementService: StockManagementService,
     private customerService: CustomerService,
-    private router: Router
+    private router: Router,
+    private stockBalanceFilterValueConverter: StockBalanceFilterValueConverter
   ) { }
 
   public async activate(prms: { lotNo: number, locationId: string }) {
@@ -94,5 +96,13 @@ export class StockBalanceList {
     this.currentLotNo = item.lotNo;
     this.router.navigateToRoute("stockBalanceList", { lotNo: item.lotNo }, { trigger: false, replace: true });
     this.router.navigateToRoute("stockList", { lotNo: item.lotNo });
+  }
+
+  protected get totals() {
+    const list = this.stockBalanceFilterValueConverter.toView(this.list, this.selectedStocksFilter, this.selectedWarehouse);
+    
+    const bags = list.reduce((a, b) => a += b.balance, 0);
+    const weightKg = list.reduce((a, b) => a += b.balanceWeightKg, 0);
+    return { bags, weightKg };
   }
 }

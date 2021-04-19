@@ -92,7 +92,7 @@ namespace Tests
                 AnalysisResults = new List<AnalysisResult> {stockIn2.AnalysisResult},
                 Moisture = stockIn2.AnalysisResult.Moisture
             };
-
+            
             // Act
             var response1 = await sut.BlendStock(balance1, 150, 0, new DateTime(2013, 1, 1));
             await sut.BlendStock(balance2, 30, response1.Dto.LotNo, new DateTime(2013, 1, 6));
@@ -105,7 +105,7 @@ namespace Tests
             actual[0].Bags.Should().Be(150);
             actual[0].WeightKg.Should().Be(150 * averageBagWeightKg1);
             actual[0].IsStockIn.Should().BeTrue();
-
+            
             actual[1].Bags.Should().Be(30);
             actual[1].WeightKg.Should().Be(30 * averageBagWeightKg2);
             actual[1].IsStockIn.Should().BeTrue();

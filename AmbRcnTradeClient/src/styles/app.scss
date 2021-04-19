@@ -82,11 +82,13 @@ text-area-input+div.invalid-feedback {
 }
 
 .cursor-grab {
-  cursor: move;
+  cursor: move;  
   /* fallback if grab cursor is unsupported */  
   cursor: -moz-grab;
   cursor: -webkit-grab;
   cursor: grab;
+
+  
 
   &:active{    
     cursor: -moz-grabbing;

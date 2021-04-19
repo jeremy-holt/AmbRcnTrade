@@ -70,7 +70,16 @@
             
           </tr>
         </tbody>
-      </table>     
+        <tfoot>
+          <tr>
+            <th colspan="2" class="h3">Totals</th>
+            <th class="text-right h3">${totals.bags | numberFormat: "0,0"} bags</th>
+            <th class="text-right h3">${totals.weightKg | numberFormat: "0,0"} kg</th>
+            <td class="text-right">${totals.weightKg/totals.bags | numberFormat: "0,0.00"} kg/bag</td>
+            <th></th>
+          </tr>
+        </tfoot>        
+      </table>    
     </div>
   </div>
 </template>
