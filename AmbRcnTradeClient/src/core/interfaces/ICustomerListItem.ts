@@ -1,4 +1,4 @@
-import { CustomerGroup } from "./../constants/app-constants";
+import { CustomerGroup } from "./../../constants/app-constants";
 export interface ICustomerListItem {    
     id: string;
     name: string;

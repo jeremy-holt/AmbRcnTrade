@@ -1,4 +1,4 @@
-import { IUser } from "interfaces/IUser";
+import { IUser } from "../interfaces/IUser";
 
 export interface ICustomerUserListItem {
     customerId: string;

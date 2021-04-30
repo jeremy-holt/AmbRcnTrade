@@ -1,4 +1,4 @@
-import { IParamsId } from "./../../interfaces/IParamsId";
+import { IParamsId } from "core/interfaces/IParamsId";
 import { DialogService } from "aurelia-dialog";
 import { autoinject, observable } from "aurelia-framework";
 import { Router } from "aurelia-router";
@@ -8,7 +8,7 @@ import { InspectionService } from "services/inspection-service";
 import { IState } from "store/state";
 import { Approval, CustomerGroup } from "./../../constants/app-constants";
 import { encodeParams, getRavenRootId } from "./../../core/helpers";
-import { ICustomerListItem } from "./../../interfaces/ICustomerListItem";
+import { ICustomerListItem } from "core/interfaces/ICustomerListItem";
 import { IInspectionListItem } from "./../../interfaces/inspections/IInspectionListItem";
 import { IInspectionQueryParams } from "./../../interfaces/inspections/IInspectionQueryParams";
 import { CustomerService } from "./../../services/customer-service";

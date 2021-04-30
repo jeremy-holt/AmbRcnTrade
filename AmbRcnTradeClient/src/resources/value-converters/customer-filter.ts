@@ -1,7 +1,7 @@
 import { autoinject } from "aurelia-framework";
 import { connectTo } from "aurelia-store";
 import { CustomerGroup } from "constants/app-constants";
-import { ICustomerListItem } from "../../interfaces/ICustomerListItem";
+import { ICustomerListItem } from "core/interfaces/ICustomerListItem";
 
 @autoinject
 @connectTo()

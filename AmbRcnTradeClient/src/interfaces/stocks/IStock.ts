@@ -1,4 +1,4 @@
-import { IEntityCompany } from "interfaces/IEntity";
+import { IEntityCompany } from "core/interfaces/IEntity";
 import { IAnalysisResult } from "./../inspections/IAnalysis";
 import { IStuffingRecord } from "./IStuffingRecord";
 

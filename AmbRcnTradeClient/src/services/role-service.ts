@@ -1,8 +1,8 @@
 import { isArray } from "util";
 import { concatStringArray } from "../core/helpers";
-import { IRoleNameItem } from "../interfaces/IRoleNameItem";
+import { IRoleNameItem } from "core/interfaces/IRoleNameItem";
 import { IState } from "../store/state";
-import { RoleType } from "./../interfaces/types";
+import { RoleType } from "core/interfaces/types";
 export class RoleService {
 
 }

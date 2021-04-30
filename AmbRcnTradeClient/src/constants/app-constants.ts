@@ -1,4 +1,4 @@
-import { ICurrency } from "../interfaces/ICurrency";
+import { ICurrency } from "../core/interfaces/ICurrency";
 
 
 export const DATEFORMAT = "YYYY-MM-DD";

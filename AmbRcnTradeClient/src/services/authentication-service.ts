@@ -5,7 +5,7 @@ import { Router } from "aurelia-router";
 import { Store } from "aurelia-store";
 import _ from "lodash";
 import { log } from "../core/log";
-import { IPayload } from "../interfaces/IPayload";
+import { IPayload } from "core/interfaces/IPayload";
 import { initialState } from "../store/initial-state";
 import { IState } from "../store/state";
 import { LOCAL_STORAGE } from "./../localStorage-consts";

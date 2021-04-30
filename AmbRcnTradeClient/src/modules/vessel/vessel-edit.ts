@@ -10,8 +10,8 @@ import _ from "lodash";
 import { VesselService } from "services/vessel-service";
 import { IState } from "store/state";
 import { encodeParams } from "./../../core/helpers";
-import { ICustomerListItem } from "./../../interfaces/ICustomerListItem";
-import { IParamsId } from "./../../interfaces/IParamsId";
+import { ICustomerListItem } from "core/interfaces/ICustomerListItem";
+import { IParamsId } from "core/interfaces/IParamsId";
 import { CustomerService } from "./../../services/customer-service";
 import { PortService } from "./../../services/port-service";
 

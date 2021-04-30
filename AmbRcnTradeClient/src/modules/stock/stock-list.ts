@@ -2,7 +2,7 @@ import { autoinject, observable } from "aurelia-framework";
 import { Router } from "aurelia-router";
 import { connectTo } from "aurelia-store";
 import { StockBalanceFilter, STOCK_BALANCE_FILTER_LIST } from "constants/app-constants";
-import { IListItem } from "interfaces/IEntity";
+import { IListItem } from "core/interfaces/IEntity";
 import _ from "lodash";
 import { IState } from "store/state";
 import "../../core/helpers";

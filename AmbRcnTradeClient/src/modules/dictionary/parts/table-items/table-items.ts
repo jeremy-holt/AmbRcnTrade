@@ -2,7 +2,7 @@ import { autoinject, bindable } from "aurelia-framework";
 import { Router } from "aurelia-router";
 import { encodeParams } from "core/helpers";
 import _ from "lodash";
-import { IEntitySorted } from "../../../../interfaces/IEntity";
+import { IEntitySorted } from "core/interfaces/IEntity";
 
 @autoinject
 export class TableItems {

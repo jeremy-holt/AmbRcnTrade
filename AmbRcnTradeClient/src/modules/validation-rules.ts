@@ -4,9 +4,9 @@ import moment from "moment";
 import "moment/locale/fr";
 import "moment/locale/pt";
 import "moment/locale/vi";
-import { ILogin } from "../interfaces/ILogin";
-import { IAppUser } from "./../interfaces/IAppUser";
-import { ICompany } from "./../interfaces/ICompany";
+import { ILogin } from "core/interfaces/ILogin";
+import { IAppUser } from "core/interfaces/IAppUser";
+import { ICompany } from "core/interfaces/ICompany";
 
 // export const client = ValidationRules
 //   .ensure((c: IBaseClient) => c.name).required().withMessage("* Please provide the name of the company");

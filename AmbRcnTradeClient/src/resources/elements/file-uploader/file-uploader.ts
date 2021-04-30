@@ -1,7 +1,7 @@
 import { DialogController } from "aurelia-dialog";
 import { autoinject, bindable, observable } from "aurelia-framework";
 import * as blobUtil from "blob-util";
-import { IFileImage } from "interfaces/IFileImage";
+import { IFileImage } from "core/interfaces/IFileImage";
 import { ImageType } from "./../../../constants/app-constants";
 
 @autoinject

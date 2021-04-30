@@ -1,4 +1,4 @@
-import { IEntity } from "interfaces/IEntity";
+import { IEntity } from "core/interfaces/IEntity";
 
 export class TableItemsFilterValueConverter {
   public toView(list: IEntity[]) {

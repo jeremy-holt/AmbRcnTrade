@@ -1,4 +1,4 @@
-import { ImageType } from "./../constants/app-constants";
+import { ImageType } from "./../../constants/app-constants";
 export interface IAttachmentInfo {
     name: string;
     route: string;

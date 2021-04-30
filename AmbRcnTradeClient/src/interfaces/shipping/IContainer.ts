@@ -1,6 +1,6 @@
 import { IIncomingStock } from "./../stockManagement/IIncomingStock";
 import { ContainerStatus, Teu } from "constants/app-constants";
-import { IEntityCompany } from "interfaces/IEntity";
+import { IEntityCompany } from "core/interfaces/IEntity";
 export interface IContainer extends IEntityCompany {
   containerNumber: string;
   sealNumber: string;

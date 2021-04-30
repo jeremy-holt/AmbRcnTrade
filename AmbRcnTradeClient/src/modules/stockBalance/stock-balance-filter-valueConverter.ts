@@ -1,4 +1,4 @@
-import { ICustomerListItem } from "./../../interfaces/ICustomerListItem";
+import { ICustomerListItem } from "core/interfaces/ICustomerListItem";
 import { IStockBalanceFilterItem, StockBalanceFilter } from "./../../constants/app-constants";
 import { IStockBalance } from "./../../interfaces/stocks/IStockBalance";
 import _ from "lodash";

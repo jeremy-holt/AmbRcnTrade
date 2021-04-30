@@ -1,4 +1,4 @@
-import { IAuditLog } from "../../../interfaces/IAuditLog";
+import { IAuditLog } from "core/interfaces/IAuditLog";
 
 export class AuditLogUserFilterValueConverter {
   public toView(list: IAuditLog[], filter: string) {

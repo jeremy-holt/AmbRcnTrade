@@ -1,14 +1,14 @@
 
 import { DialogService } from "aurelia-dialog";
-import { autoinject, observable, TaskQueue } from "aurelia-framework";
+import { autoinject, observable } from "aurelia-framework";
 import { connectTo } from "aurelia-store";
 import _ from "lodash";
 import { StockManagementService } from "services/stock-management-service";
 import { IState } from "store/state";
 import { CURRENCIES_LIST, Currency } from "./../../constants/app-constants";
 import { DeleteDialog } from "./../../dialogs/delete-dialog";
-import { IListItem } from "./../../interfaces/IEntity";
-import { IParamsId } from "./../../interfaces/IParamsId";
+import { IListItem } from "core/interfaces/IEntity";
+import { IParamsId } from "core/interfaces/IParamsId";
 import { IPurchase } from "./../../interfaces/purchases/IPurchase";
 import { IPurchaseDetail } from "./../../interfaces/purchases/IPurchaseDetail";
 import { IStockListItem } from "./../../interfaces/stocks/IStockListItem";

@@ -1,4 +1,4 @@
-import { IListItem } from "interfaces/IEntity";
+import { IListItem } from "core/interfaces/IEntity";
 import { DialogController } from "aurelia-dialog";
 import { autoinject, observable } from "aurelia-framework";
 import { connectTo } from "aurelia-store";

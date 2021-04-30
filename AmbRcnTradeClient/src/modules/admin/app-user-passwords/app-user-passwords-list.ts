@@ -1,4 +1,4 @@
-import { IAppUserPassword } from "./../../../interfaces/IAppUserPassword";
+import { IAppUserPassword } from "core/interfaces/IAppUserPassword";
 import { AppUserService } from "../../../services/app-user-service";
 import { autoinject } from "aurelia-framework";
 

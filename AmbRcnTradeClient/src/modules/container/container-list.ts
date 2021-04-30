@@ -1,7 +1,3 @@
-import { IParamsId } from "./../../interfaces/IParamsId";
-import { getRavenRootId } from "./../../core/helpers";
-import { CustomerService } from "./../../services/customer-service";
-import { ICustomerListItem } from "./../../interfaces/ICustomerListItem";
 import { autoinject, observable } from "aurelia-framework";
 import { Router } from "aurelia-router";
 import { connectTo } from "aurelia-store";
@@ -9,8 +5,11 @@ import { encodeParams } from "core/helpers";
 import _ from "lodash";
 import { IState } from "store/state";
 import { CONTAINER_STATUS_LIST, CustomerGroup, IContainerStatus } from "./../../constants/app-constants";
+import { getRavenRootId } from "./../../core/helpers";
+import { ICustomerListItem } from "core/interfaces/ICustomerListItem";
 import { IContainer } from "./../../interfaces/shipping/IContainer";
 import { ContainerService } from "./../../services/container-service";
+import { CustomerService } from "./../../services/customer-service";
 import { isInRole } from "./../../services/role-service";
 import { ContainerStatusFormatterValueConverter } from "./container-status-formatter-valueconverter";
 

@@ -1,7 +1,7 @@
 import { encodeParams } from "./../../core/helpers";
 import { Router } from "aurelia-router";
 import { CustomerService } from "./../../services/customer-service";
-import { IListItem } from "./../../interfaces/IEntity";
+import { IListItem } from "core/interfaces/IEntity";
 import { IPurchaseListItem } from "./../../interfaces/purchases/IPurchaseListItem";
 import { PurchaseService } from "./../../services/purchase-service";
 import { autoinject, observable } from "aurelia-framework";

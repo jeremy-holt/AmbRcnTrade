@@ -1,6 +1,6 @@
 import { autoinject, bindable, bindingMode, observable } from "aurelia-framework";
 import { Currency, CURRENCIES_LIST } from "../../constants/app-constants";
-import { ICurrency } from "../../interfaces/ICurrency";
+import { ICurrency } from "../../core/interfaces/ICurrency";
 
 
 @autoinject

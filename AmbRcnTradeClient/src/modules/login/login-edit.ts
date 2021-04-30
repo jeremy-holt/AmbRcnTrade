@@ -5,7 +5,7 @@ import { ValidateEvent, validateTrigger, ValidationController, ValidationControl
 import { AuthenticationService } from "../../services/authentication-service";
 import { IState } from "../../store/state";
 import * as validationRules from "../validation-rules";
-import { ILogin } from "./../../interfaces/ILogin";
+import { ILogin } from "core/interfaces/ILogin";
 import { BootstrapFormRenderer } from "./../../resources/custom-renderers/bootstrap-form-renderer";
 import { ServerMessageService } from "./../../services/server-message-service";
 

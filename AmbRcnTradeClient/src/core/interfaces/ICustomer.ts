@@ -1,5 +1,5 @@
-import { CustomerGroup as CustomerGroup } from "./../constants/app-constants";
-import { IUser } from "interfaces/IUser";
+import { CustomerGroup as CustomerGroup } from "../../constants/app-constants";
+import { IUser } from "../interfaces/IUser";
 import { IEntityCompany } from "./IEntity";
 
 

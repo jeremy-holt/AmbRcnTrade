@@ -8,7 +8,7 @@ import _ from "lodash";
 import moment from "moment";
 import { InspectionService } from "services/inspection-service";
 import { IState } from "store/state";
-import { IListItem } from "./../../interfaces/IEntity";
+import { IListItem } from "core/interfaces/IEntity";
 import { IMoveInspectionToStockRequest } from "./../../interfaces/stockManagement/IMoveInspectionToStockRequest";
 import { IStockListItem } from "./../../interfaces/stocks/IStockListItem";
 import { CustomerService } from "./../../services/customer-service";

@@ -1,4 +1,4 @@
-import { IEntityCompany } from "interfaces/IEntity";
+import { IEntityCompany } from "core/interfaces/IEntity";
 import { IPurchaseDetail } from "./IPurchaseDetail";
 
 export interface IPurchase extends IEntityCompany {

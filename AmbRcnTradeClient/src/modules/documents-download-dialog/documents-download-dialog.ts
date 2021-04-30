@@ -3,9 +3,9 @@ import { DialogController, DialogService } from "aurelia-dialog";
 import { autoinject } from "aurelia-framework";
 import { Router } from "aurelia-router";
 import { connectTo } from "aurelia-store";
-import { IAttachmentInfo } from "interfaces/IAttachmentInfo";
+import { IAttachmentInfo } from "core/interfaces/IAttachmentInfo";
 import { IState } from "store/state";
-import { IDeleteAttachmentRequest } from "interfaces/IDeleteAttachmentRequest";
+import { IDeleteAttachmentRequest } from "core/interfaces/IDeleteAttachmentRequest";
 import { DeleteDialog } from "dialogs/delete-dialog";
 
 

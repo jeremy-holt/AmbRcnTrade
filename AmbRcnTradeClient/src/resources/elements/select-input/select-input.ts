@@ -1,6 +1,6 @@
 import { autoinject, bindable, bindingMode } from "aurelia-framework";
-import { IListItem } from "../../../interfaces/IEntity";
-import { trueFalse } from "./../../../core/helpers";
+import { IListItem } from "core/interfaces/IEntity";
+import { trueFalse } from "core/helpers";
 @autoinject
 export class SelectInput {
   @bindable({ defaultBindingMode: bindingMode.twoWay }) public value: IListItem | string | null | undefined = undefined!;

@@ -1,4 +1,3 @@
-import { IPurchaseDetail } from "./../interfaces/purchases/IPurchaseDetail";
 import { HttpClient } from "aurelia-fetch-client";
 import { autoinject } from "aurelia-framework";
 import { Router } from "aurelia-router";

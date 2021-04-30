@@ -1,5 +1,4 @@
 import { autoinject } from "aurelia-framework";
-import { encodeParams } from "core/helpers";
 import { QueryId } from "../models/QueryId";
 import { FetchRoute } from "./../requests/FetchRoute";
 import { LanguageService } from "./language-service";

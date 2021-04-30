@@ -7,7 +7,7 @@ import "moment/locale/pt";
 import "moment/locale/vi";
 import { DATEFORMAT } from "../constants/app-constants";
 import { IState } from "../store/state";
-import { IEntity, IIdentity } from "./../interfaces/IEntity";
+import { IEntity, IIdentity } from "./../core/interfaces/IEntity";
 import { log } from "./log";
 import { Fn } from "./types";
 

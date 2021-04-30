@@ -8,7 +8,7 @@ import numbro from "numbro";
 import { CURRENCIES_LIST, Currency } from "./../../constants/app-constants";
 import { encodeParams } from "./../../core/helpers";
 import { DeleteDialog } from "./../../dialogs/delete-dialog";
-import { ICustomerListItem } from "./../../interfaces/ICustomerListItem";
+import { ICustomerListItem } from "core/interfaces/ICustomerListItem";
 import { IPaymentDto } from "./../../interfaces/payments/IPaymentDto";
 import { CustomerService } from "./../../services/customer-service";
 import { PaymentService } from "./../../services/payment-service";

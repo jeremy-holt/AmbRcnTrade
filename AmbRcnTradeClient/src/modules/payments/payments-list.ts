@@ -1,7 +1,7 @@
 import { Router } from "aurelia-router";
 import { encodeParams } from "./../../core/helpers";
 import { IPaymentListItem } from "interfaces/payments/IPaymentListItem";
-import { ICustomerListItem } from "./../../interfaces/ICustomerListItem";
+import { ICustomerListItem } from "core/interfaces/ICustomerListItem";
 import { PaymentService } from "./../../services/payment-service";
 import { CustomerService } from "./../../services/customer-service";
 import { IState } from "./../../store/state";

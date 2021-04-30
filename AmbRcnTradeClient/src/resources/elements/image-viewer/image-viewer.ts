@@ -1,5 +1,5 @@
 import { autoinject, bindable } from "aurelia-framework";
-import { IFileContentResult } from "../../../interfaces/IFileContentResult";
+import { IFileContentResult } from "core/interfaces/IFileContentResult";
 
 @autoinject
 export class ImageViewer {

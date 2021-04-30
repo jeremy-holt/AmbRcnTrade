@@ -11,7 +11,7 @@ import { IState } from "store/state";
 import { ITeu, TEU_LIST } from "./../../constants/app-constants";
 import { encodeParams } from "./../../core/helpers";
 import { DeleteDialog } from "./../../dialogs/delete-dialog";
-import { ICustomerListItem } from "./../../interfaces/ICustomerListItem";
+import { ICustomerListItem } from "core/interfaces/ICustomerListItem";
 import { IPort } from "./../../interfaces/IPort";
 import { IBillLading } from "./../../interfaces/shipping/IBillLading";
 import { IContainer } from "./../../interfaces/shipping/IContainer";

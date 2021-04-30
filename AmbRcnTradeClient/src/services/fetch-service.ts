@@ -1,12 +1,12 @@
-import { IEntity } from "./../interfaces/IEntity";
+import { IEntity } from "core/interfaces/IEntity";
 import { HttpClient, json } from "aurelia-fetch-client";
 import { autoinject } from "aurelia-framework";
 import { Router } from "aurelia-router";
 import { Reducer, Store } from "aurelia-store";
-import { IEntityCompany } from "interfaces/IEntity";
+import { IEntityCompany } from "core/interfaces/IEntity";
 import { Subscription } from "rxjs";
 import { log } from "../core/log";
-import { IServerResponse } from "../interfaces/IServerResponse";
+import { IServerResponse } from "core/interfaces/IServerResponse";
 import { LOCAL_STORAGE } from "../localStorage-consts";
 import { FetchRoute } from "../requests/FetchRoute";
 import { IState } from "../store/state";

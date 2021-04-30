@@ -4,7 +4,7 @@ import { Subscription } from "aurelia-event-aggregator";
 import { autoinject } from "aurelia-framework";
 import { connectTo } from "aurelia-store";
 import { decodeParams } from "core/helpers";
-import { IParamsId } from "interfaces/IParamsId";
+import { IParamsId } from "core/interfaces/IParamsId";
 import { IPort } from "interfaces/IPort";
 import _ from "lodash";
 import { IState } from "store/state";

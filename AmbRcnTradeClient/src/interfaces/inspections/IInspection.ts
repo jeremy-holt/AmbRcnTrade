@@ -1,4 +1,4 @@
-import { IEntityCompany } from "interfaces/IEntity";
+import { IEntityCompany } from "core/interfaces/IEntity";
 import { IAnalysis, IAnalysisResult } from "./IAnalysis";
 import { IStockReference } from "./IStockReference";
 

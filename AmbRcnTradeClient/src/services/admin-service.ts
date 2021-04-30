@@ -3,13 +3,13 @@ import { autoinject } from "aurelia-framework";
 import { Router } from "aurelia-router";
 import { Store } from "aurelia-store";
 import _ from "lodash";
-import { ICompany } from "../interfaces/ICompany";
-import { IRoleNameItem } from "../interfaces/IRoleNameItem";
+import { ICompany } from "core/interfaces/ICompany";
+import { IRoleNameItem } from "core/interfaces/IRoleNameItem";
 import { QueryId } from "../models/QueryId";
 import { IState } from "../store/state";
-import { IAppUser, IAppUserListItem } from "./../interfaces/IAppUser";
-import { ICompanyListItem } from "./../interfaces/ICompany";
-import { IEntity } from "./../interfaces/IEntity";
+import { IAppUser, IAppUserListItem } from "../core/interfaces/IAppUser";
+import { ICompanyListItem } from "core/interfaces/ICompany";
+import { IEntity } from "core/interfaces/IEntity";
 import { FetchService } from "./fetch-service";
 import { noOpAction } from "./no-op-action";
 
