@@ -42,7 +42,7 @@ namespace Tests
             using var session = store.OpenAsyncSession();
             await InitializeIndexes(store);
             var sut = GetStockManagementService(session);
-            await new Company().CreateIdAndStore(session);
+            await new Company().CreateIdAndStoreAsync(session);
 
             var stocks = await "ContainerServiceData-Stocks.json".JsonFileToClassAsync<List<Stock>>();
             await stocks.SaveList(session);
@@ -120,7 +120,7 @@ namespace Tests
             await InitializeIndexes(store);
             var sut = GetStockManagementService(session);
             
-            await new Company().CreateIdAndStore(session);
+            await new Company().CreateIdAndStoreAsync(session);
 
             var stocks = await "ContainerServiceData-Stocks.json".JsonFileToClassAsync<List<Stock>>();
             await stocks.SaveList(session);
@@ -164,7 +164,7 @@ namespace Tests
             await InitializeIndexes(store);
             var sut = GetStockManagementService(session);
 
-            await new Company().CreateIdAndStore(session);
+            await new Company().CreateIdAndStoreAsync(session);
 
             var stocks = await "ContainerServiceData-Stocks.json".JsonFileToClassAsync<List<Stock>>();
             await stocks.SaveList(session);
@@ -408,7 +408,7 @@ namespace Tests
                 .Create();
             await session.StoreAsync(inspection);
 
-            var supplier = await new Customer().CreateAndStore(session);
+            var supplier = await new Customer().CreateAndStoreAsync(session);
 
             var location = fixture.DefaultEntity<Customer>().Create();
             await session.StoreAsync(location);

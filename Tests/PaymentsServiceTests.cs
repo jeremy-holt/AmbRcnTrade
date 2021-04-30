@@ -40,7 +40,7 @@ namespace Tests
             using var session = store.OpenAsyncSession();
             var sut = GetPaymentService(session);
 
-            var payment = await new Payment().CreateAndStore(session);
+            var payment = await new Payment().CreateAndStoreAsync(session);
             await session.SaveChangesAsync();
 
             // Act
@@ -66,10 +66,10 @@ namespace Tests
             var sut = GetPaymentService(session);
             var fixture = new Fixture();
 
-            var supplier = await new Customer().CreateAndStore(session);
-            var beneficiary = await new Customer().CreateAndStore(session);
+            var supplier = await new Customer().CreateAndStoreAsync(session);
+            var beneficiary = await new Customer().CreateAndStoreAsync(session);
 
-            var inspection = await new Inspection().CreateAndStore(session);
+            var inspection = await new Inspection().CreateAndStoreAsync(session);
 
             var stocks = fixture.DefaultEntity<Stock>()
                 .With(c => c.SupplierId, supplier.Id)
@@ -123,8 +123,8 @@ namespace Tests
             var sut = GetPaymentService(session);
             var fixture = new Fixture();
 
-            var supplier = await new Customer().CreateAndStore(session);
-            var beneficiary = await new Customer().CreateAndStore(session);
+            var supplier = await new Customer().CreateAndStoreAsync(session);
+            var beneficiary = await new Customer().CreateAndStoreAsync(session);
 
             var stocks = fixture.DefaultEntity<Stock>()
                 .With(c => c.SupplierId, supplier.Id)
@@ -177,10 +177,10 @@ namespace Tests
             var sut = GetPaymentService(session);
             var fixture = new Fixture();
 
-            var supplier = await new Customer().CreateAndStore(session);
-            var beneficiary = await new Customer().CreateAndStore(session);
+            var supplier = await new Customer().CreateAndStoreAsync(session);
+            var beneficiary = await new Customer().CreateAndStoreAsync(session);
 
-            var inspection = await new Inspection().CreateAndStore(session);
+            var inspection = await new Inspection().CreateAndStoreAsync(session);
 
             var stocks = fixture.DefaultEntity<Stock>()
                 .With(c => c.SupplierId, supplier.Id)
@@ -241,7 +241,7 @@ namespace Tests
             var sut = GetPaymentService(session);
             var fixture = new Fixture();
 
-            await new Company().CreateIdAndStore(session);
+            await new Company().CreateIdAndStoreAsync(session);
 
             var beneficiary = fixture.DefaultEntity<Customer>().Create();
             await session.StoreAsync(beneficiary);

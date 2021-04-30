@@ -123,7 +123,7 @@ namespace Tests
             var sut = GetContainerService(session);
             var fixture = new Fixture();
 
-            var vessel = await new Vessel().CreateAndStore(session);
+            var vessel = await new Vessel().CreateAndStoreAsync(session);
 
             var container = fixture.DefaultEntity<Container>()
                 .With(c => c.VesselId, vessel.Id)
@@ -180,7 +180,7 @@ namespace Tests
             var sut = GetContainerService(session);
             var fixture = new Fixture();
 
-            var vessel = await new Vessel().CreateAndStore(session);
+            var vessel = await new Vessel().CreateAndStoreAsync(session);
 
             var warehouse = fixture.DefaultEntity<Customer>().Create();
             await session.StoreAsync(warehouse);

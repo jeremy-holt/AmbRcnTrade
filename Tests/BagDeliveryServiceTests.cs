@@ -57,7 +57,7 @@ namespace Tests
             var sut = GetBagDeliveryService(session);
             var fixture = new Fixture();
 
-           var bagDelivery =  await fixture.DefaultEntity<BagDelivery>().Create().CreateAndStore(session);
+           var bagDelivery =  await fixture.DefaultEntity<BagDelivery>().Create().CreateAndStoreAsync(session);
            
            // Act
            BagDelivery actual = await sut.Load(bagDelivery.Id);

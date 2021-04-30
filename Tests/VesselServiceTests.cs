@@ -120,7 +120,7 @@ namespace Tests
             var customers = fixture.DefaultEntity<Customer>().CreateMany(2).ToList();
             await customers.SaveList(session);
 
-            var container = await new Container().CreateAndStore(session);
+            var container = await new Container().CreateAndStoreAsync(session);
             var containersIds = new List<string>() {container.Id};
 
             var bills = fixture.DefaultEntity<BillLading>()

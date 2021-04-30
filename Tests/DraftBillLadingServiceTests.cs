@@ -37,17 +37,17 @@ namespace Tests
             var containers = fixture.DefaultEntity<Container>().CreateMany().ToList();
             await containers.SaveList(session);
 
-            var shipper = await new Customer().CreateAndStore(session);
+            var shipper = await new Customer().CreateAndStoreAsync(session);
             shipper.Address.City = "London";
             shipper.Address.State = null;
             shipper.Address.Country = "UK";
-            var consignee = await new Customer().CreateAndStore(session);
-            var notifyParty1 = await new Customer().CreateAndStore(session);
-            var notifyParty2 = await new Customer().CreateAndStore(session);
-            var forwardingAgent = await new Customer().CreateAndStore(session);
-            var portDestination = await new Port().CreateAndStore(session);
+            var consignee = await new Customer().CreateAndStoreAsync(session);
+            var notifyParty1 = await new Customer().CreateAndStoreAsync(session);
+            var notifyParty2 = await new Customer().CreateAndStoreAsync(session);
+            var forwardingAgent = await new Customer().CreateAndStoreAsync(session);
+            var portDestination = await new Port().CreateAndStoreAsync(session);
 
-            var billLading = await new BillLading().CreateAndStore(session);
+            var billLading = await new BillLading().CreateAndStoreAsync(session);
             billLading.ContainerIds = containers.GetPropertyFromList(c => c.Id);
             billLading.ShipperId = shipper.Id;
             billLading.ConsigneeId = consignee.Id;
@@ -82,7 +82,7 @@ namespace Tests
             var sut = GetDraftBillLadingService(session);
             var fixture = new Fixture();
             
-            var billLading = await new BillLading().CreateAndStore(session);
+            var billLading = await new BillLading().CreateAndStoreAsync(session);
             billLading.ContainerIds = new List<string>();
             
             var vessel = fixture.DefaultEntity<Vessel>()
@@ -109,7 +109,7 @@ namespace Tests
             var sut = GetDraftBillLadingService(session);
             var fixture = new Fixture();
 
-            var shipper = await new Customer().CreateAndStore(session);
+            var shipper = await new Customer().CreateAndStoreAsync(session);
             shipper.Address.Street3 = null;
             shipper.Address.Street4 = null;
             
@@ -117,13 +117,13 @@ namespace Tests
             shipper.Address.State = null;
             shipper.Address.Country = "UK";
 
-            var consignee = await new Customer().CreateAndStore(session);
-            var notifyParty1 = await new Customer().CreateAndStore(session);
-            var notifyParty2 = await new Customer().CreateAndStore(session);
-            var forwardingAgent = await new Customer().CreateAndStore(session);
-            var portDestination = await new Port().CreateAndStore(session);
+            var consignee = await new Customer().CreateAndStoreAsync(session);
+            var notifyParty1 = await new Customer().CreateAndStoreAsync(session);
+            var notifyParty2 = await new Customer().CreateAndStoreAsync(session);
+            var forwardingAgent = await new Customer().CreateAndStoreAsync(session);
+            var portDestination = await new Port().CreateAndStoreAsync(session);
 
-            var billLading = await new BillLading().CreateAndStore(session);
+            var billLading = await new BillLading().CreateAndStoreAsync(session);
             billLading.ShipperId = shipper.Id;
             billLading.ConsigneeId = consignee.Id;
             billLading.NotifyParty1Id = notifyParty1.Id;
@@ -165,7 +165,7 @@ namespace Tests
             var sut = GetDraftBillLadingService(session);
             var fixture = new Fixture();
 
-            var shipper = await new Customer().CreateAndStore(session);
+            var shipper = await new Customer().CreateAndStoreAsync(session);
             shipper.Address = new Address()
             {
                 Street3 = "street 2",
@@ -176,7 +176,7 @@ namespace Tests
             shipper.Reference1 = "reference 1";
             shipper.Reference2 = "reference 2";
 
-            var billLading = await new BillLading().CreateAndStore(session);
+            var billLading = await new BillLading().CreateAndStoreAsync(session);
             billLading.ShipperId = shipper.Id;
             
             var vessel = fixture.DefaultEntity<Vessel>()
@@ -212,7 +212,7 @@ namespace Tests
             var sut = GetDraftBillLadingService(session);
             var fixture = new Fixture();
 
-            var shipper = await new Customer().CreateAndStore(session);
+            var shipper = await new Customer().CreateAndStoreAsync(session);
             shipper.Address.Street1 = null;
             shipper.Address.Street2 = null;
             shipper.Address.Street3 = null;
@@ -224,7 +224,7 @@ namespace Tests
             shipper.Reference2 = null;
             shipper.Email = null;
 
-            var billLading = await new BillLading().CreateAndStore(session);
+            var billLading = await new BillLading().CreateAndStoreAsync(session);
             billLading.ShipperId = shipper.Id;
             billLading.DestinationAgentId = null;
 
@@ -263,7 +263,7 @@ namespace Tests
             var sut = GetDraftBillLadingService(session);
             var fixture = new Fixture();
 
-            var billLading = await new BillLading().CreateAndStore(session);
+            var billLading = await new BillLading().CreateAndStoreAsync(session);
             billLading.ShipperId = null;
             
             var vessel = fixture.DefaultEntity<Vessel>()
@@ -307,7 +307,7 @@ namespace Tests
             var containers = fixture.DefaultEntity<Container>().CreateMany().ToList();
             await containers.SaveList(session);
 
-            var billLading = await new BillLading().CreateAndStore(session);
+            var billLading = await new BillLading().CreateAndStoreAsync(session);
             billLading.ContainerIds = containers.GetPropertyFromList(c => c.Id);
             billLading.ShipperId = customers[0].Id;
 

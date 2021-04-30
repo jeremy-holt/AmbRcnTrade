@@ -316,7 +316,7 @@ namespace Tests
             var sut = GetBillLadingService(session);
             var fixture = new Fixture();
 
-            var billLading = await new BillLading().CreateAndStore(session);
+            var billLading = await new BillLading().CreateAndStoreAsync(session);
             billLading.ContainersOnBoard = 0;
             billLading.ContainerIds = new List<string> {"containers/1-A", "containers/2-A"};
             await session.StoreAsync(billLading);
