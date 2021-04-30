@@ -1,6 +1,6 @@
 import { autoinject } from "aurelia-framework";
 import { IAuditLog } from "core/interfaces/IAuditLog";
-import { AuditingService } from "./../../../services/auditing-service";
+import { AuditingService } from "core/services/auditing-service";
 
 @autoinject
 export class AuditLogsList {

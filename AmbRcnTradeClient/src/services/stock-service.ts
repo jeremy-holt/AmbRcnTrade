@@ -4,13 +4,13 @@ import { IStockListItem } from "./../interfaces/stocks/IStockListItem";
 import { IStock } from "interfaces/stocks/IStock";
 import { Router } from "aurelia-router";
 import { HttpClient } from "aurelia-fetch-client";
-import { FetchService } from "./fetch-service";
+import { FetchService } from "core/services/fetch-service";
 import { autoinject } from "aurelia-framework";
 import { Store } from "aurelia-store";
 import { IState } from "store/state";
 import _ from "lodash";
-import { QueryId } from "models/QueryId";
-import { noOpAction } from "./no-op-action";
+import { QueryId } from "core/services/QueryId";
+import { noOpAction } from "core/services/no-op-action";
 
 @autoinject
 export class StockService extends FetchService {

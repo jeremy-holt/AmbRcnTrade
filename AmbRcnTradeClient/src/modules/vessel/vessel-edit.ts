@@ -1,5 +1,5 @@
 import { DeleteDialog } from "dialogs/delete-dialog";
-import { isInRole } from "./../../services/role-service";
+import { isInRole } from "core/services/role-service";
 import { DialogService } from "aurelia-dialog";
 import { autoinject, observable } from "aurelia-framework";
 import { Router } from "aurelia-router";
@@ -12,7 +12,7 @@ import { IState } from "store/state";
 import { encodeParams } from "./../../core/helpers";
 import { ICustomerListItem } from "core/interfaces/ICustomerListItem";
 import { IParamsId } from "core/interfaces/IParamsId";
-import { CustomerService } from "./../../services/customer-service";
+import { CustomerService } from "../../core/services/customer-service";
 import { PortService } from "./../../services/port-service";
 
 @autoinject

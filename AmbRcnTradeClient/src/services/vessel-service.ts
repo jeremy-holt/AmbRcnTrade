@@ -8,8 +8,8 @@ import { IState } from "store/state";
 import { fixAspNetCoreDate } from "./../core/helpers";
 import { IVesselContainersRequest } from "./../interfaces/shipping/IVesselContainerRequest";
 import { IVesselListItem } from "./../interfaces/shipping/IVesselListItem";
-import { FetchService } from "./fetch-service";
-import { noOpAction } from "./no-op-action";
+import { FetchService } from "core/services/fetch-service";
+import { noOpAction } from "core/services/no-op-action";
 
 @autoinject
 export class VesselService extends FetchService {

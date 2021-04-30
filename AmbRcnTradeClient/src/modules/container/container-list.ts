@@ -9,8 +9,8 @@ import { getRavenRootId } from "./../../core/helpers";
 import { ICustomerListItem } from "core/interfaces/ICustomerListItem";
 import { IContainer } from "./../../interfaces/shipping/IContainer";
 import { ContainerService } from "./../../services/container-service";
-import { CustomerService } from "./../../services/customer-service";
-import { isInRole } from "./../../services/role-service";
+import { CustomerService } from "../../core/services/customer-service";
+import { isInRole } from "core/services/role-service";
 import { ContainerStatusFormatterValueConverter } from "./container-status-formatter-valueconverter";
 
 @autoinject

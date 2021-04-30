@@ -1,4 +1,4 @@
-import { Teu, TEU_LIST } from "./../../constants/app-constants";
+import { Teu, TEU_LIST } from "constants/app-constants";
 import { autoinject } from "aurelia-framework";
 
 @autoinject

@@ -6,7 +6,7 @@ import { connectTo } from "aurelia-store";
 import { IState } from "store/state";
 import { Router } from "aurelia-router";
 import _ from "lodash";
-import { CustomerService } from "services/customer-service";
+import { CustomerService } from "core/services/customer-service";
 
 @autoinject
 @connectTo()

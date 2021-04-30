@@ -6,8 +6,8 @@ import { HttpClient } from "aurelia-fetch-client";
 import { Router } from "aurelia-router";
 import { Store } from "aurelia-store";
 import { IState } from "store/state";
-import { FetchService } from "./fetch-service";
-import { noOpAction } from "./no-op-action";
+import { FetchService } from "core/services/fetch-service";
+import { noOpAction } from "core/services/no-op-action";
 import _ from "lodash";
 import { autoinject } from "aurelia-dependency-injection";
 @autoinject

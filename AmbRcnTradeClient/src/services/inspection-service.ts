@@ -2,7 +2,7 @@ import { HttpClient, json } from "aurelia-fetch-client";
 import { autoinject } from "aurelia-framework";
 import { Router } from "aurelia-router";
 import { Store } from "aurelia-store";
-import { Fn } from "core/types";
+import { Fn } from "core/helpers";
 import _ from "lodash";
 import { IState } from "store/state";
 import { Approval } from "./../constants/app-constants";
@@ -11,8 +11,8 @@ import { IAnalysis, IAnalysisResult } from "./../interfaces/inspections/IAnalysi
 import { IInspection } from "./../interfaces/inspections/IInspection";
 import { IInspectionListItem } from "./../interfaces/inspections/IInspectionListItem";
 import { IInspectionQueryParams } from "./../interfaces/inspections/IInspectionQueryParams";
-import { FetchService } from "./fetch-service";
-import { noOpAction } from "./no-op-action";
+import { FetchService } from "core/services/fetch-service";
+import { noOpAction } from "core/services/no-op-action";
 
 @autoinject
 export class InspectionService extends FetchService {

@@ -2,9 +2,9 @@ import { EventAggregator, Subscription } from "aurelia-event-aggregator";
 import { autoinject } from "aurelia-framework";
 import { NavModel, Router } from "aurelia-router";
 import { connectTo } from "aurelia-store";
-import { isInRole } from "../../../services/role-service";
+import { isInRole } from "core/services/role-service";
 import { IState } from "../../../store/state";
-import { AuthenticationService } from "./../../../services/authentication-service";
+import { AuthenticationService } from "core/services/authentication-service";
 
 @autoinject
 @connectTo()

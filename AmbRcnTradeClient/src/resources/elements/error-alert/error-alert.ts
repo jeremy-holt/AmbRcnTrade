@@ -1,6 +1,5 @@
 import { autoinject, bindable, observable } from "aurelia-framework";
 import { connectTo, Store } from "aurelia-store";
-import { serverClearMessageAction } from "../../../services/server-message-service";
 import { IState } from "../../../store/state";
 
 @autoinject

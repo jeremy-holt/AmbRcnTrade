@@ -8,8 +8,8 @@ import { IState } from "store/state";
 import "../../core/helpers";
 import { decodeParams, distinctBy, encodeParams, getRavenRootId } from "./../../core/helpers";
 import { IStockListItem } from "./../../interfaces/stocks/IStockListItem";
-import { CustomerService } from "./../../services/customer-service";
-import { isInRole } from "./../../services/role-service";
+import { CustomerService } from "../../core/services/customer-service";
+import { isInRole } from "core/services/role-service";
 import { StockService } from "./../../services/stock-service";
 
 

@@ -2,13 +2,14 @@ import { autoinject } from "aurelia-framework";
 import { I18N } from "aurelia-i18n";
 import { Store } from "aurelia-store";
 import { BindingSignaler } from "aurelia-templating-resources";
+import { LOCAL_STORAGE } from "core/localStorage-consts";
 import _ from "lodash";
 import moment from "moment";
 import "moment/locale/fr";
 import "moment/locale/pt";
 import "moment/locale/vi";
-import { LOCAL_STORAGE } from "../localStorage-consts";
-import { IState } from "../store/state";
+import { IState } from "store/state";
+
 
 @autoinject
 export class LanguageService {

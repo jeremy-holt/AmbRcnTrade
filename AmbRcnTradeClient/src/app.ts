@@ -4,13 +4,13 @@ import { autoinject, observable } from "aurelia-framework";
 import { connectTo, localStorageMiddleware, MiddlewarePlacement, rehydrateFromLocalStorage, Store } from "aurelia-store";
 import { IState } from "./store/state";
 import { StateInitializationService } from "./store/state-initialization-service";
-import { LOCAL_STORAGE } from "./localStorage-consts";
+import { LOCAL_STORAGE } from "./core/localStorage-consts";
 import { Router, RouterConfiguration } from "aurelia-router";
-import { AuthenticationService } from "./services/authentication-service";
+import { AuthenticationService } from "core/services/authentication-service";
 import { HttpClient } from "aurelia-fetch-client";
 import { FetchConfig } from "aurelia-authentication";
 import { EventAggregator } from "aurelia-event-aggregator";
-import { noOpAction } from "./services/no-op-action";
+import { noOpAction } from "core/services/no-op-action";
 
 @autoinject
 @connectTo()

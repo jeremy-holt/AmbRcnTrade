@@ -5,14 +5,14 @@ import { connectTo } from "aurelia-store";
 import { IParamsId } from "core/interfaces/IParamsId";
 import { IContainer } from "interfaces/shipping/IContainer";
 import _ from "lodash";
-import { CustomerService } from "services/customer-service";
+import { CustomerService } from "core/services/customer-service";
 import { IState } from "store/state";
 import { CONTAINER_STATUS_LIST, CustomerGroup, IContainerStatus, TEU_LIST } from "./../../constants/app-constants";
 import { encodeParams, getRavenRootId } from "./../../core/helpers";
 import { DeleteDialog } from "./../../dialogs/delete-dialog";
 import { ICustomerListItem } from "core/interfaces/ICustomerListItem";
 import { ContainerService } from "./../../services/container-service";
-import { isInRole } from "./../../services/role-service";
+import { isInRole } from "core/services/role-service";
 import { UnstuffContainerDialog } from "./unstuff-container-dialog";
 
 @autoinject

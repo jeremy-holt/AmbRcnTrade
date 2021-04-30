@@ -10,7 +10,7 @@ import { IParamsId } from "core/interfaces/IParamsId";
 import { IStock } from "interfaces/stocks/IStock";
 import _ from "lodash";
 import { IState } from "store/state";
-import { CustomerService } from "./../../services/customer-service";
+import { CustomerService } from "../../core/services/customer-service";
 import { StockService } from "./../../services/stock-service";
 import { DocumentsDownloadDialog } from "modules/documents-download-dialog/documents-download-dialog";
 

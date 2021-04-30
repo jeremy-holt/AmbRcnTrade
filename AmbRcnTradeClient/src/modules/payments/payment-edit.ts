@@ -10,7 +10,7 @@ import { encodeParams } from "./../../core/helpers";
 import { DeleteDialog } from "./../../dialogs/delete-dialog";
 import { ICustomerListItem } from "core/interfaces/ICustomerListItem";
 import { IPaymentDto } from "./../../interfaces/payments/IPaymentDto";
-import { CustomerService } from "./../../services/customer-service";
+import { CustomerService } from "../../core/services/customer-service";
 import { PaymentService } from "./../../services/payment-service";
 import { IState } from "./../../store/state";
 

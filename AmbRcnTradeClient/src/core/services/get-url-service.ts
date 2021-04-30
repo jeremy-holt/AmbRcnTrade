@@ -1,6 +1,6 @@
 import { autoinject } from "aurelia-framework";
-import { QueryId } from "../models/QueryId";
-import { FetchRoute } from "./../requests/FetchRoute";
+import { QueryId } from "./QueryId";
+import { FetchRoute } from "./FetchRoute";
 import { LanguageService } from "./language-service";
 
 @autoinject

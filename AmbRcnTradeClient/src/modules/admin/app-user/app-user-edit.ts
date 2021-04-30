@@ -5,8 +5,8 @@ import { IState } from "store/state";
 import { IAppUser, IAppUserListItem } from "../../../core/interfaces/IAppUser";
 import { IRoleNameItem } from "core/interfaces/IRoleNameItem";
 import { RoleType } from "core/interfaces/types";
-import { AdminService } from "../../../services/admin-service";
-import { AppUserService } from "../../../services/app-user-service";
+import { AdminService } from "../../../core/services/admin-service";
+import { AppUserService } from "core/services/app-user-service";
 import _ from "lodash";
 
 @autoinject

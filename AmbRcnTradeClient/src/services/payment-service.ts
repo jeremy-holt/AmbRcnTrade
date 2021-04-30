@@ -6,11 +6,11 @@ import { Store } from "aurelia-store";
 import { IPayment } from "interfaces/payments/IPayment";
 import { IPaymentListItem } from "interfaces/payments/IPaymentListItem";
 import _ from "lodash";
-import { QueryId } from "models/QueryId";
+import { QueryId } from "core/services/QueryId";
 import { IState } from "store/state";
 import { fixAspNetCoreDate } from "./../core/helpers";
-import { FetchService } from "./fetch-service";
-import { noOpAction } from "./no-op-action";
+import { FetchService } from "core/services/fetch-service";
+import { noOpAction } from "core/services/no-op-action";
 
 @autoinject
 export class PaymentService extends FetchService {

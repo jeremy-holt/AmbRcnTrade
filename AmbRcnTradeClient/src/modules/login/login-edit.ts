@@ -2,12 +2,12 @@ import { Subscription } from "aurelia-event-aggregator";
 import { autoinject, observable } from "aurelia-framework";
 import { connectTo } from "aurelia-store";
 import { ValidateEvent, validateTrigger, ValidationController, ValidationControllerFactory } from "aurelia-validation";
-import { AuthenticationService } from "../../services/authentication-service";
+import { AuthenticationService } from "core/services/authentication-service";
 import { IState } from "../../store/state";
 import * as validationRules from "../validation-rules";
 import { ILogin } from "core/interfaces/ILogin";
 import { BootstrapFormRenderer } from "./../../resources/custom-renderers/bootstrap-form-renderer";
-import { ServerMessageService } from "./../../services/server-message-service";
+import { ServerMessageService } from "core/services/server-message-service";
 
 @autoinject
 @connectTo()

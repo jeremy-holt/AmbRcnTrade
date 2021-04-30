@@ -12,7 +12,7 @@ import { IParamsId } from "core/interfaces/IParamsId";
 import { IPurchase } from "./../../interfaces/purchases/IPurchase";
 import { IPurchaseDetail } from "./../../interfaces/purchases/IPurchaseDetail";
 import { IStockListItem } from "./../../interfaces/stocks/IStockListItem";
-import { CustomerService } from "./../../services/customer-service";
+import { CustomerService } from "../../core/services/customer-service";
 import { PurchaseService } from "./../../services/purchase-service";
 import { UncommittedStocksDialog } from "./uncommitted-stocks-dialog";
 

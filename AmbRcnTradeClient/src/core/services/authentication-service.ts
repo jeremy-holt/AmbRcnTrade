@@ -4,14 +4,14 @@ import { I18N } from "aurelia-i18n";
 import { Router } from "aurelia-router";
 import { Store } from "aurelia-store";
 import _ from "lodash";
-import { log } from "../core/log";
+import { log } from "core/log";
 import { IPayload } from "core/interfaces/IPayload";
-import { initialState } from "../store/initial-state";
-import { IState } from "../store/state";
-import { LOCAL_STORAGE } from "./../localStorage-consts";
 import { AdminService } from "./admin-service";
 import { ServerMessageService } from "./server-message-service";
 import { AppUserService } from "./app-user-service";
+import { LOCAL_STORAGE } from "core/localStorage-consts";
+import { initialState } from "store/initial-state";
+import { IState } from "store/state";
 
 @autoinject
 export class AuthenticationService {

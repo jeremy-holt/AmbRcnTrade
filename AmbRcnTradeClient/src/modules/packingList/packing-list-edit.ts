@@ -1,6 +1,6 @@
 import { encodeParams } from "core/helpers";
 import { PortService } from "./../../services/port-service";
-import { CustomerService } from "./../../services/customer-service";
+import { CustomerService } from "../../core/services/customer-service";
 import { IPort } from "./../../interfaces/IPort";
 import { ICustomerListItem } from "core/interfaces/ICustomerListItem";
 import { IContainer } from "interfaces/shipping/IContainer";

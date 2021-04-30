@@ -1,4 +1,4 @@
-import { isInRole } from "./../../services/role-service";
+import { isInRole } from "core/services/role-service";
 import { CUSTOMER_GROUPS } from "./../../constants/app-constants";
 import { observable } from "aurelia-binding";
 import { autoinject } from "aurelia-framework";
@@ -10,9 +10,9 @@ import { IAppUserListItem } from "core/interfaces/IAppUser";
 import { ICustomer } from "core/interfaces/ICustomer";
 import { IParamsId } from "core/interfaces/IParamsId";
 import _ from "lodash";
-import { AdminService } from "services/admin-service";
+import { AdminService } from "core/services/admin-service";
 import { IState } from "store/state";
-import { CustomerService } from "../../services/customer-service";
+import { CustomerService } from "../../core/services/customer-service";
 
 @autoinject
 @connectTo()

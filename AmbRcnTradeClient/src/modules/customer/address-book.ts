@@ -7,9 +7,9 @@ import { decodeParams, encodeParams } from "core/helpers";
 import { ICustomer } from "core/interfaces/ICustomer";
 import { IParamsId } from "core/interfaces/IParamsId";
 import _ from "lodash";
-import { AdminService } from "services/admin-service";
-import { CustomerService } from "services/customer-service";
-import { isInRole } from "services/role-service";
+import { AdminService } from "core/services/admin-service";
+import { CustomerService } from "core/services/customer-service";
+import { isInRole } from "core/services/role-service";
 import { IState } from "store/state";
 
 @autoinject

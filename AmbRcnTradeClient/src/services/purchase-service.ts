@@ -3,13 +3,13 @@ import { autoinject } from "aurelia-framework";
 import { Router } from "aurelia-router";
 import { Store } from "aurelia-store";
 import _ from "lodash";
-import { QueryId } from "models/QueryId";
+import { QueryId } from "core/services/QueryId";
 import { IState } from "store/state";
 import { fixAspNetCoreDate } from "./../core/helpers";
 import { IPurchase } from "./../interfaces/purchases/IPurchase";
 import { IPurchaseListItem } from "./../interfaces/purchases/IPurchaseListItem";
 import { IStockListItem } from "./../interfaces/stocks/IStockListItem";
-import { FetchService } from "./fetch-service";
+import { FetchService } from "core/services/fetch-service";
 
 @autoinject
 export class PurchaseService extends FetchService {

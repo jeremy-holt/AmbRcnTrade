@@ -4,13 +4,13 @@ import { Router } from "aurelia-router";
 import { Store } from "aurelia-store";
 import { IUnstuffContainerRequest } from "interfaces/shipping/IUnstuffContainerRequest";
 import _ from "lodash";
-import { QueryId } from "models/QueryId";
+import { QueryId } from "core/services/QueryId";
 import { IState } from "store/state";
 import { ContainerStatus } from "./../constants/app-constants";
 import { fixAspNetCoreDate } from "./../core/helpers";
 import { IContainer } from "./../interfaces/shipping/IContainer";
-import { FetchService } from "./fetch-service";
-import { noOpAction } from "./no-op-action";
+import { FetchService } from "core/services/fetch-service";
+import { noOpAction } from "core/services/no-op-action";
 
 @autoinject
 export class ContainerService extends FetchService {

@@ -1,8 +1,8 @@
 import { autoinject } from "aurelia-framework";
 import { Store } from "aurelia-store";
 import _ from "lodash";
-import { log } from "../core/log";
-import { IState } from "../store/state";
+import { log } from "core/log";
+import { IState } from "store/state";
 
 @autoinject
 export class ServerMessageService {

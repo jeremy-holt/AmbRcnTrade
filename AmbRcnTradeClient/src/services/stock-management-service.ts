@@ -7,7 +7,7 @@ import { ContainerStatus } from "constants/app-constants";
 import { IStuffingRequest } from "interfaces/stockManagement/IStuffingRequest";
 import { IStock } from "interfaces/stocks/IStock";
 import _ from "lodash";
-import { QueryId } from "models/QueryId";
+import { QueryId } from "core/services/QueryId";
 import { IState } from "store/state";
 import { IAvailableContainer } from "./../interfaces/stockManagement/IAvailableContainerItem";
 import { IOutgoingStock } from "./../interfaces/stockManagement/IIncomingStock";
@@ -16,8 +16,8 @@ import { IMoveInspectionToStockRequest } from "./../interfaces/stockManagement/I
 import { IRemoveInspectionFromStockRequest } from "./../interfaces/stockManagement/IRemoveInspectionFromStockRequest";
 import { IStockBalance } from "./../interfaces/stocks/IStockBalance";
 import { IStockListItem } from "./../interfaces/stocks/IStockListItem";
-import { FetchService } from "./fetch-service";
-import { noOpAction } from "./no-op-action";
+import { FetchService } from "core/services/fetch-service";
+import { noOpAction } from "core/services/no-op-action";
 import { IBlendedStock } from "interfaces/stockManagement/IBlendedStock";
 
 @autoinject

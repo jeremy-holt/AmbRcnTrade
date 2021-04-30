@@ -5,15 +5,15 @@ import { Router } from "aurelia-router";
 import { Reducer, Store } from "aurelia-store";
 import { IEntityCompany } from "core/interfaces/IEntity";
 import { Subscription } from "rxjs";
-import { log } from "../core/log";
+import { log } from "core/log";
 import { IServerResponse } from "core/interfaces/IServerResponse";
-import { LOCAL_STORAGE } from "../localStorage-consts";
-import { FetchRoute } from "../requests/FetchRoute";
-import { IState } from "../store/state";
-import { QueryId } from "./../models/QueryId";
+import { FetchRoute } from "./FetchRoute";
+import { QueryId } from "./QueryId";
 import { logoutAction } from "./authentication-service";
 import { GetUrlService } from "./get-url-service";
 import { serverErrorMessageAction, ServerMessageService } from "./server-message-service";
+import { LOCAL_STORAGE } from "core/localStorage-consts";
+import { IState } from "store/state";
 
 export type RequestMethod = "get" | "delete" | "post" | "getMany";
 

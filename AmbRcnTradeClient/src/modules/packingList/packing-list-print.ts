@@ -5,7 +5,7 @@ import { Router } from "aurelia-router";
 import { connectTo } from "aurelia-store";
 import { ICustomer } from "core/interfaces/ICustomer";
 import { IParamsId } from "core/interfaces/IParamsId";
-import { CustomerService } from "services/customer-service";
+import { CustomerService } from "core/services/customer-service";
 import { IState } from "store/state";
 import { IPackingList } from "./../../interfaces/shipping/IPackingList";
 import { PackingListService } from "./../../services/packing-list-service";

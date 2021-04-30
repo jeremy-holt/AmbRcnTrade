@@ -1,4 +1,4 @@
-import { Fn } from "./types";
+import { Fn } from "./helpers";
 
 export const sum = <T>(array: T[], fieldPath?: Fn<T, number>): number => {
   if (!fieldPath && typeof +array[0] !== "number") {

@@ -4,7 +4,7 @@ import { Router } from "aurelia-router";
 import { Store } from "aurelia-store";
 import _ from "lodash";
 import { IState } from "store/state";
-import { ICustomer } from "../core/interfaces/ICustomer";
+import { ICustomer } from "../interfaces/ICustomer";
 import { ICustomerListItem } from "core/interfaces/ICustomerListItem";
 import { FetchService } from "./fetch-service";
 

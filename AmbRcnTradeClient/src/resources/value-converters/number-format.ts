@@ -1,6 +1,6 @@
 import numbro from "numbro";
 import { log } from "../../core/log";
-import { LanguageService } from "../../services/language-service";
+import { LanguageService } from "core/services/language-service";
 
 export class NumberFormatValueConverter {
 

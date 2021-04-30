@@ -3,12 +3,12 @@ import { autoinject } from "aurelia-framework";
 import { Router } from "aurelia-router";
 import { Store } from "aurelia-store";
 import _ from "lodash";
-import { QueryId } from "models/QueryId";
+import { QueryId } from "core/services/QueryId";
 import { IState } from "store/state";
 import { IAttachmentInfo } from "core/interfaces/IAttachmentInfo";
 import { IDeleteAttachmentRequest } from "core/interfaces/IDeleteAttachmentRequest";
-import { FetchService } from "./fetch-service";
-import { noOpAction } from "./no-op-action";
+import { FetchService } from "core/services/fetch-service";
+import { noOpAction } from "core/services/no-op-action";
 
 
 @autoinject

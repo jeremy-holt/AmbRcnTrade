@@ -3,13 +3,13 @@ import { autoinject } from "aurelia-framework";
 import { Router } from "aurelia-router";
 import { Store } from "aurelia-store";
 import _ from "lodash";
-import { IState } from "../store/state";
 import { IAppUserPassword } from "core/interfaces/IAppUserPassword";
 import { ICustomerUserListItem } from "core/interfaces/ICustomerUserListItem";
 import { IListItem } from "core/interfaces/IEntity";
 import { IPayload } from "core/interfaces/IPayload";
 import { FetchService } from "./fetch-service";
 import { noOpAction } from "./no-op-action";
+import { IState } from "store/state";
 
 @autoinject
 export class AppUserService extends FetchService {

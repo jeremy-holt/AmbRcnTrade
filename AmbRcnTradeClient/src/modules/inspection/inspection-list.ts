@@ -11,7 +11,7 @@ import { encodeParams, getRavenRootId } from "./../../core/helpers";
 import { ICustomerListItem } from "core/interfaces/ICustomerListItem";
 import { IInspectionListItem } from "./../../interfaces/inspections/IInspectionListItem";
 import { IInspectionQueryParams } from "./../../interfaces/inspections/IInspectionQueryParams";
-import { CustomerService } from "./../../services/customer-service";
+import { CustomerService } from "../../core/services/customer-service";
 import { StockNavigationDialog } from "./stock-navigation-dialog";
 
 @autoinject

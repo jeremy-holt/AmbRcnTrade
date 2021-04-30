@@ -1,4 +1,4 @@
-import { QueryId } from "./../models/QueryId";
+import { QueryId } from "./QueryId";
 import { FetchPostRoute } from "./FetchPostRoute";
 
 export class FetchRoute extends FetchPostRoute {

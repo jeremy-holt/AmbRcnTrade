@@ -9,7 +9,6 @@ import { DATEFORMAT } from "../constants/app-constants";
 import { IState } from "../store/state";
 import { IEntity, IIdentity } from "./../core/interfaces/IEntity";
 import { log } from "./log";
-import { Fn } from "./types";
 
 /**
  * Creates a delay
@@ -262,4 +261,15 @@ export const randomHtmlId = (prefix: string) => {
 export const getRavenRootId =(id: string) =>{  
   return id?.split("/")[1].split("-")[0];
 };
+
+export type Lazy<T> = () => T;
+export type Fn<T, TU> = (t: T) => TU;
+export type Predicate = (e: unknown) => boolean;
+// export type ById1<T> = { [key: string]: T }
+
+// export interface IById<T> { [key: string]: T; }
+export const head = <T>(array: T[]) => array[0];
+export const tail = <T>(array: T[]) => array.slice(1);
+export const ifElse = <T>(expr: boolean, t: Lazy<T>, f: Lazy<T>) => expr ? t() : f();
+// export const act = <T, TU>(expr: Fn<T, TU>, value: unknown): TU => expr(value);
 

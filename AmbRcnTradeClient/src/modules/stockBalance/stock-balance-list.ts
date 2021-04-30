@@ -10,10 +10,10 @@ import { IState } from "store/state";
 import { ContainerStatus, CustomerGroup, IStockBalanceFilterItem, StockBalanceFilter, STOCK_BALANCE_FILTER_LIST } from "./../../constants/app-constants";
 import { IAvailableContainer } from "./../../interfaces/stockManagement/IAvailableContainerItem";
 import { IStockBalance } from "./../../interfaces/stocks/IStockBalance";
-import { isInRole } from "./../../services/role-service";
+import { isInRole } from "core/services/role-service";
 import { StockService } from "./../../services/stock-service";
 import { StuffContainerDialog } from "./stuff-container-dialog";
-import { CustomerService } from "services/customer-service";
+import { CustomerService } from "core/services/customer-service";
 import { StockBalanceFilterValueConverter } from "./stock-balance-filter-valueConverter";
 
 @autoinject

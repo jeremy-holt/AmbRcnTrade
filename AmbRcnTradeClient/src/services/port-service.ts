@@ -2,11 +2,10 @@ import { HttpClient } from "aurelia-fetch-client";
 import { autoinject } from "aurelia-framework";
 import { Router } from "aurelia-router";
 import { Store } from "aurelia-store";
+import { FetchService } from "core/services/fetch-service";
 import { IPort } from "interfaces/IPort";
 import _ from "lodash";
 import { IState } from "store/state";
-import { FetchService } from "./fetch-service";
-
 @autoinject
 export class PortService extends FetchService {
   constructor(

@@ -5,16 +5,16 @@ import { Store } from "aurelia-store";
 import { IBillLadingContainersRequest } from "interfaces/shipping/IBillLadingContainersRequest";
 import { IBillLadingListItem } from "interfaces/shipping/IBillLadingListItem";
 import _ from "lodash";
-import { QueryId } from "models/QueryId";
+import { QueryId } from "core/services/QueryId";
 import { IState } from "store/state";
 import { encodeParams, fixAspNetCoreDate } from "./../core/helpers";
 import { IAddContainersToBillLadingRequest } from "./../interfaces/shipping/IAddContainersToBillLadingRequest";
 import { IBillLading } from "./../interfaces/shipping/IBillLading";
 import { IContainer } from "./../interfaces/shipping/IContainer";
 import { IMoveBillLadingRequest } from "./../interfaces/shipping/IMoveBillLadingRequest";
-import { FetchService } from "./fetch-service";
-import { GetUrlService } from "./get-url-service";
-import { noOpAction } from "./no-op-action";
+import { FetchService } from "core/services/fetch-service";
+import { GetUrlService } from "core/services/get-url-service";
+import { noOpAction } from "core/services/no-op-action";
 @autoinject
 
 export class BillLadingService extends FetchService {

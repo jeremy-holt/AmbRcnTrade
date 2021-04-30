@@ -11,7 +11,7 @@ import { IState } from "store/state";
 import { IListItem } from "core/interfaces/IEntity";
 import { IMoveInspectionToStockRequest } from "./../../interfaces/stockManagement/IMoveInspectionToStockRequest";
 import { IStockListItem } from "./../../interfaces/stocks/IStockListItem";
-import { CustomerService } from "./../../services/customer-service";
+import { CustomerService } from "../../core/services/customer-service";
 import { StockService } from "./../../services/stock-service";
 
 @autoinject

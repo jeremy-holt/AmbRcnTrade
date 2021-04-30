@@ -3,7 +3,7 @@ import { encodeParams } from "./../../core/helpers";
 import { IPaymentListItem } from "interfaces/payments/IPaymentListItem";
 import { ICustomerListItem } from "core/interfaces/ICustomerListItem";
 import { PaymentService } from "./../../services/payment-service";
-import { CustomerService } from "./../../services/customer-service";
+import { CustomerService } from "../../core/services/customer-service";
 import { IState } from "./../../store/state";
 import { autoinject, observable } from "aurelia-framework";
 import { connectTo } from "aurelia-store";

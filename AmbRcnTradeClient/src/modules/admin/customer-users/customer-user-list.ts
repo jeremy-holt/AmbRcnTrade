@@ -1,5 +1,5 @@
 
-import { AppUserService } from "../../../services/app-user-service";
+import { AppUserService } from "core/services/app-user-service";
 import { autoinject, observable } from "aurelia-framework";
 import { connectTo } from "aurelia-store";
 import { IState } from "store/state";
